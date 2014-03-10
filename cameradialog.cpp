@@ -9,6 +9,8 @@ CameraDialog::CameraDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setWindowIcon(QIcon::fromTheme("camera-photo"));
+
     //Camera devices:
     QByteArray cameraDevice;
     foreach(const QByteArray &deviceName, QCamera::availableDevices()) {

@@ -6,7 +6,7 @@
 
 QT       += core gui widgets multimedia multimediawidgets
 
-TARGET = CAIGA
+TARGET   = CAIGA
 TEMPLATE = app
 
 
@@ -16,7 +16,7 @@ SOURCES  += main.cpp\
             image.cpp \
             project.cpp \
             optionsdialog.cpp \
-    qimageviewer.cpp
+            qimageviewer.cpp
 
 HEADERS  += mainwindow.h \
             cameradialog.h \
@@ -24,14 +24,16 @@ HEADERS  += mainwindow.h \
             image.h \
             project.h \
             optionsdialog.h \
-    qimageviewer.h
+            qimageviewer.h
 
 FORMS    += mainwindow.ui \
             cameradialog.ui \
             optionsdialog.ui
 
+RESOURCES+= app.qrc
+
 windows: {
-RESOURCES += icons.qrc
+RESOURCES+= icons.qrc
 
 #Change lines below according to your setup environment
 INCLUDEPATH += C:/openCV/build/include

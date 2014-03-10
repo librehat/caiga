@@ -6,6 +6,8 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
     ui(new Ui::OptionsDialog)
 {
     ui->setupUi(this);
+
+    setWindowIcon(QIcon::fromTheme("configure"));
 }
 
 OptionsDialog::~OptionsDialog()

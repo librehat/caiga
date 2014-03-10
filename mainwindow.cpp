@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionUndo->setIcon(QIcon::fromTheme("edit-undo"));
     ui->actionAddImgDisk_toolbar->setIcon(QIcon::fromTheme("document-open"));
     ui->actionAddImgDisk->setIcon(QIcon::fromTheme("document-open"));
+    ui->actionAddImgCamera->setIcon(QIcon::fromTheme("camera-photo"));
     ui->actionOptions->setIcon(QIcon::fromTheme("configure"));
     ui->actionHelp->setIcon(QIcon::fromTheme("help-contents"));
     ui->actionAbout_CAIGA->setIcon(QIcon::fromTheme("documentinfo"));

@@ -47,5 +47,8 @@
         <file alias="48x48/help-contents.png">icons/Oxygen/48x48/help-contents.png</file>
         <file alias="22x22/help-contents.png">icons/Oxygen/22x22/help-contents.png</file>
         <file alias="32x32/help-contents.png">icons/Oxygen/32x32/help-contents.png</file>
+        <file alias="48x48/camera-photo.png">icons/Oxygen/48x48/camera-photo.png</file>
+        <file alias="22x22/camera-photo.png">icons/Oxygen/22x22/camera-photo.png</file>
+        <file alias="32x32/camera-photo.png">icons/Oxygen/32x32/camera-photo.png</file>
     </qresource>
 </RCC>
