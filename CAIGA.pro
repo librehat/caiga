@@ -34,6 +34,7 @@ RESOURCES+= app.qrc
 
 windows: {
 RESOURCES+= icons.qrc
+RC_ICONS = myappico.ico
 
 #Change lines below according to your setup environment
 INCLUDEPATH += C:/openCV/build/include
