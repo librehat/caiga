@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->imageList->setModel(imgNameModel);
 }
 
-QString MainWindow::aboutText = QString("<h3>Computer-Aid Interactive Grain Analyser</h3><p><i>Pre Alpha</i> on ")
+QString MainWindow::aboutText = QString("<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version Pre Alpha on ")
 #if defined(_WIN32)//_WIN32 is defined for both 32-bit and 64-bit environment
         + QString("Windows")
 #elif defined(__linux__)
@@ -82,7 +82,7 @@ QString MainWindow::aboutText = QString("<h3>Computer-Aid Interactive Grain Anal
 #else
         + QString("Unkown compiler")
 #endif
-        + QString("</p><p>Copyright 2014 William Wong. All rights reserved.</p><p>The program is provided AS IS with NO WARRANTY OF ANY KIND,INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.</p>");
+        + QString("</p><p>Copyright &copy; 2014 William Wong and other contributors.</p><p>Licensed under <a href='http://en.wikipedia.org/wiki/MIT_License'>The MIT License</a></p><p>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</p>");
 
 MainWindow::~MainWindow()
 {
@@ -160,6 +160,12 @@ void MainWindow::aboutQtDialog()
 
 void MainWindow::aboutCAIGADialog()
 {
+    /*QMessageBox about(this);
+    about.setWindowTitle("About CAIGA");
+    about.setText(aboutText);
+    about.setStandardButtons(QMessageBox::Ok);
+    about.exec();
+    */
     QMessageBox::about(this, "About CAIGA", aboutText);
 }
 
