@@ -20,7 +20,7 @@
    <string>CAIGA</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="app.qrc">
+   <iconset resource="caiga.qrc">
     <normaloff>:/icons/Oxygen/icons/caiga.png</normaloff>:/icons/Oxygen/icons/caiga.png</iconset>
   </property>
   <property name="locale">
@@ -66,7 +66,16 @@
         <string>Information</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>4</number>
+        </property>
+        <property name="topMargin">
+         <number>4</number>
+        </property>
+        <property name="rightMargin">
+         <number>4</number>
+        </property>
+        <property name="bottomMargin">
          <number>4</number>
         </property>
         <item row="0" column="1">
@@ -129,7 +138,16 @@
         <string>Orignial</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -142,7 +160,16 @@
         <string>Preprocessed</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -155,7 +182,16 @@
         <string>Processed</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -173,7 +209,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>24</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -203,7 +239,8 @@
     <property name="title">
      <string>Tools</string>
     </property>
-    <addaction name="actionExport_As"/>
+    <addaction name="actionExportImg_As"/>
+    <addaction name="actionExportPro_As"/>
     <addaction name="actionProject_Properties"/>
     <addaction name="separator"/>
     <addaction name="actionOptions"/>
@@ -358,9 +395,9 @@
     <string>About Qt</string>
    </property>
   </action>
-  <action name="actionExport_As">
+  <action name="actionExportImg_As">
    <property name="text">
-    <string>Export As...</string>
+    <string>Export Image Information As...</string>
    </property>
   </action>
   <action name="actionAddImgDisk_toolbar">
@@ -393,6 +430,11 @@
     <string>Toolbar</string>
    </property>
   </action>
+  <action name="actionExportPro_As">
+   <property name="text">
+    <string>Export Project Information As...</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -404,7 +446,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="app.qrc"/>
+  <include location="caiga.qrc"/>
  </resources>
  <connections>
   <connection>

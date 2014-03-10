@@ -32,7 +32,6 @@ private slots:
     void setCamera(const QByteArray &cameraDevice);
     void takePicture();
     void displayCapturedImage(int, const QImage &img);
-    void displayCapturedImage(int, const QVideoFrame &vframe);
 
     void displaycameraError();
     void displaycaptureError(int, QCameraImageCapture::Error, const QString &err);

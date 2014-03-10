@@ -56,14 +56,9 @@ void CameraDialog::setCamera(const QByteArray &cameraDevice)
     connect(camera, SIGNAL(error(QCamera::Error)), this, SLOT(displaycameraError()));
 
     imageCapture = new QCameraImageCapture(camera);
-    imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
-    imageCapture->setBufferFormat(QVideoFrame::Format_Jpeg);
+    imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToFile);
     connect(imageCapture, SIGNAL(imageCaptured(int,QImage)), this, SLOT(displayCapturedImage(int,QImage)));
-    /*
-     *
-     * it didn't work. :-(
-     * connect(imageCapture, SIGNAL(imageAvailable(int,QVideoFrame)), this, SLOT(displayCapturedImage(int,QVideoFrame)));
-    */
+
     connect(imageCapture, SIGNAL(error(int,QCameraImageCapture::Error,QString)), this, SLOT(displaycaptureError(int,QCameraImageCapture::Error,QString)));
 
     camera->start();
@@ -72,7 +67,7 @@ void CameraDialog::setCamera(const QByteArray &cameraDevice)
 void CameraDialog::takePicture()
 {
     camera->searchAndLock();
-    imageCapture->capture();
+    imageCapture->capture(CAIGA::tempImg);
     camera->unlock();
 }
 
@@ -80,21 +75,6 @@ void CameraDialog::displayCapturedImage(int, const QImage &img)
 {
     capturedImage = img;
     ui->viewLabel->setPixmap(QPixmap::fromImage(img).scaled(ui->viewLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-}
-
-//not work. may be deleted later
-void CameraDialog::displayCapturedImage(int, const QVideoFrame &vframe)
-{
-    QVideoFrame capFrame = vframe;
-    if (!capFrame.map(QAbstractVideoBuffer::ReadOnly)) {
-        qWarning("Failed to map video frame into memory.");
-        return;
-    }
-
-    capturedImage.loadFromData(capFrame.bits(), capFrame.mappedBytes(), "JPEG");
-    ui->viewLabel->setPixmap(QPixmap::fromImage(capturedImage).scaled(ui->viewLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-
-    capFrame.unmap();
 }
 
 void CameraDialog::displaycameraError()

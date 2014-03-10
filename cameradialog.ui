@@ -33,30 +33,15 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLabel" name="viewLabel">
+       <widget class="QImageViewer" name="viewLabel" native="true">
         <property name="minimumSize">
          <size>
-          <width>220</width>
-          <height>160</height>
+          <width>160</width>
+          <height>120</height>
          </size>
         </property>
-        <property name="maximumSize">
-         <size>
-          <width>1024</width>
-          <height>768</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">Background-color: #000;</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-        <property name="textInteractionFlags">
-         <set>Qt::NoTextInteraction</set>
+        <property name="autoFillBackground">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -105,6 +90,12 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>QImageViewer</class>
+   <extends>QWidget</extends>
+   <header>qimageviewer.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>QCameraViewfinder</class>
    <extends>QWidget</extends>

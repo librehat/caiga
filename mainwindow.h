@@ -37,7 +37,8 @@ public slots:
     void addDiskFileDialog();
     void createCameraDialog();
     void createOptionsDialog();
-    void exportDialog();
+    void exportImgDialog();
+    void exportProDialog();
     void projectPropertiesDialog();
     void aboutQtDialog();
     void aboutCAIGADialog();

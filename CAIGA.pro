@@ -30,11 +30,11 @@ FORMS    += mainwindow.ui \
             cameradialog.ui \
             optionsdialog.ui
 
-RESOURCES+= app.qrc
+RESOURCES+= caiga.qrc
 
 windows: {
 RESOURCES+= icons.qrc
-RC_ICONS = myappico.ico
+RC_ICONS = caiga.ico
 
 #Change lines below according to your setup environment
 INCLUDEPATH += C:/openCV/build/include

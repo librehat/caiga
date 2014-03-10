@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-//Let X11 uses system theme
+//Windows should use packaged theme since its lacking of **theme**
 #if defined(_WIN32)
     QIcon::setThemeName("Oxygen");
 #endif
@@ -24,7 +24,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionClose_Project->setIcon(QIcon::fromTheme("document-close"));
     ui->actionQuit->setIcon(QIcon::fromTheme("application-exit"));
     ui->actionProject_Properties->setIcon(QIcon::fromTheme("document-properties"));
-    ui->actionExport_As->setIcon(QIcon::fromTheme("document-export"));
+    ui->actionExportImg_As->setIcon(QIcon::fromTheme("document-export"));
+    ui->actionExportPro_As->setIcon(QIcon::fromTheme("document-export"));
     ui->actionRedo->setIcon(QIcon::fromTheme("edit-redo"));
     ui->actionUndo->setIcon(QIcon::fromTheme("edit-undo"));
     ui->actionAddImgDisk_toolbar->setIcon(QIcon::fromTheme("document-open"));
@@ -44,7 +45,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAddImgDisk_toolbar, SIGNAL(triggered()), this, SLOT(addDiskFileDialog()));
     connect(ui->actionAddImgCamera, SIGNAL(triggered()), this, SLOT(createCameraDialog()));
     connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(createOptionsDialog()));
-    connect(ui->actionExport_As, SIGNAL(triggered()), this, SLOT(exportDialog()));
+    connect(ui->actionExportImg_As, SIGNAL(triggered()), this, SLOT(exportImgDialog()));
+    connect(ui->actionExportPro_As, SIGNAL(triggered()), this, SLOT(exportProDialog()));
     connect(ui->actionProject_Properties, SIGNAL(triggered()), this, SLOT(projectPropertiesDialog()));
     connect(ui->actionAbout_Qt, SIGNAL(triggered()), this, SLOT(aboutQtDialog()));
     connect(ui->actionAbout_CAIGA, SIGNAL(triggered()), this, SLOT(aboutCAIGADialog()));
@@ -56,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 QString MainWindow::aboutText = QString("<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version Pre Alpha on ")
+
 #if defined(_WIN32)//_WIN32 is defined for both 32-bit and 64-bit environment
         + QString("Windows")
 #elif defined(__linux__)
@@ -83,6 +86,7 @@ QString MainWindow::aboutText = QString("<h3>Computer-Aid Interactive Grain Anal
 #else
         + QString("Unkown compiler")
 #endif
+
         + QString("</p><p>Copyright &copy; 2014 William Wong and other contributors.</p><p>Licensed under <a href='http://en.wikipedia.org/wiki/MIT_License'>The MIT License</a></p><p>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</p>");
 
 MainWindow::~MainWindow()
@@ -93,7 +97,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::openProjectDialog()//TODO
 {
-    QString filename = QFileDialog::getOpenFileName(this, "Open Project", QDir::currentPath(), "CAIGA Project (*.caigap)");
+    QString filename = QFileDialog::getOpenFileName(this, "Open Project", QDir::currentPath(),
+                                                    "CAIGA Project (*.caigap)");
     if (filename.isNull()) {
         return;
     }
@@ -102,7 +107,8 @@ void MainWindow::openProjectDialog()//TODO
 
 void MainWindow::saveProjectDialog()//TODO
 {
-    QString filename = QFileDialog::getSaveFileName(this, "Save Project As", QDir::currentPath(), "CAIGA Project (*.caigap)");
+    QString filename = QFileDialog::getSaveFileName(this, "Save Project As", QDir::currentPath(),
+                                                    "CAIGA Project (*.caigap)");
     if (filename.isNull()) {
         return;
     }
@@ -111,7 +117,8 @@ void MainWindow::saveProjectDialog()//TODO
 
 void MainWindow::addDiskFileDialog()//TODO
 {
-    QString filename = QFileDialog::getOpenFileName(this, "Add Image from Disk", QDir::currentPath(), "Images (*.png *.jpg *.jpeg *.tiff *.bmp *.gif *.xpm)");
+    QString filename = QFileDialog::getOpenFileName(this, "Add Image from Disk", QDir::currentPath(),
+                                                    "Images (*.png *.jpg *.jpeg *.tiff *.bmp *.gif *.xpm)");
     if (filename.isNull()) {
         return;
     }
@@ -134,10 +141,20 @@ void MainWindow::createOptionsDialog()//TODO
     optDlg.exec();
 }
 
-void MainWindow::exportDialog()//TODO
+void MainWindow::exportImgDialog()//TODO
 {
-    QString filename = QFileDialog::getSaveFileName(this, "Export As", QDir::currentPath(),
-                       "PDF (*.pdf);;Open Document File (*.odf);;HTML Document (*.html)");
+    QString filename = QFileDialog::getSaveFileName(this, "Export Image Information As", QDir::currentPath(),
+                       "Adobe Portable Document Format (*.pdf);;Open Document File (*.odf);;HTML Document (*.html)");
+    if (filename.isNull()) {
+        return;
+    }
+    CAIGA::setCurrentDir(filename);
+}
+
+void MainWindow::exportProDialog()//TODO
+{
+    QString filename = QFileDialog::getSaveFileName(this ,"Export Project Information As", QDir::currentPath(),
+                       "Comma-Separated Values (*.csv);;Microsoft Office Open XML Workbook (*.xlsx)");
     if (filename.isNull()) {
         return;
     }
@@ -161,12 +178,6 @@ void MainWindow::aboutQtDialog()
 
 void MainWindow::aboutCAIGADialog()
 {
-    /*QMessageBox about(this);
-    about.setWindowTitle("About CAIGA");
-    about.setText(aboutText);
-    about.setStandardButtons(QMessageBox::Ok);
-    about.exec();
-    */
     QMessageBox::about(this, "About CAIGA", aboutText);
 }
 

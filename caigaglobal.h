@@ -22,6 +22,8 @@ namespace CAIGA {
  * Define global variables here
  */
 
+const QString tempImg = QDir::tempPath() + QString("/CAIGA_Cam.jpeg");
+
 /*
  * Define inline global functions here
  */
