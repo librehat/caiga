@@ -16,6 +16,7 @@
 #include <QImage>
 #include <QPixmap>
 #include <QSettings>
+#include <QTimer>
 
 #include "caigaglobal.h"
 #include "project.h"
@@ -37,8 +38,11 @@ signals:
     void configReadFinished(int,int,int,bool,int);
 
 private slots:
+    void newProject();
     void openProjectDialog();
-    void saveProjectDialog();
+    void saveProject();
+    void saveProjectAsDialog();
+    void closeProject();
     void addDiskFileDialog();
     void createCameraDialog();
     void createOptionsDialog();
@@ -56,20 +60,24 @@ private:
 
     QSettings settings;
     void readConfig();
+    QTimer autoSaveTimer;
 
-    //CAIGA::Project caiga_Project;
-    //Pre Alpha Dev: Focus on Single Image!
-    CAIGA::Image proImg;
+    CAIGA::Project project;
+    bool projectUnsaved;
+
+    int unSavedProject();//2 for cancel, 0 for no, 1 for yes, -1 if there is no unsaved project
+    void setWidgetsEnabled(bool);
     /*
      * Use the abstract interface to the model, which ensures
      * that the code still works despite what the model type is.
      */
-    //QAbstractItemModel *imgNameModel;
-    QStringListModel *imgNameModel;
+    QAbstractItemModel *imgNameModel;
     QStringList imgNameList;
-
 
     //Text in About Dialog
     static QString aboutText;
+
+protected:
+     void closeEvent(QCloseEvent *event);
 };
 #endif // MAINWINDOW_H

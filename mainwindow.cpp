@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #endif
 
     /*
-     * Currently Qt won't load svg-format theme icons.
+     * Setup icons.
      */
     ui->actionNew_Project->setIcon(QIcon::fromTheme("document-new"));
     ui->actionOpen_Project->setIcon(QIcon::fromTheme("document-open-folder"));
@@ -41,8 +41,11 @@ MainWindow::MainWindow(QWidget *parent) :
      * SIGNALs and SLOTs
      * Only those that cannot be connected in Deisgner should be defined below
      */
+    connect(ui->actionNew_Project, SIGNAL(triggered()), this, SLOT(newProject()));
     connect(ui->actionOpen_Project, SIGNAL(triggered()), this, SLOT(openProjectDialog()));
-    connect(ui->actionSave_Project_As, SIGNAL(triggered()), this, SLOT(saveProjectDialog()));
+    connect(ui->actionSave_Project, SIGNAL(triggered()), this, SLOT(saveProject()));
+    connect(ui->actionSave_Project_As, SIGNAL(triggered()), this, SLOT(saveProjectAsDialog()));
+    connect(ui->actionClose_Project, SIGNAL(triggered()), this, SLOT(closeProject()));
     connect(ui->actionAddImgDisk, SIGNAL(triggered()), this, SLOT(addDiskFileDialog()));
     connect(ui->actionAddImgDisk_toolbar, SIGNAL(triggered()), this, SLOT(addDiskFileDialog()));
     connect(ui->actionAddImgCamera, SIGNAL(triggered()), this, SLOT(createCameraDialog()));
@@ -54,14 +57,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout_CAIGA, SIGNAL(triggered()), this, SLOT(aboutCAIGADialog()));
     connect(ui->imageList, SIGNAL(activated(QModelIndex)), this, SLOT(setActivateImage(QModelIndex)));
 
-    connect(this, SIGNAL(configReadFinished(int,int,int,bool,int)), this,
-            SLOT(updateOptions(int,int,int,bool,int)));
+    connect(this, SIGNAL(configReadFinished(int,int,int,bool,int)),
+            this, SLOT(updateOptions(int,int,int,bool,int)));
 
     //underlying work
     imgNameModel = new QStringListModel();
     ui->imageList->setModel(imgNameModel);
 
     readConfig();
+    projectUnsaved = false;
 }
 
 QString MainWindow::aboutText = QString("<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version Pre Alpha on ")
@@ -94,7 +98,7 @@ QString MainWindow::aboutText = QString("<h3>Computer-Aid Interactive Grain Anal
         + QString("Unkown compiler")
 #endif
 
-        + QString("</p><p>Copyright &copy; 2014 William Wong and other contributors.</p><p>Licensed under <a href='http://en.wikipedia.org/wiki/MIT_License'>The MIT License</a></p><p>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.</p>");
+        + QString("</p><p>Copyright &copy; 2014 William Wong and other contributors.<br />School of Materials Science and Engineering, Southeast University.</p><p>Licensed under <a href='http://en.wikipedia.org/wiki/MIT_License'>The MIT License</a>.<br /></p><p><strong>The software contains the third-party library and artwork below.</strong><br /><a href='http://opencv.org'>OpenCV</a> licensed under <a href='https://github.com/Itseez/opencv/blob/master/LICENSE'>3-clause BSD License</a><br /><a href='http://www.oxygen-icons.org'>Oxygen Icons</a> licensed under <a href='http://www.gnu.org/licenses/lgpl-3.0.txt'>LGPLv3 License</a><br /></p><div>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</div>");
 
 MainWindow::~MainWindow()
 {
@@ -102,17 +106,53 @@ MainWindow::~MainWindow()
     delete imgNameModel;
 }
 
+void MainWindow::newProject()
+{
+    switch (unSavedProject()) {
+    case 2:
+        return;
+        break;
+    default:
+        project.close();
+    }
+
+    project = CAIGA::Project();
+    this->setWidgetsEnabled(true);
+    projectUnsaved = false;
+}
+
 void MainWindow::openProjectDialog()//TODO
 {
+    switch (unSavedProject()) {
+    case 2:
+        return;
+        break;
+    default:
+        project.close();
+    }
+
     QString filename = QFileDialog::getOpenFileName(this, "Open Project", QDir::currentPath(),
                                                     "CAIGA Project (*.caigap)");
     if (filename.isNull()) {
         return;
     }
     CAIGA::setCurrentDir(filename);
+
+    if(project.setDataBase(filename)) {
+        this->setWidgetsEnabled(true);
+        projectUnsaved = false;
+    }
 }
 
-void MainWindow::saveProjectDialog()//TODO
+void MainWindow::saveProject()//TODO
+{
+    if (projectUnsaved) {
+        saveProjectAsDialog();
+    }
+    projectUnsaved = false;
+}
+
+void MainWindow::saveProjectAsDialog()//TODO
 {
     QString filename = QFileDialog::getSaveFileName(this, "Save Project As", QDir::currentPath(),
                                                     "CAIGA Project (*.caigap)");
@@ -120,6 +160,20 @@ void MainWindow::saveProjectDialog()//TODO
         return;
     }
     CAIGA::setCurrentDir(filename);
+    projectUnsaved = false;
+}
+
+void MainWindow::closeProject()
+{
+    switch (unSavedProject()) {
+    case 2://Cancel
+        return;//ignore
+        break;
+    default:
+        project.close();
+        setWidgetsEnabled(false);
+        projectUnsaved = false;
+    }
 }
 
 void MainWindow::addDiskFileDialog()//TODO
@@ -133,7 +187,7 @@ void MainWindow::addDiskFileDialog()//TODO
     int row = imgNameModel->rowCount();
     //insertRow: Inserts a single row before the given row in the child items of the parent specified.
     imgNameModel->insertRow(row);
-    imgNameModel->setData(imgNameModel->index(row), QVariant(filename));
+    imgNameModel->setData(imgNameModel->index(row, 0), QVariant(filename));
 }
 
 void MainWindow::createCameraDialog()//TODO camera image should be involved with SQLite
@@ -142,7 +196,7 @@ void MainWindow::createCameraDialog()//TODO camera image should be involved with
     camDlg.exec();
 }
 
-void MainWindow::createOptionsDialog()//TODO
+void MainWindow::createOptionsDialog()
 {
     OptionsDialog optDlg;
     connect(&optDlg, SIGNAL(optionsAccepted(int,int,int,bool,int)), this,
@@ -164,8 +218,8 @@ void MainWindow::exportImgDialog()//TODO
 
 void MainWindow::exportProDialog()//TODO
 {
-    QString filename = QFileDialog::getSaveFileName(this ,"Export Project Information As", QDir::currentPath(),
-                       "Comma-Separated Values (*.csv);;Microsoft Office Open XML Workbook (*.xlsx)");
+    QString filename = QFileDialog::getSaveFileName(this ,"Export Project Information As",
+                       QDir::currentPath(), "Open Document SpreadSheet (*.ods)");
     if (filename.isNull()) {
         return;
     }
@@ -174,7 +228,7 @@ void MainWindow::exportProDialog()//TODO
 
 void MainWindow::projectPropertiesDialog()//TODO
 {
-    QMessageBox proDlg;
+    QMessageBox proDlg(this);
     proDlg.setWindowIcon(QIcon::fromTheme("document-properties"));
     proDlg.setWindowTitle("Properties");
     proDlg.setText("<strong>TODO</strong>");
@@ -248,4 +302,52 @@ void MainWindow::readConfig()
                             settings.value("Tab Position", 1).toInt(),
                             settings.value("AutoSave", false).toBool(),
                             settings.value("AutoSave Interval", 5).toInt());
+}
+
+void MainWindow::setWidgetsEnabled(bool b)
+{
+    ui->centralWidget->setEnabled(b);
+    ui->actionSave_Project->setEnabled(b);
+    ui->actionSave_Project_As->setEnabled(b);
+    ui->actionRevert_Project_to_Saved->setEnabled(b);
+    ui->actionClose_Project->setEnabled(b);
+    ui->actionExportImg_As->setEnabled(b);
+    ui->actionExportPro_As->setEnabled(b);
+    ui->actionProject_Properties->setEnabled(b);
+    ui->menuImage->setEnabled(b);
+    ui->mainToolBar->setEnabled(b);
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    switch (unSavedProject()) {
+    case 2:
+        event->ignore();
+        break;
+    default:
+        event->accept();
+    }
+}
+
+int MainWindow::unSavedProject()
+{
+    if (projectUnsaved) {
+        int Ans = QMessageBox::question(this, "Unsaved Project",
+                  "Do you want to save this unsaved project?",
+                  QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
+        switch (Ans) {
+        case QMessageBox::No:
+            return 0;
+            break;
+        case QMessageBox::Yes:
+            saveProjectAsDialog();
+            return 1;
+            break;
+        default://including Cancel and Escape
+            return 2;
+        }
+    }
+    else {
+        return -1;//No unsaved project
+    }
 }

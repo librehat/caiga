@@ -1,4 +1,7 @@
+The MIT License
+
 Copyright (c) 2014 William Wong and other contributors.
+School of Materials Science and Engineering, Southeast University, Nanjing
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

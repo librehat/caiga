@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets multimedia multimediawidgets
+QT       += core gui widgets multimedia multimediawidgets sql
 
 TARGET   = CAIGA
 TEMPLATE = app

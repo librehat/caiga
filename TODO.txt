@@ -1,5 +1,3 @@
-Rewrite previous core with OpenCV2 (C++).
-
-Subclass QLabel into QPixmapLabel, elegant to display pixmap and auto-resize.
+Check TODO in each file.
 
 Design caigap structure (SQLite).

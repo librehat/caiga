@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>598</width>
-    <height>348</height>
+    <width>592</width>
+    <height>342</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -27,6 +27,9 @@
    <locale language="English" country="UnitedKingdom"/>
   </property>
   <widget class="QWidget" name="centralWidget">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QListView" name="imageList">
@@ -65,57 +68,11 @@
        <attribute name="title">
         <string>Information</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
         <property name="margin">
          <number>4</number>
         </property>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="nameEdit">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>1</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="nameLabel">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Name</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QLabel" name="remarkLabel">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="text">
-           <string>Remark</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLineEdit" name="remarkEdit">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>2</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="4">
+        <item>
          <widget class="QLabel" name="infoLabel">
           <property name="text">
            <string/>
@@ -172,7 +129,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>598</width>
+     <width>592</width>
      <height>25</height>
     </rect>
    </property>
@@ -193,6 +150,9 @@
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuImage">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="title">
      <string>Image</string>
     </property>
@@ -232,6 +192,9 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="windowTitle">
     <string>Toolbar</string>
    </property>
@@ -284,21 +247,33 @@
    </property>
   </action>
   <action name="actionSave_Project">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Save Project</string>
    </property>
   </action>
   <action name="actionSave_Project_As">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Save Project As...</string>
    </property>
   </action>
   <action name="actionRevert_Project_to_Saved">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Revert Project to Saved</string>
    </property>
   </action>
   <action name="actionClose_Project">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Close Project</string>
    </property>
@@ -334,6 +309,9 @@
    </property>
   </action>
   <action name="actionProject_Properties">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Project Properties</string>
    </property>
@@ -360,6 +338,9 @@
    </property>
   </action>
   <action name="actionExportImg_As">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Export Image Information As...</string>
    </property>
@@ -395,6 +376,9 @@
    </property>
   </action>
   <action name="actionExportPro_As">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Export Project Information As...</string>
    </property>

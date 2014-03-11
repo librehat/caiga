@@ -6,10 +6,7 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
     ui(new Ui::OptionsDialog)
 {
     ui->setupUi(this);
-
-    setWindowIcon(QIcon::fromTheme("configure"));
     this->readConfigFile();
-
     confChanged = false;
 
     connect(this, SIGNAL(accepted()), this, SLOT(optionsChanged()));
