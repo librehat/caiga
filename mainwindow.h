@@ -15,6 +15,8 @@
 #include <QAbstractItemModel>
 #include <QImage>
 #include <QPixmap>
+#include <QSettings>
+
 #include "caigaglobal.h"
 #include "project.h"
 
@@ -31,7 +33,10 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-public slots:
+signals:
+    void configReadFinished(int,int,int,bool,int);
+
+private slots:
     void openProjectDialog();
     void saveProjectDialog();
     void addDiskFileDialog();
@@ -42,10 +47,15 @@ public slots:
     void projectPropertiesDialog();
     void aboutQtDialog();
     void aboutCAIGADialog();
+
     void setActivateImage(QModelIndex);
+    void updateOptions(int,int,int,bool,int);
 
 private:
     Ui::MainWindow *ui;
+
+    QSettings settings;
+    void readConfig();
 
     //CAIGA::Project caiga_Project;
     //Pre Alpha Dev: Focus on Single Image!

@@ -51,102 +51,8 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QComboBox" name="langsBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="insertPolicy">
-      <enum>QComboBox::InsertAlphabetically</enum>
-     </property>
-     <item>
-      <property name="text">
-       <string>&lt;System&gt;</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>English</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Simplified Chinese</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Japanese</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QCheckBox" name="autosave">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Autosave modified project</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QSpinBox" name="autosaveInterval">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="buttonSymbols">
-      <enum>QAbstractSpinBox::PlusMinus</enum>
-     </property>
-     <property name="correctionMode">
-      <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
-     </property>
-     <property name="suffix">
-      <string>  minutes</string>
-     </property>
-     <property name="prefix">
-      <string>Interval: </string>
-     </property>
-     <property name="minimum">
-      <number>5</number>
-     </property>
-     <property name="maximum">
-      <number>60</number>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Toolbar Style</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="1">
-    <widget class="QComboBox" name="comboBox">
+    <widget class="QComboBox" name="toolbarStyleBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -176,6 +82,137 @@
        <string>Text beside icons</string>
       </property>
      </item>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="languageBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="toolTip">
+      <string>Application Restart Needed</string>
+     </property>
+     <property name="insertPolicy">
+      <enum>QComboBox::InsertAlphabetically</enum>
+     </property>
+     <item>
+      <property name="text">
+       <string>&lt;System&gt;</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>English</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Simplified Chinese</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Japanese</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QCheckBox" name="autosave">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Autosave modified project</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QSpinBox" name="autosaveInterval">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="buttonSymbols">
+      <enum>QAbstractSpinBox::PlusMinus</enum>
+     </property>
+     <property name="correctionMode">
+      <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+     </property>
+     <property name="suffix">
+      <string>  minutes</string>
+     </property>
+     <property name="prefix">
+      <string>Interval: </string>
+     </property>
+     <property name="minimum">
+      <number>5</number>
+     </property>
+     <property name="maximum">
+      <number>60</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="toolbarStyleLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Toolbar Style</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QComboBox" name="tabPositionBox">
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <item>
+      <property name="text">
+       <string>Top</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Bottom</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Left</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Right</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="tabPositionLabel">
+     <property name="text">
+      <string>Tab Position</string>
+     </property>
     </widget>
    </item>
   </layout>

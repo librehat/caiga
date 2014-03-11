@@ -51,6 +51,6 @@ LIBS += -LC:/openCV/build/x86/mingw/lib \
         -lopencv_legacy248 \
         -lopencv_flann248
 } else:unix: {
-CONFIG += link_pkgconfig
+CONFIG    += link_pkgconfig
 PKGCONFIG += opencv
 }

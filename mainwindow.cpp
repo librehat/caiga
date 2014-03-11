@@ -14,7 +14,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QIcon::setThemeName("Oxygen");
 #endif
 
-    //Icons
+    /*
+     * Currently Qt won't load svg-format theme icons.
+     */
     ui->actionNew_Project->setIcon(QIcon::fromTheme("document-new"));
     ui->actionOpen_Project->setIcon(QIcon::fromTheme("document-open-folder"));
     ui->actionRecent->setIcon(QIcon::fromTheme("document-open-recent"));
@@ -52,9 +54,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout_CAIGA, SIGNAL(triggered()), this, SLOT(aboutCAIGADialog()));
     connect(ui->imageList, SIGNAL(activated(QModelIndex)), this, SLOT(setActivateImage(QModelIndex)));
 
+    connect(this, SIGNAL(configReadFinished(int,int,int,bool,int)), this,
+            SLOT(updateOptions(int,int,int,bool,int)));
+
     //underlying work
     imgNameModel = new QStringListModel();
     ui->imageList->setModel(imgNameModel);
+
+    readConfig();
 }
 
 QString MainWindow::aboutText = QString("<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version Pre Alpha on ")
@@ -138,12 +145,16 @@ void MainWindow::createCameraDialog()//TODO camera image should be involved with
 void MainWindow::createOptionsDialog()//TODO
 {
     OptionsDialog optDlg;
+    connect(&optDlg, SIGNAL(optionsAccepted(int,int,int,bool,int)), this,
+            SLOT(updateOptions(int,int,int,bool,int)));
     optDlg.exec();
 }
 
 void MainWindow::exportImgDialog()//TODO
 {
-    QString filename = QFileDialog::getSaveFileName(this, "Export Image Information As", QDir::currentPath(),
+    QString filename = QFileDialog::getSaveFileName(this,
+                       "Export Image Information As",
+                       QDir::currentPath(),
                        "Adobe Portable Document Format (*.pdf);;Open Document File (*.odf);;HTML Document (*.html)");
     if (filename.isNull()) {
         return;
@@ -186,4 +197,55 @@ void MainWindow::setActivateImage(QModelIndex i)
     QString imgfile = imgNameModel->data(i, Qt::DisplayRole).toString();
     QPixmap a(imgfile);
     ui->origLabel->setPixmap(a);
+}
+
+void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, bool autoSave, int interval)
+{
+    Q_UNUSED(lang);//TODO: i18n
+
+    switch(toolbarStyle) {
+    case 0://<system>
+        ui->mainToolBar->setToolButtonStyle(Qt::ToolButtonFollowStyle);
+        break;
+    case 1://icon-only
+        ui->mainToolBar->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        break;
+    case 2://text below
+        ui->mainToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+        break;
+    case 3://text beside
+        ui->mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        break;
+    default:
+        qWarning("Invalid Toolbar Style");
+    }
+
+    switch(tabPos) {
+    case 0://top
+        ui->imageTabs->setTabPosition(QTabWidget::North);
+        break;
+    case 1://bottom
+        ui->imageTabs->setTabPosition(QTabWidget::South);
+        break;
+    case 2://left
+        ui->imageTabs->setTabPosition(QTabWidget::West);
+        break;
+    case 3://right
+        ui->imageTabs->setTabPosition(QTabWidget::East);
+        break;
+    default:
+        qWarning("Invalid Tab Position");
+    }
+
+    Q_UNUSED(autoSave);//TODO: project saving
+    Q_UNUSED(interval);
+}
+
+void MainWindow::readConfig()
+{
+    emit configReadFinished(settings.value("Language").toInt(),
+                            settings.value("Toolbar Style").toInt(),
+                            settings.value("Tab Position", 1).toInt(),
+                            settings.value("AutoSave", false).toBool(),
+                            settings.value("AutoSave Interval", 5).toInt());
 }
