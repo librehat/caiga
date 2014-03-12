@@ -5,8 +5,7 @@
 #-------------------------------------------------
 include(common.pri)
 
-#Check Qt
-!minQtVersion(5, 0, 0) {
+!isEqual(QT_MAJOR_VERSION, 5) {
     message("Cannot build CAIGA with Qt version $${QT_VERSION}.")
     error("Use at least Qt 5.0.0.")
 }

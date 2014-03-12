@@ -10,8 +10,12 @@ windows: {
     INCLUDEPATH += C:/openCV/build/include
 
     win32-msvc2012: {#assume building 64-bit version
-        contains(QMAKE_HOST.arch, x86_64):LIBS += -LC:/openCV/build/x64/vc11/lib
-        else:LIBS += -LC:/openCV/build/x86/vc11/lib
+        contains(QMAKE_HOST.arch, x86_64):{
+        LIBS += -LC:/openCV/build/x64/vc11/lib
+        }
+        else: {
+        LIBS += -LC:/openCV/build/x86/vc11/lib
+        }
     } else:win32-g++ {
         LIBS += -LC:/openCV/build/x86/mingw/lib
     } else: {
@@ -19,6 +23,7 @@ windows: {
         error("Use MinGW G++ or Visual C++ Compiler")
     }
 
+    CONFIG(release, debug|release): {
     LIBS += -lopencv_core248 \
             -lopencv_imgproc248 \
             -lopencv_highgui248 \
@@ -30,30 +35,20 @@ windows: {
             -lopencv_contrib248 \
             -lopencv_legacy248 \
             -lopencv_flann248
+    } else: CONFIG(debug, release|debug): {
+    LIBS += -lopencv_core248d \
+            -lopencv_imgproc248d \
+            -lopencv_highgui248d \
+            -lopencv_ml248d \
+            -lopencv_video248d \
+            -lopencv_features2d248d \
+            -lopencv_calib3d248d \
+            -lopencv_objdetect248d \
+            -lopencv_contrib248d \
+            -lopencv_legacy248d \
+            -lopencv_flann248d
+    }
 } else:unix: {
     CONFIG    += link_pkgconfig
     PKGCONFIG += opencv
-}
-
-defineTest(minQtVersion) {
-    maj = $$1
-    min = $$2
-    patch = $$3
-    isEqual(QT_MAJOR_VERSION, $$maj) {
-        isEqual(QT_MINOR_VERSION, $$min) {
-            isEqual(QT_PATCH_VERSION, $$patch) {
-                return(true)
-            }
-            greaterThan(QT_PATCH_VERSION, $$patch) {
-                return(true)
-            }
-        }
-        greaterThan(QT_MINOR_VERSION, $$min) {
-            return(true)
-        }
-    }
-    greaterThan(QT_MAJOR_VERSION, $$maj) {
-        return(true)
-    }
-    return(false)
 }
