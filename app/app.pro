@@ -1,6 +1,8 @@
-include (../caiga.pri)
+QT      += core widgets sql
 
 TEMPLATE = app
+
+INCLUDEPATH += ../core ../gui
 
 SOURCES += main.cpp
 

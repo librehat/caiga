@@ -1,5 +1,7 @@
 include(../caiga.pri)
 
+QT       += widgets sql
+
 SOURCES  += image.cpp\
             project.cpp
 

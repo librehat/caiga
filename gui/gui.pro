@@ -1,5 +1,7 @@
 include(../caiga.pri)
 
+QT    += gui widgets multimedia multimediawidgets sql
+
 FORMS += cameradialog.ui \
          mainwindow.ui \
          optionsdialog.ui

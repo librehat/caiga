@@ -1,4 +1,4 @@
-QT          += core gui widgets multimedia multimediawidgets sql
+QT          += core
 
 TEMPLATE    = lib
 UI_DIR      = uics
