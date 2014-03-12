@@ -17,9 +17,9 @@
 #include <QPixmap>
 #include <QSettings>
 #include <QTimer>
+#include <QDir>
 
 #include "../core/project.h"
-#include "../share/caigaglobal.h"
 
 namespace Ui
 {
@@ -67,6 +67,7 @@ private:
 
     int unSavedProject();//2 for cancel, 0 for no, 1 for yes, -1 if there is no unsaved project
     void setWidgetsEnabled(bool);
+    void setCurrentDirbyFile(QString &);
     /*
      * Use the abstract interface to the model, which ensures
      * that the code still works despite what the model type is.

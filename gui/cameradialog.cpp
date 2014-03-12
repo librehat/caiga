@@ -1,6 +1,5 @@
 #include "cameradialog.h"
 #include "ui_cameradialog.h"
-#include <QDir>
 
 CameraDialog::CameraDialog(QWidget *parent) :
     QDialog(parent),

@@ -139,7 +139,7 @@ void MainWindow::openProjectDialog()//TODO
     if (filename.isNull()) {
         return;
     }
-    CAIGA::setCurrentDir(filename);
+    setCurrentDirbyFile(filename);
 
     if(project.setDataBase(filename)) {
         this->setWidgetsEnabled(true);
@@ -162,7 +162,7 @@ void MainWindow::saveProjectAsDialog()//TODO
     if (filename.isNull()) {
         return;
     }
-    CAIGA::setCurrentDir(filename);
+    setCurrentDirbyFile(filename);
     projectUnsaved = false;
 }
 
@@ -186,7 +186,7 @@ void MainWindow::addDiskFileDialog()//TODO
     if (filename.isNull()) {
         return;
     }
-    CAIGA::setCurrentDir(filename);
+    setCurrentDirbyFile(filename);
     int row = imgNameModel->rowCount();
     //insertRow: Inserts a single row before the given row in the child items of the parent specified.
     imgNameModel->insertRow(row);
@@ -216,7 +216,7 @@ void MainWindow::exportImgDialog()//TODO
     if (filename.isNull()) {
         return;
     }
-    CAIGA::setCurrentDir(filename);
+    setCurrentDirbyFile(filename);
 }
 
 void MainWindow::exportProDialog()//TODO
@@ -226,7 +226,7 @@ void MainWindow::exportProDialog()//TODO
     if (filename.isNull()) {
         return;
     }
-    CAIGA::setCurrentDir(filename);
+    setCurrentDirbyFile(filename);
 }
 
 void MainWindow::projectPropertiesDialog()//TODO
@@ -354,5 +354,13 @@ int MainWindow::unSavedProject()
     }
     else {
         return -1;//No unsaved project
+    }
+}
+
+void MainWindow::setCurrentDirbyFile(QString &f)
+{
+    int trimIndex = f.lastIndexOf('/');
+    if (trimIndex != -1) {
+        QDir::setCurrent(f.left(trimIndex));
     }
 }

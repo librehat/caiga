@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QCamera>
 #include <QCameraImageCapture>
+#include <QDir>
 
 namespace Ui
 {
