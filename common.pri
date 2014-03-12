@@ -9,10 +9,14 @@ windows: {
     #Change lines below according to your setup environment
     INCLUDEPATH += C:/openCV/build/include
 
-    CONFIG(x64, x86|x64) {#pass argument "CONFIG+=x64" while building win64 target
-        LIBS += -LC:/openCV/build/x64/vc11/lib
-    } else {
+    win32-msvc2012: {#assume building 64-bit version
+        contains(QMAKE_HOST.arch, x86_64):LIBS += -LC:/openCV/build/x64/vc11/lib
+        else:LIBS += -LC:/openCV/build/x86/vc11/lib
+    } else:win32-g++ {
         LIBS += -LC:/openCV/build/x86/mingw/lib
+    } else: {
+        message("Unsupported Windows Compiler or Environment")
+        error("Use MinGW G++ or Visual C++ Compiler")
     }
 
     LIBS += -lopencv_core248 \

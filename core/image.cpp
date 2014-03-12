@@ -123,13 +123,13 @@ QImage Image::convertMat2QImage(const cv::Mat &src)
     switch(src.type()) {
     case CV_8UC3:
     {
-        QImage t(src.data, src.cols, src.rows, src.step, QImage::Format_RGB888);
+        QImage t(src.data, src.cols, src.rows, (int)src.step, QImage::Format_RGB888);
         return t.rgbSwapped();
         break;
     }
     case CV_8UC4:
     {
-        QImage t(src.data, src.cols, src.rows, src.step, QImage::Format_RGB32);
+        QImage t(src.data, src.cols, src.rows, (int)src.step, QImage::Format_RGB32);
         return t;
         break;
     }
@@ -141,7 +141,7 @@ QImage Image::convertMat2QImage(const cv::Mat &src)
                 colorTable.push_back(qRgb(i,i,i));
             }
         }
-        QImage t(src.data, src.cols, src.rows, src.step, QImage::Format_Indexed8);
+        QImage t(src.data, src.cols, src.rows, (int)src.step, QImage::Format_Indexed8);
         t.setColorTable(colorTable);
         return t;
         break;
