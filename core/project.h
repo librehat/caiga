@@ -14,7 +14,6 @@
 #define PROJECT_H
 
 #include <QSqlDatabase>
-#include "caigaglobal.h"
 #include "image.h"
 
 /*

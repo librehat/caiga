@@ -18,8 +18,8 @@
 #include <QSettings>
 #include <QTimer>
 
-#include "caigaglobal.h"
-#include "project.h"
+#include "../core/project.h"
+#include "../share/caigaglobal.h"
 
 namespace Ui
 {

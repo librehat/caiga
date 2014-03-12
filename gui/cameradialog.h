@@ -12,8 +12,6 @@
 #include <QCamera>
 #include <QCameraImageCapture>
 
-#include "caigaglobal.h"
-
 namespace Ui
 {
 class CameraDialog;

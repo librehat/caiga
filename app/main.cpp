@@ -1,7 +1,6 @@
 #include <QApplication>
 
-#include "caigaglobal.h"
-#include "mainwindow.h"
+#include "../gui/mainwindow.h"
 
 int main(int argc, char *argv[])
 {

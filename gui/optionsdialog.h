@@ -4,8 +4,6 @@
 #include <QDialog>
 #include <QSettings>
 
-#include "caigaglobal.h"
-
 namespace Ui
 {
 class OptionsDialog;

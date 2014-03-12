@@ -12,4 +12,6 @@ include(caiga.pri)
 }
 CONFIG   += ordered
 TEMPLATE  = subdirs
-SUBDIRS   = src
+SUBDIRS   = core \
+            gui \
+            app

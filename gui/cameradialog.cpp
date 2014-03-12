@@ -1,5 +1,6 @@
 #include "cameradialog.h"
 #include "ui_cameradialog.h"
+#include <QDir>
 
 CameraDialog::CameraDialog(QWidget *parent) :
     QDialog(parent),
@@ -65,7 +66,7 @@ void CameraDialog::setCamera(const QByteArray &cameraDevice)
 void CameraDialog::takePicture()
 {
     camera->searchAndLock();
-    imageCapture->capture(CAIGA::tempImg);
+    imageCapture->capture(QDir::tempPath() + QString("/caiga_tmp.jpeg"));
     camera->unlock();
 }
 
