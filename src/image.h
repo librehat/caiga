@@ -1,3 +1,16 @@
+/*
+ * Every CAIGA::Image object contains:
+ * - Name (should be unique)
+ * - Remarks (optional, maybe empty)
+ * - Original Image
+ * - Pre-Processed Image
+ * - Processed Image (after analysis)
+ * - Original analysis data
+ * - Analysis result used to display on screen
+ *
+ * Images are in type of QImage since it's easy to convert to Mat and QPixmap
+ *
+ */
 #ifndef IMAGE_H
 #define IMAGE_H
 

@@ -9,6 +9,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    restoreGeometry(settings.value("MainGeometry").toByteArray());
+    QDir::setCurrent(settings.value("CurrentDir").toString());
+
 //Windows should use packaged theme since its lacking of **theme**
 #if defined(_WIN32)
     QIcon::setThemeName("Oxygen");
@@ -179,7 +182,7 @@ void MainWindow::closeProject()
 void MainWindow::addDiskFileDialog()//TODO
 {
     QString filename = QFileDialog::getOpenFileName(this, "Add Image from Disk", QDir::currentPath(),
-                                                    "Images (*.png *.jpg *.jpeg *.tiff *.bmp *.gif *.xpm)");
+                       "Supported Images (*.png *.jpg *.jpeg *.tif *.tiff *.bmp)");
     if (filename.isNull()) {
         return;
     }
@@ -325,6 +328,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
         event->ignore();
         break;
     default:
+        settings.setValue("MainGeometry", saveGeometry());//save MainWindow geometry
+        settings.setValue("CurrentDir", QDir::currentPath());
         event->accept();
     }
 }

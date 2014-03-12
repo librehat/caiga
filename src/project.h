@@ -1,3 +1,15 @@
+/*
+ * The file type of CAIGA Project is SQLite.
+ * Read/Write CAIGA Project file by using QtSQL.
+ *
+ * CAIGA::Project contains:
+ * - Project Name
+ * - Project Properties (name, size, created date, modified date, etc)
+ * - Analysis Type (Grain Size Rate, Ductile Iron Spheroidal Rate, Pearlite Nodulizing Rate, etc)
+ * - Relevant Analyser Object
+ * - A List of CAIGA::Image
+ */
+
 #ifndef PROJECT_H
 #define PROJECT_H
 
@@ -20,9 +32,9 @@ public:
     ~Project();
     //QList<Image> imageList;//for the sake of convenience
     void setProperties(QString p);
-    QString getProperties();
+    QString getProperties();//"Project Properties"
     bool setDataBase(const QString &dbFile);
-    bool save();
+    bool save();//Save all data into sqlite file.
     bool isSaved();
     void close();//Free allocated memory and resources. Close opened database connection.
 private:
