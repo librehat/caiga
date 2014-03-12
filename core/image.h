@@ -14,6 +14,7 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+#include "core_lib.h"
 #include <QStringList>
 #include <QImage>
 #include <QPixmap>
@@ -28,7 +29,7 @@ using namespace cv;
  */
 namespace CAIGA {
 // store QImage instead of Mat or QPixmap
-class Image
+class CORE_LIB Image
 {
 public:
     Image();

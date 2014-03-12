@@ -18,8 +18,7 @@
 #include <QSettings>
 #include <QTimer>
 #include <QDir>
-
-#include "../core/project.h"
+#include "project.h"
 
 namespace Ui
 {

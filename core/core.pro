@@ -1,4 +1,4 @@
-include(../caiga.pri)
+include(../common.pri)
 
 QT       += widgets sql
 
@@ -7,4 +7,7 @@ SOURCES  += image.cpp\
 
 HEADERS  += image.h \
             project.h \
-            abstractanalyser.h
+            abstractanalyser.h \
+            core_lib.h
+
+DEFINES  += CORE

@@ -2,14 +2,16 @@
  * This is an abstract base class for all "Analyser".
  */
 
+#ifndef ABSTRACTANALYSER_H
+#define ABSTRACTANALYSER_H
+
+#include "core_lib.h"
 #include <QString>
 #include <QImage>
 
-#ifndef ABSTRACTANALYSER_H
-#define ABSTRACTANALYSER_H
 namespace CAIGA
 {
-class AbstractAnalyser
+class CORE_LIB AbstractAnalyser
 {
 public:
     virtual bool isAnalysed() const = 0;

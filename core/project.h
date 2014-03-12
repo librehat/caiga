@@ -13,6 +13,7 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
+#include "core_lib.h"
 #include <QSqlDatabase>
 #include "image.h"
 
@@ -22,7 +23,7 @@
  */
 namespace CAIGA
 {
-class Project
+class CORE_LIB Project
 {
 public:
     Project();

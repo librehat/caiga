@@ -1,17 +1,36 @@
-include(../caiga.pri)
+include(../common.pri)
 
-QT    += gui widgets multimedia multimediawidgets sql
+QT       += gui widgets multimedia multimediawidgets sql
 
-FORMS += cameradialog.ui \
-         mainwindow.ui \
-         optionsdialog.ui
+TEMPLATE  = app
+
+TARGET    = caiga
+
+FORMS    += cameradialog.ui \
+            mainwindow.ui \
+            optionsdialog.ui
          
-SOURCES += cameradialog.cpp \
-           mainwindow.cpp \
-           optionsdialog.cpp \
-           qimageviewer.cpp
+SOURCES  += main.cpp \
+            cameradialog.cpp \
+            mainwindow.cpp \
+            optionsdialog.cpp \
+            qimageviewer.cpp
            
-HEADERS += cameradialog.h \
-           mainwindow.h \
-           optionsdialog.h \
-           qimageviewer.h
+HEADERS  += cameradialog.h \
+            mainwindow.h \
+            optionsdialog.h \
+            qimageviewer.h
+
+RESOURCES+= caiga.qrc
+windows: {
+    RESOURCES   += icons.qrc
+    RC_FILE      = winicon.rc
+    OTHER_FILES += winicon.rc
+}
+
+windows:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../core/release/ -lcore
+else:windows:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../core/debug/ -lcore
+else:unix: LIBS += -L$$OUT_PWD/../core/ -lcore
+
+INCLUDEPATH += $$PWD/../core
+DEPENDPATH  += $$PWD/../core
