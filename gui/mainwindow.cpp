@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     restoreGeometry(settings.value("MainGeometry").toByteArray());
-    restoreState(settings.value("MainState").toBitArray());
+    restoreState(settings.value("MainState").toByteArray());
     QDir::setCurrent(settings.value("CurrentDir").toString());
 
 //Windows should use packaged theme since its lacking of **theme**
