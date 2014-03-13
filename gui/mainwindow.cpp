@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     restoreGeometry(settings.value("MainGeometry").toByteArray());
+    restoreState(settings.value("MainState").toBitArray());
     QDir::setCurrent(settings.value("CurrentDir").toString());
 
 //Windows should use packaged theme since its lacking of **theme**
@@ -329,6 +330,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
         break;
     default:
         settings.setValue("MainGeometry", saveGeometry());//save MainWindow geometry
+        settings.setValue("MainState", saveState());//save MainWindow toolbar, child widget state
         settings.setValue("CurrentDir", QDir::currentPath());
         event->accept();
     }
