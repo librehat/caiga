@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     restoreGeometry(settings.value("MainGeometry").toByteArray());
     restoreState(settings.value("MainState").toByteArray());
     if (ui->mainToolBar->isHidden()) {
-        ui->actionToolbar_Menu->setChecked(false);
+        ui->actionToolbar->setChecked(false);
     }
 
     QDir::setCurrent(settings.value("CurrentDir").toString());
@@ -38,9 +38,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionExportPro_As->setIcon(QIcon::fromTheme("document-export"));
     ui->actionRedo->setIcon(QIcon::fromTheme("edit-redo"));
     ui->actionUndo->setIcon(QIcon::fromTheme("edit-undo"));
-    ui->actionAddImgDisk_toolbar->setIcon(QIcon::fromTheme("document-open"));
     ui->actionAddImgDisk->setIcon(QIcon::fromTheme("document-open"));
     ui->actionAddImgCamera->setIcon(QIcon::fromTheme("camera-photo"));
+    ui->actionDeleteImg->setIcon(QIcon::fromTheme("edit-delete"));
     ui->actionOptions->setIcon(QIcon::fromTheme("configure"));
     ui->actionHelp->setIcon(QIcon::fromTheme("help-contents"));
     ui->actionAbout_CAIGA->setIcon(QIcon::fromTheme("documentinfo"));
@@ -55,7 +55,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSave_Project_As, SIGNAL(triggered()), this, SLOT(saveProjectAsDialog()));
     connect(ui->actionClose_Project, SIGNAL(triggered()), this, SLOT(closeProject()));
     connect(ui->actionAddImgDisk, SIGNAL(triggered()), this, SLOT(addDiskFileDialog()));
-    connect(ui->actionAddImgDisk_toolbar, SIGNAL(triggered()), this, SLOT(addDiskFileDialog()));
     connect(ui->actionAddImgCamera, SIGNAL(triggered()), this, SLOT(createCameraDialog()));
     connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(createOptionsDialog()));
     connect(ui->actionExportImg_As, SIGNAL(triggered()), this, SLOT(exportImgDialog()));
@@ -83,7 +82,7 @@ QString MainWindow::aboutText = QString("<h3>Computer-Aid Interactive Grain Anal
 #elif defined(__linux__)
         + QString("Linux")
 #elif defined(__APPLE__) && defined(__MACH__)
-        + QString("Mac OS")
+        + QString("Mac OS X")
 #elif defined(BSD)
         + QString("BSD")
 #elif defined(__ANDROID__)

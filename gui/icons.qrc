@@ -43,6 +43,9 @@
         <file alias="48x48/edit-redo.png">icons/Oxygen/48x48/edit-redo.png</file>
         <file alias="22x22/edit-redo.png">icons/Oxygen/22x22/edit-redo.png</file>
         <file alias="32x32/edit-redo.png">icons/Oxygen/32x32/edit-redo.png</file>
+        <file alias="48x48/edit-delete.png">icons/Oxygen/48x48/edit-delete.png</file>
+        <file alias="22x22/edit-delete.png">icons/Oxygen/22x22/edit-delete.png</file>
+        <file alias="32x32/edit-delete.png">icons/Oxygen/32x32/edit-delete.png</file>
         <file alias="48x48/help-contents.png">icons/Oxygen/48x48/help-contents.png</file>
         <file alias="22x22/help-contents.png">icons/Oxygen/22x22/help-contents.png</file>
         <file alias="32x32/help-contents.png">icons/Oxygen/32x32/help-contents.png</file>

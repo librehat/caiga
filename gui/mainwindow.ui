@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>592</width>
-    <height>342</height>
+    <width>700</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,7 +20,7 @@
    <string>CAIGA</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="caiga.qrc">
+   <iconset>
     <normaloff>:/icons/Oxygen/icons/caiga.png</normaloff>:/icons/Oxygen/icons/caiga.png</iconset>
   </property>
   <property name="locale">
@@ -129,7 +129,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>592</width>
+     <width>700</width>
      <height>25</height>
     </rect>
    </property>
@@ -158,6 +158,10 @@
     </property>
     <addaction name="actionAddImgDisk"/>
     <addaction name="actionAddImgCamera"/>
+    <addaction name="actionDeleteImg"/>
+    <addaction name="separator"/>
+    <addaction name="actionPreProcess"/>
+    <addaction name="actionProcessnAnalyse"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -182,8 +186,8 @@
     <property name="title">
      <string>View</string>
     </property>
-    <addaction name="actionLeftPanel_Menu"/>
-    <addaction name="actionToolbar_Menu"/>
+    <addaction name="actionLeftPanel"/>
+    <addaction name="actionToolbar"/>
    </widget>
    <addaction name="menuProject"/>
    <addaction name="menuImage"/>
@@ -222,8 +226,12 @@
    <addaction name="actionUndo"/>
    <addaction name="actionRedo"/>
    <addaction name="separator"/>
-   <addaction name="actionAddImgDisk_toolbar"/>
+   <addaction name="actionAddImgDisk"/>
+   <addaction name="actionAddImgCamera"/>
+   <addaction name="actionDeleteImg"/>
    <addaction name="separator"/>
+   <addaction name="actionPreProcess"/>
+   <addaction name="actionProcessnAnalyse"/>
   </widget>
   <action name="actionNew_Project">
    <property name="text">
@@ -345,15 +353,7 @@
     <string>Export Image Information As...</string>
    </property>
   </action>
-  <action name="actionAddImgDisk_toolbar">
-   <property name="text">
-    <string>Add Image</string>
-   </property>
-   <property name="toolTip">
-    <string>Add Image from Disk</string>
-   </property>
-  </action>
-  <action name="actionLeftPanel_Menu">
+  <action name="actionLeftPanel">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -364,7 +364,7 @@
     <string>Left Panel</string>
    </property>
   </action>
-  <action name="actionToolbar_Menu">
+  <action name="actionToolbar">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -383,6 +383,21 @@
     <string>Export Project Information As...</string>
    </property>
   </action>
+  <action name="actionPreProcess">
+   <property name="text">
+    <string>Pre-Process</string>
+   </property>
+  </action>
+  <action name="actionProcessnAnalyse">
+   <property name="text">
+    <string>Process and Analyse</string>
+   </property>
+  </action>
+  <action name="actionDeleteImg">
+   <property name="text">
+    <string>Delete</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -393,9 +408,7 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="caiga.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>actionQuit</sender>
@@ -414,7 +427,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionToolbar_Menu</sender>
+   <sender>actionToolbar</sender>
    <signal>toggled(bool)</signal>
    <receiver>mainToolBar</receiver>
    <slot>setVisible(bool)</slot>
@@ -430,7 +443,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionLeftPanel_Menu</sender>
+   <sender>actionLeftPanel</sender>
    <signal>toggled(bool)</signal>
    <receiver>imageList</receiver>
    <slot>setVisible(bool)</slot>

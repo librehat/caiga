@@ -1,4 +1,5 @@
 #include "qimageviewer.h"
+#include <QStyleOption>
 
 QImageViewer::QImageViewer(QWidget *parent) :
     QWidget(parent)
@@ -9,10 +10,15 @@ void QImageViewer::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);
 
+    //Make StyleSheet available
+    QStyleOption opt;
+    opt.init(this);
+    QPainter painter(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
+
     if (m_pixmap.isNull())
         return;
 
-    QPainter painter(this);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
     QSize pixSize = m_pixmap.size();
     pixSize.scale(event->rect().size(), Qt::KeepAspectRatio);
