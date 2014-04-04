@@ -49,23 +49,22 @@ MainWindow::MainWindow(QWidget *parent) :
      * SIGNALs and SLOTs
      * Only those that cannot be connected in Deisgner should be defined below
      */
-    connect(ui->actionNew_Project, SIGNAL(triggered()), this, SLOT(newProject()));
-    connect(ui->actionOpen_Project, SIGNAL(triggered()), this, SLOT(openProjectDialog()));
-    connect(ui->actionSave_Project, SIGNAL(triggered()), this, SLOT(saveProject()));
-    connect(ui->actionSave_Project_As, SIGNAL(triggered()), this, SLOT(saveProjectAsDialog()));
-    connect(ui->actionClose_Project, SIGNAL(triggered()), this, SLOT(closeProject()));
-    connect(ui->actionAddImgDisk, SIGNAL(triggered()), this, SLOT(addDiskFileDialog()));
-    connect(ui->actionAddImgCamera, SIGNAL(triggered()), this, SLOT(createCameraDialog()));
-    connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT(createOptionsDialog()));
-    connect(ui->actionExportImg_As, SIGNAL(triggered()), this, SLOT(exportImgDialog()));
-    connect(ui->actionExportPro_As, SIGNAL(triggered()), this, SLOT(exportProDialog()));
-    connect(ui->actionProject_Properties, SIGNAL(triggered()), this, SLOT(projectPropertiesDialog()));
-    connect(ui->actionAbout_Qt, SIGNAL(triggered()), this, SLOT(aboutQtDialog()));
-    connect(ui->actionAbout_CAIGA, SIGNAL(triggered()), this, SLOT(aboutCAIGADialog()));
-    connect(ui->imageList, SIGNAL(activated(QModelIndex)), this, SLOT(setActivateImage(QModelIndex)));
+    connect(ui->actionNew_Project, &QAction::triggered, this, &MainWindow::newProject);
+    connect(ui->actionOpen_Project, &QAction::triggered, this, &MainWindow::openProjectDialog);
+    connect(ui->actionSave_Project, &QAction::triggered, this, &MainWindow::saveProject);
+    connect(ui->actionSave_Project_As, &QAction::triggered, this, &MainWindow::saveProjectAsDialog);
+    connect(ui->actionClose_Project, &QAction::triggered, this, &MainWindow::closeProject);
+    connect(ui->actionAddImgDisk, &QAction::triggered, this, &MainWindow::addDiskFileDialog);
+    connect(ui->actionAddImgCamera, &QAction::triggered, this, &MainWindow::createCameraDialog);
+    connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::createOptionsDialog);
+    connect(ui->actionExportImg_As, &QAction::triggered, this, &MainWindow::exportImgDialog);
+    connect(ui->actionExportPro_As, &QAction::triggered, this, &MainWindow::exportProDialog);
+    connect(ui->actionProject_Properties, &QAction::triggered, this, &MainWindow::projectPropertiesDialog);
+    connect(ui->actionAbout_Qt, &QAction::triggered, this, &MainWindow::aboutQtDialog);
+    connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
+    connect(ui->imageList, &QListView::activated, this, &MainWindow::setActivateImage);
 
-    connect(this, SIGNAL(configReadFinished(int,int,int,bool,int)),
-            this, SLOT(updateOptions(int,int,int,bool,int)));
+    connect(this, &MainWindow::configReadFinished, this, &MainWindow::updateOptions);
 
     //underlying work
     imgNameModel = new QStringListModel();

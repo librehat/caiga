@@ -22,8 +22,8 @@ CameraDialog::CameraDialog(QWidget *parent) :
     setCamera(cameraDevice);
 
     //SIGNALs and SLOTs
-    connect(ui->cameraBox, SIGNAL(currentIndexChanged(int)), SLOT(updateCameraDevice(int)));
-    connect(ui->captureButton, SIGNAL(clicked()), this, SLOT(takePicture()));
+    connect(ui->cameraBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &CameraDialog::updateCameraDevice);
+    connect(ui->captureButton, &QPushButton::clicked, this, &CameraDialog::takePicture);
 }
 
 CameraDialog::~CameraDialog()

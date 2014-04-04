@@ -9,14 +9,13 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
     this->readConfigFile();
     confChanged = false;
 
-    connect(this, SIGNAL(accepted()), this, SLOT(optionsChanged()));
-    connect(this, SIGNAL(optionsAccepted(int,int,int,bool,int)),
-            this, SLOT(writeConfigFile(int,int,int,bool,int)));
-    connect(ui->languageBox, SIGNAL(currentIndexChanged(int)), this, SLOT(configsChanged(int)));
-    connect(ui->toolbarStyleBox, SIGNAL(currentIndexChanged(int)), this, SLOT(configsChanged(int)));
-    connect(ui->tabPositionBox, SIGNAL(currentIndexChanged(int)), this, SLOT(configsChanged(int)));
-    connect(ui->autosave, SIGNAL(stateChanged(int)), this, SLOT(configsChanged(int)));
-    connect(ui->autosaveInterval, SIGNAL(valueChanged(int)), this, SLOT(configsChanged(int)));
+    connect(this, &OptionsDialog::accepted, this, &OptionsDialog::optionsChanged);
+    connect(this, &OptionsDialog::optionsAccepted, this, &OptionsDialog::writeConfigFile);
+    connect(ui->languageBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &OptionsDialog::configsChanged);
+    connect(ui->toolbarStyleBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &OptionsDialog::configsChanged);
+    connect(ui->tabPositionBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &OptionsDialog::configsChanged);
+    connect(ui->autosave, &QCheckBox::stateChanged, this, &OptionsDialog::configsChanged);
+    connect(ui->autosaveInterval, &QCheckBox::stateChanged, this, &OptionsDialog::configsChanged);
 }
 
 OptionsDialog::~OptionsDialog()
