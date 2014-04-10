@@ -28,21 +28,24 @@ using namespace cv;
  * in case of global conflict
  */
 namespace CAIGA {
-// store QImage instead of Mat or QPixmap
+// Mat is implemented internally instead of relevant Qt Classes
 class CORE_LIB Image
 {
 public:
     Image();
     Image(QImage img);
-    Image(Mat &matImg);
+    Image(Mat matImg);
     Image(const QString &imgfile);
-    Image(const QByteArray &orig, QByteArray *pre, QByteArray *pro, QStringList *info);
     ~Image();
     QImage getOrigImage();
-    void setOrigImage(QImage img);
+    void setOrigImage(Mat img);
+    void setOrigImage(QImage qimg);
+    void setOrigImage(const QString &imgfile);
+    void toBeCannyed(double ht, double lt, int aSize, bool l2);
+    QImage getPreProcessedImage();
+    void setPreProcessedImage(Mat img);
     QImage getProcessedImage();
-    void setPreProcessedImage(QImage img);
-    void setProcessedImage(QImage img);
+    void setProcessedImage(Mat img);
     bool isPreProcessed();
     bool isProcessed();
     bool isAnalysed();
@@ -50,13 +53,12 @@ public:
 
     static QImage convertMat2QImage(const cv::Mat &src);
     static QPixmap convertMat2QPixmap(const cv::Mat &src);
-    static Mat preProcess(Mat &src);
-    static Mat process(Mat &src);
+    static Mat convertQImage2Mat(const QImage &qimg);
 
 private:
-    QImage origImage;//original image
-    QImage preprocessedImage;//pre-processed image
-    QImage processedImage;//image ready to be analysed
+    Mat origImage;//original image
+    Mat preprocessedImage;//pre-processed image
+    Mat processedImage;//image ready to be analysed (shed colour already)
     bool m_isPreProcessed;//with prefix "m_" to indicate an object instead of a function
     bool m_isProcessed;
     bool m_isAnalysed;

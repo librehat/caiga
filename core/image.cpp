@@ -1,4 +1,5 @@
 #include "image.h"
+#include <QDebug>
 using namespace CAIGA;
 
 Image::Image()
@@ -10,54 +11,17 @@ Image::Image()
 
 Image::Image(QImage img)
 {
-    origImage = img;
-    origImage.detach();
-    m_isPreProcessed = false;
-    m_isProcessed = false;
-    m_isAnalysed = false;
+    setOrigImage(img);
 }
 
-Image::Image(Mat &matImg)
+Image::Image(Mat matImg)
 {
-    origImage = convertMat2QImage(matImg);
-    origImage.detach();
-    m_isPreProcessed = false;
-    m_isProcessed = false;
-    m_isAnalysed = false;
+    setOrigImage(matImg);
 }
 
 Image::Image(const QString &imgfile)
 {
-    origImage = QImage(imgfile);
-    m_isPreProcessed = false;
-    m_isProcessed = false;
-    m_isAnalysed = false;
-}
-
-Image::Image(const QByteArray &orig, QByteArray *pre = 0, QByteArray *pro = 0, QStringList *info = 0)
-{
-    origImage = QImage::fromData(orig);
-    if (pre != 0) {
-        preprocessedImage = QImage::fromData(*pre);
-        m_isPreProcessed = true;
-    }
-    else {
-        m_isPreProcessed = false;
-    }
-    if (pro != 0) {
-        processedImage = QImage::fromData(*pro);
-        m_isProcessed = true;
-    }
-    else {
-        m_isProcessed = false;
-    }
-    if (info != 0) {
-        infoList = QStringList(*info);
-        m_isAnalysed = true;
-    }
-    else {
-        m_isAnalysed = false;
-    }
+    setOrigImage(imgfile);
 }
 
 Image::~Image()
@@ -67,15 +31,20 @@ Image::~Image()
 
 QImage Image::getOrigImage()
 {
-    return origImage;
+    return convertMat2QImage(origImage);
+}
+
+QImage Image::getPreProcessedImage()
+{
+    return convertMat2QImage(preprocessedImage);
 }
 
 QImage Image::getProcessedImage()
 {
-    return processedImage;
+    return convertMat2QImage(processedImage);
 }
 
-void Image::setOrigImage(QImage img)
+void Image::setOrigImage(Mat img)
 {
     origImage = img;
     m_isPreProcessed = false;
@@ -83,7 +52,30 @@ void Image::setOrigImage(QImage img)
     m_isAnalysed = false;
 }
 
-void Image::setPreProcessedImage(QImage img)
+void Image::setOrigImage(QImage qimg)
+{
+    origImage = convertQImage2Mat(qimg);
+    m_isPreProcessed = false;
+    m_isProcessed = false;
+    m_isAnalysed = false;
+}
+
+void Image::setOrigImage(const QString &imgfile)
+{
+    origImage = cv::imread(imgfile.toStdString(), CV_LOAD_IMAGE_GRAYSCALE);
+    m_isPreProcessed = false;
+    m_isProcessed = false;
+    m_isAnalysed = false;
+}
+
+void Image::toBeCannyed(double ht, double lt, int aSize, bool l2)
+{
+    cv::Mat out;
+    cv::Canny(origImage, out, ht, lt, aSize, l2);
+    setPreProcessedImage(out);
+}
+
+void Image::setPreProcessedImage(Mat img)
 {
     preprocessedImage = img;
     m_isPreProcessed = true;
@@ -91,7 +83,7 @@ void Image::setPreProcessedImage(QImage img)
     m_isAnalysed = false;
 }
 
-void Image::setProcessedImage(QImage img)
+void Image::setProcessedImage(Mat img)
 {
     processedImage = img;
     m_isProcessed = true;
@@ -155,4 +147,11 @@ QImage Image::convertMat2QImage(const cv::Mat &src)
 QPixmap Image::convertMat2QPixmap(const cv::Mat &src)
 {
     return QPixmap::fromImage(convertMat2QImage(src));
+}
+
+
+Mat Image::convertQImage2Mat(const QImage &qimg)
+{
+    Mat t(qimg.height(), qimg.width(), qimg.format(), (void *)qimg.bits(), qimg.bytesPerLine());
+    return t;
 }

@@ -37,6 +37,13 @@ signals:
     void configReadFinished(int,int,int,bool,int);
 
 private slots:
+    void apertureSizeChanged(int);
+    void highThresholdChanged(double);
+    void lowThresholdChanged(double);
+    void l2gradientStateChanged(int);
+    void updatePreProcessedImage();
+    void savePreProcessedImage();
+    void discardPreProcessedImage();
     void newProject();
     void openProjectDialog();
     void saveProject();
@@ -71,6 +78,7 @@ private:
      * Use the abstract interface to the model, which ensures
      * that the code still works despite what the model type is.
      */
+    CAIGA::Image cgimg;
     QAbstractItemModel *imgNameModel;
     QStringList imgNameList;
 

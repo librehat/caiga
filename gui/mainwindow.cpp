@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "cameradialog.h"
 #include "optionsdialog.h"
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -49,6 +50,12 @@ MainWindow::MainWindow(QWidget *parent) :
      * SIGNALs and SLOTs
      * Only those that cannot be connected in Deisgner should be defined below
      */
+    connect(ui->sizeSlider, &QSlider::valueChanged, this, &MainWindow::apertureSizeChanged);
+    connect(ui->htDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::highThresholdChanged);
+    connect(ui->ltDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::lowThresholdChanged);
+    connect(ui->l2GradientCheckBox, &QCheckBox::stateChanged, this, &MainWindow::l2gradientStateChanged);
+    connect(ui->preProcessButtonBox, &QDialogButtonBox::accepted, this, &MainWindow::savePreProcessedImage);
+    connect(ui->preProcessButtonBox, &QDialogButtonBox::rejected, this, &MainWindow::discardPreProcessedImage);
     connect(ui->actionNew_Project, &QAction::triggered, this, &MainWindow::newProject);
     connect(ui->actionOpen_Project, &QAction::triggered, this, &MainWindow::openProjectDialog);
     connect(ui->actionSave_Project, &QAction::triggered, this, &MainWindow::saveProject);
@@ -110,6 +117,54 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete imgNameModel;
+}
+
+void MainWindow::apertureSizeChanged(int s)
+{
+    Q_UNUSED(s);
+    updatePreProcessedImage();
+}
+
+void MainWindow::highThresholdChanged(double ht)
+{
+    ui->ltDoubleSpinBox->setMaximum(ht - 1);
+    updatePreProcessedImage();
+}
+
+void MainWindow::lowThresholdChanged(double lt)
+{
+    Q_UNUSED(lt);
+    updatePreProcessedImage();
+}
+
+void MainWindow::l2gradientStateChanged(int s)
+{
+    Q_UNUSED(s);
+    updatePreProcessedImage();
+}
+
+void MainWindow::updatePreProcessedImage()
+{
+    //TODO: Use Project
+    int aSize = (ui->sizeSlider->value() * 2 - 1);
+
+    bool l2 = false;
+    if (ui->l2GradientCheckBox->checkState() == Qt::Checked) {//true
+        l2 = true;
+    }
+
+    cgimg.toBeCannyed(ui->htDoubleSpinBox->value(), ui->ltDoubleSpinBox->value(), aSize, l2);
+    ui->preLabel->setPixmap(QPixmap::fromImage(cgimg.getPreProcessedImage()));
+}
+
+void MainWindow::savePreProcessedImage()
+{
+    //invoke setPreProcessed()
+}
+
+void MainWindow::discardPreProcessedImage()
+{
+    //reset the preprocess tab
 }
 
 void MainWindow::newProject()
@@ -255,6 +310,7 @@ void MainWindow::aboutCAIGADialog()
 void MainWindow::setActivateImage(QModelIndex i)
 {
     QString imgfile = imgNameModel->data(i, Qt::DisplayRole).toString();
+    cgimg.setOrigImage(imgfile);
     QPixmap a(imgfile);
     ui->origLabel->setPixmap(a);
 }
