@@ -15,7 +15,7 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
     connect(ui->toolbarStyleBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &OptionsDialog::configsChanged);
     connect(ui->tabPositionBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &OptionsDialog::configsChanged);
     connect(ui->autosave, &QCheckBox::stateChanged, this, &OptionsDialog::configsChanged);
-    connect(ui->autosaveInterval, &QCheckBox::stateChanged, this, &OptionsDialog::configsChanged);
+    connect(ui->autosaveInterval, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &OptionsDialog::configsChanged);
 }
 
 OptionsDialog::~OptionsDialog()
