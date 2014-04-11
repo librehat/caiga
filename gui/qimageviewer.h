@@ -14,6 +14,7 @@ public:
 
 public slots:
     void setPixmap(const QPixmap &pix);
+    void setPixmap(const QImage &qimg);
 
 protected:
     void paintEvent(QPaintEvent *);

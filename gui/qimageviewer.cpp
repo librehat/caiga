@@ -40,3 +40,9 @@ void QImageViewer::setPixmap(const QPixmap &pix)
     m_pixmap = pix;
     this->update();
 }
+
+void QImageViewer::setPixmap(const QImage &qimg)
+{
+    m_pixmap = QPixmap::fromImage(qimg);
+    this->update();
+}

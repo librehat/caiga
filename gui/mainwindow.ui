@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>400</height>
+    <height>410</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -71,16 +71,7 @@
         <string>Information</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <property name="leftMargin">
-         <number>4</number>
-        </property>
-        <property name="topMargin">
-         <number>4</number>
-        </property>
-        <property name="rightMargin">
-         <number>4</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>4</number>
         </property>
         <item>
@@ -92,25 +83,139 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="origTab">
+      <widget class="QWidget" name="rawTab">
        <attribute name="title">
-        <string>Orignial</string>
+        <string>Raw</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
-         <widget class="QImageViewer" name="origLabel" native="true"/>
+         <widget class="QImageViewer" name="rawLabel" native="true"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="ccTab">
+       <attribute name="title">
+        <string>Crop and Calibre</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <item row="1" column="1" alignment="Qt::AlignBottom">
+         <widget class="QDialogButtonBox" name="ccButtonBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="standardButtons">
+           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" rowspan="2">
+         <widget class="QImageViewer" name="cropLabel" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>3</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QGroupBox" name="ccGroupBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Control Panel</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QPushButton" name="cropCircleButton">
+             <property name="toolTip">
+              <string>Draw a rectangle first. Then computer will remove the corners and turn it into a circle automatically.</string>
+             </property>
+             <property name="text">
+              <string>Crop a Circle</string>
+             </property>
+             <property name="default">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="cropRectButton">
+             <property name="toolTip">
+              <string>Draw a rectangle as exactly what you expected.</string>
+             </property>
+             <property name="text">
+              <string>Crop a Rectangle</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="calibreButton">
+             <property name="toolTip">
+              <string>Draw a line then input its real size.</string>
+             </property>
+             <property name="text">
+              <string>Manually Calibre</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="autoCalibreButton">
+             <property name="toolTip">
+              <string>Extract calibration information inside the image (Experimental).</string>
+             </property>
+             <property name="text">
+              <string>Automatically Calibre</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="calibreLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Calibration</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="calibreDoubleSpinBox">
+             <property name="toolTip">
+              <string>Input calibration if already known.</string>
+             </property>
+             <property name="suffix">
+              <string> pixel:um</string>
+             </property>
+             <property name="decimals">
+              <number>4</number>
+             </property>
+             <property name="maximum">
+              <double>999.999900000000025</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -119,36 +224,27 @@
         <string>Preprocess</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item row="0" column="2">
          <widget class="QToolBox" name="preProcessToolBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-            <horstretch>1</horstretch>
+            <horstretch>3</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="histogramPage">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>164</width>
-             <height>178</height>
+             <width>195</width>
+             <height>185</height>
             </rect>
            </property>
            <attribute name="label">
@@ -185,8 +281,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>156</width>
-             <height>195</height>
+             <width>104</width>
+             <height>83</height>
             </rect>
            </property>
            <attribute name="label">
@@ -219,6 +315,14 @@
            </layout>
           </widget>
           <widget class="QWidget" name="binaryzationPage">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>166</width>
+             <height>193</height>
+            </rect>
+           </property>
            <attribute name="label">
             <string>Binaryzation</string>
            </attribute>
@@ -236,9 +340,12 @@
         </item>
         <item row="1" column="2" alignment="Qt::AlignBottom">
          <widget class="QDialogButtonBox" name="preProcessButtonBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>1</horstretch>
+            <horstretch>3</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
@@ -251,11 +358,10 @@
          <widget class="QImageViewer" name="preProcessLabel" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>3</horstretch>
+            <horstretch>5</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <zorder>verticalLayoutWidget</zorder>
          </widget>
         </item>
        </layout>
@@ -265,16 +371,7 @@
         <string>Edges</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item row="0" column="2">
@@ -458,6 +555,9 @@
         </item>
         <item row="1" column="2" alignment="Qt::AlignBottom">
          <widget class="QDialogButtonBox" name="edgesButtonBox">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>1</horstretch>
@@ -486,16 +586,7 @@
         <string>Analysis</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
@@ -513,7 +604,7 @@
      <x>0</x>
      <y>0</y>
      <width>700</width>
-     <height>19</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -610,6 +701,7 @@
    <addaction name="actionAddImgCamera"/>
    <addaction name="actionDeleteImg"/>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew_Project">
    <property name="text">
     <string>New Project</string>
