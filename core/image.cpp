@@ -4,6 +4,7 @@ using namespace CAIGA;
 
 Image::Image()
 {
+    m_hasEdges = false;
     m_isPreProcessed = false;
     m_isProcessed = false;
     m_isAnalysed = false;
@@ -32,6 +33,11 @@ Image::~Image()
 QImage Image::getOrigImage()
 {
     return convertMat2QImage(origImage);
+}
+
+QImage Image::getEdges()
+{
+    return convertMat2QImage(edges);
 }
 
 QImage Image::getPreProcessedImage()
@@ -68,11 +74,13 @@ void Image::setOrigImage(const QString &imgfile)
     m_isAnalysed = false;
 }
 
-void Image::toBeCannyed(double ht, double lt, int aSize, bool l2)
+void Image::setEdges(Mat img)
 {
-    cv::Mat out;
-    cv::Canny(origImage, out, ht, lt, aSize, l2);
-    setPreProcessedImage(out);
+    edges = img;
+    m_hasEdges = true;
+    m_isPreProcessed = false;
+    m_isProcessed = false;
+    m_isAnalysed = false;
 }
 
 void Image::setPreProcessedImage(Mat img)
@@ -90,6 +98,11 @@ void Image::setProcessedImage(Mat img)
     m_isAnalysed = false;
 }
 
+bool Image::hasEdges()
+{
+    return m_hasEdges;
+}
+
 bool Image::isPreProcessed()
 {
     return m_isPreProcessed;
@@ -103,6 +116,15 @@ bool Image::isProcessed()
 bool Image::isAnalysed()
 {
     return m_isAnalysed;
+}
+
+void Image::toBeCannyed(double ht, double lt, int aSize, bool l2)
+{
+    cv::Mat out;
+    qDebug() << out.empty();
+    cv::Canny(origImage, out, ht, lt, aSize, l2);
+    qDebug() << out.empty();
+    setEdges(out);
 }
 
 QStringList Image::getInfoList()

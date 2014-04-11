@@ -50,12 +50,17 @@ MainWindow::MainWindow(QWidget *parent) :
      * SIGNALs and SLOTs
      * Only those that cannot be connected in Deisgner should be defined below
      */
-    connect(ui->sizeSlider, &QSlider::valueChanged, this, &MainWindow::apertureSizeChanged);
-    connect(ui->htDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::highThresholdChanged);
-    connect(ui->ltDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::lowThresholdChanged);
+    connect(ui->histogramCheckBox, &QCheckBox::stateChanged, this, &MainWindow::histogramCheckBoxStateChanged);
+    connect(ui->histogramMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::histogramMethodChanged);
+    connect(ui->blurCheckBox, &QCheckBox::stateChanged, this, &MainWindow::blurCheckBoxStateChanged);
+    connect(ui->blurMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::blurMethodChanged);
+    connect(ui->binaryzationCheckBox, &QCheckBox::stateChanged, this, &MainWindow::binaryzationCheckBoxStateChanged);
+    connect(ui->apertureSizeSlider, &QSlider::valueChanged, this, &MainWindow::apertureSizeChanged);
+    connect(ui->highThresholdDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::highThresholdChanged);
+    connect(ui->lowThresholdDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::lowThresholdChanged);
     connect(ui->l2GradientCheckBox, &QCheckBox::stateChanged, this, &MainWindow::l2gradientStateChanged);
-    connect(ui->preProcessButtonBox, &QDialogButtonBox::accepted, this, &MainWindow::savePreProcessedImage);
-    connect(ui->preProcessButtonBox, &QDialogButtonBox::rejected, this, &MainWindow::discardPreProcessedImage);
+    connect(ui->edgesButtonBox, &QDialogButtonBox::accepted, this, &MainWindow::saveEdges);
+    connect(ui->edgesButtonBox, &QDialogButtonBox::rejected, this, &MainWindow::discardEdges);
     connect(ui->actionNew_Project, &QAction::triggered, this, &MainWindow::newProject);
     connect(ui->actionOpen_Project, &QAction::triggered, this, &MainWindow::openProjectDialog);
     connect(ui->actionSave_Project, &QAction::triggered, this, &MainWindow::saveProject);
@@ -111,7 +116,7 @@ QString MainWindow::aboutText = QString("<h3>Computer-Aid Interactive Grain Anal
         + QString("Unkown compiler")
 #endif
 
-        + QString("</p><p>Copyright &copy; 2014 William Wong and other contributors.<br />School of Materials Science and Engineering, Southeast University.</p><p>Licensed under <a href='http://en.wikipedia.org/wiki/MIT_License'>The MIT License</a>.<br /></p><p><strong>The software contains the third-party library and artwork below.</strong><br /><a href='http://opencv.org'>OpenCV</a> licensed under <a href='https://github.com/Itseez/opencv/blob/master/LICENSE'>3-clause BSD License</a><br /><a href='http://www.oxygen-icons.org'>Oxygen Icons</a> licensed under <a href='http://www.gnu.org/licenses/lgpl-3.0.txt'>LGPLv3 License</a><br /></p><div>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</div>");
+        + QString("</p><p>Copyright &copy; 2014 William Wong and other contributors.<br />School of Materials Science and Engineering, Southeast University.</p><p>Licensed under <a href='http://en.wikipedia.org/wiki/MIT_License'>The MIT License</a>.<br /></p><p><strong>The software contains third-party libraries and artworks below.</strong><br /><a href='http://opencv.org'>OpenCV</a> licensed under <a href='https://github.com/Itseez/opencv/blob/master/LICENSE'>3-clause BSD License</a><br /><a href='http://www.oxygen-icons.org'>Oxygen Icons</a> licensed under <a href='http://www.gnu.org/licenses/lgpl-3.0.txt'>LGPLv3 License</a><br /></p><div>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</div>");
 
 MainWindow::~MainWindow()
 {
@@ -119,52 +124,89 @@ MainWindow::~MainWindow()
     delete imgNameModel;
 }
 
-void MainWindow::apertureSizeChanged(int s)
+void MainWindow::histogramCheckBoxStateChanged(int)
 {
-    Q_UNUSED(s);
-    updatePreProcessedImage();
+    //TODO
+}
+
+void MainWindow::histogramMethodChanged(int)
+{
+    //TODO
+}
+
+void MainWindow::blurCheckBoxStateChanged(int)
+{
+    //TODO
+}
+
+void MainWindow::blurMethodChanged(int)
+{
+    //TODO
+}
+
+void MainWindow::binaryzationCheckBoxStateChanged(int)
+{
+    //TODO
+}
+
+void MainWindow::apertureSizeChanged(int)
+{
+    updateEdges();
 }
 
 void MainWindow::highThresholdChanged(double ht)
 {
-    ui->ltDoubleSpinBox->setMaximum(ht - 1);
-    updatePreProcessedImage();
+    ui->lowThresholdDoubleSpinBox->setMaximum(ht - 1);
+    updateEdges();
 }
 
-void MainWindow::lowThresholdChanged(double lt)
+void MainWindow::lowThresholdChanged(double)
 {
-    Q_UNUSED(lt);
-    updatePreProcessedImage();
+    updateEdges();
 }
 
-void MainWindow::l2gradientStateChanged(int s)
+void MainWindow::l2gradientStateChanged(int)
 {
-    Q_UNUSED(s);
-    updatePreProcessedImage();
+    updateEdges();
+}
+
+void MainWindow::updateEdges()
+{
+    //TODO: Use Project
+    int aSize = (ui->apertureSizeSlider->value() * 2 - 1);
+
+    bool l2 = false;
+    if (ui->l2GradientCheckBox->checkState() == Qt::Checked) {
+        l2 = true;
+    }
+
+    cgimg.toBeCannyed(ui->highThresholdDoubleSpinBox->value(), ui->lowThresholdDoubleSpinBox->value(), aSize, l2);
+    ui->edgesLabel->setPixmap(QPixmap::fromImage(cgimg.getEdges()));
+}
+
+void MainWindow::saveEdges()
+{
+    //invoke setEdges()
+}
+
+void MainWindow::discardEdges()
+{
+    //reset the edges tab
 }
 
 void MainWindow::updatePreProcessedImage()
 {
-    //TODO: Use Project
-    int aSize = (ui->sizeSlider->value() * 2 - 1);
-
-    bool l2 = false;
-    if (ui->l2GradientCheckBox->checkState() == Qt::Checked) {//true
-        l2 = true;
-    }
-
-    cgimg.toBeCannyed(ui->htDoubleSpinBox->value(), ui->ltDoubleSpinBox->value(), aSize, l2);
-    ui->preLabel->setPixmap(QPixmap::fromImage(cgimg.getPreProcessedImage()));
+    //TODO
 }
 
 void MainWindow::savePreProcessedImage()
 {
-    //invoke setPreProcessed()
+    //TODO
 }
 
 void MainWindow::discardPreProcessedImage()
 {
-    //reset the preprocess tab
+    //TODO
 }
 
 void MainWindow::newProject()

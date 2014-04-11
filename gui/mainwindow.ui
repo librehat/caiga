@@ -16,6 +16,11 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="font">
+   <font>
+    <family>Segoe UI</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>CAIGA</string>
   </property>
@@ -109,11 +114,11 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="preprocessTab">
+      <widget class="QWidget" name="preProcessTab">
        <attribute name="title">
         <string>Preprocess</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QGridLayout" name="gridLayout">
         <property name="leftMargin">
          <number>0</number>
         </property>
@@ -126,20 +131,156 @@
         <property name="bottomMargin">
          <number>0</number>
         </property>
-        <item>
-         <widget class="QImageViewer" name="preLabel" native="true">
+        <item row="0" column="2">
+         <widget class="QToolBox" name="preProcessToolBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="currentIndex">
+           <number>2</number>
+          </property>
+          <widget class="QWidget" name="histogramPage">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>164</width>
+             <height>178</height>
+            </rect>
+           </property>
+           <attribute name="label">
+            <string>Histogram</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="QCheckBox" name="histogramCheckBox">
+              <property name="text">
+               <string>Histogram Equalisation</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="histogramMethodLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Method</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="histogramMethodComboBox"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="blurPage">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>156</width>
+             <height>195</height>
+            </rect>
+           </property>
+           <attribute name="label">
+            <string>Blur</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QCheckBox" name="blurCheckBox">
+              <property name="text">
+               <string>Image Blur</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="blurMethodLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Method</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="blurMethodComboBox"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="binaryzationPage">
+           <attribute name="label">
+            <string>Binaryzation</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <widget class="QCheckBox" name="binaryzationCheckBox">
+              <property name="text">
+               <string>Image Binaryzation</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+        <item row="1" column="2" alignment="Qt::AlignBottom">
+         <widget class="QDialogButtonBox" name="preProcessButtonBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="standardButtons">
+           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" rowspan="2">
+         <widget class="QImageViewer" name="preProcessLabel" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>3</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <zorder>verticalLayoutWidget</zorder>
          </widget>
         </item>
-        <item>
-         <widget class="QGroupBox" name="preProcessGroupBox">
+       </layout>
+      </widget>
+      <widget class="QWidget" name="edgesTab">
+       <attribute name="title">
+        <string>Edges</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item row="0" column="2">
+         <widget class="QGroupBox" name="edgesGroupBox">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
             <horstretch>1</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -149,7 +290,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-            <widget class="QLabel" name="methodLabel">
+            <widget class="QLabel" name="edgesMethodLabel">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -162,16 +303,16 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="methodComboBox">
+            <widget class="QComboBox" name="edgesMethodComboBox">
              <item>
               <property name="text">
-               <string>Canny86</string>
+               <string>Canny</string>
               </property>
              </item>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="sizeLabel">
+            <widget class="QLabel" name="apertureSizeLabel">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -184,9 +325,9 @@
             </widget>
            </item>
            <item>
-            <widget class="QSlider" name="sizeSlider">
+            <widget class="QSlider" name="apertureSizeSlider">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -234,7 +375,13 @@
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="htDoubleSpinBox">
+            <widget class="QDoubleSpinBox" name="highThresholdDoubleSpinBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="decimals">
               <number>1</number>
              </property>
@@ -266,7 +413,13 @@
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="ltDoubleSpinBox">
+            <widget class="QDoubleSpinBox" name="lowThresholdDoubleSpinBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="decimals">
               <number>1</number>
              </property>
@@ -286,6 +439,12 @@
            </item>
            <item>
             <widget class="QCheckBox" name="l2GradientCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="toolTip">
               <string>Whether a more accurate L2 norm should be used.</string>
              </property>
@@ -294,21 +453,37 @@
              </property>
             </widget>
            </item>
-           <item>
-            <widget class="QDialogButtonBox" name="preProcessButtonBox">
-             <property name="standardButtons">
-              <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
-             </property>
-            </widget>
-           </item>
           </layout>
+         </widget>
+        </item>
+        <item row="1" column="2" alignment="Qt::AlignBottom">
+         <widget class="QDialogButtonBox" name="edgesButtonBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="standardButtons">
+           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" rowspan="2">
+         <widget class="QImageViewer" name="edgesLabel" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>3</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="processedTab">
+      <widget class="QWidget" name="analysisTab">
        <attribute name="title">
-        <string>Processed</string>
+        <string>Analysis</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <property name="leftMargin">
@@ -324,7 +499,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QImageViewer" name="proLabel" native="true"/>
+         <widget class="QImageViewer" name="analysisLabel" native="true"/>
         </item>
        </layout>
       </widget>

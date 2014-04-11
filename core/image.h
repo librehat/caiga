@@ -42,10 +42,13 @@ public:
     void setOrigImage(QImage qimg);
     void setOrigImage(const QString &imgfile);
     void toBeCannyed(double ht, double lt, int aSize, bool l2);
+    QImage getEdges();
+    void setEdges(Mat img);
     QImage getPreProcessedImage();
     void setPreProcessedImage(Mat img);
     QImage getProcessedImage();
     void setProcessedImage(Mat img);
+    bool hasEdges();
     bool isPreProcessed();
     bool isProcessed();
     bool isAnalysed();
@@ -57,8 +60,10 @@ public:
 
 private:
     Mat origImage;//original image
+    Mat edges;
     Mat preprocessedImage;//pre-processed image
     Mat processedImage;//image ready to be analysed (shed colour already)
+    bool m_hasEdges;
     bool m_isPreProcessed;//with prefix "m_" to indicate an object instead of a function
     bool m_isProcessed;
     bool m_isAnalysed;

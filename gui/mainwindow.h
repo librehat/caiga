@@ -34,13 +34,21 @@ public:
     ~MainWindow();
 
 signals:
-    void configReadFinished(int,int,int,bool,int);
+    void configReadFinished(int, int, int, bool, int);
 
 private slots:
+    void histogramCheckBoxStateChanged(int);
+    void histogramMethodChanged(int);
+    void blurCheckBoxStateChanged(int);
+    void blurMethodChanged(int);
+    void binaryzationCheckBoxStateChanged(int);
     void apertureSizeChanged(int);
     void highThresholdChanged(double);
     void lowThresholdChanged(double);
     void l2gradientStateChanged(int);
+    void updateEdges();
+    void saveEdges();
+    void discardEdges();
     void updatePreProcessedImage();
     void savePreProcessedImage();
     void discardPreProcessedImage();
@@ -59,7 +67,7 @@ private slots:
     void aboutCAIGADialog();
 
     void setActivateImage(QModelIndex);
-    void updateOptions(int,int,int,bool,int);
+    void updateOptions(int, int, int, bool, int);
 
 private:
     Ui::MainWindow *ui;
