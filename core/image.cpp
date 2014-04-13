@@ -174,6 +174,6 @@ QPixmap Image::convertMat2QPixmap(const cv::Mat &src)
 
 Mat Image::convertQImage2Mat(const QImage &qimg)
 {
-    Mat t(qimg.height(), qimg.width(), qimg.format(), (void *)qimg.bits(), qimg.bytesPerLine());
+    Mat t(qimg.height(), qimg.width(), qimg.format(), (uchar *)qimg.bits(), qimg.bytesPerLine());
     return t;
 }
