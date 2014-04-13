@@ -37,6 +37,8 @@ signals:
     void configReadFinished(int, int, int, bool, int);
 
 private slots:
+    void cropCircleButtonPressed();
+    void cropRectButtonPressed();
     void histogramCheckBoxStateChanged(int);
     void histogramMethodChanged(int);
     void blurCheckBoxStateChanged(int);

@@ -50,6 +50,8 @@ MainWindow::MainWindow(QWidget *parent) :
      * SIGNALs and SLOTs
      * Only those that cannot be connected in Deisgner should be defined below
      */
+    connect(ui->cropCircleButton, &QPushButton::clicked, this, &MainWindow::cropCircleButtonPressed);
+    connect(ui->cropRectButton, &QPushButton::clicked, this, &MainWindow::cropRectButtonPressed);
     connect(ui->histogramCheckBox, &QCheckBox::stateChanged, this, &MainWindow::histogramCheckBoxStateChanged);
     connect(ui->histogramMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::histogramMethodChanged);
     connect(ui->blurCheckBox, &QCheckBox::stateChanged, this, &MainWindow::blurCheckBoxStateChanged);
@@ -122,6 +124,27 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete imgNameModel;
+}
+
+void MainWindow::cropCircleButtonPressed()
+{
+    /*
+     * should be combined with paintEvent
+     * make another class for image manipulating
+     *
+    QPainter painter;
+    painter.begin(this);
+    QPen pen(Qt::red, 2, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
+    painter.setPen(pen);
+    int radius = std::min(ui->cropLabel->pixmap()->width(), ui->cropLabel->pixmap()->height());
+    painter.drawEllipse(ui->cropLabel->pixmap()->rect().center(), radius, radius);
+    painter.end();
+    */
+}
+
+void MainWindow::cropRectButtonPressed()
+{
+    //TODO
 }
 
 void MainWindow::histogramCheckBoxStateChanged(int)
@@ -352,9 +375,9 @@ void MainWindow::aboutCAIGADialog()
 void MainWindow::setActivateImage(QModelIndex i)
 {
     QString imgfile = imgNameModel->data(i, Qt::DisplayRole).toString();
-    cgimg.setOrigImage(imgfile);
+    cgimg.setRawImage(imgfile);
     QPixmap a(imgfile);
-    ui->origLabel->setPixmap(a);
+    ui->rawLabel->setPixmap(a);
 }
 
 void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, bool autoSave, int interval)

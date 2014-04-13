@@ -12,17 +12,17 @@ Image::Image()
 
 Image::Image(QImage img)
 {
-    setOrigImage(img);
+    setRawImage(img);
 }
 
 Image::Image(Mat matImg)
 {
-    setOrigImage(matImg);
+    setRawImage(matImg);
 }
 
 Image::Image(const QString &imgfile)
 {
-    setOrigImage(imgfile);
+    setRawImage(imgfile);
 }
 
 Image::~Image()
@@ -30,9 +30,9 @@ Image::~Image()
     //NOTHING
 }
 
-QImage Image::getOrigImage()
+QImage Image::getRawImage()
 {
-    return convertMat2QImage(origImage);
+    return convertMat2QImage(rawImage);
 }
 
 QImage Image::getEdges()
@@ -50,25 +50,25 @@ QImage Image::getProcessedImage()
     return convertMat2QImage(processedImage);
 }
 
-void Image::setOrigImage(Mat img)
+void Image::setRawImage(Mat img)
 {
-    origImage = img;
+    rawImage = img;
     m_isPreProcessed = false;
     m_isProcessed = false;
     m_isAnalysed = false;
 }
 
-void Image::setOrigImage(QImage qimg)
+void Image::setRawImage(QImage qimg)
 {
-    origImage = convertQImage2Mat(qimg);
+    rawImage = convertQImage2Mat(qimg);
     m_isPreProcessed = false;
     m_isProcessed = false;
     m_isAnalysed = false;
 }
 
-void Image::setOrigImage(const QString &imgfile)
+void Image::setRawImage(const QString &imgfile)
 {
-    origImage = cv::imread(imgfile.toStdString(), CV_LOAD_IMAGE_GRAYSCALE);
+    rawImage = cv::imread(imgfile.toStdString(), CV_LOAD_IMAGE_GRAYSCALE);
     m_isPreProcessed = false;
     m_isProcessed = false;
     m_isAnalysed = false;
@@ -121,9 +121,7 @@ bool Image::isAnalysed()
 void Image::toBeCannyed(double ht, double lt, int aSize, bool l2)
 {
     cv::Mat out;
-    qDebug() << out.empty();
-    cv::Canny(origImage, out, ht, lt, aSize, l2);
-    qDebug() << out.empty();
+    cv::Canny(rawImage, out, ht, lt, aSize, l2);
     setEdges(out);
 }
 

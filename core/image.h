@@ -37,10 +37,10 @@ public:
     Image(Mat matImg);
     Image(const QString &imgfile);
     ~Image();
-    QImage getOrigImage();
-    void setOrigImage(Mat img);
-    void setOrigImage(QImage qimg);
-    void setOrigImage(const QString &imgfile);
+    QImage getRawImage();
+    void setRawImage(Mat img);
+    void setRawImage(QImage qimg);
+    void setRawImage(const QString &imgfile);
     void toBeCannyed(double ht, double lt, int aSize, bool l2);
     QImage getEdges();
     void setEdges(Mat img);
@@ -59,7 +59,7 @@ public:
     static Mat convertQImage2Mat(const QImage &qimg);
 
 private:
-    Mat origImage;//original image
+    Mat rawImage;//original image
     Mat edges;
     Mat preprocessedImage;//pre-processed image
     Mat processedImage;//image ready to be analysed (shed colour already)
