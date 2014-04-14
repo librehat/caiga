@@ -37,32 +37,42 @@ public:
     Image(Mat matImg);
     Image(const QString &imgfile);
     ~Image();
-    QImage getRawImage();
+    Mat getRawMatrix();
+    QPixmap getRawPixmap();
     void setRawImage(Mat img);
     void setRawImage(QImage qimg);
     void setRawImage(const QString &imgfile);
-    void toBeCannyed(double ht, double lt, int aSize, bool l2);
-    QImage getEdges();
+    QImage getCroppedImage();
+    QPixmap getCroppedPixmap();
+    void setCroppedImage(QImage qimg);
+    QImage getEdgesImage();
+    QPixmap getEdgesPixmap();
     void setEdges(Mat img);
     QImage getPreProcessedImage();
+    QPixmap getPreProcessedPixmap();
     void setPreProcessedImage(Mat img);
     QImage getProcessedImage();
+    QPixmap getProcessedPixmap();
     void setProcessedImage(Mat img);
-    bool hasEdges();
+    bool isCropped();
     bool isPreProcessed();
+    bool hasEdges();
     bool isProcessed();
     bool isAnalysed();
     QStringList getInfoList();
 
+    static QPixmap ImageToCannyedPixmap(const Mat &img, double ht, double lt, int aSize, bool l2);
     static QImage convertMat2QImage(const cv::Mat &src);
     static QPixmap convertMat2QPixmap(const cv::Mat &src);
     static Mat convertQImage2Mat(const QImage &qimg);
 
 private:
     Mat rawImage;//original image
-    Mat edges;
+    Mat croppedImage;
     Mat preprocessedImage;//pre-processed image
+    Mat edges;
     Mat processedImage;//image ready to be analysed (shed colour already)
+    bool m_isCropped;
     bool m_hasEdges;
     bool m_isPreProcessed;//with prefix "m_" to indicate an object instead of a function
     bool m_isProcessed;

@@ -30,12 +30,17 @@ Image::~Image()
     //NOTHING
 }
 
-QImage Image::getRawImage()
+Mat Image::getRawMatrix()
 {
-    return convertMat2QImage(rawImage);
+    return rawImage;
 }
 
-QImage Image::getEdges()
+QImage Image::getCroppedImage()
+{
+    return convertMat2QImage(croppedImage);
+}
+
+QImage Image::getEdgesImage()
 {
     return convertMat2QImage(edges);
 }
@@ -50,10 +55,37 @@ QImage Image::getProcessedImage()
     return convertMat2QImage(processedImage);
 }
 
+QPixmap Image::getRawPixmap()
+{
+    return convertMat2QPixmap(rawImage);
+}
+
+QPixmap Image::getCroppedPixmap()
+{
+    return convertMat2QPixmap(croppedImage);
+}
+
+QPixmap Image::getPreProcessedPixmap()
+{
+    return convertMat2QPixmap(preprocessedImage);
+}
+
+QPixmap Image::getEdgesPixmap()
+{
+    return convertMat2QPixmap(edges);
+}
+
+QPixmap Image::getProcessedPixmap()
+{
+    return convertMat2QPixmap(processedImage);
+}
+
 void Image::setRawImage(Mat img)
 {
     rawImage = img;
+    m_isCropped = false;
     m_isPreProcessed = false;
+    m_hasEdges = false;
     m_isProcessed = false;
     m_isAnalysed = false;
 }
@@ -61,7 +93,9 @@ void Image::setRawImage(Mat img)
 void Image::setRawImage(QImage qimg)
 {
     rawImage = convertQImage2Mat(qimg);
+    m_isCropped = false;
     m_isPreProcessed = false;
+    m_hasEdges = false;
     m_isProcessed = false;
     m_isAnalysed = false;
 }
@@ -69,7 +103,19 @@ void Image::setRawImage(QImage qimg)
 void Image::setRawImage(const QString &imgfile)
 {
     rawImage = cv::imread(imgfile.toStdString(), CV_LOAD_IMAGE_GRAYSCALE);
+    m_isCropped = false;
     m_isPreProcessed = false;
+    m_hasEdges = false;
+    m_isProcessed = false;
+    m_isAnalysed = false;
+}
+
+void Image::setCroppedImage(QImage qimg)
+{
+    croppedImage = convertQImage2Mat(qimg);
+    m_isCropped = true;
+    m_isPreProcessed = false;
+    m_hasEdges = false;
     m_isProcessed = false;
     m_isAnalysed = false;
 }
@@ -78,7 +124,6 @@ void Image::setEdges(Mat img)
 {
     edges = img;
     m_hasEdges = true;
-    m_isPreProcessed = false;
     m_isProcessed = false;
     m_isAnalysed = false;
 }
@@ -87,6 +132,7 @@ void Image::setPreProcessedImage(Mat img)
 {
     preprocessedImage = img;
     m_isPreProcessed = true;
+    m_hasEdges = false;
     m_isProcessed = false;
     m_isAnalysed = false;
 }
@@ -96,6 +142,11 @@ void Image::setProcessedImage(Mat img)
     processedImage = img;
     m_isProcessed = true;
     m_isAnalysed = false;
+}
+
+bool Image::isCropped()
+{
+    return m_isCropped;
 }
 
 bool Image::hasEdges()
@@ -118,16 +169,22 @@ bool Image::isAnalysed()
     return m_isAnalysed;
 }
 
-void Image::toBeCannyed(double ht, double lt, int aSize, bool l2)
-{
-    cv::Mat out;
-    cv::Canny(rawImage, out, ht, lt, aSize, l2);
-    setEdges(out);
-}
-
 QStringList Image::getInfoList()
 {
     return infoList;
+}
+
+QPixmap Image::ImageToCannyedPixmap(const Mat &img, double ht, double lt, int aSize, bool l2)
+{
+    if (img.depth() != CV_8U) {
+        qWarning("Error: Canny can't accept a Mat whose depth is not CV_8U!");
+        return QPixmap();
+    }
+    else {
+        cv::Mat out;
+        cv::Canny(img, out, ht, lt, aSize, l2);
+        return convertMat2QPixmap(out);
+    }
 }
 
 QImage Image::convertMat2QImage(const cv::Mat &src)
@@ -172,6 +229,6 @@ QPixmap Image::convertMat2QPixmap(const cv::Mat &src)
 
 Mat Image::convertQImage2Mat(const QImage &qimg)
 {
-    Mat t(qimg.height(), qimg.width(), qimg.format(), (uchar *)qimg.bits(), qimg.bytesPerLine());
+    Mat t(qimg.height(), qimg.width(), qimg.format(), const_cast<uchar *>(qimg.bits()), qimg.bytesPerLine());
     return t;
 }

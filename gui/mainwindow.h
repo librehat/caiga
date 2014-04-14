@@ -35,6 +35,7 @@ public:
 
 signals:
     void configReadFinished(int, int, int, bool, int);
+    void edgesParametersChanged();
 
 private slots:
     void cropCircleButtonPressed();
@@ -44,11 +45,8 @@ private slots:
     void blurCheckBoxStateChanged(int);
     void blurMethodChanged(int);
     void binaryzationCheckBoxStateChanged(int);
-    void apertureSizeChanged(int);
     void highThresholdChanged(double);
-    void lowThresholdChanged(double);
-    void l2gradientStateChanged(int);
-    void updateEdges();
+    void onEdgesParametersChanged();
     void saveEdges();
     void discardEdges();
     void updatePreProcessedImage();

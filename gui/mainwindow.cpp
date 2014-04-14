@@ -57,10 +57,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->blurCheckBox, &QCheckBox::stateChanged, this, &MainWindow::blurCheckBoxStateChanged);
     connect(ui->blurMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::blurMethodChanged);
     connect(ui->binaryzationCheckBox, &QCheckBox::stateChanged, this, &MainWindow::binaryzationCheckBoxStateChanged);
-    connect(ui->apertureSizeSlider, &QSlider::valueChanged, this, &MainWindow::apertureSizeChanged);
+    connect(ui->apertureSizeSlider, &QSlider::valueChanged, this, &MainWindow::onEdgesParametersChanged);
     connect(ui->highThresholdDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::highThresholdChanged);
-    connect(ui->lowThresholdDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::lowThresholdChanged);
-    connect(ui->l2GradientCheckBox, &QCheckBox::stateChanged, this, &MainWindow::l2gradientStateChanged);
+    connect(ui->lowThresholdDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onEdgesParametersChanged);
+    connect(ui->l2GradientCheckBox, &QCheckBox::stateChanged, this, &MainWindow::onEdgesParametersChanged);
     connect(ui->edgesButtonBox, &QDialogButtonBox::accepted, this, &MainWindow::saveEdges);
     connect(ui->edgesButtonBox, &QDialogButtonBox::rejected, this, &MainWindow::discardEdges);
     connect(ui->actionNew_Project, &QAction::triggered, this, &MainWindow::newProject);
@@ -172,28 +172,13 @@ void MainWindow::binaryzationCheckBoxStateChanged(int)
     //TODO
 }
 
-void MainWindow::apertureSizeChanged(int)
-{
-    updateEdges();
-}
-
 void MainWindow::highThresholdChanged(double ht)
 {
     ui->lowThresholdDoubleSpinBox->setMaximum(ht - 1);
-    updateEdges();
+    emit onEdgesParametersChanged();
 }
 
-void MainWindow::lowThresholdChanged(double)
-{
-    updateEdges();
-}
-
-void MainWindow::l2gradientStateChanged(int)
-{
-    updateEdges();
-}
-
-void MainWindow::updateEdges()
+void MainWindow::onEdgesParametersChanged()
 {
     //TODO: Use Project
     int aSize = (ui->apertureSizeSlider->value() * 2 - 1);
@@ -203,13 +188,12 @@ void MainWindow::updateEdges()
         l2 = true;
     }
 
-    cgimg.toBeCannyed(ui->highThresholdDoubleSpinBox->value(), ui->lowThresholdDoubleSpinBox->value(), aSize, l2);
-    ui->edgesLabel->setPixmap(QPixmap::fromImage(cgimg.getEdges()));
+    ui->edgesLabel->setPixmap(CAIGA::Image::ImageToCannyedPixmap(cgimg.getRawMatrix(), ui->highThresholdDoubleSpinBox->value(), ui->lowThresholdDoubleSpinBox->value(), aSize, l2));
 }
 
 void MainWindow::saveEdges()
 {
-    //invoke setEdges()
+    cgimg.setEdges(CAIGA::Image::convertQImage2Mat(ui->edgesLabel->pixmap()->toImage()));
 }
 
 void MainWindow::discardEdges()
@@ -376,8 +360,43 @@ void MainWindow::setActivateImage(QModelIndex i)
 {
     QString imgfile = imgNameModel->data(i, Qt::DisplayRole).toString();
     cgimg.setRawImage(imgfile);
-    QPixmap a(imgfile);
-    ui->rawLabel->setPixmap(a);
+    ui->rawLabel->setPixmap(cgimg.getRawPixmap());
+
+    /*
+     * reverse priority to avoid corruption.
+     */
+    if (cgimg.isProcessed()) {
+        ui->analysisLabel->setPixmap(cgimg.getProcessedPixmap());
+    }
+    else {
+        ui->analysisLabel->setPixmap(cgimg.getEdgesPixmap());
+    }
+
+    if (cgimg.hasEdges()) {
+        ui->analysisTab->setEnabled(true);
+    }
+    else {
+        emit onEdgesParametersChanged();//Initialise a premature edges image
+        ui->analysisTab->setEnabled(false);
+    }
+
+    if (cgimg.isPreProcessed()) {
+        ui->preProcessLabel->setPixmap(cgimg.getPreProcessedPixmap());
+        ui->edgesTab->setEnabled(true);
+    }
+    else {
+        ui->preProcessLabel->setPixmap(cgimg.getCroppedPixmap());
+        ui->preProcessTab->setEnabled(false);
+    }
+
+    if (cgimg.isCropped()) {
+        ui->cropLabel->setPixmap(cgimg.getCroppedPixmap());
+        ui->preProcessTab->setEnabled(true);
+    }
+    else {
+        ui->cropLabel->setPixmap(cgimg.getRawPixmap());
+        ui->preProcessTab->setEnabled(false);
+    }
 }
 
 void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, bool autoSave, int interval)
