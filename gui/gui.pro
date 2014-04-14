@@ -14,12 +14,14 @@ SOURCES  += main.cpp \
             cameradialog.cpp \
             mainwindow.cpp \
             optionsdialog.cpp \
-            qimageviewer.cpp
+            qimageviewer.cpp \
+    qimagedrawer.cpp
            
 HEADERS  += cameradialog.h \
             mainwindow.h \
             optionsdialog.h \
-            qimageviewer.h
+            qimageviewer.h \
+    qimagedrawer.h
 
 RESOURCES+= caiga.qrc
 windows: {

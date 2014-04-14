@@ -38,8 +38,8 @@ signals:
     void edgesParametersChanged();
 
 private slots:
-    void cropCircleButtonPressed();
-    void cropRectButtonPressed();
+    void cropCircleRadioChecked();
+    void cropRectRadioChecked();
     void histogramCheckBoxStateChanged(int);
     void histogramMethodChanged(int);
     void blurCheckBoxStateChanged(int);

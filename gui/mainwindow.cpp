@@ -50,8 +50,8 @@ MainWindow::MainWindow(QWidget *parent) :
      * SIGNALs and SLOTs
      * Only those that cannot be connected in Deisgner should be defined below
      */
-    connect(ui->cropCircleButton, &QPushButton::clicked, this, &MainWindow::cropCircleButtonPressed);
-    connect(ui->cropRectButton, &QPushButton::clicked, this, &MainWindow::cropRectButtonPressed);
+    connect(ui->cropCircleRadio, &QRadioButton::clicked, this, &MainWindow::cropCircleRadioChecked);
+    connect(ui->cropRectRadio, &QRadioButton::clicked, this, &MainWindow::cropRectRadioChecked);
     connect(ui->histogramCheckBox, &QCheckBox::stateChanged, this, &MainWindow::histogramCheckBoxStateChanged);
     connect(ui->histogramMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::histogramMethodChanged);
     connect(ui->blurCheckBox, &QCheckBox::stateChanged, this, &MainWindow::blurCheckBoxStateChanged);
@@ -126,25 +126,14 @@ MainWindow::~MainWindow()
     delete imgNameModel;
 }
 
-void MainWindow::cropCircleButtonPressed()
+void MainWindow::cropCircleRadioChecked()
 {
-    /*
-     * should be combined with paintEvent
-     * make another class for image manipulating
-     *
-    QPainter painter;
-    painter.begin(this);
-    QPen pen(Qt::red, 2, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
-    painter.setPen(pen);
-    int radius = std::min(ui->cropLabel->pixmap()->width(), ui->cropLabel->pixmap()->height());
-    painter.drawEllipse(ui->cropLabel->pixmap()->rect().center(), radius, radius);
-    painter.end();
-    */
+    ui->cropLabel->setDrawCircle(true);
 }
 
-void MainWindow::cropRectButtonPressed()
+void MainWindow::cropRectRadioChecked()
 {
-    //TODO
+    ui->cropLabel->setDrawCircle(false);
 }
 
 void MainWindow::histogramCheckBoxStateChanged(int)

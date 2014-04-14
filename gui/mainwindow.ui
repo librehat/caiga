@@ -64,7 +64,7 @@
        <enum>QTabWidget::South</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="infoTab">
        <attribute name="title">
@@ -120,16 +120,6 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0" rowspan="2">
-         <widget class="QImageViewer" name="cropLabel" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>3</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="1">
          <widget class="QGroupBox" name="ccGroupBox">
           <property name="sizePolicy">
@@ -143,25 +133,19 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QPushButton" name="cropCircleButton">
-             <property name="toolTip">
-              <string>Draw a rectangle first. Then computer will remove the corners and turn it into a circle automatically.</string>
-             </property>
+            <widget class="QRadioButton" name="cropCircleRadio">
              <property name="text">
-              <string>Crop a Circle</string>
+              <string>Crop Circle</string>
              </property>
-             <property name="default">
+             <property name="checked">
               <bool>true</bool>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="cropRectButton">
-             <property name="toolTip">
-              <string>Draw a rectangle as exactly what you expected.</string>
-             </property>
+            <widget class="QRadioButton" name="cropRectRadio">
              <property name="text">
-              <string>Crop a Rectangle</string>
+              <string>Crop Rectangle</string>
              </property>
             </widget>
            </item>
@@ -215,6 +199,16 @@
             </widget>
            </item>
           </layout>
+         </widget>
+        </item>
+        <item row="0" column="0" rowspan="2">
+         <widget class="QImageDrawer" name="cropLabel" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>3</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
          </widget>
         </item>
        </layout>
@@ -880,6 +874,12 @@
    <class>QImageViewer</class>
    <extends>QWidget</extends>
    <header>qimageviewer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>QImageDrawer</class>
+   <extends>QWidget</extends>
+   <header>qimagedrawer.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -1,4 +1,5 @@
 #include "qimageviewer.h"
+#include <QtDebug>
 #include <QStyleOption>
 
 QImageViewer::QImageViewer(QWidget *parent) :
