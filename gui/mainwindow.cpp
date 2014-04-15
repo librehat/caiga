@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 #include "cameradialog.h"
 #include "optionsdialog.h"
-#include <QDebug>
+#include <QtDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -50,8 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
      * SIGNALs and SLOTs
      * Only those that cannot be connected in Deisgner should be defined below
      */
-    connect(ui->cropCircleRadio, &QRadioButton::clicked, this, &MainWindow::cropCircleRadioChecked);
-    connect(ui->cropRectRadio, &QRadioButton::clicked, this, &MainWindow::cropRectRadioChecked);
+    connect(ui->buttonGroup, static_cast<void (QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &MainWindow::ccModeChanged);
     connect(ui->histogramCheckBox, &QCheckBox::stateChanged, this, &MainWindow::histogramCheckBoxStateChanged);
     connect(ui->histogramMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::histogramMethodChanged);
     connect(ui->blurCheckBox, &QCheckBox::stateChanged, this, &MainWindow::blurCheckBoxStateChanged);
@@ -77,6 +76,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout_Qt, &QAction::triggered, this, &MainWindow::aboutQtDialog);
     connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
     connect(ui->imageList, &QListView::activated, this, &MainWindow::setActivateImage);
+
+    connect(ui->cropLabel, &QImageDrawer::calibreFinished, this, &MainWindow::onCalibreFinished);
 
     connect(this, &MainWindow::configReadFinished, this, &MainWindow::updateOptions);
 
@@ -126,14 +127,15 @@ MainWindow::~MainWindow()
     delete imgNameModel;
 }
 
-void MainWindow::cropCircleRadioChecked()
+void MainWindow::ccModeChanged(int i)
 {
-    ui->cropLabel->setDrawCircle(true);
+    ui->cropLabel->setDrawMode(i);
 }
 
-void MainWindow::cropRectRadioChecked()
+void MainWindow::onCalibreFinished(int pixel, double rsize)
 {
-    ui->cropLabel->setDrawCircle(false);
+    double calibre = static_cast<double>(pixel) / rsize;
+    ui->calibreDoubleSpinBox->setValue(calibre);
 }
 
 void MainWindow::histogramCheckBoxStateChanged(int)
@@ -298,8 +300,7 @@ void MainWindow::createCameraDialog()//TODO camera image should be involved with
 void MainWindow::createOptionsDialog()
 {
     OptionsDialog optDlg;
-    connect(&optDlg, SIGNAL(optionsAccepted(int,int,int,bool,int)), this,
-            SLOT(updateOptions(int,int,int,bool,int)));
+    connect(&optDlg, &OptionsDialog::optionsAccepted, this, &MainWindow::updateOptions);
     optDlg.exec();
 }
 
@@ -388,7 +389,7 @@ void MainWindow::setActivateImage(QModelIndex i)
     }
 }
 
-void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, bool autoSave, int interval)
+void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, bool autoSave, int interval, const QString &colour)
 {
     Q_UNUSED(lang);//TODO: i18n
 
@@ -428,6 +429,8 @@ void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, bool auto
 
     Q_UNUSED(autoSave);//TODO: project saving
     Q_UNUSED(interval);
+
+    ui->cropLabel->setPenColour(colour);
 }
 
 void MainWindow::readConfig()
@@ -436,7 +439,8 @@ void MainWindow::readConfig()
                             settings.value("Toolbar Style").toInt(),
                             settings.value("Tab Position", 1).toInt(),
                             settings.value("AutoSave", false).toBool(),
-                            settings.value("AutoSave Interval", 5).toInt());
+                            settings.value("AutoSave Interval", 5).toInt(),
+                            settings.value("Pen Colour", "#F00").toString());
 }
 
 void MainWindow::setWidgetsEnabled(bool b)

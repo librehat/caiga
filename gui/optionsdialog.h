@@ -18,16 +18,16 @@ public:
     ~OptionsDialog();
 
 signals:
-    void optionsAccepted(int, int, int, bool, int);
+    void optionsAccepted(int, int, int, bool, int, const QString &);
 
 private slots:
+    void pickColour();
     void optionsChanged();
-    void writeConfigFile(int, int, int, bool, int);
-    void configsChanged(int);
+    void writeConfigFile(int, int, int, bool, int, const QString &);
+    void configsChanged();
 
 private:
     Ui::OptionsDialog *ui;
-
     QSettings settings;
     void readConfigFile();
     bool confChanged;

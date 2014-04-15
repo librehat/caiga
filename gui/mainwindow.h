@@ -34,12 +34,12 @@ public:
     ~MainWindow();
 
 signals:
-    void configReadFinished(int, int, int, bool, int);
+    void configReadFinished(int, int, int, bool, int, const QString &);
     void edgesParametersChanged();
 
 private slots:
-    void cropCircleRadioChecked();
-    void cropRectRadioChecked();
+    void ccModeChanged(int);
+    void onCalibreFinished(int, double);
     void histogramCheckBoxStateChanged(int);
     void histogramMethodChanged(int);
     void blurCheckBoxStateChanged(int);
@@ -67,7 +67,7 @@ private slots:
     void aboutCAIGADialog();
 
     void setActivateImage(QModelIndex);
-    void updateOptions(int, int, int, bool, int);
+    void updateOptions(int, int, int, bool, int, const QString &);
 
 private:
     Ui::MainWindow *ui;
