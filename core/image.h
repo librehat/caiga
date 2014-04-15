@@ -39,14 +39,16 @@ public:
     ~Image();
     Mat getRawMatrix();
     QPixmap getRawPixmap();
+    QImage getRawImage();
     void setRawImage(Mat img);
     void setRawImage(QImage qimg);
     void setRawImage(const QString &imgfile);
     QImage getCroppedImage();
     QPixmap getCroppedPixmap();
-    void setCroppedImage(QImage qimg);
+    void setCroppedImage(const QImage &);
     QImage getEdgesImage();
     QPixmap getEdgesPixmap();
+    void doEdgesDetection(double, double, int, bool);
     void setEdges(Mat img);
     QImage getPreProcessedImage();
     QPixmap getPreProcessedPixmap();
@@ -64,7 +66,7 @@ public:
     double getCalibre();
     QStringList getInfoList();
 
-    static QPixmap ImageToCannyedPixmap(const Mat &img, double ht, double lt, int aSize, bool l2);
+    static Mat ImageToCannyed(const Mat &img, double ht, double lt, int aSize, bool l2);
     static QImage convertMat2QImage(const cv::Mat &src);
     static QPixmap convertMat2QPixmap(const cv::Mat &src);
     static Mat convertQImage2Mat(const QImage &qimg);

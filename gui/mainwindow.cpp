@@ -50,12 +50,14 @@ MainWindow::MainWindow(QWidget *parent) :
      * SIGNALs and SLOTs
      * Only those that cannot be connected in Deisgner should be defined below
      */
-    connect(ui->buttonGroup, static_cast<void (QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &MainWindow::ccModeChanged);
+    connect(ui->buttonGroup, static_cast<void (QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &MainWindow::ccModeChanged);//Operation Mode
+    connect(ui->ccButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onCCButtonBoxClicked);
     connect(ui->histogramCheckBox, &QCheckBox::stateChanged, this, &MainWindow::histogramCheckBoxStateChanged);
     connect(ui->histogramMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::histogramMethodChanged);
     connect(ui->blurCheckBox, &QCheckBox::stateChanged, this, &MainWindow::blurCheckBoxStateChanged);
     connect(ui->blurMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::blurMethodChanged);
     connect(ui->binaryzationCheckBox, &QCheckBox::stateChanged, this, &MainWindow::binaryzationCheckBoxStateChanged);
+    connect(this, &MainWindow::edgesParametersChanged, this, &MainWindow::onEdgesParametersChanged);
     connect(ui->apertureSizeSlider, &QSlider::valueChanged, this, &MainWindow::onEdgesParametersChanged);
     connect(ui->highThresholdDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::highThresholdChanged);
     connect(ui->lowThresholdDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onEdgesParametersChanged);
@@ -138,6 +140,18 @@ void MainWindow::onCalibreFinished(int pixel, double rsize)
     ui->calibreDoubleSpinBox->setValue(cgimg.getCalibre());
 }
 
+void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
+{
+    if (ui->ccButtonBox->standardButton(b) == QDialogButtonBox::Reset) {
+        //TODO Reset
+    }
+    else {//save
+        QImage i = ui->cropLabel->getCroppedImage();
+        cgimg.setCroppedImage(i);
+        ui->preProcessLabel->setPixmap(cgimg.getCroppedPixmap());//TODO
+    }
+}
+
 void MainWindow::histogramCheckBoxStateChanged(int)
 {
     //TODO
@@ -166,7 +180,7 @@ void MainWindow::binaryzationCheckBoxStateChanged(int)
 void MainWindow::highThresholdChanged(double ht)
 {
     ui->lowThresholdDoubleSpinBox->setMaximum(ht - 1);
-    emit onEdgesParametersChanged();
+    emit edgesParametersChanged();
 }
 
 void MainWindow::onEdgesParametersChanged()
@@ -179,7 +193,8 @@ void MainWindow::onEdgesParametersChanged()
         l2 = true;
     }
 
-    ui->edgesLabel->setPixmap(CAIGA::Image::ImageToCannyedPixmap(cgimg.getRawMatrix(), ui->highThresholdDoubleSpinBox->value(), ui->lowThresholdDoubleSpinBox->value(), aSize, l2));
+    cgimg.doEdgesDetection(ui->highThresholdDoubleSpinBox->value(), ui->lowThresholdDoubleSpinBox->value(), aSize, l2);
+    ui->edgesLabel->setPixmap(cgimg.getEdgesPixmap());
 }
 
 void MainWindow::saveEdges()
@@ -363,29 +378,29 @@ void MainWindow::setActivateImage(QModelIndex i)
     }
 
     if (cgimg.hasEdges()) {
-        ui->analysisTab->setEnabled(true);
+        //ui->analysisTab->setEnabled(true);
     }
     else {
-        emit onEdgesParametersChanged();//Initialise a premature edges image
-        ui->analysisTab->setEnabled(false);
+        emit edgesParametersChanged();//Initialise a premature edges image
+        //ui->analysisTab->setEnabled(false);
     }
 
     if (cgimg.isPreProcessed()) {
         ui->preProcessLabel->setPixmap(cgimg.getPreProcessedPixmap());
-        ui->edgesTab->setEnabled(true);
+        //ui->edgesTab->setEnabled(true);
     }
     else {
         ui->preProcessLabel->setPixmap(cgimg.getCroppedPixmap());
-        ui->preProcessTab->setEnabled(false);
+        //ui->preProcessTab->setEnabled(false);
     }
 
     if (cgimg.isCropped()) {
-        ui->cropLabel->setPixmap(cgimg.getCroppedPixmap());
-        ui->preProcessTab->setEnabled(true);
+        ui->cropLabel->setImage(cgimg.getCroppedImage());
+        //ui->preProcessTab->setEnabled(true);
     }
     else {
-        ui->cropLabel->setPixmap(cgimg.getRawPixmap());
-        ui->preProcessTab->setEnabled(false);
+        ui->cropLabel->setImage(cgimg.getRawImage());
+        //ui->preProcessTab->setEnabled(false);
     }
 }
 

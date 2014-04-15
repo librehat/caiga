@@ -11,13 +11,14 @@ class QImageDrawer : public QWidget
     Q_OBJECT
 public:
     explicit QImageDrawer(QWidget *parent = 0);
-    const QPixmap *getOrigPixmap() const;
-    const QPixmap *getCroppedPixmap() const;
+    const QImage *image() const;
+    QImage getCroppedImage();
     void setDrawMode(int);//-2: circle; -3: rect; -4: calibre (QButtonGroup id start with -2)
     void setPenColour(const QString &);
+    bool isCircle();
 
 public slots:
-    void setPixmap(const QPixmap &pix);
+    void setImage(const QImage &);
 
 signals:
     void calibreFinished(int, double);
@@ -30,9 +31,10 @@ protected:
 
 private:
     int m_drawMode;
+    bool m_isCircle;
     QColor m_penColour;
-    QPixmap m_origPixmap;
-    QPixmap m_croppedPixmap;
+    QImage m_image;
+    QImage m_scaledImage;//this ensures user always crop correct region
     QPoint m_mousePressed;
     QPoint m_mouseReleased;
 

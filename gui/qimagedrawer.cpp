@@ -1,11 +1,13 @@
 #include "qimagedrawer.h"
 #include <cmath>
 #include <QInputDialog>
+#include <QDebug>
 
 QImageDrawer::QImageDrawer(QWidget *parent) :
     QWidget(parent)
 {
     m_drawMode = -2;//circle
+    m_isCircle = true;
     m_penColour = QColor(255, 0, 0);//Red
 }
 
@@ -13,19 +15,20 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);
 
-    if (m_origPixmap.isNull())
+    if (m_image.isNull())
         return;
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
-    QSize pixSize = m_origPixmap.size();
+    QSize pixSize = m_image.size();
     pixSize.scale(event->rect().size(), Qt::KeepAspectRatio);
 
     QPoint topleft;
     topleft.setX((this->width() - pixSize.width()) / 2);
     topleft.setY((this->height() - pixSize.height()) / 2);
 
-    painter.drawPixmap(topleft, m_origPixmap.scaled(pixSize, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    m_scaledImage = m_image.scaled(pixSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    painter.drawImage(topleft, m_scaledImage);
 
     //Draw
     QPen pen(m_penColour, 2, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
@@ -36,11 +39,9 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
         QPoint delta = m_mousePressed - m_mouseReleased;
         m_drawedCircleRadius = static_cast<int>(std::sqrt(std::pow(delta.x(), 2) + std::pow(delta.y(), 2)));
         m_drawedCircleCentre = m_mousePressed;
-        painter.drawEllipse(m_drawedCircleCentre, m_drawedCircleRadius, m_drawedCircleRadius);
     }
     else if (m_drawMode == -3) {//rectangle
         m_drawedRect = QRect(m_mousePressed, m_mouseReleased);
-        painter.drawRect(m_drawedRect);
     }
     else if (m_drawMode == -4) {//calibre
         m_drawedCalibre = QLine(m_mousePressed, m_mouseReleased);
@@ -52,6 +53,15 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
         }
         painter.drawLine(m_drawedCalibre);
     }
+
+    //keep circle or rectangle painted
+    if (m_isCircle) {
+        painter.drawEllipse(m_drawedCircleCentre, m_drawedCircleRadius, m_drawedCircleRadius);
+    }
+    else {
+        painter.drawRect(m_drawedRect);
+    }
+
 }
 
 void QImageDrawer::mousePressEvent(QMouseEvent *m)
@@ -83,6 +93,12 @@ void QImageDrawer::mouseMoveEvent(QMouseEvent *m)
 void QImageDrawer::setDrawMode(int m)
 {
     m_drawMode = m;
+    if (m_drawMode == -2) {
+        m_isCircle = true;
+    }
+    else if (m_drawMode == -3) {
+        m_isCircle = false;
+    }
 }
 
 void QImageDrawer::setPenColour(const QString &c)
@@ -93,18 +109,37 @@ void QImageDrawer::setPenColour(const QString &c)
     }
 }
 
-const QPixmap* QImageDrawer::getOrigPixmap() const
+const QImage* QImageDrawer::image() const
 {
-    return &m_origPixmap;
+    return &m_image;
 }
 
-const QPixmap* QImageDrawer::getCroppedPixmap() const
+bool QImageDrawer::isCircle()
 {
-    return &m_croppedPixmap;
+    return m_isCircle;
 }
 
-void QImageDrawer::setPixmap(const QPixmap &pix)
+QImage QImageDrawer::getCroppedImage()
 {
-    m_origPixmap = pix;
+    if (m_isCircle) {
+        QPoint realCentre = m_drawedCircleCentre - QPoint(0, (this->height() - m_scaledImage.height()) / 2);
+        QRect enclosingRect(realCentre.x() - m_drawedCircleRadius, realCentre.y() - m_drawedCircleRadius, m_drawedCircleRadius * 2, m_drawedCircleRadius * 2);
+        QImage enclosingImage = m_scaledImage.copy(enclosingRect);
+        QImage circle(enclosingImage.size(), enclosingImage.format());
+        QPainter p(&circle);
+        QPainterPath path;
+        path.addEllipse(enclosingImage.rect().center(), m_drawedCircleRadius, m_drawedCircleRadius);
+        p.setClipPath(path);
+        p.drawImage(0, 0, enclosingImage);
+        return circle;
+    }
+    else {
+        return m_scaledImage.copy(m_drawedRect.translated(0, (m_scaledImage.height() - this->height()) / 2));
+    }
+}
+
+void QImageDrawer::setImage(const QImage &img)
+{
+    m_image = img;
     this->update();
 }

@@ -113,7 +113,7 @@
            </sizepolicy>
           </property>
           <property name="standardButtons">
-           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+           <set>QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
           </property>
          </widget>
         </item>
@@ -124,6 +124,9 @@
             <horstretch>3</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="cursor">
+           <cursorShape>CrossCursor</cursorShape>
           </property>
          </widget>
         </item>
@@ -275,7 +278,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>193</width>
+             <width>109</width>
              <height>96</height>
             </rect>
            </property>
@@ -319,8 +322,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>193</width>
-             <height>73</height>
+             <width>159</width>
+             <height>40</height>
             </rect>
            </property>
            <attribute name="label">
@@ -347,7 +350,7 @@
            </sizepolicy>
           </property>
           <property name="standardButtons">
-           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+           <set>QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
           </property>
          </widget>
         </item>
@@ -559,7 +562,7 @@
            </sizepolicy>
           </property>
           <property name="standardButtons">
-           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+           <set>QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
           </property>
          </widget>
         </item>
