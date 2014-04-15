@@ -59,6 +59,9 @@ public:
     bool hasEdges();
     bool isProcessed();
     bool isAnalysed();
+
+    void setCalibre(int, double);
+    double getCalibre();
     QStringList getInfoList();
 
     static QPixmap ImageToCannyedPixmap(const Mat &img, double ht, double lt, int aSize, bool l2);
@@ -81,7 +84,7 @@ private:
     /*
      * analysis data are defined below
      */
-
+    double m_calibre;
     QStringList infoList;//information displayed on the info text browser
 
 };

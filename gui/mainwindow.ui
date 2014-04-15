@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>442</height>
+    <height>446</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -104,11 +104,8 @@
         <property name="margin">
          <number>0</number>
         </property>
-        <item row="3" column="2" alignment="Qt::AlignBottom">
+        <item row="5" column="2" alignment="Qt::AlignBottom">
          <widget class="QDialogButtonBox" name="ccButtonBox">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>1</horstretch>
@@ -120,7 +117,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0" rowspan="4">
+        <item row="0" column="0" rowspan="6">
          <widget class="QImageDrawer" name="cropLabel" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -130,101 +127,89 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
-         <layout class="QVBoxLayout" name="ccRightVerticalLayout">
-          <item>
-           <widget class="QGroupBox" name="ccModeGroupBox">
-            <property name="title">
-             <string>Operation Mode</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_6">
-             <item>
-              <widget class="QRadioButton" name="cropCircleRadio">
-               <property name="text">
-                <string>Crop Circle</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">buttonGroup</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="cropRectRadio">
-               <property name="text">
-                <string>Crop Rectangle</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">buttonGroup</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="calibreRadio">
-               <property name="text">
-                <string>Manually Calibre</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">buttonGroup</string>
-               </attribute>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="calibreLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Calibration</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QDoubleSpinBox" name="calibreDoubleSpinBox">
-            <property name="toolTip">
-             <string>Input calibration if already known.</string>
-            </property>
-            <property name="suffix">
-             <string> pixel:μm</string>
-            </property>
-            <property name="decimals">
-             <number>4</number>
-            </property>
-            <property name="maximum">
-             <double>9999.999900000000707</double>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="autoCalibreButton">
-            <property name="text">
-             <string>Automatically Calibre</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="readCalibrationButton">
-            <property name="text">
-             <string>Read Calibration from File</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="saveCalibrationButton">
-            <property name="text">
-             <string>Save Calibration to File</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+        <item row="0" column="2" rowspan="5" alignment="Qt::AlignTop">
+         <widget class="QGroupBox" name="ccModeGroupBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Operation Mode</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <widget class="QRadioButton" name="cropCircleRadio">
+             <property name="text">
+              <string>Crop Circle</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">buttonGroup</string>
+             </attribute>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="cropRectRadio">
+             <property name="text">
+              <string>Crop Rectangle</string>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">buttonGroup</string>
+             </attribute>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="calibreRadio">
+             <property name="text">
+              <string>Manually Calibre</string>
+             </property>
+             <attribute name="buttonGroup">
+              <string notr="true">buttonGroup</string>
+             </attribute>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="calibreLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Calibration</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="calibreDoubleSpinBox">
+             <property name="toolTip">
+              <string>Input calibration if already known.</string>
+             </property>
+             <property name="suffix">
+              <string> pixel:μm</string>
+             </property>
+             <property name="decimals">
+              <number>4</number>
+             </property>
+             <property name="maximum">
+              <double>9999.999900000000707</double>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="autoCalibreButton">
+             <property name="text">
+              <string>Automatically Calibre</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -236,7 +221,7 @@
         <property name="margin">
          <number>0</number>
         </property>
-        <item row="0" column="2">
+        <item row="0" column="2" alignment="Qt::AlignTop">
          <widget class="QToolBox" name="preProcessToolBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -245,14 +230,14 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="histogramPage">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>178</width>
+             <width>193</width>
              <height>96</height>
             </rect>
            </property>
@@ -290,7 +275,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>109</width>
+             <width>193</width>
              <height>96</height>
             </rect>
            </property>
@@ -334,8 +319,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>159</width>
-             <height>40</height>
+             <width>193</width>
+             <height>73</height>
             </rect>
            </property>
            <attribute name="label">
@@ -355,9 +340,6 @@
         </item>
         <item row="1" column="2" alignment="Qt::AlignBottom">
          <widget class="QDialogButtonBox" name="preProcessButtonBox">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>3</horstretch>
@@ -389,7 +371,7 @@
         <property name="margin">
          <number>0</number>
         </property>
-        <item row="0" column="2">
+        <item row="0" column="2" alignment="Qt::AlignTop">
          <widget class="QGroupBox" name="edgesGroupBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -570,9 +552,6 @@
         </item>
         <item row="1" column="2" alignment="Qt::AlignBottom">
          <widget class="QDialogButtonBox" name="edgesButtonBox">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>1</horstretch>

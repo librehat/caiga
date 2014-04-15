@@ -134,8 +134,8 @@ void MainWindow::ccModeChanged(int i)
 
 void MainWindow::onCalibreFinished(int pixel, double rsize)
 {
-    double calibre = static_cast<double>(pixel) / rsize;
-    ui->calibreDoubleSpinBox->setValue(calibre);
+    cgimg.setCalibre(pixel, rsize);
+    ui->calibreDoubleSpinBox->setValue(cgimg.getCalibre());
 }
 
 void MainWindow::histogramCheckBoxStateChanged(int)

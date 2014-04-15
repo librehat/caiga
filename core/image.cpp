@@ -169,6 +169,16 @@ bool Image::isAnalysed()
     return m_isAnalysed;
 }
 
+void Image::setCalibre(int p, double c)
+{
+    m_calibre = static_cast<double>(p) / c;
+}
+
+double Image::getCalibre()
+{
+    return m_calibre;
+}
+
 QStringList Image::getInfoList()
 {
     return infoList;
