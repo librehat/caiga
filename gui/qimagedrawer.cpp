@@ -150,7 +150,9 @@ QImage QImageDrawer::getCroppedImage()
 {
     if (m_value.isCircle) {
         QRect enclosingRect(m_value.centre.x() - m_value.radius, m_value.centre.y() - m_value.radius, m_value.radius * 2, m_value.radius * 2);
-        //QPainter cannot paint on an image with the QImage::Format_Indexed8 format
+        /*
+         * QPainter cannot paint on an image with the QImage::Format_Indexed8 format
+         */
         QImage enclosingImage = m_image.copy(enclosingRect).convertToFormat(QImage::Format_RGB32);
         QImage circle(enclosingImage.size(), enclosingImage.format());
         QPainter p(&circle);
@@ -187,7 +189,7 @@ void QImageDrawer::reset()
 
 CAIGA::ccStruct QImageDrawer::getCCStruct()
 {
-    m_value.croppedImage = CAIGA::Image::convertQImage2Mat(getCroppedImage());
+    m_value.croppedImage = CAIGA::Image::convertQImage2Mat(getCroppedImage(), true);//ensure it's a CV_8UC1 Mat.
     return m_value;
 }
 

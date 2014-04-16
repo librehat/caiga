@@ -56,10 +56,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->ccDrawer, &QImageDrawer::calibreFinished, ui->calibreDoubleSpinBox, &QDoubleSpinBox::setValue);
 
     //preProcessTab
-    connect(ui->histogramCheckBox, &QCheckBox::stateChanged, this, &MainWindow::histogramCheckBoxStateChanged);
-    connect(ui->histogramMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::histogramMethodChanged);
-    connect(ui->blurCheckBox, &QCheckBox::stateChanged, this, &MainWindow::blurCheckBoxStateChanged);
+    connect(ui->histogramCheckBox, &QCheckBox::stateChanged, this, &MainWindow::histogramEqualiseChecked);
     connect(ui->blurMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::blurMethodChanged);
+    connect(ui->blurKSizeSlider, &QSlider::valueChanged, this, &MainWindow::onBlurParameterChanged);
+    connect(ui->blurSigma1SpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBlurParameterChanged);
+    connect(ui->blurSigma2SpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBlurParameterChanged);
     connect(ui->binaryzationCheckBox, &QCheckBox::stateChanged, this, &MainWindow::binaryzationCheckBoxStateChanged);
     connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPPButtonBoxClicked);
 
@@ -150,27 +151,69 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
     }
     else {//save
         cgimg.setCroppedImage(ui->ccDrawer->getCCStruct());
+        ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
     }
 }
 
-void MainWindow::histogramCheckBoxStateChanged(int)
+void MainWindow::histogramEqualiseChecked(int state)
 {
-    //TODO
+    if (state == Qt::Checked) {
+        cgimg.doHistogramEqualise();
+        ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
+    }
+    else {
+        //TODO
+    }
 }
 
-void MainWindow::histogramMethodChanged(int)
+void MainWindow::onBlurParameterChanged()
 {
-    //TODO
+    int ksize = ui->blurKSizeSlider->value() * 2 - 1;
+    double sx = ui->blurSigma1SpinBox->value();
+    double sy = ui->blurSigma2SpinBox->value();
+
+    switch (ui->blurMethodComboBox->currentIndex()) {
+    case 0://AdaptiveBilateralFilter
+        cgimg.doAdaptiveBilateralFilter(ksize, sx, sy);
+        break;
+    case 1://Gaussian
+        cgimg.doGaussianBlur(ksize, sx, sy);
+        break;
+    case 2://Median
+        cgimg.doMedianBlur(ksize);
+        break;
+    }
+
+    ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
 }
 
-void MainWindow::blurCheckBoxStateChanged(int)
+void MainWindow::blurMethodChanged(int mID)
 {
-    //TODO
-}
-
-void MainWindow::blurMethodChanged(int)
-{
-    //TODO
+    switch(mID) {
+    case 0://AdaptiveBilateralFilter
+        ui->blurSigma1SpinBox->setEnabled(true);
+        ui->blurSigma2SpinBox->setEnabled(true);
+        ui->blurSigma1SpinBox->setMinimum(1.0);
+        ui->blurSigma2SpinBox->setMinimum(1.0);
+        ui->blurSigma1SpinBox->setValue(1.0);
+        ui->blurSigma2SpinBox->setValue(20.0);//set 20 to default
+        ui->blurSigma1Label->setText("Sigma Space");
+        ui->blurSigma2Label->setText("Max Sigma Colour");
+        break;
+    case 1://Gaussian
+        ui->blurSigma1SpinBox->setEnabled(true);
+        ui->blurSigma2SpinBox->setEnabled(true);
+        ui->blurSigma1SpinBox->setMinimum(0.0);
+        ui->blurSigma2SpinBox->setMinimum(0.0);
+        ui->blurSigma1SpinBox->setValue(0.0);//when use zeros, sigma will be calculated from kernel size.
+        ui->blurSigma2SpinBox->setValue(0.0);
+        ui->blurSigma1Label->setText("Sigma X");
+        ui->blurSigma2Label->setText("Sigma Y");
+        break;
+    case 2://Median
+        ui->blurSigma1SpinBox->setEnabled(false);
+        ui->blurSigma2SpinBox->setEnabled(false);
+    }
 }
 
 void MainWindow::binaryzationCheckBoxStateChanged(int)

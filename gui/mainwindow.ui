@@ -265,22 +265,6 @@
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QLabel" name="histogramMethodLabel">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Method</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="histogramMethodComboBox"/>
-            </item>
            </layout>
           </widget>
           <widget class="QWidget" name="blurPage">
@@ -288,8 +272,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>109</width>
-             <height>96</height>
+             <width>182</width>
+             <height>261</height>
             </rect>
            </property>
            <attribute name="label">
@@ -318,11 +302,102 @@
             </item>
             <item>
              <widget class="QComboBox" name="blurMethodComboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <item>
+               <property name="text">
+                <string>Adaptive Bilateral Filter</string>
+               </property>
+              </item>
               <item>
                <property name="text">
                 <string>Gaussian</string>
                </property>
               </item>
+              <item>
+               <property name="text">
+                <string>Median Filter</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="blurKSizeLabel">
+              <property name="text">
+               <string>Kernel Size</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="blurKSizeSlider">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>15</number>
+              </property>
+              <property name="pageStep">
+               <number>1</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="tickPosition">
+               <enum>QSlider::TicksAbove</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="blurSigma1Label">
+              <property name="text">
+               <string>Sigma Space</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="blurSigma1SpinBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="decimals">
+               <number>4</number>
+              </property>
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>999.999900000000025</double>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="blurSigma2Label">
+              <property name="text">
+               <string>Max Sigma Colour</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="blurSigma2SpinBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="decimals">
+               <number>4</number>
+              </property>
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>999.999900000000025</double>
+              </property>
+              <property name="value">
+               <double>20.000000000000000</double>
+              </property>
              </widget>
             </item>
            </layout>
@@ -946,6 +1021,70 @@
     <hint type="destinationlabel">
      <x>41</x>
      <y>188</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>blurCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>blurMethodComboBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>586</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>586</x>
+     <y>202</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>blurCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>blurKSizeSlider</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>586</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>586</x>
+     <y>256</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>blurCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>blurSigma1SpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>586</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>586</x>
+     <y>311</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>blurCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>blurSigma2SpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>586</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>586</x>
+     <y>367</y>
     </hint>
    </hints>
   </connection>

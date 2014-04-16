@@ -35,15 +35,15 @@ public:
 
 signals:
     void configReadFinished(int, int, int, bool, int, const QString &);
+    void blurParametersChanged();
     void edgesParametersChanged();
 
 private slots:
     void ccModeChanged(int);
     void onCCButtonBoxClicked(QAbstractButton *);
-    void histogramCheckBoxStateChanged(int);
-    void histogramMethodChanged(int);
-    void blurCheckBoxStateChanged(int);
+    void histogramEqualiseChecked(int);
     void blurMethodChanged(int);
+    void onBlurParameterChanged();
     void binaryzationCheckBoxStateChanged(int);
     void highThresholdChanged(double);
     void onEdgesParametersChanged();

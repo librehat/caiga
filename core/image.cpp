@@ -139,6 +139,53 @@ void Image::setPreProcessedImage(Mat img)
     m_isAnalysed = false;
 }
 
+void Image::doHistogramEqualise()
+{
+    if (cropCalibre.croppedImage.empty()) {
+        qWarning("Abort. Cropped Image is invalid.");
+        return;
+    }
+    if (cropCalibre.croppedImage.type() != CV_8UC1) {
+        qWarning("Abort. Cannot apply cv::equalizeHist to this Mat type: %d", cropCalibre.croppedImage.type());
+        return;
+    }
+    cv::equalizeHist(cropCalibre.croppedImage, preprocessedImage);
+}
+
+void Image::doGaussianBlur(int kSize, double sx, double sy)
+{
+    cv::Size k(kSize, kSize);
+    if (cropCalibre.croppedImage.empty()) {
+        qWarning("Abort. Cropped Image is invalid.");
+        return;
+    }
+    cv::GaussianBlur(cropCalibre.croppedImage, preprocessedImage, k, sx, sy);
+}
+
+void Image::doAdaptiveBilateralFilter(int kSize, double space, double colour)
+{
+    //this method performs very slowly in old machines
+    cv::Size k(kSize, kSize);
+    if (cropCalibre.croppedImage.empty()) {
+        qWarning("Abort. Cropped Image is invalid.");
+        return;
+    }
+    if (cropCalibre.croppedImage.type() != CV_8UC1 && cropCalibre.croppedImage.type() != CV_8UC3) {
+        qWarning("Abort. Cannot apply cv::adaptiveBilateralFilter to this Mat type: %d", cropCalibre.croppedImage.type());
+        return;
+    }
+    cv::adaptiveBilateralFilter(cropCalibre.croppedImage, preprocessedImage, k, space, colour);
+}
+
+void Image::doMedianBlur(int kSize)
+{
+    if (cropCalibre.croppedImage.empty()) {
+        qWarning("Abort. Cropped Image is invalid.");
+        return;
+    }
+    cv::medianBlur(cropCalibre.croppedImage, preprocessedImage, kSize);
+}
+
 void Image::doEdgesDetection(double ht, double lt, int aSize, bool l2)
 {
     if (m_isCropped) {//FIXME: Change to preprocessedImage
@@ -242,15 +289,28 @@ QPixmap Image::convertMat2QPixmap(const cv::Mat &src)
     return QPixmap::fromImage(convertMat2QImage(src));
 }
 
-Mat Image::convertQImage2Mat(const QImage &qimg)
+Mat Image::convertQImage2Mat(const QImage &qimg, bool indexed)
 {
     QImage swapped = qimg.rgbSwapped();
+    cv::Mat to;
+    cv::Mat temp;
     switch (qimg.format()) {
     case QImage::Format_RGB32:
-        return Mat(qimg.height(), qimg.width(), CV_8UC4, const_cast<uchar *>(qimg.bits()), qimg.bytesPerLine()).clone();
+        to = Mat(qimg.height(), qimg.width(), CV_8UC4, const_cast<uchar *>(qimg.bits()), qimg.bytesPerLine()).clone();
+        if (indexed) {
+            cvtColor(to, temp, CV_RGB2GRAY);
+            temp.convertTo(to, CV_8UC1);
+        }
+        return to.clone();
     case QImage::Format_RGB888:
-        return Mat(swapped.height(), swapped.width(), CV_8UC3, const_cast<uchar *>(swapped.bits()), swapped.bytesPerLine()).clone();
+        to = Mat(swapped.height(), swapped.width(), CV_8UC3, const_cast<uchar *>(swapped.bits()), swapped.bytesPerLine()).clone();
+        if (indexed) {
+            cvtColor(to, temp, CV_RGB2GRAY);//FIXME: not sure about this conversion
+            temp.convertTo(to, CV_8UC1);
+        }
+        return to.clone();
     case QImage::Format_Indexed8:
+        //it's indexed anyway
         return Mat(qimg.height(), qimg.width(), CV_8UC1, const_cast<uchar *>(qimg.bits()), qimg.bytesPerLine()).clone();
     default:
         qWarning("Unsupported QImage format: %d", qimg.format());

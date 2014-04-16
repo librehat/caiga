@@ -68,6 +68,10 @@ public:
     void setEdges(Mat img);
     QImage getPreProcessedImage();
     QPixmap getPreProcessedPixmap();
+    void doHistogramEqualise();
+    void doGaussianBlur(int, double = 0.0, double = 0.0);
+    void doAdaptiveBilateralFilter(int, double, double = 20.0);
+    void doMedianBlur(int);
     void setPreProcessedImage(Mat img);
     QImage getProcessedImage();
     QPixmap getProcessedPixmap();
@@ -83,7 +87,7 @@ public:
     static Mat ImageToCannyed(const Mat &img, double ht, double lt, int aSize, bool l2);
     static QImage convertMat2QImage(const cv::Mat &src);
     static QPixmap convertMat2QPixmap(const cv::Mat &src);
-    static Mat convertQImage2Mat(const QImage &qimg);
+    static Mat convertQImage2Mat(const QImage &qimg, bool indexed = false);
 
 private:
     Mat rawImage;//original image
