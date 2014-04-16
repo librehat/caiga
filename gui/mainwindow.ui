@@ -92,7 +92,14 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QImageViewer" name="rawLabel" native="true"/>
+         <widget class="QImageViewer" name="rawViewer" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -118,9 +125,9 @@
          </widget>
         </item>
         <item row="0" column="0" rowspan="6">
-         <widget class="QImageDrawer" name="cropLabel" native="true">
+         <widget class="QImageDrawer" name="ccDrawer" native="true">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
             <horstretch>3</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -355,9 +362,9 @@
          </widget>
         </item>
         <item row="0" column="0" rowspan="2">
-         <widget class="QImageViewer" name="preProcessLabel" native="true">
+         <widget class="QImageViewer" name="preProcessViewer" native="true">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
             <horstretch>5</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -567,9 +574,9 @@
          </widget>
         </item>
         <item row="0" column="0" rowspan="2">
-         <widget class="QImageViewer" name="edgesLabel" native="true">
+         <widget class="QImageViewer" name="edgesViewer" native="true">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
             <horstretch>3</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -587,7 +594,14 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QImageViewer" name="analysisLabel" native="true"/>
+         <widget class="QImageViewer" name="analysisLabel" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

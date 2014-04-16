@@ -79,7 +79,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
     connect(ui->imageList, &QListView::activated, this, &MainWindow::setActivateImage);
 
-    connect(ui->cropLabel, &QImageDrawer::calibreFinished, this, &MainWindow::onCalibreFinished);
+    connect(ui->ccDrawer, &QImageDrawer::calibreFinished, this, &MainWindow::onCalibreFinished);
 
     connect(this, &MainWindow::configReadFinished, this, &MainWindow::updateOptions);
 
@@ -131,7 +131,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::ccModeChanged(int i)
 {
-    ui->cropLabel->setDrawMode(i);
+    ui->ccDrawer->setDrawMode(i);
 }
 
 void MainWindow::onCalibreFinished(int pixel, qreal rsize)
@@ -146,9 +146,9 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
         //TODO Reset
     }
     else {//save
-        QImage i = ui->cropLabel->getCroppedImage();
+        QImage i = ui->ccDrawer->getCroppedImage();
         cgimg.setCroppedImage(i);
-        ui->preProcessLabel->setPixmap(cgimg.getCroppedPixmap());//TODO
+        ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());//TODO
     }
 }
 
@@ -194,12 +194,12 @@ void MainWindow::onEdgesParametersChanged()
     }
 
     cgimg.doEdgesDetection(ui->highThresholdDoubleSpinBox->value(), ui->lowThresholdDoubleSpinBox->value(), aSize, l2);
-    ui->edgesLabel->setPixmap(cgimg.getEdgesPixmap());
+    ui->edgesViewer->setPixmap(cgimg.getEdgesPixmap());
 }
 
 void MainWindow::saveEdges()
 {
-    cgimg.setEdges(CAIGA::Image::convertQImage2Mat(ui->edgesLabel->pixmap()->toImage()));
+    cgimg.setEdges(CAIGA::Image::convertQImage2Mat(ui->edgesViewer->pixmap()->toImage()));
 }
 
 void MainWindow::discardEdges()
@@ -365,7 +365,7 @@ void MainWindow::setActivateImage(QModelIndex i)
 {
     QString imgfile = imgNameModel->data(i, Qt::DisplayRole).toString();
     cgimg.setRawImage(imgfile);
-    ui->rawLabel->setPixmap(cgimg.getRawPixmap());
+    ui->rawViewer->setPixmap(cgimg.getRawPixmap());
 
     /*
      * reverse priority to avoid corruption.
@@ -386,20 +386,20 @@ void MainWindow::setActivateImage(QModelIndex i)
     }
 
     if (cgimg.isPreProcessed()) {
-        ui->preProcessLabel->setPixmap(cgimg.getPreProcessedPixmap());
+        ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
         //ui->edgesTab->setEnabled(true);
     }
     else {
-        ui->preProcessLabel->setPixmap(cgimg.getCroppedPixmap());
+        ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
         //ui->preProcessTab->setEnabled(false);
     }
 
     if (cgimg.isCropped()) {
-        ui->cropLabel->setImage(cgimg.getCroppedImage());
+        ui->ccDrawer->setImage(cgimg.getCroppedImage());
         //ui->preProcessTab->setEnabled(true);
     }
     else {
-        ui->cropLabel->setImage(cgimg.getRawImage());
+        ui->ccDrawer->setImage(cgimg.getRawImage());
         //ui->preProcessTab->setEnabled(false);
     }
 }
@@ -445,7 +445,7 @@ void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, bool auto
     Q_UNUSED(autoSave);//TODO: project saving
     Q_UNUSED(interval);
 
-    ui->cropLabel->setPenColour(colour);
+    ui->ccDrawer->setPenColour(colour);
 }
 
 void MainWindow::readConfig()
