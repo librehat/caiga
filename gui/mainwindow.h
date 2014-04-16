@@ -39,7 +39,7 @@ signals:
 
 private slots:
     void ccModeChanged(int);
-    void onCalibreFinished(int, double);
+    void onCalibreFinished(int, qreal);
     void onCCButtonBoxClicked(QAbstractButton *);
     void histogramCheckBoxStateChanged(int);
     void histogramMethodChanged(int);

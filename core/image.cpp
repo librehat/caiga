@@ -183,9 +183,9 @@ bool Image::isAnalysed()
     return m_isAnalysed;
 }
 
-void Image::setCalibre(int p, double c)
+void Image::setCalibre(int p, qreal c)
 {
-    m_calibre = static_cast<double>(p) / c;
+    m_calibre = static_cast<qreal>(p) / c;
 }
 
 double Image::getCalibre()

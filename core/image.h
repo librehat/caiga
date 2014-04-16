@@ -62,7 +62,7 @@ public:
     bool isProcessed();
     bool isAnalysed();
 
-    void setCalibre(int, double);
+    void setCalibre(int, qreal);
     double getCalibre();
     QStringList getInfoList();
 
@@ -86,7 +86,7 @@ private:
     /*
      * analysis data are defined below
      */
-    double m_calibre;
+    qreal m_calibre;//pixel/μm
     QStringList infoList;//information displayed on the info text browser
 
 };

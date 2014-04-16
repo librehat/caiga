@@ -134,7 +134,7 @@ void MainWindow::ccModeChanged(int i)
     ui->cropLabel->setDrawMode(i);
 }
 
-void MainWindow::onCalibreFinished(int pixel, double rsize)
+void MainWindow::onCalibreFinished(int pixel, qreal rsize)
 {
     cgimg.setCalibre(pixel, rsize);
     ui->calibreDoubleSpinBox->setValue(cgimg.getCalibre());

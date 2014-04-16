@@ -35,14 +35,16 @@ private:
     QColor m_penColour;
     QImage m_image;
     QImage m_scaledImage;//this ensures user always crop correct region
+    qreal m_scale;//m_scaledImage.size() / m_image.size()
+
+    //all these values are calculated based on original image (m_image)
     QPoint m_mousePressed;
     QPoint m_mouseReleased;
-
     QPoint m_drawedCircleCentre;
     int m_drawedCircleRadius;
     QRect m_drawedRect;
     QLine m_drawedCalibre;
-    double m_calibreRealSize;
+    qreal m_calibreRealSize;
 };
 
 #endif // QIMAGEDRAWER_H
