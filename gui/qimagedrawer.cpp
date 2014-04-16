@@ -1,7 +1,6 @@
 #include "qimagedrawer.h"
 #include <cmath>
 #include <QInputDialog>
-#include <QDebug>
 
 QImageDrawer::QImageDrawer(QWidget *parent) :
     QWidget(parent)
@@ -83,6 +82,9 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
 void QImageDrawer::mousePressEvent(QMouseEvent *m)
 {
     QWidget::mousePressEvent(m);
+    if (m_image.isNull()) {
+        return;
+    }
     m_mousePressed.setX(m->pos().x() / m_scale);
     m_mousePressed.setY((m->pos().y() - (this->height() - m_scaledImage.height()) / 2) / m_scale);
 }
@@ -90,6 +92,9 @@ void QImageDrawer::mousePressEvent(QMouseEvent *m)
 void QImageDrawer::mouseReleaseEvent(QMouseEvent *m)
 {
     QWidget::mouseReleaseEvent(m);
+    if (m_image.isNull()) {
+        return;
+    }
     if (m_drawMode == -4) {//calibre, we should pop up a dialog and get the real size
         bool ok;
         m_calibreRealSize = static_cast<qreal>(QInputDialog::getDouble(this, "Input the real size", "Unit: μm", 0, 0, 9999, 4, &ok));
@@ -103,6 +108,9 @@ void QImageDrawer::mouseReleaseEvent(QMouseEvent *m)
 void QImageDrawer::mouseMoveEvent(QMouseEvent *m)
 {
     QWidget::mouseMoveEvent(m);
+    if (m_image.isNull()) {
+        return;
+    }
     m_mouseReleased.setX(m->pos().x() / m_scale);
     m_mouseReleased.setY((m->pos().y() - (this->height() - m_scaledImage.height()) / 2) / m_scale);
     this->update();
@@ -159,5 +167,19 @@ QImage QImageDrawer::getCroppedImage()
 void QImageDrawer::setImage(const QImage &img)
 {
     m_image = img;
+    this->update();
+}
+
+void QImageDrawer::reset()
+{
+    m_drawMode = -2;
+    m_isCircle = true;
+    m_mousePressed = QPoint();
+    m_mouseReleased = QPoint();
+    m_drawedCircleCentre = QPoint();
+    m_drawedCircleRadius = 0;
+    m_drawedRect = QRect();
+    m_drawedCalibre = QLine();
+    m_calibreRealSize = 0.0;
     this->update();
 }

@@ -143,7 +143,9 @@ void MainWindow::onCalibreFinished(int pixel, qreal rsize)
 void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
 {
     if (ui->ccButtonBox->standardButton(b) == QDialogButtonBox::Reset) {
-        //TODO Reset
+        ui->ccDrawer->reset();
+        ui->calibreDoubleSpinBox->setValue(0.0);
+        ui->cropCircleRadio->setChecked(true);
     }
     else {//save
         QImage i = ui->ccDrawer->getCroppedImage();

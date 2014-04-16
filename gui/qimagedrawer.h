@@ -16,6 +16,7 @@ public:
     void setDrawMode(int);//-2: circle; -3: rect; -4: calibre (QButtonGroup id start with -2)
     void setPenColour(const QString &);
     bool isCircle();
+    void reset();
 
 public slots:
     void setImage(const QImage &);
