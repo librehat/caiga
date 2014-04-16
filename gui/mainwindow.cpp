@@ -50,13 +50,20 @@ MainWindow::MainWindow(QWidget *parent) :
      * SIGNALs and SLOTs
      * Only those that cannot be connected in Deisgner should be defined below
      */
+    //crop and calibre tab
     connect(ui->buttonGroup, static_cast<void (QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &MainWindow::ccModeChanged);//Operation Mode
     connect(ui->ccButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onCCButtonBoxClicked);
+    connect(ui->ccDrawer, &QImageDrawer::calibreFinished, ui->calibreDoubleSpinBox, &QDoubleSpinBox::setValue);
+
+    //preProcessTab
     connect(ui->histogramCheckBox, &QCheckBox::stateChanged, this, &MainWindow::histogramCheckBoxStateChanged);
     connect(ui->histogramMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::histogramMethodChanged);
     connect(ui->blurCheckBox, &QCheckBox::stateChanged, this, &MainWindow::blurCheckBoxStateChanged);
     connect(ui->blurMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::blurMethodChanged);
     connect(ui->binaryzationCheckBox, &QCheckBox::stateChanged, this, &MainWindow::binaryzationCheckBoxStateChanged);
+    connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPPButtonBoxClicked);
+
+    //edgesTab
     connect(this, &MainWindow::edgesParametersChanged, this, &MainWindow::onEdgesParametersChanged);
     connect(ui->apertureSizeSlider, &QSlider::valueChanged, this, &MainWindow::onEdgesParametersChanged);
     connect(ui->highThresholdDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::highThresholdChanged);
@@ -64,6 +71,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->l2GradientCheckBox, &QCheckBox::stateChanged, this, &MainWindow::onEdgesParametersChanged);
     connect(ui->edgesButtonBox, &QDialogButtonBox::accepted, this, &MainWindow::saveEdges);
     connect(ui->edgesButtonBox, &QDialogButtonBox::rejected, this, &MainWindow::discardEdges);
+
+    //MainWindow
     connect(ui->actionNew_Project, &QAction::triggered, this, &MainWindow::newProject);
     connect(ui->actionOpen_Project, &QAction::triggered, this, &MainWindow::openProjectDialog);
     connect(ui->actionSave_Project, &QAction::triggered, this, &MainWindow::saveProject);
@@ -78,8 +87,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout_Qt, &QAction::triggered, this, &MainWindow::aboutQtDialog);
     connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
     connect(ui->imageList, &QListView::activated, this, &MainWindow::setActivateImage);
-
-    connect(ui->ccDrawer, &QImageDrawer::calibreFinished, this, &MainWindow::onCalibreFinished);
 
     connect(this, &MainWindow::configReadFinished, this, &MainWindow::updateOptions);
 
@@ -134,12 +141,6 @@ void MainWindow::ccModeChanged(int i)
     ui->ccDrawer->setDrawMode(i);
 }
 
-void MainWindow::onCalibreFinished(int pixel, qreal rsize)
-{
-    cgimg.setCalibre(pixel, rsize);
-    ui->calibreDoubleSpinBox->setValue(cgimg.getCalibre());
-}
-
 void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
 {
     if (ui->ccButtonBox->standardButton(b) == QDialogButtonBox::Reset) {
@@ -148,9 +149,7 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
         ui->cropCircleRadio->setChecked(true);
     }
     else {//save
-        QImage i = ui->ccDrawer->getCroppedImage();
-        cgimg.setCroppedImage(i);
-        ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());//TODO
+        cgimg.setCroppedImage(ui->ccDrawer->getCCStruct());
     }
 }
 
@@ -177,6 +176,17 @@ void MainWindow::blurMethodChanged(int)
 void MainWindow::binaryzationCheckBoxStateChanged(int)
 {
     //TODO
+}
+
+void MainWindow::onPPButtonBoxClicked(QAbstractButton *b)
+{
+    if (ui->preProcessButtonBox->standardButton(b) == QDialogButtonBox::Reset) {//reset
+        //TODO
+        ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
+    }
+    else {//save
+        //TODO
+    }
 }
 
 void MainWindow::highThresholdChanged(double ht)
@@ -206,22 +216,7 @@ void MainWindow::saveEdges()
 
 void MainWindow::discardEdges()
 {
-    //reset the edges tab
-}
-
-void MainWindow::updatePreProcessedImage()
-{
-    //TODO
-}
-
-void MainWindow::savePreProcessedImage()
-{
-    //TODO
-}
-
-void MainWindow::discardPreProcessedImage()
-{
-    //TODO
+    ui->edgesViewer->setPixmap(cgimg.getCroppedPixmap());//TODO change to preProcessImage
 }
 
 void MainWindow::newProject()
@@ -369,9 +364,6 @@ void MainWindow::setActivateImage(QModelIndex i)
     cgimg.setRawImage(imgfile);
     ui->rawViewer->setPixmap(cgimg.getRawPixmap());
 
-    /*
-     * reverse priority to avoid corruption.
-     */
     if (cgimg.isProcessed()) {
         ui->analysisLabel->setPixmap(cgimg.getProcessedPixmap());
     }
@@ -380,29 +372,22 @@ void MainWindow::setActivateImage(QModelIndex i)
     }
 
     if (cgimg.hasEdges()) {
-        //ui->analysisTab->setEnabled(true);
+        ui->edgesViewer->setPixmap(cgimg.getEdgesPixmap());
     }
     else {
         emit edgesParametersChanged();//Initialise a premature edges image
-        //ui->analysisTab->setEnabled(false);
     }
 
     if (cgimg.isPreProcessed()) {
         ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
-        //ui->edgesTab->setEnabled(true);
     }
     else {
         ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
-        //ui->preProcessTab->setEnabled(false);
     }
 
+    ui->ccDrawer->setImage(cgimg.getRawImage());
     if (cgimg.isCropped()) {
-        ui->ccDrawer->setImage(cgimg.getCroppedImage());
-        //ui->preProcessTab->setEnabled(true);
-    }
-    else {
-        ui->ccDrawer->setImage(cgimg.getRawImage());
-        //ui->preProcessTab->setEnabled(false);
+        ui->ccDrawer->restoreState(cgimg.getCropCalibreStruct());
     }
 }
 

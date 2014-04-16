@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QMouseEvent>
+#include "image.h"
 
 class QImageDrawer : public QWidget
 {
@@ -13,16 +14,18 @@ public:
     explicit QImageDrawer(QWidget *parent = 0);
     const QImage *image() const;
     QImage getCroppedImage();
+    CAIGA::ccStruct getCCStruct();
     void setDrawMode(int);//-2: circle; -3: rect; -4: calibre (QButtonGroup id start with -2)
     void setPenColour(const QString &);
     bool isCircle();
     void reset();
+    void restoreState(CAIGA::ccStruct *);
 
 public slots:
     void setImage(const QImage &);
 
 signals:
-    void calibreFinished(int, double);
+    void calibreFinished(qreal);
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -31,14 +34,15 @@ protected:
     void mouseMoveEvent(QMouseEvent *);
 
 private:
-    int m_drawMode;
-    bool m_isCircle;
     QColor m_penColour;
     QImage m_image;
     QImage m_scaledImage;//this ensures user always crop correct region
     qreal m_scale;//m_scaledImage.size() / m_image.size()
 
-    //all these values are calculated based on original image (m_image)
+    CAIGA::ccStruct m_value;
+    /*
+     * replaced with ccStruct
+     * all these values are calculated based on original image (m_image)
     QPoint m_mousePressed;
     QPoint m_mouseReleased;
     QPoint m_drawedCircleCentre;
@@ -46,6 +50,7 @@ private:
     QRect m_drawedRect;
     QLine m_drawedCalibre;
     qreal m_calibreRealSize;
+    */
 };
 
 #endif // QIMAGEDRAWER_H

@@ -5,8 +5,8 @@
 QImageDrawer::QImageDrawer(QWidget *parent) :
     QWidget(parent)
 {
-    m_drawMode = -2;//circle
-    m_isCircle = true;
+    m_value.drawMode = -2;//circle
+    m_value.isCircle = true;
     m_penColour = QColor(255, 0, 0);//Red
     m_scale = 1.0;
 }
@@ -39,41 +39,41 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
      * use if statement because switch statement forbids initialising variables inside case clauses
      * recalculate points because the user may change m_scaledImage's size by changing window's size.
      */
-    if (m_drawMode == -2) {//circle
-        QPoint delta = m_mousePressed - m_mouseReleased;
-        m_drawedCircleRadius = static_cast<int>(std::sqrt(std::pow(delta.x(), 2) + std::pow(delta.y(), 2)));
-        m_drawedCircleCentre = m_mousePressed;
+    if (m_value.drawMode == -2) {//circle
+        QPoint delta = m_value.pressed - m_value.released;
+        m_value.radius = static_cast<int>(std::sqrt(std::pow(delta.x(), 2) + std::pow(delta.y(), 2)));
+        m_value.centre = m_value.pressed;
     }
-    else if (m_drawMode == -3) {//rectangle
-        m_drawedRect = QRect(m_mousePressed, m_mouseReleased);
+    else if (m_value.drawMode == -3) {//rectangle
+        m_value.rect = QRect(m_value.pressed, m_value.released);
     }
-    else if (m_drawMode == -4) {//calibre
-        m_drawedCalibre = QLine(m_mousePressed, m_mouseReleased);
-        if (std::abs(m_drawedCalibre.dx()) > std::abs(m_drawedCalibre.dy())) {
-            m_drawedCalibre.setP2(QPoint(m_mouseReleased.x(), m_mousePressed.y()));
+    else if (m_value.drawMode == -4) {//calibre
+        m_value.calibreLine = QLine(m_value.pressed, m_value.released);
+        if (std::abs(m_value.calibreLine.dx()) > std::abs(m_value.calibreLine.dy())) {
+            m_value.calibreLine.setP2(QPoint(m_value.released.x(), m_value.pressed.y()));
         }
         else {
-            m_drawedCalibre.setP2(QPoint(m_mousePressed.x(), m_mouseReleased.y()));
+            m_value.calibreLine.setP2(QPoint(m_value.pressed.x(), m_value.released.y()));
         }
-        QPoint p1(m_drawedCalibre.p1().x() * m_scale,
-                  m_drawedCalibre.p1().y() * m_scale + (this->height() - m_scaledImage.height()) / 2);
-        QPoint p2(m_drawedCalibre.p2().x() * m_scale,
-                  m_drawedCalibre.p2().y() * m_scale + (this->height() - m_scaledImage.height()) / 2);
+        QPoint p1(m_value.calibreLine.p1().x() * m_scale,
+                  m_value.calibreLine.p1().y() * m_scale + (this->height() - m_scaledImage.height()) / 2);
+        QPoint p2(m_value.calibreLine.p2().x() * m_scale,
+                  m_value.calibreLine.p2().y() * m_scale + (this->height() - m_scaledImage.height()) / 2);
         painter.drawLine(p1, p2);
     }
 
     //keep circle or rectangle painted
     //resize to m_scaledImage in advance.
-    if (m_isCircle) {
-        QPoint scaledCentre(m_drawedCircleCentre.x() * m_scale,
-                            m_drawedCircleCentre.y() * m_scale + (this->height() - m_scaledImage.height()) / 2);
-        int scaledRadius = m_drawedCircleRadius * m_scale;
+    if (m_value.isCircle) {
+        QPoint scaledCentre(m_value.centre.x() * m_scale,
+                            m_value.centre.y() * m_scale + (this->height() - m_scaledImage.height()) / 2);
+        int scaledRadius = m_value.radius * m_scale;
         painter.drawEllipse(scaledCentre, scaledRadius, scaledRadius);
     }
     else {
-        QPoint topleft(m_drawedRect.topLeft().x() * m_scale,
-                       m_drawedRect.topLeft().y() * m_scale + (this->height() - m_scaledImage.height()) / 2);
-        QRect scaledRect(topleft, m_drawedRect.size() * m_scale);
+        QPoint topleft(m_value.rect.topLeft().x() * m_scale,
+                       m_value.rect.topLeft().y() * m_scale + (this->height() - m_scaledImage.height()) / 2);
+        QRect scaledRect(topleft, m_value.rect.size() * m_scale);
         painter.drawRect(scaledRect);
     }
 
@@ -85,8 +85,8 @@ void QImageDrawer::mousePressEvent(QMouseEvent *m)
     if (m_image.isNull()) {
         return;
     }
-    m_mousePressed.setX(m->pos().x() / m_scale);
-    m_mousePressed.setY((m->pos().y() - (this->height() - m_scaledImage.height()) / 2) / m_scale);
+    m_value.pressed.setX(m->pos().x() / m_scale);
+    m_value.pressed.setY((m->pos().y() - (this->height() - m_scaledImage.height()) / 2) / m_scale);
 }
 
 void QImageDrawer::mouseReleaseEvent(QMouseEvent *m)
@@ -95,12 +95,13 @@ void QImageDrawer::mouseReleaseEvent(QMouseEvent *m)
     if (m_image.isNull()) {
         return;
     }
-    if (m_drawMode == -4) {//calibre, we should pop up a dialog and get the real size
+    if (m_value.drawMode == -4) {//calibre, we should pop up a dialog and get the real size
         bool ok;
-        m_calibreRealSize = static_cast<qreal>(QInputDialog::getDouble(this, "Input the real size", "Unit: μm", 0, 0, 9999, 4, &ok));
+        qreal r = static_cast<qreal>(QInputDialog::getDouble(this, "Input the real size", "Unit: μm", 0, 0, 9999, 4, &ok));
         if (ok) {
-            emit calibreFinished(std::max(std::abs(m_drawedCalibre.dx()), std::abs(m_drawedCalibre.dy())),
-                                 m_calibreRealSize);
+            m_value.realSize = r;
+            m_value.calibre = std::max(std::abs(m_value.calibreLine.dx()), std::abs(m_value.calibreLine.dy())) / m_value.realSize;
+            emit calibreFinished(m_value.calibre);
         }
     }
 }
@@ -111,19 +112,19 @@ void QImageDrawer::mouseMoveEvent(QMouseEvent *m)
     if (m_image.isNull()) {
         return;
     }
-    m_mouseReleased.setX(m->pos().x() / m_scale);
-    m_mouseReleased.setY((m->pos().y() - (this->height() - m_scaledImage.height()) / 2) / m_scale);
+    m_value.released.setX(m->pos().x() / m_scale);
+    m_value.released.setY((m->pos().y() - (this->height() - m_scaledImage.height()) / 2) / m_scale);
     this->update();
 }
 
 void QImageDrawer::setDrawMode(int m)
 {
-    m_drawMode = m;
-    if (m_drawMode == -2) {
-        m_isCircle = true;
+    m_value.drawMode = m;
+    if (m == -2) {
+        m_value.isCircle = true;
     }
-    else if (m_drawMode == -3) {
-        m_isCircle = false;
+    else if (m == -3) {
+        m_value.isCircle = false;
     }
 }
 
@@ -142,25 +143,25 @@ const QImage* QImageDrawer::image() const
 
 bool QImageDrawer::isCircle()
 {
-    return m_isCircle;
+    return m_value.isCircle;
 }
 
 QImage QImageDrawer::getCroppedImage()
 {
-    if (m_isCircle) {
-        QRect enclosingRect(m_drawedCircleCentre.x() - m_drawedCircleRadius, m_drawedCircleCentre.y() - m_drawedCircleRadius, m_drawedCircleRadius * 2, m_drawedCircleRadius * 2);
+    if (m_value.isCircle) {
+        QRect enclosingRect(m_value.centre.x() - m_value.radius, m_value.centre.y() - m_value.radius, m_value.radius * 2, m_value.radius * 2);
         //QPainter cannot paint on an image with the QImage::Format_Indexed8 format
         QImage enclosingImage = m_image.copy(enclosingRect).convertToFormat(QImage::Format_RGB32);
         QImage circle(enclosingImage.size(), enclosingImage.format());
         QPainter p(&circle);
         QPainterPath path;
-        path.addEllipse(enclosingImage.rect().center(), m_drawedCircleRadius, m_drawedCircleRadius);
+        path.addEllipse(enclosingImage.rect().center(), m_value.radius, m_value.radius);
         p.setClipPath(path);
         p.drawImage(0, 0, enclosingImage);
         return circle;
     }
     else {
-        return m_image.copy(m_drawedRect);
+        return m_image.copy(m_value.rect);
     }
 }
 
@@ -172,14 +173,26 @@ void QImageDrawer::setImage(const QImage &img)
 
 void QImageDrawer::reset()
 {
-    m_drawMode = -2;
-    m_isCircle = true;
-    m_mousePressed = QPoint();
-    m_mouseReleased = QPoint();
-    m_drawedCircleCentre = QPoint();
-    m_drawedCircleRadius = 0;
-    m_drawedRect = QRect();
-    m_drawedCalibre = QLine();
-    m_calibreRealSize = 0.0;
+    m_value.drawMode = -2;
+    m_value.isCircle = true;
+    m_value.pressed = QPoint();
+    m_value.released = QPoint();
+    m_value.centre = QPoint();
+    m_value.radius = 0;
+    m_value.rect = QRect();
+    m_value.calibreLine = QLine();
+    m_value.realSize = 0.0;
+    this->update();
+}
+
+CAIGA::ccStruct QImageDrawer::getCCStruct()
+{
+    m_value.croppedImage = CAIGA::Image::convertQImage2Mat(getCroppedImage());
+    return m_value;
+}
+
+void QImageDrawer::restoreState(CAIGA::ccStruct *c)
+{
+    m_value = *c;
     this->update();
 }

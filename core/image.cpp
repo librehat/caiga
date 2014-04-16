@@ -42,7 +42,7 @@ QImage Image::getRawImage()
 
 QImage Image::getCroppedImage()
 {
-    return convertMat2QImage(croppedImage);
+    return convertMat2QImage(cropCalibre.croppedImage);
 }
 
 QImage Image::getEdgesImage()
@@ -67,7 +67,7 @@ QPixmap Image::getRawPixmap()
 
 QPixmap Image::getCroppedPixmap()
 {
-    return convertMat2QPixmap(croppedImage);
+    return convertMat2QPixmap(cropCalibre.croppedImage);
 }
 
 QPixmap Image::getPreProcessedPixmap()
@@ -83,6 +83,11 @@ QPixmap Image::getEdgesPixmap()
 QPixmap Image::getProcessedPixmap()
 {
     return convertMat2QPixmap(processedImage);
+}
+
+ccStruct *Image::getCropCalibreStruct()
+{
+    return &cropCalibre;
 }
 
 void Image::setRawImage(Mat img)
@@ -115,9 +120,9 @@ void Image::setRawImage(const QString &imgfile)
     m_isAnalysed = false;
 }
 
-void Image::setCroppedImage(const QImage &qimg)
+void Image::setCroppedImage(const ccStruct &c)
 {
-    croppedImage = convertQImage2Mat(qimg);
+    cropCalibre = c;
     m_isCropped = true;
     m_isPreProcessed = false;
     m_hasEdges = false;
@@ -137,7 +142,7 @@ void Image::setPreProcessedImage(Mat img)
 void Image::doEdgesDetection(double ht, double lt, int aSize, bool l2)
 {
     if (m_isCropped) {//FIXME: Change to preprocessedImage
-        setEdges(ImageToCannyed(croppedImage, ht, lt, aSize, l2));
+        setEdges(ImageToCannyed(cropCalibre.croppedImage, ht, lt, aSize, l2));
     }
     else
         qWarning("Abort. Image have not been pre-processed!");
@@ -181,16 +186,6 @@ bool Image::isProcessed()
 bool Image::isAnalysed()
 {
     return m_isAnalysed;
-}
-
-void Image::setCalibre(int p, qreal c)
-{
-    m_calibre = static_cast<qreal>(p) / c;
-}
-
-double Image::getCalibre()
-{
-    return m_calibre;
 }
 
 QStringList Image::getInfoList()

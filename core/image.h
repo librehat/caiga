@@ -28,6 +28,21 @@ using namespace cv;
  * in case of global conflict
  */
 namespace CAIGA {
+struct CORE_LIB ccStruct
+{
+    int drawMode;
+    bool isCircle;
+    QPoint pressed;
+    QPoint released;
+    QPoint centre;
+    int radius;
+    QRect rect;
+    QLine calibreLine;
+    qreal calibre;//pixel/μm
+    qreal realSize;
+    Mat croppedImage;
+};
+
 // Mat is implemented internally instead of relevant Qt Classes
 class CORE_LIB Image
 {
@@ -45,7 +60,8 @@ public:
     void setRawImage(const QString &imgfile);
     QImage getCroppedImage();
     QPixmap getCroppedPixmap();
-    void setCroppedImage(const QImage &);
+    ccStruct *getCropCalibreStruct();
+    void setCroppedImage(const ccStruct &);
     QImage getEdgesImage();
     QPixmap getEdgesPixmap();
     void doEdgesDetection(double, double, int, bool);
@@ -62,8 +78,6 @@ public:
     bool isProcessed();
     bool isAnalysed();
 
-    void setCalibre(int, qreal);
-    double getCalibre();
     QStringList getInfoList();
 
     static Mat ImageToCannyed(const Mat &img, double ht, double lt, int aSize, bool l2);
@@ -73,7 +87,7 @@ public:
 
 private:
     Mat rawImage;//original image
-    Mat croppedImage;
+    ccStruct cropCalibre;
     Mat preprocessedImage;//pre-processed image
     Mat edges;
     Mat processedImage;//image ready to be analysed (shed colour already)
@@ -86,7 +100,6 @@ private:
     /*
      * analysis data are defined below
      */
-    qreal m_calibre;//pixel/μm
     QStringList infoList;//information displayed on the info text browser
 
 };

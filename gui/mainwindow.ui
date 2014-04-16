@@ -64,7 +64,7 @@
        <enum>QTabWidget::South</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="infoTab">
        <attribute name="title">
@@ -213,6 +213,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="autoCalibreButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="text">
               <string>Automatically Calibre</string>
              </property>

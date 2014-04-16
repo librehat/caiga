@@ -39,7 +39,6 @@ signals:
 
 private slots:
     void ccModeChanged(int);
-    void onCalibreFinished(int, qreal);
     void onCCButtonBoxClicked(QAbstractButton *);
     void histogramCheckBoxStateChanged(int);
     void histogramMethodChanged(int);
@@ -50,9 +49,7 @@ private slots:
     void onEdgesParametersChanged();
     void saveEdges();
     void discardEdges();
-    void updatePreProcessedImage();
-    void savePreProcessedImage();
-    void discardPreProcessedImage();
+    void onPPButtonBoxClicked(QAbstractButton *);
     void newProject();
     void openProjectDialog();
     void saveProject();
