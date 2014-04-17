@@ -243,15 +243,15 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="histogramPage">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>193</width>
-             <height>96</height>
+             <width>178</width>
+             <height>40</height>
             </rect>
            </property>
            <attribute name="label">
@@ -273,7 +273,7 @@
              <x>0</x>
              <y>0</y>
              <width>182</width>
-             <height>261</height>
+             <height>256</height>
             </rect>
            </property>
            <attribute name="label">
@@ -338,16 +338,16 @@
                <number>1</number>
               </property>
               <property name="maximum">
-               <number>15</number>
+               <number>20</number>
               </property>
               <property name="pageStep">
                <number>1</number>
               </property>
+              <property name="value">
+               <number>5</number>
+              </property>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="tickPosition">
-               <enum>QSlider::TicksAbove</enum>
               </property>
              </widget>
             </item>
@@ -371,6 +371,9 @@
               </property>
               <property name="maximum">
                <double>999.999900000000025</double>
+              </property>
+              <property name="value">
+               <double>5.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -407,8 +410,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>159</width>
-             <height>40</height>
+             <width>180</width>
+             <height>256</height>
             </rect>
            </property>
            <attribute name="label">
@@ -422,11 +425,127 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QLabel" name="binaryzationMethodLabel">
+              <property name="text">
+               <string>Adaptive Method</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="binaryzationMethodComboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <item>
+               <property name="text">
+                <string>Mean C</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Gaussian C</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="binaryzationTypeLabel">
+              <property name="text">
+               <string>Threshold Type</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="binaryzationTypeComboBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <item>
+               <property name="text">
+                <string>Binary</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Binary Invert</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="binaryzationSizeLabel">
+              <property name="text">
+               <string>Block Size</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QSlider" name="binaryzationSizeSlider">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="minimum">
+               <number>2</number>
+              </property>
+              <property name="maximum">
+               <number>999</number>
+              </property>
+              <property name="pageStep">
+               <number>1</number>
+              </property>
+              <property name="value">
+               <number>10</number>
+              </property>
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="binaryzationCLabel">
+              <property name="text">
+               <string>Constant C</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="binaryzationCDoubleSpinBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="decimals">
+               <number>4</number>
+              </property>
+              <property name="minimum">
+               <double>-99.999899999999997</double>
+              </property>
+              <property name="maximum">
+               <double>99.999899999999997</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </widget>
         </item>
-        <item row="1" column="2" alignment="Qt::AlignBottom">
+        <item row="0" column="0" rowspan="3">
+         <widget class="QImageViewer" name="preProcessViewer" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>5</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2" alignment="Qt::AlignBottom">
          <widget class="QDialogButtonBox" name="preProcessButtonBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -436,16 +555,6 @@
           </property>
           <property name="standardButtons">
            <set>QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" rowspan="2">
-         <widget class="QImageViewer" name="preProcessViewer" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-            <horstretch>5</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
           </property>
          </widget>
         </item>
@@ -1085,6 +1194,70 @@
     <hint type="destinationlabel">
      <x>586</x>
      <y>367</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>binaryzationCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>binaryzationCDoubleSpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>585</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>585</x>
+     <y>401</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>binaryzationCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>binaryzationMethodComboBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>585</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>585</x>
+     <y>233</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>binaryzationCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>binaryzationTypeComboBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>585</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>585</x>
+     <y>289</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>binaryzationCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>binaryzationSizeSlider</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>585</x>
+     <y>108</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>585</x>
+     <y>270</y>
     </hint>
    </hints>
   </connection>

@@ -195,6 +195,15 @@ void Image::doMedianBlur(int kSize)
     cv::medianBlur(croppedImage, preprocessedImage, kSize);
 }
 
+void Image::doBinaryzation(int method, int type, int block, double c)
+{
+    if (croppedImage.empty()) {
+        qWarning("Abort. Cropped Image is invalid.");
+        return;
+    }
+    cv::adaptiveThreshold(croppedImage, preprocessedImage, 255, method, type, block, c);
+}
+
 void Image::doEdgesDetection(double ht, double lt, int aSize, bool l2)
 {
     if (m_isCropped) {//FIXME: Change to preprocessedImage

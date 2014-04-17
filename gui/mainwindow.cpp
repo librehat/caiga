@@ -56,12 +56,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->ccDrawer, &QImageDrawer::calibreFinished, ui->calibreDoubleSpinBox, &QDoubleSpinBox::setValue);
 
     //preProcessTab
-    connect(ui->histogramCheckBox, &QCheckBox::stateChanged, this, &MainWindow::histogramEqualiseChecked);
+    connect(ui->histogramCheckBox, &QCheckBox::toggled, this, &MainWindow::histogramEqualiseChecked);
     connect(ui->blurMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::blurMethodChanged);
     connect(ui->blurKSizeSlider, &QSlider::valueChanged, this, &MainWindow::onBlurParameterChanged);
+    connect(ui->blurKSizeSlider, &QSlider::valueChanged, this, &MainWindow::onBlurKSizeSliderChanged);
     connect(ui->blurSigma1SpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBlurParameterChanged);
     connect(ui->blurSigma2SpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBlurParameterChanged);
-    connect(ui->binaryzationCheckBox, &QCheckBox::stateChanged, this, &MainWindow::binaryzationCheckBoxStateChanged);
+    connect(ui->binaryzationCheckBox, &QCheckBox::toggled, this, &MainWindow::binaryzationCheckBoxStateChanged);
+    connect(ui->binaryzationCDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBinaryzationParameterChanged);
+    connect(ui->binaryzationMethodComboBox, static_cast<void (QComboBox::*) (int)>(&QComboBox::currentIndexChanged), this, &MainWindow::onBinaryzationParameterChanged);
+    connect(ui->binaryzationTypeComboBox, static_cast<void (QComboBox::*) (int)>(&QComboBox::currentIndexChanged), this, &MainWindow::onBinaryzationParameterChanged);
+    connect(ui->binaryzationSizeSlider, &QSlider::valueChanged, this, &MainWindow::onBinaryzationParameterChanged);
+    connect(ui->binaryzationSizeSlider, &QSlider::valueChanged, this, &MainWindow::onBinaryzationSizeSliderValueChanged);
     connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPPButtonBoxClicked);
 
     //edgesTab
@@ -69,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->apertureSizeSlider, &QSlider::valueChanged, this, &MainWindow::onEdgesParametersChanged);
     connect(ui->highThresholdDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::highThresholdChanged);
     connect(ui->lowThresholdDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onEdgesParametersChanged);
-    connect(ui->l2GradientCheckBox, &QCheckBox::stateChanged, this, &MainWindow::onEdgesParametersChanged);
+    connect(ui->l2GradientCheckBox, &QCheckBox::toggled, this, &MainWindow::onEdgesParametersChanged);
     connect(ui->edgesButtonBox, &QDialogButtonBox::accepted, this, &MainWindow::saveEdges);
     connect(ui->edgesButtonBox, &QDialogButtonBox::rejected, this, &MainWindow::discardEdges);
 
@@ -156,9 +162,9 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
     }
 }
 
-void MainWindow::histogramEqualiseChecked(int state)
+void MainWindow::histogramEqualiseChecked(bool toggle)
 {
-    if (state == Qt::Checked) {
+    if (toggle) {
         cgimg.doHistogramEqualise();
         ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
     }
@@ -187,6 +193,11 @@ void MainWindow::onBlurParameterChanged()
     }
 
     ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
+}
+
+void MainWindow::onBlurKSizeSliderChanged(int s)
+{
+    ui->blurKSizeSlider->setToolTip(QString::number(s * 2 - 1));
 }
 
 void MainWindow::blurMethodChanged(int mID)
@@ -218,9 +229,31 @@ void MainWindow::blurMethodChanged(int mID)
     }
 }
 
-void MainWindow::binaryzationCheckBoxStateChanged(int)
+void MainWindow::binaryzationCheckBoxStateChanged(bool s)
 {
-    //TODO
+    if (s) {
+        onBinaryzationParameterChanged();
+    }
+}
+
+void MainWindow::onBinaryzationParameterChanged()
+{
+    int blockSize = ui->binaryzationSizeSlider->value() * 2 - 1;
+    int method = cv::ADAPTIVE_THRESH_MEAN_C;
+    int type = cv::THRESH_BINARY;
+    if (ui->binaryzationMethodComboBox->currentIndex() == 1) {
+        method = cv::ADAPTIVE_THRESH_GAUSSIAN_C;
+    }
+    if (ui->binaryzationTypeComboBox->currentIndex() == 1) {
+        method = cv::THRESH_BINARY_INV;
+    }
+    cgimg.doBinaryzation(method, type, blockSize, ui->binaryzationCDoubleSpinBox->value());
+    ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
+}
+
+void MainWindow::onBinaryzationSizeSliderValueChanged(int s)
+{
+    ui->binaryzationSizeSlider->setToolTip(QString::number(s * 2 - 1));
 }
 
 void MainWindow::onPPButtonBoxClicked(QAbstractButton *b)

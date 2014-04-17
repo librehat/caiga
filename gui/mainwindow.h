@@ -42,11 +42,14 @@ signals:
 private slots:
     void ccModeChanged(int);
     void onCCButtonBoxClicked(QAbstractButton *);
-    void histogramEqualiseChecked(int);
+    void histogramEqualiseChecked(bool);
     void blurMethodChanged(int);
     void onBlurParameterChanged();
-    void binaryzationCheckBoxStateChanged(int);
+    void onBlurKSizeSliderChanged(int);
+    void binaryzationCheckBoxStateChanged(bool);
     void highThresholdChanged(double);
+    void onBinaryzationSizeSliderValueChanged(int);
+    void onBinaryzationParameterChanged();
     void onEdgesParametersChanged();
     void saveEdges();
     void discardEdges();

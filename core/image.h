@@ -58,6 +58,7 @@ public:
     void doGaussianBlur(int, double = 0.0, double = 0.0);
     void doAdaptiveBilateralFilter(int, double, double = 20.0);
     void doMedianBlur(int);
+    void doBinaryzation(int, int, int, double);
     void setPreProcessedImage(Mat img);
     QImage getProcessedImage();
     QPixmap getProcessedPixmap();
