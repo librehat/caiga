@@ -1,5 +1,4 @@
 #include "image.h"
-#include <QDebug>
 using namespace CAIGA;
 
 Image::Image()
@@ -42,7 +41,7 @@ QImage Image::getRawImage()
 
 QImage Image::getCroppedImage()
 {
-    return convertMat2QImage(cropCalibre.croppedImage);
+    return convertMat2QImage(croppedImage);
 }
 
 QImage Image::getEdgesImage()
@@ -67,7 +66,7 @@ QPixmap Image::getRawPixmap()
 
 QPixmap Image::getCroppedPixmap()
 {
-    return convertMat2QPixmap(cropCalibre.croppedImage);
+    return convertMat2QPixmap(croppedImage);
 }
 
 QPixmap Image::getPreProcessedPixmap()
@@ -85,9 +84,9 @@ QPixmap Image::getProcessedPixmap()
     return convertMat2QPixmap(processedImage);
 }
 
-ccStruct *Image::getCropCalibreStruct()
+ccStruct Image::getCropCalibreStruct()
 {
-    return &cropCalibre;
+    return cropCalibre;
 }
 
 void Image::setRawImage(Mat img)
@@ -102,7 +101,7 @@ void Image::setRawImage(Mat img)
 
 void Image::setRawImage(QImage qimg)
 {
-    rawImage = convertQImage2Mat(qimg);
+    rawImage = convertQImage2Mat(qimg, true);
     m_isCropped = false;
     m_isPreProcessed = false;
     m_hasEdges = false;
@@ -120,9 +119,18 @@ void Image::setRawImage(const QString &imgfile)
     m_isAnalysed = false;
 }
 
-void Image::setCroppedImage(const ccStruct &c)
+void Image::setCropCalibreStruct(const ccStruct &c)
 {
     cropCalibre = c;
+    if(cropCalibre.isCircle) {
+        //TODO
+    }
+    else {
+        cv::Point tl(c.rect.topLeft().x(), c.rect.topLeft().y());
+        cv::Point br(c.rect.bottomRight().x(), c.rect.bottomRight().y());
+        cv::Rect rect(tl, br);
+        croppedImage = rawImage(rect).clone();
+    }
     m_isCropped = true;
     m_isPreProcessed = false;
     m_hasEdges = false;
@@ -141,55 +149,56 @@ void Image::setPreProcessedImage(Mat img)
 
 void Image::doHistogramEqualise()
 {
-    if (cropCalibre.croppedImage.empty()) {
+    if (croppedImage.empty()) {
         qWarning("Abort. Cropped Image is invalid.");
         return;
     }
-    if (cropCalibre.croppedImage.type() != CV_8UC1) {
-        qWarning("Abort. Cannot apply cv::equalizeHist to this Mat type: %d", cropCalibre.croppedImage.type());
+    if (croppedImage.type() != CV_8UC1) {
+        qWarning("Abort. Cannot apply cv::equalizeHist to this Mat type: %d", croppedImage.type());
         return;
     }
-    cv::equalizeHist(cropCalibre.croppedImage, preprocessedImage);
+    cv::equalizeHist(croppedImage, preprocessedImage);
 }
 
 void Image::doGaussianBlur(int kSize, double sx, double sy)
 {
     cv::Size k(kSize, kSize);
-    if (cropCalibre.croppedImage.empty()) {
+    if (croppedImage.empty()) {
         qWarning("Abort. Cropped Image is invalid.");
         return;
     }
-    cv::GaussianBlur(cropCalibre.croppedImage, preprocessedImage, k, sx, sy);
+    cv::GaussianBlur(croppedImage, preprocessedImage, k, sx, sy);
 }
 
 void Image::doAdaptiveBilateralFilter(int kSize, double space, double colour)
 {
-    //this method performs very slowly in old machines
+    //this method performs very slowly
+    //TODO use OpenCL or GPU accelerate its process
     cv::Size k(kSize, kSize);
-    if (cropCalibre.croppedImage.empty()) {
+    if (croppedImage.empty()) {
         qWarning("Abort. Cropped Image is invalid.");
         return;
     }
-    if (cropCalibre.croppedImage.type() != CV_8UC1 && cropCalibre.croppedImage.type() != CV_8UC3) {
-        qWarning("Abort. Cannot apply cv::adaptiveBilateralFilter to this Mat type: %d", cropCalibre.croppedImage.type());
+    if (croppedImage.type() != CV_8UC1 && croppedImage.type() != CV_8UC3) {
+        qWarning("Abort. Cannot apply cv::adaptiveBilateralFilter to this Mat type: %d", croppedImage.type());
         return;
     }
-    cv::adaptiveBilateralFilter(cropCalibre.croppedImage, preprocessedImage, k, space, colour);
+    cv::adaptiveBilateralFilter(croppedImage, preprocessedImage, k, space, colour);
 }
 
 void Image::doMedianBlur(int kSize)
 {
-    if (cropCalibre.croppedImage.empty()) {
+    if (croppedImage.empty()) {
         qWarning("Abort. Cropped Image is invalid.");
         return;
     }
-    cv::medianBlur(cropCalibre.croppedImage, preprocessedImage, kSize);
+    cv::medianBlur(croppedImage, preprocessedImage, kSize);
 }
 
 void Image::doEdgesDetection(double ht, double lt, int aSize, bool l2)
 {
     if (m_isCropped) {//FIXME: Change to preprocessedImage
-        setEdges(ImageToCannyed(cropCalibre.croppedImage, ht, lt, aSize, l2));
+        setEdges(ImageToCannyed(croppedImage, ht, lt, aSize, l2));
     }
     else
         qWarning("Abort. Image have not been pre-processed!");

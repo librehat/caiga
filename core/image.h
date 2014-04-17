@@ -15,6 +15,7 @@
 #define IMAGE_H
 
 #include "core_lib.h"
+#include "datastructure.h"
 #include <QStringList>
 #include <QImage>
 #include <QPixmap>
@@ -28,21 +29,6 @@ using namespace cv;
  * in case of global conflict
  */
 namespace CAIGA {
-struct CORE_LIB ccStruct
-{
-    int drawMode;
-    bool isCircle;
-    QPoint pressed;
-    QPoint released;
-    QPoint centre;
-    int radius;
-    QRect rect;
-    QLine calibreLine;
-    qreal calibre;//pixel/μm
-    qreal realSize;
-    Mat croppedImage;
-};
-
 // Mat is implemented internally instead of relevant Qt Classes
 class CORE_LIB Image
 {
@@ -60,8 +46,8 @@ public:
     void setRawImage(const QString &imgfile);
     QImage getCroppedImage();
     QPixmap getCroppedPixmap();
-    ccStruct *getCropCalibreStruct();
-    void setCroppedImage(const ccStruct &);
+    ccStruct getCropCalibreStruct();
+    void setCropCalibreStruct(const ccStruct &);
     QImage getEdgesImage();
     QPixmap getEdgesPixmap();
     void doEdgesDetection(double, double, int, bool);
@@ -92,6 +78,7 @@ public:
 private:
     Mat rawImage;//original image
     ccStruct cropCalibre;
+    Mat croppedImage;
     Mat preprocessedImage;//pre-processed image
     Mat edges;
     Mat processedImage;//image ready to be analysed (shed colour already)

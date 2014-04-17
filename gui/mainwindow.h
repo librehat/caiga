@@ -37,6 +37,7 @@ signals:
     void configReadFinished(int, int, int, bool, int, const QString &);
     void blurParametersChanged();
     void edgesParametersChanged();
+    void messageArrived(const QString &);//to display on statusbar
 
 private slots:
     void ccModeChanged(int);
@@ -63,6 +64,7 @@ private slots:
     void projectPropertiesDialog();
     void aboutQtDialog();
     void aboutCAIGADialog();
+    void onMessagesArrived(const QString &);
 
     void setActivateImage(QModelIndex);
     void updateOptions(int, int, int, bool, int, const QString &);

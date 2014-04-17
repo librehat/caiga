@@ -5,7 +5,8 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QMouseEvent>
-#include "image.h"
+#include "datastructure.h"
+using namespace CAIGA;
 
 class QImageDrawer : public QWidget
 {
@@ -13,13 +14,13 @@ class QImageDrawer : public QWidget
 public:
     explicit QImageDrawer(QWidget *parent = 0);
     const QImage *image() const;
-    QImage getCroppedImage();
-    CAIGA::ccStruct getCCStruct();
+    //QImage getCroppedImage();
+    ccStruct getCCStruct();
     void setDrawMode(int);//-2: circle; -3: rect; -4: calibre (QButtonGroup id start with -2)
     void setPenColour(const QString &);
     bool isCircle();
     void reset();
-    void restoreState(CAIGA::ccStruct *);
+    void restoreState(ccStruct);
 
 public slots:
     void setImage(const QImage &);
@@ -39,7 +40,7 @@ private:
     QImage m_scaledImage;//this ensures user always crop correct region
     qreal m_scale;//m_scaledImage.size() / m_image.size()
 
-    CAIGA::ccStruct m_value;
+    ccStruct m_value;
     /*
      * replaced with ccStruct
      * all these values are calculated based on original image (m_image)

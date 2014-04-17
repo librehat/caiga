@@ -88,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout_Qt, &QAction::triggered, this, &MainWindow::aboutQtDialog);
     connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
     connect(ui->imageList, &QListView::activated, this, &MainWindow::setActivateImage);
+    connect(this, &MainWindow::messageArrived, this, &MainWindow::onMessagesArrived);
 
     connect(this, &MainWindow::configReadFinished, this, &MainWindow::updateOptions);
 
@@ -150,7 +151,7 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
         ui->cropCircleRadio->setChecked(true);
     }
     else {//save
-        cgimg.setCroppedImage(ui->ccDrawer->getCCStruct());
+        cgimg.setCropCalibreStruct(ui->ccDrawer->getCCStruct());
         ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
     }
 }
@@ -162,7 +163,8 @@ void MainWindow::histogramEqualiseChecked(int state)
         ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
     }
     else {
-        //TODO
+        //TODO kind of undo
+        ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
     }
 }
 
@@ -545,4 +547,9 @@ void MainWindow::setCurrentDirbyFile(QString &f)
     if (trimIndex != -1) {
         QDir::setCurrent(f.left(trimIndex));
     }
+}
+
+void MainWindow::onMessagesArrived(const QString &str)
+{
+    ui->statusBar->showMessage(str);
 }
