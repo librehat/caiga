@@ -69,7 +69,6 @@ public:
 
     QStringList getInfoList();
 
-    static Mat ImageToCannyed(const Mat &img, double ht, double lt, int aSize, bool l2);
     static QImage convertMat2QImage(const cv::Mat &src);
     static QPixmap convertMat2QPixmap(const cv::Mat &src);
     static Mat convertQImage2Mat(const QImage &qimg, bool indexed = false);

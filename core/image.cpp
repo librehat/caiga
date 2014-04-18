@@ -235,41 +235,29 @@ QStringList Image::getInfoList()
     return infoList;
 }
 
-Mat Image::ImageToCannyed(const Mat &img, double ht, double lt, int aSize, bool l2)
-{
-    if (img.depth() != CV_8U) {
-        qWarning("Error: Canny can't accept a Mat whose depth is not CV_8U!");
-        return cv::Mat();
-    }
-    else {
-        cv::Mat out;
-        cv::Canny(img, out, ht, lt, aSize, l2);
-        return out;
-    }
-}
 //cv::Mat and QImage conversion code is based on http://asmaloney.com/2013/11/code/converting-between-cvmat-and-qimage-or-qpixmap/
 QImage Image::convertMat2QImage(const cv::Mat &src)
 {
     switch(src.type()) {
     case CV_8UC3:
     {
-        QImage t(src.data, src.cols, src.rows, (int)src.step, QImage::Format_RGB888);
+        QImage t(src.data, src.cols, src.rows, static_cast<int>(src.step), QImage::Format_RGB888);
         return t.rgbSwapped();
     }
     case CV_8UC4:
     {
-        QImage t(src.data, src.cols, src.rows, (int)src.step, QImage::Format_RGB32);
+        QImage t(src.data, src.cols, src.rows, static_cast<int>(src.step), QImage::Format_RGB32);
         return t;
     }
     case CV_8UC1:
     {
         static QVector<QRgb> colorTable;
         if (colorTable.isEmpty()) {
-            for (int i=0; i<256; i++) {
-                colorTable.push_back(qRgb(i,i,i));
+            for (int i = 0; i < 256; i++) {
+                colorTable.push_back(qRgb(i, i, i));
             }
         }
-        QImage t(src.data, src.cols, src.rows, (int)src.step, QImage::Format_Indexed8);
+        QImage t(src.data, src.cols, src.rows, static_cast<int>(src.step), QImage::Format_Indexed8);
         t.setColorTable(colorTable);
         return t;
     }
