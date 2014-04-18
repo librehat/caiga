@@ -15,13 +15,13 @@ SOURCES  += main.cpp \
             mainwindow.cpp \
             optionsdialog.cpp \
             qimageviewer.cpp \
-    qimagedrawer.cpp
+            qimagedrawer.cpp
            
 HEADERS  += cameradialog.h \
             mainwindow.h \
             optionsdialog.h \
             qimageviewer.h \
-    qimagedrawer.h
+            qimagedrawer.h
 
 RESOURCES+= caiga.qrc
 windows: {
@@ -30,9 +30,9 @@ windows: {
     OTHER_FILES += winicon.rc
 }
 
-windows:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../core/release/ -lcore
-else:windows:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../core/debug/ -lcore
-else:unix: LIBS += -L$$OUT_PWD/../core/ -lcore
+windows:CONFIG(release, debug|release): LIBS += -L../core/release -lcore
+else:windows:CONFIG(debug, debug|release): LIBS += -L../core/debug -lcore
+else:unix: LIBS += -L../core -lcore
 
-INCLUDEPATH += $$PWD/../core
-DEPENDPATH  += $$PWD/../core
+INCLUDEPATH += ../core
+DEPENDPATH  += ../core

@@ -1,6 +1,6 @@
 QT          += core concurrent
 
-VERSION     = 0.1.0
+unix: VERSION     = 0.1.0
 TEMPLATE    = lib
 UI_DIR      = uics
 MOC_DIR     = mocs
