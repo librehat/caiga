@@ -16,12 +16,12 @@ class CORE_LIB WorkerThread : public QObject
     Q_OBJECT
 public:
     explicit WorkerThread(QObject *parent = 0);
-    void histogramEqualiseWork(CAIGA::Image *cimg);
-    void adaptiveBilateralFilterWork(CAIGA::Image *cimg, int k, double space, double colour);
-    void gaussianBlurWork(CAIGA::Image *cimg, int k, double sx, double sy);
-    void medianBlurWork(CAIGA::Image *cimg, int k);
-    void binaryzationWork(CAIGA::Image *cimg, int method, int type, int blockSize, double C);
-    void cannyEdgesWork(CAIGA::Image *cimg, double ht, double lt, int aSize, bool l2);
+    void histogramEqualiseWork(CAIGA::Image &cimg);
+    void adaptiveBilateralFilterWork(CAIGA::Image &cimg, int k, double space, double colour);
+    void gaussianBlurWork(CAIGA::Image &cimg, int k, double sx, double sy);
+    void medianBlurWork(CAIGA::Image &cimg, int k);
+    void binaryzationWork(CAIGA::Image &cimg, int method, int type, int blockSize, double C);
+    void cannyEdgesWork(CAIGA::Image &cimg, double ht, double lt, int aSize, bool l2);
 
 signals:
     void workFinished();

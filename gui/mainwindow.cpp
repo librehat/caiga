@@ -170,7 +170,7 @@ void MainWindow::histogramEqualiseChecked(bool toggle)
         if (cgimg.validateHistogramEqualise()) {
             disconnect(&worker, &WorkerThread::workFinished, 0, 0);
             connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
-            worker.histogramEqualiseWork(&cgimg);
+            worker.histogramEqualiseWork(cgimg);
         }
     }
     else {
@@ -202,17 +202,17 @@ void MainWindow::onBlurParameterChanged()
     switch (ui->blurMethodComboBox->currentIndex()) {
     case 0://AdaptiveBilateralFilter
         if (cgimg.validateAdaptiveBilateralFilter()) {
-            worker.adaptiveBilateralFilterWork(&cgimg, ksize, sx, sy);
+            worker.adaptiveBilateralFilterWork(cgimg, ksize, sx, sy);
         }
         break;
     case 1://Gaussian
         if (cgimg.validateGaussianMedianBlur()) {
-            worker.gaussianBlurWork(&cgimg, ksize, sx, sy);
+            worker.gaussianBlurWork(cgimg, ksize, sx, sy);
         }
         break;
     case 2://Median
         if (cgimg.validateGaussianMedianBlur()) {
-            worker.medianBlurWork(&cgimg, ksize);
+            worker.medianBlurWork(cgimg, ksize);
         }
         break;
     }
@@ -276,7 +276,7 @@ void MainWindow::onBinaryzationParameterChanged()
     }
     disconnect(&worker, &WorkerThread::workFinished, 0, 0);
     connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
-    worker.binaryzationWork(&cgimg, method, type, blockSize, ui->binaryzationCDoubleSpinBox->value());
+    worker.binaryzationWork(cgimg, method, type, blockSize, ui->binaryzationCDoubleSpinBox->value());
 }
 
 void MainWindow::onBinaryzationSizeSliderValueChanged(int s)
@@ -317,7 +317,7 @@ void MainWindow::onEdgesParametersChanged()
 
     disconnect(&worker, &WorkerThread::workFinished, 0, 0);
     connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onEdgesDetectionWorkFinished);
-    worker.cannyEdgesWork(&cgimg, ui->highThresholdDoubleSpinBox->value(), ui->lowThresholdDoubleSpinBox->value(), aSize, l2);
+    worker.cannyEdgesWork(cgimg, ui->highThresholdDoubleSpinBox->value(), ui->lowThresholdDoubleSpinBox->value(), aSize, l2);
 }
 
 void MainWindow::onEdgesDetectionWorkFinished()

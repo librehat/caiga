@@ -79,14 +79,11 @@ private:
     Mat rawImage;//original image
     ccStruct cropCalibre;
     Mat croppedImage;
+    Mat croppedEnclosingRectImage;//this stores enclosing rect for circular cropped image
     Mat preprocessedImage;//pre-processed image
     Mat edges;
     Mat processedImage;//image ready to be analysed (shed colour already)
-    bool m_isCropped;
-    bool m_hasEdges;
-    bool m_isPreProcessed;//with prefix "m_" to indicate an object instead of a function
-    bool m_isProcessed;
-    bool m_isAnalysed;
+
     /*
      * analysis data are defined below
      */

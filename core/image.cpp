@@ -3,12 +3,7 @@
 using namespace CAIGA;
 
 Image::Image()
-{
-    m_hasEdges = false;
-    m_isPreProcessed = false;
-    m_isProcessed = false;
-    m_isAnalysed = false;
-}
+{}
 
 Image::Image(QImage img)
 {
@@ -93,38 +88,33 @@ ccStruct Image::getCropCalibreStruct()
 void Image::setRawImage(Mat img)
 {
     rawImage = img;
-    m_isCropped = false;
-    m_isPreProcessed = false;
-    m_hasEdges = false;
-    m_isProcessed = false;
-    m_isAnalysed = false;
 }
 
 void Image::setRawImage(QImage qimg)
 {
     rawImage = convertQImage2Mat(qimg, true);
-    m_isCropped = false;
-    m_isPreProcessed = false;
-    m_hasEdges = false;
-    m_isProcessed = false;
-    m_isAnalysed = false;
 }
 
 void Image::setRawImage(const QString &imgfile)
 {
     rawImage = cv::imread(imgfile.toStdString(), CV_LOAD_IMAGE_GRAYSCALE);
-    m_isCropped = false;
-    m_isPreProcessed = false;
-    m_hasEdges = false;
-    m_isProcessed = false;
-    m_isAnalysed = false;
 }
 
 void Image::setCropCalibreStruct(const ccStruct &c)
 {
     cropCalibre = c;
     if(cropCalibre.isCircle) {
-        //TODO
+        cv::Point tl(c.centre.x() - c.radius, c.centre.y() - c.radius);
+        cv::Point br(c.centre.x() + c.radius, c.centre.y() + c.radius);
+        cv::Rect enclosingRect(tl, br);
+        croppedEnclosingRectImage = rawImage(enclosingRect).clone();
+
+        //notice that this centre is relevant to croppedImage instead of rawImage
+        cv::Point centre(enclosingRect.width / 2, enclosingRect.height / 2);
+        cv::Mat circle = cv::Mat::zeros(croppedEnclosingRectImage.rows, croppedEnclosingRectImage.cols, CV_8UC1);
+        croppedImage = cv::Mat::zeros(croppedEnclosingRectImage.rows, croppedEnclosingRectImage.cols, CV_8UC1);
+        cv::circle(circle, centre, c.radius, 255, -1, 8, 0);
+        cv::bitwise_and(croppedEnclosingRectImage, croppedEnclosingRectImage, croppedImage, circle);//bitwise_and is the C++ version of "cvAnd"
     }
     else {
         cv::Point tl(c.rect.topLeft().x(), c.rect.topLeft().y());
@@ -132,20 +122,11 @@ void Image::setCropCalibreStruct(const ccStruct &c)
         cv::Rect rect(tl, br);
         croppedImage = rawImage(rect).clone();
     }
-    m_isCropped = true;
-    m_isPreProcessed = false;
-    m_hasEdges = false;
-    m_isProcessed = false;
-    m_isAnalysed = false;
 }
 
 void Image::setPreProcessedImage(Mat img)
 {
     preprocessedImage = img;
-    m_isPreProcessed = true;
-    m_hasEdges = false;
-    m_isProcessed = false;
-    m_isAnalysed = false;
 }
 
 bool Image::validateHistogramEqualise()
@@ -201,33 +182,31 @@ bool Image::validateEdgesDetection()
 void Image::setProcessedImage(Mat img)
 {
     processedImage = img;
-    m_isProcessed = true;
-    m_isAnalysed = false;
 }
 
 bool Image::isCropped()
 {
-    return m_isCropped;
+    return !croppedImage.empty();
 }
 
 bool Image::hasEdges()
 {
-    return m_hasEdges;
+    return !edges.empty();
 }
 
 bool Image::isPreProcessed()
 {
-    return m_isPreProcessed;
+    return !preprocessedImage.empty();
 }
 
 bool Image::isProcessed()
 {
-    return m_isProcessed;
+    return !processedImage.empty();
 }
 
 bool Image::isAnalysed()
 {
-    return m_isAnalysed;
+    return !infoList.empty();
 }
 
 QStringList Image::getInfoList()
