@@ -1,4 +1,4 @@
-QT          += core
+QT          += core concurrent
 
 VERSION     = 0.1.0
 TEMPLATE    = lib

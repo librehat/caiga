@@ -2,25 +2,44 @@
 #define WORKERTHREAD_H
 
 #include <QObject>
+#include <QtConcurrent>
 #include <QFuture>
 #include <QFutureWatcher>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include "core_lib.h"
-
+#include "datastructure.h"
+#include "image.h"
+namespace CAIGA {
 class CORE_LIB WorkerThread : public QObject
 {
     Q_OBJECT
 public:
     explicit WorkerThread(QObject *parent = 0);
-    void getToWork(void *functionPointer());
+    void histogramEqualiseWork(CAIGA::Image *cimg);
+    void adaptiveBilateralFilterWork(CAIGA::Image *cimg, int k, double space, double colour);
+    void gaussianBlurWork(CAIGA::Image *cimg, int k, double sx, double sy);
+    void medianBlurWork(CAIGA::Image *cimg, int k);
+    void binaryzationWork(CAIGA::Image *cimg, int method, int type, int blockSize, double C);
+    void cannyEdgesWork(CAIGA::Image *cimg, double ht, double lt, int aSize, bool l2);
 
 signals:
-    void workFinished(bool);
-    void workStarted(bool);
+    void workFinished();
+    void workStatusUpdated(const QString &);
 
-public slots:
+private slots:
+    void handleWorkFinished();
+    void handleWorkStarted();
 
 private:
     QFutureWatcher<void> watcher;
+    static void doHistogramEqualiseWork(cv::Mat *src, cv::Mat *out);
+    static void doAdaptiveBilateralFilterWork(cv::Mat *src, cv::Mat *out, cv::Size kSize, double space, double colour);
+    static void doGaussianBlurWork(cv::Mat *src, cv::Mat *out, cv::Size kSize, double sx, double sy);
+    static void doMedianBlurWork(cv::Mat *src, cv::Mat *out, int kSize);
+    static void doBinaryzationWork(cv::Mat *src, cv::Mat *out, parameterS p);
+    static void doCannyEdgesWork(cv::Mat *src, cv::Mat *out, parameterS p);
 };
+}
 
 #endif // WORKERTHREAD_H

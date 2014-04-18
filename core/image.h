@@ -50,15 +50,13 @@ public:
     void setCropCalibreStruct(const ccStruct &);
     QImage getEdgesImage();
     QPixmap getEdgesPixmap();
-    void doEdgesDetection(double, double, int, bool);
-    void setEdges(Mat img);
+    bool validateEdgesDetection();
     QImage getPreProcessedImage();
     QPixmap getPreProcessedPixmap();
-    void doHistogramEqualise();
-    void doGaussianBlur(int, double = 0.0, double = 0.0);
-    void doAdaptiveBilateralFilter(int, double, double = 20.0);
-    void doMedianBlur(int);
-    void doBinaryzation(int, int, int, double);
+    bool validateHistogramEqualise();
+    bool validateGaussianMedianBlur();
+    bool validateAdaptiveBilateralFilter();
+    bool validateBinaryzation();
     void setPreProcessedImage(Mat img);
     QImage getProcessedImage();
     QPixmap getProcessedPixmap();
@@ -76,6 +74,8 @@ public:
     static QPixmap convertMat2QPixmap(const cv::Mat &src);
     static Mat convertQImage2Mat(const QImage &qimg, bool indexed = false);
 
+    friend class WorkerThread;
+
 private:
     Mat rawImage;//original image
     ccStruct cropCalibre;
@@ -88,7 +88,6 @@ private:
     bool m_isPreProcessed;//with prefix "m_" to indicate an object instead of a function
     bool m_isProcessed;
     bool m_isAnalysed;
-
     /*
      * analysis data are defined below
      */

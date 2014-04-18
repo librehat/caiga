@@ -148,78 +148,54 @@ void Image::setPreProcessedImage(Mat img)
     m_isAnalysed = false;
 }
 
-void Image::doHistogramEqualise()
+bool Image::validateHistogramEqualise()
 {
-    if (croppedImage.empty()) {
-        qWarning("Abort. Cropped Image is invalid.");
-        return;
-    }
-    if (croppedImage.type() != CV_8UC1) {
-        qWarning("Abort. Cannot apply cv::equalizeHist to this Mat type: %d", croppedImage.type());
-        return;
-    }
-    cv::equalizeHist(croppedImage, preprocessedImage);
-}
-
-void Image::doGaussianBlur(int kSize, double sx, double sy)
-{
-    cv::Size k(kSize, kSize);
-    if (croppedImage.empty()) {
-        qWarning("Abort. Cropped Image is invalid.");
-        return;
-    }
-    cv::GaussianBlur(croppedImage, preprocessedImage, k, sx, sy);
-}
-
-void Image::doAdaptiveBilateralFilter(int kSize, double space, double colour)
-{
-    //this method performs very slowly
-    //TODO use OpenCL or GPU accelerate its process
-    cv::Size k(kSize, kSize);
-    if (croppedImage.empty()) {
-        qWarning("Abort. Cropped Image is invalid.");
-        return;
-    }
-    if (croppedImage.type() != CV_8UC1 && croppedImage.type() != CV_8UC3) {
-        qWarning("Abort. Cannot apply cv::adaptiveBilateralFilter to this Mat type: %d", croppedImage.type());
-        return;
-    }
-    cv::adaptiveBilateralFilter(croppedImage, preprocessedImage, k, space, colour);
-}
-
-void Image::doMedianBlur(int kSize)
-{
-    if (croppedImage.empty()) {
-        qWarning("Abort. Cropped Image is invalid.");
-        return;
-    }
-    cv::medianBlur(croppedImage, preprocessedImage, kSize);
-}
-
-void Image::doBinaryzation(int method, int type, int block, double c)
-{
-    if (croppedImage.empty()) {
-        qWarning("Abort. Cropped Image is invalid.");
-        return;
-    }
-    cv::adaptiveThreshold(croppedImage, preprocessedImage, 255, method, type, block, c);
-}
-
-void Image::doEdgesDetection(double ht, double lt, int aSize, bool l2)
-{
-    if (m_isCropped) {//FIXME: Change to preprocessedImage
-        setEdges(ImageToCannyed(croppedImage, ht, lt, aSize, l2));
+    if (croppedImage.empty() || croppedImage.type() != CV_8UC1) {
+        qWarning("Abort. CroppedImage is invalid. Its Mat type is: %d", croppedImage.type());
+        return false;
     }
     else
-        qWarning("Abort. Image have not been pre-processed!");
+        return true;
 }
 
-void Image::setEdges(Mat img)
+bool Image::validateGaussianMedianBlur()
 {
-    edges = img;
-    m_hasEdges = true;
-    m_isProcessed = false;
-    m_isAnalysed = false;
+    if (croppedImage.empty()) {
+        qWarning("Abort. Cropped Image is invalid.");
+        return false;
+    }
+    else
+        return true;
+}
+
+bool Image::validateAdaptiveBilateralFilter()
+{
+    if ((croppedImage.type() != CV_8UC1 && croppedImage.type() != CV_8UC3) || croppedImage.empty()) {
+        qWarning("Abort. CroppedImage is invalid. Its Mat type is: %d", croppedImage.type());
+        return false;
+    }
+    else
+        return true;
+}
+
+bool Image::validateBinaryzation()
+{
+    if (croppedImage.empty()) {
+        qWarning("Abort. Cropped Image is invalid.");
+        return false;
+    }
+    else
+        return true;
+}
+
+bool Image::validateEdgesDetection()
+{
+    if (preprocessedImage.empty()) {
+        qWarning("Abort. Image has not been preProcessed.");
+        return false;
+    }
+    else
+        return true;
 }
 
 void Image::setProcessedImage(Mat img)

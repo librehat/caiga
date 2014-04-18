@@ -19,5 +19,19 @@ struct ccStruct
     QLine calibreLine;
     qreal calibre;//pixel/μm
 };
+
+/*
+ * QtConcurrent taks at most 5 parameteres.
+ * Thus, we defined this struct to pass more parameters if needed.
+ * notice "S" is upper-case.
+ */
+struct parameterS{
+    int i1;
+    int i2;
+    int i3;
+    double d1;
+    double d2;
+    bool b;
+};
 }
 #endif // DATASTRUCTURE_H

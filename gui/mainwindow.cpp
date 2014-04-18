@@ -57,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //preProcessTab
     connect(ui->histogramCheckBox, &QCheckBox::toggled, this, &MainWindow::histogramEqualiseChecked);
+    connect(ui->blurCheckBox, &QCheckBox::toggled, this, &MainWindow::onBlurCheckBoxChecked);
     connect(ui->blurMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::blurMethodChanged);
     connect(ui->blurKSizeSlider, &QSlider::valueChanged, this, &MainWindow::onBlurParameterChanged);
     connect(ui->blurKSizeSlider, &QSlider::valueChanged, this, &MainWindow::onBlurKSizeSliderChanged);
@@ -76,7 +77,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->highThresholdDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::highThresholdChanged);
     connect(ui->lowThresholdDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onEdgesParametersChanged);
     connect(ui->l2GradientCheckBox, &QCheckBox::toggled, this, &MainWindow::onEdgesParametersChanged);
-    connect(ui->edgesButtonBox, &QDialogButtonBox::accepted, this, &MainWindow::saveEdges);
+    //connect(ui->edgesButtonBox, &QDialogButtonBox::accepted, this, &MainWindow::saveEdges);
     connect(ui->edgesButtonBox, &QDialogButtonBox::rejected, this, &MainWindow::discardEdges);
 
     //MainWindow
@@ -95,6 +96,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
     connect(ui->imageList, &QListView::activated, this, &MainWindow::setActivateImage);
     connect(this, &MainWindow::messageArrived, this, &MainWindow::onMessagesArrived);
+    connect(&worker, &CAIGA::WorkerThread::workStatusUpdated, this, &MainWindow::onMessagesArrived);
 
     connect(this, &MainWindow::configReadFinished, this, &MainWindow::updateOptions);
 
@@ -165,11 +167,25 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
 void MainWindow::histogramEqualiseChecked(bool toggle)
 {
     if (toggle) {
-        cgimg.doHistogramEqualise();
-        ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
+        if (cgimg.validateHistogramEqualise()) {
+            disconnect(&worker, &WorkerThread::workFinished, 0, 0);
+            connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
+            worker.histogramEqualiseWork(&cgimg);
+        }
     }
     else {
         //TODO kind of undo
+        ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
+    }
+}
+
+void MainWindow::onBlurCheckBoxChecked(bool t)
+{
+    if (t) {
+        emit onBlurParameterChanged();
+    }
+    else {
+        //TODO
         ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
     }
 }
@@ -180,19 +196,26 @@ void MainWindow::onBlurParameterChanged()
     double sx = ui->blurSigma1SpinBox->value();
     double sy = ui->blurSigma2SpinBox->value();
 
+    disconnect(&worker, &WorkerThread::workFinished, 0, 0);
+    connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
+
     switch (ui->blurMethodComboBox->currentIndex()) {
     case 0://AdaptiveBilateralFilter
-        cgimg.doAdaptiveBilateralFilter(ksize, sx, sy);
+        if (cgimg.validateAdaptiveBilateralFilter()) {
+            worker.adaptiveBilateralFilterWork(&cgimg, ksize, sx, sy);
+        }
         break;
     case 1://Gaussian
-        cgimg.doGaussianBlur(ksize, sx, sy);
+        if (cgimg.validateGaussianMedianBlur()) {
+            worker.gaussianBlurWork(&cgimg, ksize, sx, sy);
+        }
         break;
     case 2://Median
-        cgimg.doMedianBlur(ksize);
+        if (cgimg.validateGaussianMedianBlur()) {
+            worker.medianBlurWork(&cgimg, ksize);
+        }
         break;
     }
-
-    ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
 }
 
 void MainWindow::onBlurKSizeSliderChanged(int s)
@@ -234,6 +257,10 @@ void MainWindow::binaryzationCheckBoxStateChanged(bool s)
     if (s) {
         onBinaryzationParameterChanged();
     }
+    else {
+        //TODO kind of redo
+        ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
+    }
 }
 
 void MainWindow::onBinaryzationParameterChanged()
@@ -247,13 +274,19 @@ void MainWindow::onBinaryzationParameterChanged()
     if (ui->binaryzationTypeComboBox->currentIndex() == 1) {
         method = cv::THRESH_BINARY_INV;
     }
-    cgimg.doBinaryzation(method, type, blockSize, ui->binaryzationCDoubleSpinBox->value());
-    ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
+    disconnect(&worker, &WorkerThread::workFinished, 0, 0);
+    connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
+    worker.binaryzationWork(&cgimg, method, type, blockSize, ui->binaryzationCDoubleSpinBox->value());
 }
 
 void MainWindow::onBinaryzationSizeSliderValueChanged(int s)
 {
     ui->binaryzationSizeSlider->setToolTip(QString::number(s * 2 - 1));
+}
+
+void MainWindow::onPreProcessWorkFinished()
+{
+    ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
 }
 
 void MainWindow::onPPButtonBoxClicked(QAbstractButton *b)
@@ -275,7 +308,6 @@ void MainWindow::highThresholdChanged(double ht)
 
 void MainWindow::onEdgesParametersChanged()
 {
-    //TODO: Use Project
     int aSize = (ui->apertureSizeSlider->value() * 2 - 1);
 
     bool l2 = false;
@@ -283,18 +315,19 @@ void MainWindow::onEdgesParametersChanged()
         l2 = true;
     }
 
-    cgimg.doEdgesDetection(ui->highThresholdDoubleSpinBox->value(), ui->lowThresholdDoubleSpinBox->value(), aSize, l2);
-    ui->edgesViewer->setPixmap(cgimg.getEdgesPixmap());
+    disconnect(&worker, &WorkerThread::workFinished, 0, 0);
+    connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onEdgesDetectionWorkFinished);
+    worker.cannyEdgesWork(&cgimg, ui->highThresholdDoubleSpinBox->value(), ui->lowThresholdDoubleSpinBox->value(), aSize, l2);
 }
 
-void MainWindow::saveEdges()
+void MainWindow::onEdgesDetectionWorkFinished()
 {
-    cgimg.setEdges(CAIGA::Image::convertQImage2Mat(ui->edgesViewer->pixmap()->toImage()));
+    ui->edgesViewer->setPixmap(cgimg.getEdgesPixmap());
 }
 
 void MainWindow::discardEdges()
 {
-    ui->edgesViewer->setPixmap(cgimg.getCroppedPixmap());//TODO change to preProcessImage
+    ui->edgesViewer->setPixmap(cgimg.getPreProcessedPixmap());
 }
 
 void MainWindow::newProject()

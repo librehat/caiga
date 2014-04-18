@@ -20,6 +20,7 @@
 #include <QDir>
 #include "image.h"
 #include "project.h"
+#include "workerthread.h"
 
 namespace Ui
 {
@@ -44,6 +45,7 @@ private slots:
     void ccModeChanged(int);
     void onCCButtonBoxClicked(QAbstractButton *);
     void histogramEqualiseChecked(bool);
+    void onBlurCheckBoxChecked(bool);
     void blurMethodChanged(int);
     void onBlurParameterChanged();
     void onBlurKSizeSliderChanged(int);
@@ -51,8 +53,9 @@ private slots:
     void highThresholdChanged(double);
     void onBinaryzationSizeSliderValueChanged(int);
     void onBinaryzationParameterChanged();
+    void onPreProcessWorkFinished();
     void onEdgesParametersChanged();
-    void saveEdges();
+    void onEdgesDetectionWorkFinished();
     void discardEdges();
     void onPPButtonBoxClicked(QAbstractButton *);
     void newProject();
@@ -93,6 +96,7 @@ private:
     CAIGA::Image cgimg;
     QAbstractItemModel *imgNameModel;
     QStringList imgNameList;
+    CAIGA::WorkerThread worker;
 
     //Text in About Dialog
     static QString aboutText;
