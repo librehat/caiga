@@ -1,3 +1,4 @@
+#include <QFuture>
 #include "image.h"
 using namespace CAIGA;
 

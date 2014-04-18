@@ -3,12 +3,14 @@ include(../common.pri)
 QT       += widgets sql
 
 SOURCES  += image.cpp\
-            project.cpp
+            project.cpp \
+            workerthread.cpp
 
 HEADERS  += image.h \
             project.h \
             abstractanalyser.h \
             core_lib.h \
-    datastructure.h
+            datastructure.h \
+            workerthread.h
 
 DEFINES  += CORE
