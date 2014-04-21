@@ -18,6 +18,8 @@ struct ccStruct
     QRect rect;
     QLine calibreLine;
     qreal calibre;//pixel/μm
+
+    ccStruct() : drawMode(-2), isCircle(true), pressed(), released(), centre(), radius(0), rect(), calibreLine(), calibre(0) {}
 };
 
 /*
@@ -32,6 +34,8 @@ struct parameterS{
     double d1;
     double d2;
     bool b;
+
+    parameterS() : i1(0), i2(0), i3(0), d1(0), d2(0), b(false) {}
 };
 }
 #endif // DATASTRUCTURE_H

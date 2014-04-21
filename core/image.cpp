@@ -37,17 +37,31 @@ QImage Image::getRawImage()
 
 QImage Image::getCroppedImage()
 {
-    return convertMat2QImage(croppedImage);
+    if (isCircle()) {
+        return convertMat2QImage(croppedCircularImage);
+    }
+    else
+        return convertMat2QImage(croppedImage);
 }
 
 QImage Image::getEdgesImage()
 {
-    return convertMat2QImage(edges);
+    if (isCircle()) {
+        edgesCircularImage = makeInCircle(edgesImage);
+        return convertMat2QImage(edgesCircularImage);
+    }
+    else
+        return convertMat2QImage(edgesImage);
 }
 
 QImage Image::getPreProcessedImage()
 {
-    return convertMat2QImage(preprocessedImage);
+    if (isCircle()) {
+        preprocessedCircularImage = makeInCircle(preprocessedImage);
+        return convertMat2QImage(preprocessedCircularImage);
+    }
+    else
+        return convertMat2QImage(preprocessedImage);
 }
 
 QImage Image::getProcessedImage()
@@ -62,17 +76,32 @@ QPixmap Image::getRawPixmap()
 
 QPixmap Image::getCroppedPixmap()
 {
-    return convertMat2QPixmap(croppedImage);
+    if (isCircle()) {
+        return convertMat2QPixmap(croppedCircularImage);
+    }
+    else {
+        return convertMat2QPixmap(croppedImage);
+    }
 }
 
 QPixmap Image::getPreProcessedPixmap()
 {
-    return convertMat2QPixmap(preprocessedImage);
+    if (isCircle()) {
+        preprocessedCircularImage = makeInCircle(preprocessedImage);
+        return convertMat2QPixmap(preprocessedCircularImage);
+    }
+    else
+        return convertMat2QPixmap(preprocessedImage);
 }
 
 QPixmap Image::getEdgesPixmap()
 {
-    return convertMat2QPixmap(edges);
+    if (isCircle()) {
+        edgesCircularImage = makeInCircle(edgesImage);
+        return convertMat2QPixmap(edgesCircularImage);
+    }
+    else
+        return convertMat2QPixmap(edgesImage);
 }
 
 QPixmap Image::getProcessedPixmap()
@@ -103,18 +132,12 @@ void Image::setRawImage(const QString &imgfile)
 void Image::setCropCalibreStruct(const ccStruct &c)
 {
     cropCalibre = c;
-    if(cropCalibre.isCircle) {
+    if(c.isCircle) {
         cv::Point tl(c.centre.x() - c.radius, c.centre.y() - c.radius);
         cv::Point br(c.centre.x() + c.radius, c.centre.y() + c.radius);
         cv::Rect enclosingRect(tl, br);
-        croppedEnclosingRectImage = rawImage(enclosingRect).clone();
-
-        //notice that this centre is relevant to croppedImage instead of rawImage
-        cv::Point centre(enclosingRect.width / 2, enclosingRect.height / 2);
-        cv::Mat circle = cv::Mat::zeros(croppedEnclosingRectImage.rows, croppedEnclosingRectImage.cols, CV_8UC1);
-        croppedImage = cv::Mat::zeros(croppedEnclosingRectImage.rows, croppedEnclosingRectImage.cols, CV_8UC1);
-        cv::circle(circle, centre, c.radius, 255, -1, 8, 0);
-        cv::bitwise_and(croppedEnclosingRectImage, croppedEnclosingRectImage, croppedImage, circle);//bitwise_and is the C++ version of "cvAnd"
+        croppedImage = rawImage(enclosingRect).clone();
+        croppedCircularImage = makeInCircle(croppedImage);
     }
     else {
         cv::Point tl(c.rect.topLeft().x(), c.rect.topLeft().y());
@@ -184,6 +207,11 @@ void Image::setProcessedImage(Mat img)
     processedImage = img;
 }
 
+bool Image::isCircle()
+{
+    return cropCalibre.isCircle;
+}
+
 bool Image::isCropped()
 {
     return !croppedImage.empty();
@@ -191,7 +219,7 @@ bool Image::isCropped()
 
 bool Image::hasEdges()
 {
-    return !edges.empty();
+    return !edgesImage.empty();
 }
 
 bool Image::isPreProcessed()
@@ -212,6 +240,22 @@ bool Image::isAnalysed()
 QStringList Image::getInfoList()
 {
     return infoList;
+}
+
+Mat Image::makeInCircle(const Mat &rect)
+{
+    if (rect.empty()) {
+        qWarning("Abort. Input rect image is empty!");
+        return cv::Mat();
+    }
+
+    //notice that this centre is relevant to croppedImage instead of rawImage
+    cv::Point centre(rect.rows / 2, rect.cols / 2);
+    cv::Mat circle = cv::Mat::zeros(rect.rows, rect.cols, CV_8UC1);
+    cv::Mat out = cv::Mat::zeros(rect.rows, rect.cols, CV_8UC1);
+    cv::circle(circle, centre, centre.x, 255, -1, 8, 0);
+    cv::bitwise_and(rect, rect, out, circle);//bitwise_and is the C++ version of "cvAnd"
+    return out.clone();
 }
 
 //cv::Mat and QImage conversion code is based on http://asmaloney.com/2013/11/code/converting-between-cvmat-and-qimage-or-qpixmap/

@@ -9,6 +9,8 @@ WorkerThread::WorkerThread(QObject *parent) :
     connect(&watcher, &QFutureWatcher<void>::started, this, &WorkerThread::handleWorkStarted);
 }
 
+//functions used to "get hired" by main thread.
+
 void WorkerThread::histogramEqualiseWork(Image &cimg)
 {
     QFuture<void> future = QtConcurrent::run(&WorkerThread::doHistogramEqualiseWork, &cimg.croppedImage, &cimg.preprocessedImage);
@@ -53,9 +55,11 @@ void WorkerThread::cannyEdgesWork(Image &cimg, double ht, double lt, int aSize, 
     para.d2 = lt;
     para.i1 = aSize;
     para.b = l2;
-    QFuture<void> future = QtConcurrent::run(&WorkerThread::doCannyEdgesWork, &cimg.preprocessedImage, &cimg.edges, para);
+    QFuture<void> future = QtConcurrent::run(&WorkerThread::doCannyEdgesWork, &cimg.preprocessedImage, &cimg.edgesImage, para);
     watcher.setFuture(future);
 }
+
+//actual work be done by functions below
 
 void WorkerThread::doHistogramEqualiseWork(cv::Mat *src, cv::Mat *out)
 {
@@ -86,6 +90,8 @@ void WorkerThread::doCannyEdgesWork(cv::Mat *src, cv::Mat *out, parameterS p)
 {
     cv::Canny(*src, *out, p.d1, p.d2, p.i1, p.b);
 }
+
+//some slots
 
 void WorkerThread::handleWorkStarted()
 {

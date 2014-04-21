@@ -5,8 +5,6 @@
 QImageDrawer::QImageDrawer(QWidget *parent) :
     QWidget(parent)
 {
-    m_value.drawMode = -2;//circle
-    m_value.isCircle = true;
     m_penColour = QColor(255, 0, 0);//Red
     m_scale = 1.0;
 }
@@ -226,14 +224,7 @@ void QImageDrawer::setImage(const QImage &img)
 
 void QImageDrawer::reset()
 {
-    m_value.drawMode = -2;
-    m_value.isCircle = true;
-    m_value.pressed = QPoint();
-    m_value.released = QPoint();
-    m_value.centre = QPoint();
-    m_value.radius = 0;
-    m_value.rect = QRect();
-    m_value.calibreLine = QLine();
+    m_value = ccStruct();
     this->update();
 }
 

@@ -61,6 +61,7 @@ public:
     QImage getProcessedImage();
     QPixmap getProcessedPixmap();
     void setProcessedImage(Mat img);
+    bool isCircle();
     bool isCropped();
     bool isPreProcessed();
     bool hasEdges();
@@ -69,6 +70,7 @@ public:
 
     QStringList getInfoList();
 
+    static Mat makeInCircle(const cv::Mat &rect);
     static QImage convertMat2QImage(const cv::Mat &src);
     static QPixmap convertMat2QPixmap(const cv::Mat &src);
     static Mat convertQImage2Mat(const QImage &qimg, bool indexed = false);
@@ -78,10 +80,12 @@ public:
 private:
     Mat rawImage;//original image
     ccStruct cropCalibre;
-    Mat croppedImage;
-    Mat croppedEnclosingRectImage;//this stores enclosing rect for circular cropped image
-    Mat preprocessedImage;//pre-processed image
-    Mat edges;
+    Mat croppedImage;//preProcess later on take in this image. when isCircle, we use mask to make a circular image and store it in croppedCircularImage
+    Mat croppedCircularImage;//when isCircle, return this
+    Mat preprocessedImage;//pre-processed image. same thing here
+    Mat preprocessedCircularImage;//return this when isCircle
+    Mat edgesImage;//same thing here.
+    Mat edgesCircularImage;//return this when isCircle
     Mat processedImage;//image ready to be analysed (shed colour already)
 
     /*
