@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "cameradialog.h"
 #include "optionsdialog.h"
+#include "qimageinteractivedrawer.h"
 #include <QtDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -79,6 +80,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->l2GradientCheckBox, &QCheckBox::toggled, this, &MainWindow::onEdgesParametersChanged);
     //connect(ui->edgesButtonBox, &QDialogButtonBox::accepted, this, &MainWindow::saveEdges);
     connect(ui->edgesButtonBox, &QDialogButtonBox::rejected, this, &MainWindow::discardEdges);
+
+    //SegmentationTab
+    connect(ui->higherDiffSlider, &QSlider::valueChanged, this, &MainWindow::onSegmentParametersChanged);
+    connect(ui->lowerDiffSlider, &QSlider::valueChanged, this, &MainWindow::onSegmentParametersChanged);
+    connect(ui->seg4Con, &QRadioButton::toggled, this, &MainWindow::onSegmentParametersChanged);//seg8Con's toggled signal is linked with seg4Con
+    connect(ui->refreshSegButton, &QPushButton::clicked, this, &MainWindow::onSegmentationRefreshButtonPressed);
+    connect(ui->segmentationViewer, &QImageInteractiveDrawer::mouseClickedFinished, this, &MainWindow::onSegmentViewerClicked);
 
     //MainWindow
     connect(ui->actionNew_Project, &QAction::triggered, this, &MainWindow::newProject);
@@ -328,6 +336,29 @@ void MainWindow::onEdgesDetectionWorkFinished()
 void MainWindow::discardEdges()
 {
     ui->edgesViewer->setPixmap(cgimg.getPreProcessedPixmap());
+}
+
+void MainWindow::onSegmentParametersChanged()
+{
+    onSegmentationRefreshButtonPressed();
+}
+
+void MainWindow::onSegmentationRefreshButtonPressed()
+{
+    cgimg.prepareFloodFill();
+    ui->segmentationViewer->setImage(cgimg.getProcessedImage());
+}
+
+void MainWindow::onSegmentViewerClicked(QPoint p)
+{
+    disconnect(&worker, &WorkerThread::workFinished, 0, 0);
+    connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onSegmentWorkFinished);
+    worker.floodfillSegmentWork(cgimg, p, ui->higherDiffSlider->value(), ui->lowerDiffSlider->value(), ui->seg4Con->isChecked());
+}
+
+void MainWindow::onSegmentWorkFinished()
+{
+    ui->segmentationViewer->setImage(cgimg.getProcessedImage());
 }
 
 void MainWindow::newProject()

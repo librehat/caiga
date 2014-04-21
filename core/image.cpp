@@ -147,11 +147,6 @@ void Image::setCropCalibreStruct(const ccStruct &c)
     }
 }
 
-void Image::setPreProcessedImage(Mat img)
-{
-    preprocessedImage = img;
-}
-
 bool Image::validateHistogramEqualise()
 {
     if (croppedImage.empty() || croppedImage.type() != CV_8UC1) {
@@ -205,6 +200,11 @@ bool Image::validateEdgesDetection()
 void Image::setProcessedImage(Mat img)
 {
     processedImage = img;
+}
+
+void Image::prepareFloodFill()
+{
+    cvtColor(preprocessedImage, processedImage, CV_GRAY2RGB);
 }
 
 bool Image::isCircle()

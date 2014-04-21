@@ -59,6 +59,17 @@ void WorkerThread::cannyEdgesWork(Image &cimg, double ht, double lt, int aSize, 
     watcher.setFuture(future);
 }
 
+void WorkerThread::floodfillSegmentWork(Image &cimg, QPoint p, int hd, int ld, bool c4)
+{
+    cv::Point seed(p.x(), p.y());
+    parameterS para;
+    para.i1 = hd;
+    para.i2 = ld;
+    para.b = c4;
+    QFuture<void> future = QtConcurrent::run(&WorkerThread::doFloodFillSegmentWork, &cimg.processedImage, seed, para);
+    watcher.setFuture(future);
+}
+
 //actual work be done by functions below
 
 void WorkerThread::doHistogramEqualiseWork(cv::Mat *src, cv::Mat *out)
@@ -89,6 +100,18 @@ void WorkerThread::doBinaryzationWork(cv::Mat *src, cv::Mat *out, parameterS p)
 void WorkerThread::doCannyEdgesWork(cv::Mat *src, cv::Mat *out, parameterS p)
 {
     cv::Canny(*src, *out, p.d1, p.d2, p.i1, p.b);
+}
+
+void WorkerThread::doFloodFillSegmentWork(cv::Mat *dst, cv::Point seed, parameterS p)
+{
+    //FIXME
+    int flags = (p.b ? 4 : 8) + (255 << 8) + (p.i1 == 0 ? 0 : CV_FLOODFILL_FIXED_RANGE);
+    int b = (unsigned)cv::theRNG() & 255;
+    int g = (unsigned)cv::theRNG() & 255;
+    int r = (unsigned)cv::theRNG() & 255;
+    Scalar colour(b, g, r);
+    //flood fill
+    cv::floodFill(*dst, seed, colour, 0, p.i2, p.i1, flags);
 }
 
 //some slots

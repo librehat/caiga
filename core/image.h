@@ -57,7 +57,7 @@ public:
     bool validateGaussianMedianBlur();
     bool validateAdaptiveBilateralFilter();
     bool validateBinaryzation();
-    void setPreProcessedImage(Mat img);
+    void prepareFloodFill();
     QImage getProcessedImage();
     QPixmap getProcessedPixmap();
     void setProcessedImage(Mat img);

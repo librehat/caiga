@@ -15,13 +15,15 @@ SOURCES  += main.cpp \
             mainwindow.cpp \
             optionsdialog.cpp \
             qimageviewer.cpp \
-            qimagedrawer.cpp
+            qimagedrawer.cpp \
+    qimageinteractivedrawer.cpp
            
 HEADERS  += cameradialog.h \
             mainwindow.h \
             optionsdialog.h \
             qimageviewer.h \
-            qimagedrawer.h
+            qimagedrawer.h \
+    qimageinteractivedrawer.h
 
 RESOURCES+= caiga.qrc
 windows: {

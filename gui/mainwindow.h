@@ -56,6 +56,10 @@ private slots:
     void onPreProcessWorkFinished();
     void onEdgesParametersChanged();
     void onEdgesDetectionWorkFinished();
+    void onSegmentParametersChanged();
+    void onSegmentationRefreshButtonPressed();
+    void onSegmentViewerClicked(QPoint);
+    void onSegmentWorkFinished();
     void discardEdges();
     void onPPButtonBoxClicked(QAbstractButton *);
     void newProject();
