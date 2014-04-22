@@ -87,6 +87,7 @@ private:
     Mat edgesImage;//same thing here.
     Mat edgesCircularImage;//return this when isCircle
     Mat processedImage;//image ready to be analysed (shed colour already)
+    Mat processedCircularImage;
 
     /*
      * analysis data are defined below

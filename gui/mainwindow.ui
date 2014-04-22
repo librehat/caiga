@@ -804,8 +804,17 @@
           <layout class="QGridLayout" name="gridLayout_5">
            <item row="1" column="0" colspan="4">
             <widget class="QSlider" name="lowerDiffSlider">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
              <property name="pageStep">
               <number>5</number>
+             </property>
+             <property name="value">
+              <number>20</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -864,8 +873,17 @@
            </item>
            <item row="3" column="0" colspan="4">
             <widget class="QSlider" name="higherDiffSlider">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
              <property name="pageStep">
               <number>5</number>
+             </property>
+             <property name="value">
+              <number>20</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>

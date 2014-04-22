@@ -3,7 +3,7 @@
 #include "cameradialog.h"
 #include "optionsdialog.h"
 #include "qimageinteractivedrawer.h"
-#include <QtDebug>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -18,6 +18,11 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     QDir::setCurrent(settings.value("CurrentDir").toString());
+
+    //Question: is it necessary?
+    ui->rawViewer->setNotLarger(true);
+    ui->preProcessViewer->setNotLarger(true);
+    ui->edgesViewer->setNotLarger(true);
 
 //Windows should use packaged theme since its lacking of **theme**
 #if defined(_WIN32)
@@ -82,6 +87,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->edgesButtonBox, &QDialogButtonBox::rejected, this, &MainWindow::discardEdges);
 
     //SegmentationTab
+    connect(ui->higherDiffSlider, &QSlider::valueChanged, this, &MainWindow::onSegmentHighDiffValueChanged);
+    connect(ui->lowerDiffSlider, &QSlider::valueChanged, this, &MainWindow::onSegmentLowDiffValueChanged);
     connect(ui->higherDiffSlider, &QSlider::valueChanged, this, &MainWindow::onSegmentParametersChanged);
     connect(ui->lowerDiffSlider, &QSlider::valueChanged, this, &MainWindow::onSegmentParametersChanged);
     connect(ui->seg4Con, &QRadioButton::toggled, this, &MainWindow::onSegmentParametersChanged);//seg8Con's toggled signal is linked with seg4Con
@@ -336,6 +343,16 @@ void MainWindow::onEdgesDetectionWorkFinished()
 void MainWindow::discardEdges()
 {
     ui->edgesViewer->setPixmap(cgimg.getPreProcessedPixmap());
+}
+
+void MainWindow::onSegmentLowDiffValueChanged(int l)
+{
+    ui->lowerDiffSlider->setToolTip(QString::number(l));
+}
+
+void MainWindow::onSegmentHighDiffValueChanged(int h)
+{
+    ui->higherDiffSlider->setToolTip(QString::number(h));
 }
 
 void MainWindow::onSegmentParametersChanged()

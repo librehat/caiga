@@ -56,6 +56,8 @@ private slots:
     void onPreProcessWorkFinished();
     void onEdgesParametersChanged();
     void onEdgesDetectionWorkFinished();
+    void onSegmentLowDiffValueChanged(int);
+    void onSegmentHighDiffValueChanged(int);
     void onSegmentParametersChanged();
     void onSegmentationRefreshButtonPressed();
     void onSegmentViewerClicked(QPoint);

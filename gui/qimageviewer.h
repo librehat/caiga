@@ -11,6 +11,7 @@ class QImageViewer : public QWidget
 public:
     explicit QImageViewer(QWidget *parent = 0);
     const QPixmap *pixmap() const;
+    void setNotLarger(bool n = false);
 
 public slots:
     void setPixmap(const QPixmap &pix);
@@ -21,6 +22,7 @@ protected:
 
 private:
     QPixmap m_pixmap;
+    bool m_notLarger;//not larger than original one. the scale ratio will be always <= 1.0
 };
 
 #endif // QIMAGEVIEWER_H

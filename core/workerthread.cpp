@@ -111,7 +111,8 @@ void WorkerThread::doFloodFillSegmentWork(cv::Mat *dst, cv::Point seed, paramete
     int r = (unsigned)cv::theRNG() & 255;
     Scalar colour(b, g, r);
     //flood fill
-    cv::floodFill(*dst, seed, colour, 0, p.i2, p.i1, flags);
+    cv::Rect ccomp;
+    cv::floodFill(*dst, seed, colour, &ccomp, cv::Scalar(p.i2, p.i2, p.i2), cv::Scalar(p.i1, p.i1, p.i1), flags);
 }
 
 //some slots

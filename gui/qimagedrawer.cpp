@@ -17,7 +17,7 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
         return;
 
     QPainter painter(this);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform);
+    painter.setRenderHint(QPainter::Antialiasing);
     QSize pixSize = m_image.size();
     pixSize.scale(event->rect().size(), Qt::KeepAspectRatio);
     m_scale = static_cast<qreal>(pixSize.width()) / static_cast<qreal>(m_image.width());//width / width is okay because the ratio was kept
@@ -26,7 +26,7 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
     topleft.setX((this->width() - pixSize.width()) / 2);
     topleft.setY((this->height() - pixSize.height()) / 2);
 
-    m_scaledImage = m_image.scaled(pixSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    m_scaledImage = m_image.scaled(pixSize, Qt::KeepAspectRatio, Qt::FastTransformation);
     painter.drawImage(topleft, m_scaledImage);
 
     //Draw

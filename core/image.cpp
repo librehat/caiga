@@ -66,7 +66,12 @@ QImage Image::getPreProcessedImage()
 
 QImage Image::getProcessedImage()
 {
-    return convertMat2QImage(processedImage);
+    if (isCircle()) {
+        processedCircularImage = makeInCircle(processedImage);
+        return convertMat2QImage(processedCircularImage);
+    }
+    else
+        return convertMat2QImage(processedImage);
 }
 
 QPixmap Image::getRawPixmap()
@@ -106,7 +111,12 @@ QPixmap Image::getEdgesPixmap()
 
 QPixmap Image::getProcessedPixmap()
 {
-    return convertMat2QPixmap(processedImage);
+    if (isCircle()) {
+        processedCircularImage = makeInCircle(processedImage);
+        return convertMat2QPixmap(processedCircularImage);
+    }
+    else
+        return convertMat2QPixmap(processedImage);
 }
 
 ccStruct Image::getCropCalibreStruct()

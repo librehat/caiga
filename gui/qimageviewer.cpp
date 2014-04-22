@@ -5,6 +5,7 @@
 QImageViewer::QImageViewer(QWidget *parent) :
     QWidget(parent)
 {
+    m_notLarger = false;
 }
 
 void QImageViewer::paintEvent(QPaintEvent *event)
@@ -22,7 +23,11 @@ void QImageViewer::paintEvent(QPaintEvent *event)
 
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
     QSize pixSize = m_pixmap.size();
-    pixSize.scale(event->rect().size(), Qt::KeepAspectRatio);
+    if (pixSize.height() > event->rect().size().height() || pixSize.width() > event->rect().size().width() || !m_notLarger) {
+        //scale down anyway if it's too large for event
+        //or scale up if m_notLarger is false
+        pixSize.scale(event->rect().size(), Qt::KeepAspectRatio);
+    }
 
     QPoint topleft;
     topleft.setX((this->width() - pixSize.width()) / 2);
@@ -45,5 +50,11 @@ void QImageViewer::setPixmap(const QPixmap &pix)
 void QImageViewer::setPixmap(const QImage &qimg)
 {
     m_pixmap = QPixmap::fromImage(qimg);
+    this->update();
+}
+
+void QImageViewer::setNotLarger(bool n)
+{
+    m_notLarger = n;
     this->update();
 }
