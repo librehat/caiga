@@ -23,6 +23,7 @@ public:
     void binaryzationWork(CAIGA::Image &cimg, int method, int type, int blockSize, double C);
     void cannyEdgesWork(CAIGA::Image &cimg, double ht, double lt, int aSize, bool l2);
     void floodfillSegmentWork(CAIGA::Image &cimg, QPoint p, int hd, int ld, bool c4);
+    void contoursFindDrawWork(CAIGA::Image &cimg);
 
 signals:
     void workFinished();
@@ -41,6 +42,7 @@ private:
     static void doBinaryzationWork(cv::Mat *src, cv::Mat *out, parameterS p);
     static void doCannyEdgesWork(cv::Mat *src, cv::Mat *out, parameterS p);
     static void doFloodFillSegmentWork(cv::Mat *dst, cv::Point seed, parameterS p);
+    static void doContoursFindDrawWork(cv::Mat &src, cv::Mat *dst);
 };
 }
 

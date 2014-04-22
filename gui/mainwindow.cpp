@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->rawViewer->setNotLarger(true);
     ui->preProcessViewer->setNotLarger(true);
     ui->edgesViewer->setNotLarger(true);
+    ui->contourViewer->setNotLarger(true);
 
 //Windows should use packaged theme since its lacking of **theme**
 #if defined(_WIN32)
@@ -94,6 +95,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->seg4Con, &QRadioButton::toggled, this, &MainWindow::onSegmentParametersChanged);//seg8Con's toggled signal is linked with seg4Con
     connect(ui->refreshSegButton, &QPushButton::clicked, this, &MainWindow::onSegmentationRefreshButtonPressed);
     connect(ui->segmentationViewer, &QImageInteractiveDrawer::mouseClickedFinished, this, &MainWindow::onSegmentViewerClicked);
+
+    //contourTab
+    connect(ui->contourRefreshButton, &QPushButton::clicked, this, &MainWindow::onContourRefreshButtonPressed);
 
     //MainWindow
     connect(ui->actionNew_Project, &QAction::triggered, this, &MainWindow::newProject);
@@ -376,6 +380,18 @@ void MainWindow::onSegmentViewerClicked(QPoint p)
 void MainWindow::onSegmentWorkFinished()
 {
     ui->segmentationViewer->setImage(cgimg.getProcessedImage());
+}
+
+void MainWindow::onContourRefreshButtonPressed()
+{
+    disconnect(&worker, &WorkerThread::workFinished, 0, 0);
+    connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onContourWorkFinished);
+    worker.contoursFindDrawWork(cgimg);
+}
+
+void MainWindow::onContourWorkFinished()
+{
+    ui->contourViewer->setPixmap(cgimg.getProcessedPixmap());
 }
 
 void MainWindow::newProject()

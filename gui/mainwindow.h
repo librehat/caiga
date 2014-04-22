@@ -62,6 +62,8 @@ private slots:
     void onSegmentationRefreshButtonPressed();
     void onSegmentViewerClicked(QPoint);
     void onSegmentWorkFinished();
+    void onContourRefreshButtonPressed();
+    void onContourWorkFinished();
     void discardEdges();
     void onPPButtonBoxClicked(QAbstractButton *);
     void newProject();

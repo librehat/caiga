@@ -70,6 +70,12 @@ void WorkerThread::floodfillSegmentWork(Image &cimg, QPoint p, int hd, int ld, b
     watcher.setFuture(future);
 }
 
+void WorkerThread::contoursFindDrawWork(Image &cimg)
+{
+    QFuture<void> future = QtConcurrent::run(&WorkerThread::doContoursFindDrawWork, cimg.preprocessedImage, &cimg.processedImage);
+    watcher.setFuture(future);
+}
+
 //actual work be done by functions below
 
 void WorkerThread::doHistogramEqualiseWork(cv::Mat *src, cv::Mat *out)
@@ -104,7 +110,6 @@ void WorkerThread::doCannyEdgesWork(cv::Mat *src, cv::Mat *out, parameterS p)
 
 void WorkerThread::doFloodFillSegmentWork(cv::Mat *dst, cv::Point seed, parameterS p)
 {
-    //FIXME
     int flags = (p.b ? 4 : 8) + (255 << 8) + (p.i1 == 0 ? 0 : CV_FLOODFILL_FIXED_RANGE);
     int b = (unsigned)cv::theRNG() & 255;
     int g = (unsigned)cv::theRNG() & 255;
@@ -113,6 +118,21 @@ void WorkerThread::doFloodFillSegmentWork(cv::Mat *dst, cv::Point seed, paramete
     //flood fill
     cv::Rect ccomp;
     cv::floodFill(*dst, seed, colour, &ccomp, cv::Scalar(p.i2, p.i2, p.i2), cv::Scalar(p.i1, p.i1, p.i1), flags);
+}
+
+void WorkerThread::doContoursFindDrawWork(Mat &src, Mat *dst)
+{
+    std::vector<std::vector<cv::Point> > contours;
+    std::vector<cv::Vec4i> hierarchy;
+    cv::findContours(src, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_L1);//use CV_RETR_EXTERNAL mode to avoid holes caused by preProcessing. anyway, we don't have grains inside grains.
+
+    *dst = cv::Mat::zeros(src.rows, src.cols, CV_8UC3);
+    //draw each contour in its own random colour
+    int idx = 0;
+    for (; idx >= 0 ; idx = hierarchy[idx][0]) {
+        Scalar colour(rand() & 255, rand() & 255, rand() & 255);
+        cv::drawContours(*dst, contours, idx, colour, CV_FILLED, CV_AA, hierarchy);
+    }
 }
 
 //some slots

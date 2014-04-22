@@ -64,7 +64,7 @@
        <enum>QTabWidget::South</enum>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>6</number>
       </property>
       <widget class="QWidget" name="infoTab">
        <attribute name="title">
@@ -243,7 +243,7 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="histogramPage">
            <property name="geometry">
@@ -814,7 +814,7 @@
               <number>5</number>
              </property>
              <property name="value">
-              <number>20</number>
+              <number>30</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -883,7 +883,7 @@
               <number>5</number>
              </property>
              <property name="value">
-              <number>20</number>
+              <number>30</number>
              </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -898,6 +898,42 @@
           <property name="text">
            <string>Refresh</string>
           </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="contourTab">
+       <attribute name="title">
+        <string>Contours</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QImageViewer" name="contourViewer" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>10</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="contourGroupBox">
+          <property name="title">
+           <string>GroupBox</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QPushButton" name="contourRefreshButton">
+             <property name="text">
+              <string>Refresh</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
