@@ -121,7 +121,7 @@ void QImageDrawer::mouseMoveEvent(QMouseEvent *m)
     m_value.released.setX((m->pos().x() - margin.x()) / m_scale);
     m_value.released.setY((m->pos().y() - margin.y()) / m_scale);
 
-    if (m_value.isCircle) {
+    if (m_value.drawMode == -2) {
         int radius = static_cast<int>(std::sqrt(std::pow((m_value.released - m_value.pressed).x(), 2) + std::pow((m_value.released - m_value.pressed).y(), 2)));
         int maxRadius = std::min(std::min(m_value.pressed.x(), m_value.pressed.y()),  std::min(m_image.width() - m_value.pressed.x(), m_image.height() - m_value.pressed.y()));
         if (radius > maxRadius) {
