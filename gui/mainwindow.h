@@ -50,15 +50,15 @@ private slots:
     void onBlurParameterChanged();
     void onBlurKSizeSliderChanged(int);
     void onPreProcessWorkFinished();
+    void onPreProcessButtonBoxClicked(QAbstractButton *);
     void onBinaryMethodChanged(int);
     void onBinarySizeChanged(int);
     void onBinaryParametersChanged();
     void onBinaryWorkFinished();
     void onBinaryInterDrawerClicked(QPoint);
+    void onBinaryButtonBoxClicked(QAbstractButton *);
     void onContourRefreshButtonPressed();
     void onContourWorkFinished();
-    void onBinaryDiscarded();
-    void onPPButtonBoxClicked(QAbstractButton *);
     void newProject();
     void openProjectDialog();
     void saveProject();

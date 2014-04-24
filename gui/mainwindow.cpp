@@ -69,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->blurKSizeSlider, &QSlider::valueChanged, this, &MainWindow::onBlurKSizeSliderChanged);
     connect(ui->blurSigma1SpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBlurParameterChanged);
     connect(ui->blurSigma2SpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBlurParameterChanged);
-    connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPPButtonBoxClicked);
+    connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPreProcessButtonBoxClicked);
 
     //binaryTab
     connect(this, &MainWindow::binaryParametersChanged, this, &MainWindow::onBinaryParametersChanged);
@@ -80,8 +80,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lowDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBinaryParametersChanged);
     connect(ui->binaryCheckBox, &QCheckBox::toggled, this, &MainWindow::onBinaryParametersChanged);
     connect(ui->binaryInterDrawer, &QImageInteractiveDrawer::mouseClickedFinished, this, &MainWindow::onBinaryInterDrawerClicked);
-    //connect(ui->edgesButtonBox, &QDialogButtonBox::accepted, this, &MainWindow::saveEdges);
-    connect(ui->binaryButtonBox, &QDialogButtonBox::rejected, this, &MainWindow::onBinaryDiscarded);
+    connect(ui->binaryButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onBinaryButtonBoxClicked);
 
     //contourTab
     connect(ui->contourRefreshButton, &QPushButton::clicked, this, &MainWindow::onContourRefreshButtonPressed);
@@ -263,7 +262,7 @@ void MainWindow::onPreProcessWorkFinished()
     ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
 }
 
-void MainWindow::onPPButtonBoxClicked(QAbstractButton *b)
+void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
 {
     if (ui->preProcessButtonBox->standardButton(b) == QDialogButtonBox::Reset) {//reset
         //TODO
@@ -352,7 +351,6 @@ void MainWindow::onBinaryParametersChanged()
         worker.binaryzationWork(cgimg, cv::ADAPTIVE_THRESH_GAUSSIAN_C, type, size, ui->highDoubleSpinBox->value());
         break;
     case 3:
-        //TODO floodfill
         cgimg.prepareFloodFill();
         this->onBinaryWorkFinished();//prepare image to let user click
         break;
@@ -374,10 +372,15 @@ void MainWindow::onBinaryWorkFinished()
     ui->binaryInterDrawer->setImage(cgimg.getEdgesImage());
 }
 
-void MainWindow::onBinaryDiscarded()
+void MainWindow::onBinaryButtonBoxClicked(QAbstractButton *b)
 {
-    //TODO reset control panel
-    ui->binaryInterDrawer->setImage(cgimg.getPreProcessedImage());
+    if (ui->binaryButtonBox->standardButton(b) == QDialogButtonBox::Reset) {
+        //TODO reset control panel
+        ui->binaryInterDrawer->setImage(cgimg.getPreProcessedImage());
+    }
+    else {
+        //TODO Save
+    }
 }
 
 void MainWindow::onContourRefreshButtonPressed()
