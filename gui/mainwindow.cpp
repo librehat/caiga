@@ -22,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //Question: is it necessary?
     ui->rawViewer->setNotLarger(true);
     ui->preProcessViewer->setNotLarger(true);
-    ui->binaryViewer->setNotLarger(true);
     ui->contourViewer->setNotLarger(true);
 
 //Windows should use packaged theme since its lacking of **theme**
@@ -80,17 +79,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->highDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBinaryParametersChanged);
     connect(ui->lowDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBinaryParametersChanged);
     connect(ui->binaryCheckBox, &QCheckBox::toggled, this, &MainWindow::onBinaryParametersChanged);
+    connect(ui->binaryInterDrawer, &QImageInteractiveDrawer::mouseClickedFinished, this, &MainWindow::onBinaryInterDrawerClicked);
     //connect(ui->edgesButtonBox, &QDialogButtonBox::accepted, this, &MainWindow::saveEdges);
-    connect(ui->binaryButtonBox, &QDialogButtonBox::rejected, this, &MainWindow::discardEdges);
-
-    //SegmentationTab
-    connect(ui->higherDiffSlider, &QSlider::valueChanged, this, &MainWindow::onSegmentHighDiffValueChanged);
-    connect(ui->lowerDiffSlider, &QSlider::valueChanged, this, &MainWindow::onSegmentLowDiffValueChanged);
-    connect(ui->higherDiffSlider, &QSlider::valueChanged, this, &MainWindow::onSegmentParametersChanged);
-    connect(ui->lowerDiffSlider, &QSlider::valueChanged, this, &MainWindow::onSegmentParametersChanged);
-    connect(ui->seg4Con, &QRadioButton::toggled, this, &MainWindow::onSegmentParametersChanged);//seg8Con's toggled signal is linked with seg4Con
-    connect(ui->refreshSegButton, &QPushButton::clicked, this, &MainWindow::onSegmentationRefreshButtonPressed);
-    connect(ui->segmentationViewer, &QImageInteractiveDrawer::mouseClickedFinished, this, &MainWindow::onSegmentViewerClicked);
+    connect(ui->binaryButtonBox, &QDialogButtonBox::rejected, this, &MainWindow::onBinaryDiscarded);
 
     //contourTab
     connect(ui->contourRefreshButton, &QPushButton::clicked, this, &MainWindow::onContourRefreshButtonPressed);
@@ -362,52 +353,31 @@ void MainWindow::onBinaryParametersChanged()
         break;
     case 3:
         //TODO floodfill
+        cgimg.prepareFloodFill();
+        this->onBinaryWorkFinished();//prepare image to let user click
+        break;
     default:
         qWarning() << "No such binary method.";
     }
 }
 
+
+void MainWindow::onBinaryInterDrawerClicked(QPoint p)
+{
+    if (ui->binaryMethodComboBox->currentIndex() == 3) {
+        worker.floodfillSegmentWork(cgimg, p, static_cast<int>(ui->highDoubleSpinBox->value()), static_cast<int>(ui->lowDoubleSpinBox->value()), !ui->binaryCheckBox->isChecked());
+    }
+}
+
 void MainWindow::onBinaryWorkFinished()
 {
-    ui->binaryViewer->setPixmap(cgimg.getEdgesPixmap());
+    ui->binaryInterDrawer->setImage(cgimg.getEdgesImage());
 }
 
-void MainWindow::discardEdges()
+void MainWindow::onBinaryDiscarded()
 {
-    ui->binaryViewer->setPixmap(cgimg.getPreProcessedPixmap());
-}
-
-void MainWindow::onSegmentLowDiffValueChanged(int l)
-{
-    ui->lowerDiffSlider->setToolTip(QString::number(l));
-}
-
-void MainWindow::onSegmentHighDiffValueChanged(int h)
-{
-    ui->higherDiffSlider->setToolTip(QString::number(h));
-}
-
-void MainWindow::onSegmentParametersChanged()
-{
-    onSegmentationRefreshButtonPressed();
-}
-
-void MainWindow::onSegmentationRefreshButtonPressed()
-{
-    cgimg.prepareFloodFill();
-    ui->segmentationViewer->setImage(cgimg.getProcessedImage());
-}
-
-void MainWindow::onSegmentViewerClicked(QPoint p)
-{
-    disconnect(&worker, &WorkerThread::workFinished, 0, 0);
-    connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onSegmentWorkFinished);
-    worker.floodfillSegmentWork(cgimg, p, ui->higherDiffSlider->value(), ui->lowerDiffSlider->value(), ui->seg4Con->isChecked());
-}
-
-void MainWindow::onSegmentWorkFinished()
-{
-    ui->segmentationViewer->setImage(cgimg.getProcessedImage());
+    //TODO reset control panel
+    ui->binaryInterDrawer->setImage(cgimg.getPreProcessedImage());
 }
 
 void MainWindow::onContourRefreshButtonPressed()
@@ -575,7 +545,7 @@ void MainWindow::setActivateImage(QModelIndex i)
     }
 
     if (cgimg.hasEdges()) {
-        ui->binaryViewer->setPixmap(cgimg.getEdgesPixmap());
+        ui->binaryInterDrawer->setImage(cgimg.getEdgesImage());
     }
     else {
         emit binaryParametersChanged();//Initialise a premature edges image

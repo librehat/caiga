@@ -54,15 +54,10 @@ private slots:
     void onBinarySizeChanged(int);
     void onBinaryParametersChanged();
     void onBinaryWorkFinished();
-    void onSegmentLowDiffValueChanged(int);
-    void onSegmentHighDiffValueChanged(int);
-    void onSegmentParametersChanged();
-    void onSegmentationRefreshButtonPressed();
-    void onSegmentViewerClicked(QPoint);
-    void onSegmentWorkFinished();
+    void onBinaryInterDrawerClicked(QPoint);
     void onContourRefreshButtonPressed();
     void onContourWorkFinished();
-    void discardEdges();
+    void onBinaryDiscarded();
     void onPPButtonBoxClicked(QAbstractButton *);
     void newProject();
     void openProjectDialog();
