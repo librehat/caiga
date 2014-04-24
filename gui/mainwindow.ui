@@ -64,7 +64,7 @@
        <enum>QTabWidget::South</enum>
       </property>
       <property name="currentIndex">
-       <number>6</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="infoTab">
        <attribute name="title">
@@ -243,15 +243,15 @@
            </sizepolicy>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="histogramPage">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>178</width>
-             <height>40</height>
+             <width>193</width>
+             <height>73</height>
             </rect>
            </property>
            <attribute name="label">
@@ -405,134 +405,6 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="binaryzationPage">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>159</width>
-             <height>256</height>
-            </rect>
-           </property>
-           <attribute name="label">
-            <string>Binaryzation</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_2">
-            <item>
-             <widget class="QCheckBox" name="binaryzationCheckBox">
-              <property name="text">
-               <string>Image Binaryzation</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="binaryzationMethodLabel">
-              <property name="text">
-               <string>Adaptive Method</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="binaryzationMethodComboBox">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <item>
-               <property name="text">
-                <string>Mean C</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Gaussian C</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="binaryzationTypeLabel">
-              <property name="text">
-               <string>Threshold Type</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="binaryzationTypeComboBox">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <item>
-               <property name="text">
-                <string>Binary</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Binary Invert</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="binaryzationSizeLabel">
-              <property name="text">
-               <string>Block Size</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSlider" name="binaryzationSizeSlider">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="minimum">
-               <number>2</number>
-              </property>
-              <property name="maximum">
-               <number>999</number>
-              </property>
-              <property name="pageStep">
-               <number>1</number>
-              </property>
-              <property name="value">
-               <number>10</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="binaryzationCLabel">
-              <property name="text">
-               <string>Constant C</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="binaryzationCDoubleSpinBox">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="decimals">
-               <number>4</number>
-              </property>
-              <property name="minimum">
-               <double>-99.999899999999997</double>
-              </property>
-              <property name="maximum">
-               <double>99.999899999999997</double>
-              </property>
-              <property name="singleStep">
-               <double>0.500000000000000</double>
-              </property>
-              <property name="value">
-               <double>1.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
          </widget>
         </item>
         <item row="0" column="0" rowspan="3">
@@ -560,16 +432,16 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="edgesTab">
+      <widget class="QWidget" name="binaryTab">
        <attribute name="title">
-        <string>Edges</string>
+        <string>Binaryzation</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
         <property name="margin">
          <number>0</number>
         </property>
         <item row="0" column="2" alignment="Qt::AlignTop">
-         <widget class="QGroupBox" name="edgesGroupBox">
+         <widget class="QGroupBox" name="binaryGroupBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
             <horstretch>1</horstretch>
@@ -581,7 +453,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
-            <widget class="QLabel" name="edgesMethodLabel">
+            <widget class="QLabel" name="binaryMethodLabel">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -594,16 +466,31 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="edgesMethodComboBox">
+            <widget class="QComboBox" name="binaryMethodComboBox">
              <item>
               <property name="text">
                <string>Canny</string>
               </property>
              </item>
+             <item>
+              <property name="text">
+               <string>Median Binaryzation</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Gaussian Binaryzation</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Flood Fill</string>
+              </property>
+             </item>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="apertureSizeLabel">
+            <widget class="QLabel" name="sizeLabel">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -616,21 +503,18 @@
             </widget>
            </item>
            <item>
-            <widget class="QSlider" name="apertureSizeSlider">
+            <widget class="QSlider" name="sizeSlider">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="toolTip">
-              <string>Available sizes: 3, 5, 7</string>
-             </property>
              <property name="minimum">
               <number>2</number>
              </property>
              <property name="maximum">
-              <number>4</number>
+              <number>999</number>
              </property>
              <property name="singleStep">
               <number>1</number>
@@ -644,16 +528,10 @@
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
-             <property name="tickPosition">
-              <enum>QSlider::TicksAbove</enum>
-             </property>
-             <property name="tickInterval">
-              <number>1</number>
-             </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="highThresholdLabel">
+            <widget class="QLabel" name="highLabel">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -666,7 +544,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="highThresholdDoubleSpinBox">
+            <widget class="QDoubleSpinBox" name="highDoubleSpinBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -677,7 +555,7 @@
               <number>1</number>
              </property>
              <property name="minimum">
-              <double>1.100000000000000</double>
+              <double>-999.000000000000000</double>
              </property>
              <property name="maximum">
               <double>999.000000000000000</double>
@@ -691,7 +569,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="lowThresholdLabel">
+            <widget class="QLabel" name="lowLabel">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -704,7 +582,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="lowThresholdDoubleSpinBox">
+            <widget class="QDoubleSpinBox" name="lowDoubleSpinBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -715,7 +593,7 @@
               <number>1</number>
              </property>
              <property name="minimum">
-              <double>1.000000000000000</double>
+              <double>0.000000000000000</double>
              </property>
              <property name="maximum">
               <double>300.000000000000000</double>
@@ -729,7 +607,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="l2GradientCheckBox">
+            <widget class="QCheckBox" name="binaryCheckBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -748,7 +626,7 @@
          </widget>
         </item>
         <item row="1" column="2" alignment="Qt::AlignBottom">
-         <widget class="QDialogButtonBox" name="edgesButtonBox">
+         <widget class="QDialogButtonBox" name="binaryButtonBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>1</horstretch>
@@ -761,7 +639,7 @@
          </widget>
         </item>
         <item row="0" column="0" rowspan="2">
-         <widget class="QImageViewer" name="edgesViewer" native="true">
+         <widget class="QImageViewer" name="binaryViewer" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
             <horstretch>3</horstretch>
@@ -1366,70 +1244,6 @@
     <hint type="destinationlabel">
      <x>586</x>
      <y>367</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>binaryzationCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>binaryzationCDoubleSpinBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>585</x>
-     <y>179</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>585</x>
-     <y>401</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>binaryzationCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>binaryzationMethodComboBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>585</x>
-     <y>179</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>585</x>
-     <y>233</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>binaryzationCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>binaryzationTypeComboBox</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>585</x>
-     <y>179</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>585</x>
-     <y>289</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>binaryzationCheckBox</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>binaryzationSizeSlider</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>585</x>
-     <y>108</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>585</x>
-     <y>270</y>
     </hint>
    </hints>
   </connection>

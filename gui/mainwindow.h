@@ -38,7 +38,7 @@ public:
 signals:
     void configReadFinished(int, int, int, bool, int, const QString &);
     void blurParametersChanged();
-    void edgesParametersChanged();
+    void binaryParametersChanged();
     void messageArrived(const QString &);//to display on statusbar
 
 private slots:
@@ -49,13 +49,11 @@ private slots:
     void blurMethodChanged(int);
     void onBlurParameterChanged();
     void onBlurKSizeSliderChanged(int);
-    void binaryzationCheckBoxStateChanged(bool);
-    void highThresholdChanged(double);
-    void onBinaryzationSizeSliderValueChanged(int);
-    void onBinaryzationParameterChanged();
     void onPreProcessWorkFinished();
-    void onEdgesParametersChanged();
-    void onEdgesDetectionWorkFinished();
+    void onBinaryMethodChanged(int);
+    void onBinarySizeChanged(int);
+    void onBinaryParametersChanged();
+    void onBinaryWorkFinished();
     void onSegmentLowDiffValueChanged(int);
     void onSegmentHighDiffValueChanged(int);
     void onSegmentParametersChanged();

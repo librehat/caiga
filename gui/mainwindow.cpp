@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //Question: is it necessary?
     ui->rawViewer->setNotLarger(true);
     ui->preProcessViewer->setNotLarger(true);
-    ui->edgesViewer->setNotLarger(true);
+    ui->binaryViewer->setNotLarger(true);
     ui->contourViewer->setNotLarger(true);
 
 //Windows should use packaged theme since its lacking of **theme**
@@ -70,22 +70,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->blurKSizeSlider, &QSlider::valueChanged, this, &MainWindow::onBlurKSizeSliderChanged);
     connect(ui->blurSigma1SpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBlurParameterChanged);
     connect(ui->blurSigma2SpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBlurParameterChanged);
-    connect(ui->binaryzationCheckBox, &QCheckBox::toggled, this, &MainWindow::binaryzationCheckBoxStateChanged);
-    connect(ui->binaryzationCDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBinaryzationParameterChanged);
-    connect(ui->binaryzationMethodComboBox, static_cast<void (QComboBox::*) (int)>(&QComboBox::currentIndexChanged), this, &MainWindow::onBinaryzationParameterChanged);
-    connect(ui->binaryzationTypeComboBox, static_cast<void (QComboBox::*) (int)>(&QComboBox::currentIndexChanged), this, &MainWindow::onBinaryzationParameterChanged);
-    connect(ui->binaryzationSizeSlider, &QSlider::valueChanged, this, &MainWindow::onBinaryzationParameterChanged);
-    connect(ui->binaryzationSizeSlider, &QSlider::valueChanged, this, &MainWindow::onBinaryzationSizeSliderValueChanged);
     connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPPButtonBoxClicked);
 
-    //edgesTab
-    connect(this, &MainWindow::edgesParametersChanged, this, &MainWindow::onEdgesParametersChanged);
-    connect(ui->apertureSizeSlider, &QSlider::valueChanged, this, &MainWindow::onEdgesParametersChanged);
-    connect(ui->highThresholdDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::highThresholdChanged);
-    connect(ui->lowThresholdDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onEdgesParametersChanged);
-    connect(ui->l2GradientCheckBox, &QCheckBox::toggled, this, &MainWindow::onEdgesParametersChanged);
+    //binaryTab
+    connect(this, &MainWindow::binaryParametersChanged, this, &MainWindow::onBinaryParametersChanged);
+    connect(ui->binaryMethodComboBox, static_cast<void (QComboBox::*) (int)>(&QComboBox::currentIndexChanged), this, &MainWindow::onBinaryMethodChanged);
+    connect(ui->sizeSlider, &QSlider::valueChanged, this, &MainWindow::onBinarySizeChanged);
+    connect(ui->sizeSlider, &QSlider::valueChanged, this, &MainWindow::onBinaryParametersChanged);
+    connect(ui->highDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBinaryParametersChanged);
+    connect(ui->lowDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBinaryParametersChanged);
+    connect(ui->binaryCheckBox, &QCheckBox::toggled, this, &MainWindow::onBinaryParametersChanged);
     //connect(ui->edgesButtonBox, &QDialogButtonBox::accepted, this, &MainWindow::saveEdges);
-    connect(ui->edgesButtonBox, &QDialogButtonBox::rejected, this, &MainWindow::discardEdges);
+    connect(ui->binaryButtonBox, &QDialogButtonBox::rejected, this, &MainWindow::discardEdges);
 
     //SegmentationTab
     connect(ui->higherDiffSlider, &QSlider::valueChanged, this, &MainWindow::onSegmentHighDiffValueChanged);
@@ -271,38 +267,6 @@ void MainWindow::blurMethodChanged(int mID)
     }
 }
 
-void MainWindow::binaryzationCheckBoxStateChanged(bool s)
-{
-    if (s) {
-        onBinaryzationParameterChanged();
-    }
-    else {
-        //TODO kind of redo
-        ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
-    }
-}
-
-void MainWindow::onBinaryzationParameterChanged()
-{
-    int blockSize = ui->binaryzationSizeSlider->value() * 2 - 1;
-    int method = cv::ADAPTIVE_THRESH_MEAN_C;
-    int type = cv::THRESH_BINARY;
-    if (ui->binaryzationMethodComboBox->currentIndex() == 1) {
-        method = cv::ADAPTIVE_THRESH_GAUSSIAN_C;
-    }
-    if (ui->binaryzationTypeComboBox->currentIndex() == 1) {
-        method = cv::THRESH_BINARY_INV;
-    }
-    disconnect(&worker, &WorkerThread::workFinished, 0, 0);
-    connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
-    worker.binaryzationWork(cgimg, method, type, blockSize, ui->binaryzationCDoubleSpinBox->value());
-}
-
-void MainWindow::onBinaryzationSizeSliderValueChanged(int s)
-{
-    ui->binaryzationSizeSlider->setToolTip(QString::number(s * 2 - 1));
-}
-
 void MainWindow::onPreProcessWorkFinished()
 {
     ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
@@ -319,34 +283,98 @@ void MainWindow::onPPButtonBoxClicked(QAbstractButton *b)
     }
 }
 
-void MainWindow::highThresholdChanged(double ht)
+void MainWindow::onBinaryMethodChanged(int method)
 {
-    ui->lowThresholdDoubleSpinBox->setMaximum(ht - 1);
-    emit edgesParametersChanged();
-}
-
-void MainWindow::onEdgesParametersChanged()
-{
-    int aSize = (ui->apertureSizeSlider->value() * 2 - 1);
-
-    bool l2 = false;
-    if (ui->l2GradientCheckBox->checkState() == Qt::Checked) {
-        l2 = true;
+    switch (method) {
+    case 0://Canny
+        ui->sizeLabel->setText("Aperture Size");
+        ui->sizeLabel->setVisible(true);
+        ui->sizeSlider->setVisible(true);
+        ui->sizeSlider->setMinimum(2);
+        ui->sizeSlider->setMaximum(4);
+        ui->binaryCheckBox->setText("L2 Gradient");
+        ui->highLabel->setText("High Threshold");
+        ui->highDoubleSpinBox->setMinimum(1.1);
+        ui->highDoubleSpinBox->setValue(300);
+        ui->lowLabel->setText("Low Threshold");
+        ui->lowLabel->setVisible(true);
+        ui->lowDoubleSpinBox->setMinimum(1.0);
+        ui->lowDoubleSpinBox->setValue(100);
+        ui->lowDoubleSpinBox->setVisible(true);
+        break;
+    case 1://Median Binaryzation
+    case 2://Gaussian Binaryzation
+        ui->sizeLabel->setText("Block Size");
+        ui->sizeLabel->setVisible(true);
+        ui->sizeSlider->setVisible(true);
+        ui->sizeSlider->setMinimum(1);
+        ui->sizeSlider->setMaximum(999);
+        ui->binaryCheckBox->setText("Invert Threshold");
+        ui->highLabel->setText("Constant C");
+        ui->highDoubleSpinBox->setMinimum(-999.0);
+        ui->highDoubleSpinBox->setValue(0);
+        ui->lowLabel->setVisible(false);
+        ui->lowDoubleSpinBox->setVisible(false);
+        break;
+    case 3://Flood Fill
+        ui->sizeLabel->setVisible(false);
+        ui->sizeSlider->setVisible(false);
+        ui->binaryCheckBox->setText("8 Connectivity");
+        ui->highLabel->setText("High Difference");
+        ui->highDoubleSpinBox->setMinimum(0);
+        ui->highDoubleSpinBox->setValue(20);
+        ui->lowLabel->setText("Low Difference");
+        ui->lowLabel->setVisible(true);
+        ui->lowDoubleSpinBox->setMinimum(0);
+        ui->lowDoubleSpinBox->setValue(20);
+        ui->lowDoubleSpinBox->setVisible(true);
+        break;
+    default:
+        qWarning() << "No such binary method.";
     }
-
-    disconnect(&worker, &WorkerThread::workFinished, 0, 0);
-    connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onEdgesDetectionWorkFinished);
-    worker.cannyEdgesWork(cgimg, ui->highThresholdDoubleSpinBox->value(), ui->lowThresholdDoubleSpinBox->value(), aSize, l2);
 }
 
-void MainWindow::onEdgesDetectionWorkFinished()
+void MainWindow::onBinarySizeChanged(int i)
 {
-    ui->edgesViewer->setPixmap(cgimg.getEdgesPixmap());
+    ui->sizeSlider->setToolTip(QString::number(i * 2 - 1));
+}
+
+void MainWindow::onBinaryParametersChanged()
+{
+    int size = (ui->sizeSlider->value() * 2 - 1);
+    bool check = ui->binaryCheckBox->isChecked();
+    int type = cv::THRESH_BINARY;
+    if (check) {
+        type = cv::THRESH_BINARY_INV;
+    }
+    disconnect(&worker, &WorkerThread::workFinished, 0, 0);
+    connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onBinaryWorkFinished);
+
+    switch (ui->binaryMethodComboBox->currentIndex()) {
+    case 0:
+        worker.cannyEdgesWork(cgimg, ui->highDoubleSpinBox->value(), ui->lowDoubleSpinBox->value(), size, check);
+        break;
+    case 1:
+        worker.binaryzationWork(cgimg, cv::ADAPTIVE_THRESH_MEAN_C, type, size, ui->highDoubleSpinBox->value());
+        break;
+    case 2:
+        worker.binaryzationWork(cgimg, cv::ADAPTIVE_THRESH_GAUSSIAN_C, type, size, ui->highDoubleSpinBox->value());
+        break;
+    case 3:
+        //TODO floodfill
+    default:
+        qWarning() << "No such binary method.";
+    }
+}
+
+void MainWindow::onBinaryWorkFinished()
+{
+    ui->binaryViewer->setPixmap(cgimg.getEdgesPixmap());
 }
 
 void MainWindow::discardEdges()
 {
-    ui->edgesViewer->setPixmap(cgimg.getPreProcessedPixmap());
+    ui->binaryViewer->setPixmap(cgimg.getPreProcessedPixmap());
 }
 
 void MainWindow::onSegmentLowDiffValueChanged(int l)
@@ -547,10 +575,10 @@ void MainWindow::setActivateImage(QModelIndex i)
     }
 
     if (cgimg.hasEdges()) {
-        ui->edgesViewer->setPixmap(cgimg.getEdgesPixmap());
+        ui->binaryViewer->setPixmap(cgimg.getEdgesPixmap());
     }
     else {
-        emit edgesParametersChanged();//Initialise a premature edges image
+        emit binaryParametersChanged();//Initialise a premature edges image
     }
 
     if (cgimg.isPreProcessed()) {
