@@ -214,7 +214,7 @@ void Image::setProcessedImage(Mat img)
 
 void Image::prepareFloodFill()
 {
-    cvtColor(preprocessedImage, processedImage, CV_GRAY2RGB);
+    cvtColor(preprocessedImage, edgesImage, CV_GRAY2RGB);
 }
 
 bool Image::isCircle()

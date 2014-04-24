@@ -44,7 +44,7 @@ void WorkerThread::binaryzationWork(Image &cimg, int method, int type, int block
     para.i2 = type;
     para.i3 = blockSize;
     para.d1 = C;
-    QFuture<void> future = QtConcurrent::run(&WorkerThread::doBinaryzationWork, &cimg.croppedImage, &cimg.preprocessedImage, para);
+    QFuture<void> future = QtConcurrent::run(&WorkerThread::doBinaryzationWork, &cimg.preprocessedImage, &cimg.edgesImage, para);
     watcher.setFuture(future);
 }
 
@@ -66,13 +66,13 @@ void WorkerThread::floodfillSegmentWork(Image &cimg, QPoint p, int hd, int ld, b
     para.i1 = hd;
     para.i2 = ld;
     para.b = c4;
-    QFuture<void> future = QtConcurrent::run(&WorkerThread::doFloodFillSegmentWork, &cimg.processedImage, seed, para);
+    QFuture<void> future = QtConcurrent::run(&WorkerThread::doFloodFillSegmentWork, &cimg.edgesImage, seed, para);
     watcher.setFuture(future);
 }
 
 void WorkerThread::contoursFindDrawWork(Image &cimg)
 {
-    QFuture<void> future = QtConcurrent::run(&WorkerThread::doContoursFindDrawWork, cimg.preprocessedImage, &cimg.processedImage);
+    QFuture<void> future = QtConcurrent::run(&WorkerThread::doContoursFindDrawWork, cimg.edgesImage, &cimg.processedImage);
     watcher.setFuture(future);
 }
 
