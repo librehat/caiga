@@ -8,7 +8,6 @@ SOURCES  += image.cpp\
 
 HEADERS  += image.h \
             project.h \
-            abstractanalyser.h \
             core_lib.h \
             datastructure.h \
             workerthread.h
