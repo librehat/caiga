@@ -4,12 +4,14 @@
 #include "optionsdialog.h"
 #include "qimageinteractivedrawer.h"
 #include <QDebug>
+#include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    adaptiveBilateralDlg = new ParametersDialog(this);
 
     restoreGeometry(settings.value("MainGeometry").toByteArray());
     restoreState(settings.value("MainState").toByteArray());
@@ -62,13 +64,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->ccDrawer, &QImageDrawer::calibreFinished, ui->calibreDoubleSpinBox, &QDoubleSpinBox::setValue);
 
     //preProcessTab
-    connect(ui->histogramCheckBox, &QCheckBox::toggled, this, &MainWindow::histogramEqualiseChecked);
-    connect(ui->blurCheckBox, &QCheckBox::toggled, this, &MainWindow::onBlurCheckBoxChecked);
-    connect(ui->blurMethodComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &MainWindow::blurMethodChanged);
-    connect(ui->blurKSizeSlider, &QSlider::valueChanged, this, &MainWindow::onBlurParameterChanged);
-    connect(ui->blurKSizeSlider, &QSlider::valueChanged, this, &MainWindow::onBlurKSizeSliderChanged);
-    connect(ui->blurSigma1SpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBlurParameterChanged);
-    connect(ui->blurSigma2SpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBlurParameterChanged);
+    connect(ui->histEqualiseButton, &QPushButton::clicked, this, &MainWindow::onHistEqualiseButtonClicked);
+    connect(ui->adaptiveBilateralFilter, &QPushButton::clicked, this, &MainWindow::onAdaptiveBilateralFilterButtonClicked);
+    connect(adaptiveBilateralDlg, &ParametersDialog::parametersAccepted, this, &MainWindow::onAdaptiveBilateralFilterParametersAccepted);
+    connect(ui->medianBlurButton, &QPushButton::clicked, this, &MainWindow::onMedianBlurButtonClicked);
     connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPreProcessButtonBoxClicked);
 
     //binaryTab
@@ -169,91 +168,36 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
     }
 }
 
-void MainWindow::histogramEqualiseChecked(bool toggle)
+void MainWindow::onHistEqualiseButtonClicked()
 {
-    if (toggle) {
-        if (cgimg.validateHistogramEqualise()) {
-            disconnect(&worker, &WorkerThread::workFinished, 0, 0);
-            connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
-            worker.histogramEqualiseWork(cgimg);
-        }
-    }
-    else {
-        //TODO kind of undo
-        ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
+    if (cgimg.validateHistogramEqualise()) {
+        disconnect(&worker, &WorkerThread::workFinished, 0, 0);
+        connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
+        worker.histogramEqualiseWork(cgimg);
     }
 }
 
-void MainWindow::onBlurCheckBoxChecked(bool t)
+void MainWindow::onAdaptiveBilateralFilterButtonClicked()
 {
-    if (t) {
-        emit onBlurParameterChanged();
-    }
-    else {
-        //TODO
-        ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
-    }
+    adaptiveBilateralDlg->show();
+    adaptiveBilateralDlg->exec();
 }
 
-void MainWindow::onBlurParameterChanged()
+void MainWindow::onAdaptiveBilateralFilterParametersAccepted(int k, double s, double c)
 {
-    int ksize = ui->blurKSizeSlider->value() * 2 - 1;
-    double sx = ui->blurSigma1SpinBox->value();
-    double sy = ui->blurSigma2SpinBox->value();
-
     disconnect(&worker, &WorkerThread::workFinished, 0, 0);
     connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
-
-    switch (ui->blurMethodComboBox->currentIndex()) {
-    case 0://AdaptiveBilateralFilter
-        if (cgimg.validateAdaptiveBilateralFilter()) {
-            worker.adaptiveBilateralFilterWork(cgimg, ksize, sx, sy);
-        }
-        break;
-    case 1://Gaussian
-        if (cgimg.validateGaussianMedianBlur()) {
-            worker.gaussianBlurWork(cgimg, ksize, sx, sy);
-        }
-        break;
-    case 2://Median
-        if (cgimg.validateGaussianMedianBlur()) {
-            worker.medianBlurWork(cgimg, ksize);
-        }
-        break;
-    }
+    worker.adaptiveBilateralFilterWork(cgimg, k, s, c);
 }
 
-void MainWindow::onBlurKSizeSliderChanged(int s)
+void MainWindow::onMedianBlurButtonClicked()
 {
-    ui->blurKSizeSlider->setToolTip(QString::number(s * 2 - 1));
-}
-
-void MainWindow::blurMethodChanged(int mID)
-{
-    switch(mID) {
-    case 0://AdaptiveBilateralFilter
-        ui->blurSigma1SpinBox->setEnabled(true);
-        ui->blurSigma2SpinBox->setEnabled(true);
-        ui->blurSigma1SpinBox->setMinimum(1.0);
-        ui->blurSigma2SpinBox->setMinimum(1.0);
-        ui->blurSigma1SpinBox->setValue(1.0);
-        ui->blurSigma2SpinBox->setValue(20.0);//set 20 to default
-        ui->blurSigma1Label->setText("Sigma Space");
-        ui->blurSigma2Label->setText("Max Sigma Colour");
-        break;
-    case 1://Gaussian
-        ui->blurSigma1SpinBox->setEnabled(true);
-        ui->blurSigma2SpinBox->setEnabled(true);
-        ui->blurSigma1SpinBox->setMinimum(0.0);
-        ui->blurSigma2SpinBox->setMinimum(0.0);
-        ui->blurSigma1SpinBox->setValue(0.0);//when use zeros, sigma will be calculated from kernel size.
-        ui->blurSigma2SpinBox->setValue(0.0);
-        ui->blurSigma1Label->setText("Sigma X");
-        ui->blurSigma2Label->setText("Sigma Y");
-        break;
-    case 2://Median
-        ui->blurSigma1SpinBox->setEnabled(false);
-        ui->blurSigma2SpinBox->setEnabled(false);
+    bool ok;
+    int k = QInputDialog::getInt(this, "Median Blur", "Kernel Size (odd only)", 3, 1, 99, 1, &ok, Qt::Tool);
+    if (k % 2 == 1 && ok) {
+        disconnect(&worker, &WorkerThread::workFinished, 0, 0);
+        connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
+        worker.medianBlurWork(cgimg, k);
     }
 }
 

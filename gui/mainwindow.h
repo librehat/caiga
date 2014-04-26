@@ -21,6 +21,7 @@
 #include "image.h"
 #include "project.h"
 #include "workerthread.h"
+#include "parametersdialog.h"
 
 namespace Ui
 {
@@ -37,18 +38,16 @@ public:
 
 signals:
     void configReadFinished(int, int, int, bool, int, const QString &);
-    void blurParametersChanged();
     void binaryParametersChanged();
     void messageArrived(const QString &);//to display on statusbar
 
 private slots:
     void ccModeChanged(int);
     void onCCButtonBoxClicked(QAbstractButton *);
-    void histogramEqualiseChecked(bool);
-    void onBlurCheckBoxChecked(bool);
-    void blurMethodChanged(int);
-    void onBlurParameterChanged();
-    void onBlurKSizeSliderChanged(int);
+    void onHistEqualiseButtonClicked();
+    void onAdaptiveBilateralFilterButtonClicked();
+    void onAdaptiveBilateralFilterParametersAccepted(int, double, double);
+    void onMedianBlurButtonClicked();
     void onPreProcessWorkFinished();
     void onPreProcessButtonBoxClicked(QAbstractButton *);
     void onBinaryMethodChanged(int);
@@ -79,6 +78,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    ParametersDialog *adaptiveBilateralDlg;
 
     QSettings settings;
     void readConfig();
