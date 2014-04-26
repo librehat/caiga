@@ -56,7 +56,6 @@ public:
     bool validateHistogramEqualise();
     bool validateGaussianMedianBlur();
     bool validateAdaptiveBilateralFilter();
-    bool validateBinaryzation();
     void prepareFloodFill();
     QImage getProcessedImage();
     QPixmap getProcessedPixmap();

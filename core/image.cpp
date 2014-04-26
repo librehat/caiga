@@ -187,16 +187,6 @@ bool Image::validateAdaptiveBilateralFilter()
         return true;
 }
 
-bool Image::validateBinaryzation()
-{
-    if (croppedImage.empty()) {
-        qWarning("Abort. Cropped Image is invalid.");
-        return false;
-    }
-    else
-        return true;
-}
-
 bool Image::validateEdgesDetection()
 {
     if (preprocessedImage.empty()) {

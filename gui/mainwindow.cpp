@@ -175,12 +175,20 @@ void MainWindow::onHistEqualiseButtonClicked()
         connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
         worker.histogramEqualiseWork(cgimg);
     }
+    else {
+        emit messageArrived("Abort. This operation is illegal!");
+    }
 }
 
 void MainWindow::onAdaptiveBilateralFilterButtonClicked()
 {
-    adaptiveBilateralDlg->show();
-    adaptiveBilateralDlg->exec();
+    if (cgimg.validateAdaptiveBilateralFilter()) {
+        adaptiveBilateralDlg->show();
+        adaptiveBilateralDlg->exec();
+    }
+    else {
+        emit messageArrived("Abort. This operation is illegal!");
+    }
 }
 
 void MainWindow::onAdaptiveBilateralFilterParametersAccepted(int k, double s, double c)
@@ -192,12 +200,17 @@ void MainWindow::onAdaptiveBilateralFilterParametersAccepted(int k, double s, do
 
 void MainWindow::onMedianBlurButtonClicked()
 {
-    bool ok;
-    int k = QInputDialog::getInt(this, "Median Blur", "Kernel Size (odd only)", 3, 1, 99, 1, &ok, Qt::Tool);
-    if (k % 2 == 1 && ok) {
-        disconnect(&worker, &WorkerThread::workFinished, 0, 0);
-        connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
-        worker.medianBlurWork(cgimg, k);
+    if (cgimg.validateGaussianMedianBlur()) {
+        bool ok;
+        int k = QInputDialog::getInt(this, "Median Blur", "Kernel Size (odd only)", 3, 1, 99, 1, &ok, Qt::Tool);
+        if (k % 2 == 1 && ok) {
+            disconnect(&worker, &WorkerThread::workFinished, 0, 0);
+            connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
+            worker.medianBlurWork(cgimg, k);
+        }
+    }
+    else {
+        emit messageArrived("Abort. This operation is illegal!");
     }
 }
 
