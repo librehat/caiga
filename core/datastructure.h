@@ -1,8 +1,8 @@
+#ifndef DATASTRUCTURE_H
+#define DATASTRUCTURE_H
 #include <QPoint>
 #include <QRect>
 #include <QLine>
-#ifndef DATASTRUCTURE_H
-#define DATASTRUCTURE_H
 namespace CAIGA {
 /*
  * ccStruct contains informations during crop & calibre

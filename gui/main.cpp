@@ -1,6 +1,7 @@
 #include <QApplication>
 
 #include "mainwindow.h"
+#include "workhistequalise.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,4 +16,7 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
     return a.exec();
+
+    CAIGA::WorkHistEqualise h;
+    h.Func();
 }
