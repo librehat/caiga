@@ -32,7 +32,16 @@
       </sizepolicy>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
@@ -61,17 +70,17 @@
         </property>
        </spacer>
       </item>
-      <item>
+      <item alignment="Qt::AlignBottom">
        <widget class="QComboBox" name="cameraBox"/>
       </item>
-      <item>
+      <item alignment="Qt::AlignBottom">
        <widget class="QPushButton" name="captureButton">
         <property name="text">
          <string>Capture</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item alignment="Qt::AlignBottom">
        <widget class="QDialogButtonBox" name="buttonBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
