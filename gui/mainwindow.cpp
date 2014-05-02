@@ -99,6 +99,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout_Qt, &QAction::triggered, this, &MainWindow::aboutQtDialog);
     connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
     connect(ui->imageList, &QListView::activated, this, &MainWindow::setActivateImage);
+    connect(ui->imageTabs, &QTabWidget::currentChanged, this, &MainWindow::onCurrentTabChanged);
     connect(this, &MainWindow::messageArrived, this, &MainWindow::onMessagesArrived);
     connect(&worker, &CAIGA::WorkerThread::workStatusUpdated, this, &MainWindow::onMessagesArrived);
 
@@ -115,43 +116,43 @@ MainWindow::MainWindow(QWidget *parent) :
     projectUnsaved = false;
 }
 
-QString MainWindow::aboutText = QString("<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version Pre Alpha on ")
-
-#if defined(_WIN32)//_WIN32 is defined for both 32-bit and 64-bit environment
-        + QString("Windows")
-#elif defined(__linux__)
-        + QString("Linux")
-#elif defined(__APPLE__) && defined(__MACH__)
-        + QString("Mac OS X")
-#elif defined(BSD)
-        + QString("BSD")
-#elif defined(__ANDROID__)
-        + QString("Android")
-#elif defined(__unix__)
-        + QString("UNIX")
-#else
-        + QString("Unknown platform")
-#endif
-        + QString("</p><p>Built on ") + QString(__DATE__) + QString(" at ") + QString(__TIME__) + QString(" using ")
-#if defined(__GNUC__)
-        + QString("GNU Compiler Collection ") + QString::number(__GNUC__) + QString(".") + QString::number(__GNUC_MINOR__) + QString(".") + QString::number(__GNUC_PATCHLEVEL__)
-#elif defined(_MSC_VER)
-        + QString("Microsoft Visual C++ Compiler")
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-        + QString("Intel C++ Compiler ") + QString::number(__INTEL_COMPILER)
-#elif defined(__clang__)
-        + QString("Clang ") + QString(__clang_version__)
-#else
-        + QString("Unkown compiler")
-#endif
-
-        + QString("</p><p>Copyright &copy; 2014 William Wong and other contributors.<br />School of Materials Science and Engineering, Southeast University.</p><p>Licensed under <a href='http://en.wikipedia.org/wiki/MIT_License'>The MIT License</a>.<br /></p><p><strong>The software contains third-party libraries and artworks below.</strong><br /><a href='http://opencv.org'>OpenCV</a> licensed under <a href='https://github.com/Itseez/opencv/blob/master/LICENSE'>3-clause BSD License</a><br /><a href='http://www.oxygen-icons.org'>Oxygen Icons</a> licensed under <a href='http://www.gnu.org/licenses/lgpl-3.0.txt'>LGPLv3 License</a><br /></p><div>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</div>");
-
 MainWindow::~MainWindow()
 {
     delete ui;
     delete imgNameModel;
 }
+
+const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version Pre Alpha on "
+
+#if defined(_WIN32)//_WIN32 is defined for both 32-bit and 64-bit environment
+        + "Windows"
+#elif defined(__linux__)
+        + "Linux"
+#elif defined(__APPLE__) && defined(__MACH__)
+        + "Mac OS X"
+#elif defined(BSD)
+        + "BSD"
+#elif defined(__ANDROID__)
+        + "Android"
+#elif defined(__unix__)
+        + "UNIX"
+#else
+        + "Unknown platform"
+#endif
+        + "</p><p>Built on " + __DATE__ + " at " + __TIME__ + " using "
+#if defined(__GNUC__)
+        + "GNU Compiler Collection " + QString::number(__GNUC__) + "." + QString::number(__GNUC_MINOR__) + + "." + QString::number(__GNUC_PATCHLEVEL__)
+#elif defined(_MSC_VER)
+        + "Microsoft Visual C++ Compiler"
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+        + "Intel C++ Compiler " + QString::number(__INTEL_COMPILER)
+#elif defined(__clang__)
+        + "Clang " + __clang_version__
+#else
+        + "Unkown compiler"
+#endif
+
+        + "</p><p>Copyright &copy; 2014 William Wong and other contributors.<br />School of Materials Science and Engineering, Southeast University.</p><p>Licensed under <a href='http://en.wikipedia.org/wiki/MIT_License'>The MIT License</a>.<br /></p><p><strong>The software contains third-party libraries and artworks below.</strong><br /><a href='http://opencv.org'>OpenCV</a> licensed under <a href='https://github.com/Itseez/opencv/blob/master/LICENSE'>3-clause BSD License</a><br /><a href='http://www.oxygen-icons.org'>Oxygen Icons</a> licensed under <a href='http://www.gnu.org/licenses/lgpl-3.0.txt'>LGPLv3 License</a><br /></p><div>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</div>";
 
 void MainWindow::ccModeChanged(int i)
 {
@@ -348,6 +349,19 @@ void MainWindow::onContourRefreshButtonPressed()
 void MainWindow::onContourWorkFinished()
 {
     ui->contourViewer->setPixmap(cgimg.getProcessedPixmap());
+}
+
+void MainWindow::onCurrentTabChanged(int i)
+{
+    switch (i) {
+    case 3://preprocess
+        ui->actionRedo->setEnabled(true);
+        ui->actionUndo->setEnabled(true);
+        break;
+    default:
+        ui->actionRedo->setEnabled(false);
+        ui->actionUndo->setEnabled(false);
+    }
 }
 
 void MainWindow::newProject()

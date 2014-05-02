@@ -59,6 +59,7 @@ private slots:
     void onBinaryButtonBoxClicked(QAbstractButton *);
     void onContourRefreshButtonPressed();
     void onContourWorkFinished();
+    void onCurrentTabChanged(int);
     void newProject();
     void openProjectDialog();
     void saveProject();
@@ -102,7 +103,7 @@ private:
     CAIGA::WorkSpace preWorkSpace;
 
     //Text in About Dialog
-    static QString aboutText;
+    const static QString aboutText;
 
 protected:
      void closeEvent(QCloseEvent *event);

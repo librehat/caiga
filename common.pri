@@ -23,32 +23,17 @@ windows: {
         message("Unsupported Windows Compiler or Environment")
         error("Use MinGW G++ or Visual C++ Compiler")
     }
-
-    CONFIG(release, debug|release): {
-    LIBS += -lopencv_core248 \
-            -lopencv_imgproc248 \
-            -lopencv_highgui248 \
-            -lopencv_ml248 \
-            -lopencv_video248 \
-            -lopencv_features2d248 \
-            -lopencv_calib3d248 \
-            -lopencv_objdetect248 \
-            -lopencv_contrib248 \
-            -lopencv_legacy248 \
-            -lopencv_flann248
-    } else: CONFIG(debug, release|debug): {
-    LIBS += -lopencv_core248d \
-            -lopencv_imgproc248d \
-            -lopencv_highgui248d \
-            -lopencv_ml248d \
-            -lopencv_video248d \
-            -lopencv_features2d248d \
-            -lopencv_calib3d248d \
-            -lopencv_objdetect248d \
-            -lopencv_contrib248d \
-            -lopencv_legacy248d \
-            -lopencv_flann248d
-    }
+    LIBS += -lopencv_core247 \
+            -lopencv_imgproc247 \
+            -lopencv_highgui247 \
+            -lopencv_ml247 \
+            -lopencv_video247 \
+            -lopencv_features2d247 \
+            -lopencv_calib3d247 \
+            -lopencv_objdetect247 \
+            -lopencv_contrib247 \
+            -lopencv_legacy247 \
+            -lopencv_flann247
 } else:unix: {
     CONFIG    += link_pkgconfig
     PKGCONFIG += opencv
