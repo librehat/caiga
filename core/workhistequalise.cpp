@@ -1,9 +1,7 @@
 #include "workhistequalise.h"
 using namespace CAIGA;
 
-WorkHistEqualise::WorkHistEqualise()
-{
-}
-
 void WorkHistEqualise::Func()
-{}
+{
+    cv::equalizeHist(*src, *dst);
+}

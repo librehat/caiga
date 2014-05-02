@@ -30,6 +30,11 @@ Mat Image::getRawMatrix()
     return rawImage;
 }
 
+Mat Image::getCroppedMatrix()
+{
+    return croppedImage;
+}
+
 QImage Image::getRawImage()
 {
     return convertMat2QImage(rawImage);

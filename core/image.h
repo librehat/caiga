@@ -44,6 +44,7 @@ public:
     void setRawImage(Mat img);
     void setRawImage(QImage qimg);
     void setRawImage(const QString &imgfile);
+    Mat getCroppedMatrix();
     QImage getCroppedImage();
     QPixmap getCroppedPixmap();
     ccStruct getCropCalibreStruct();
@@ -75,6 +76,7 @@ public:
     static Mat convertQImage2Mat(const QImage &qimg, bool indexed = false);
 
     friend class WorkerThread;
+    friend class WorkSpace;
 
 private:
     Mat rawImage;//original image

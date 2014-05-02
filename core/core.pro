@@ -5,7 +5,10 @@ QT       += widgets sql
 SOURCES  += image.cpp\
             project.cpp \
             workerthread.cpp \
-    workhistequalise.cpp
+    workhistequalise.cpp \
+    workspace.cpp \
+    workmedianblur.cpp \
+    workaptbilateralfilter.cpp
 
 HEADERS  += image.h \
             project.h \
@@ -14,6 +17,8 @@ HEADERS  += image.h \
             workerthread.h \
             workspace.h \
     workbase.h \
-    workhistequalise.h
+    workhistequalise.h \
+    workmedianblur.h \
+    workaptbilateralfilter.h
 
 DEFINES  += CORE

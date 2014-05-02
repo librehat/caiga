@@ -102,6 +102,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, &MainWindow::messageArrived, this, &MainWindow::onMessagesArrived);
     connect(&worker, &CAIGA::WorkerThread::workStatusUpdated, this, &MainWindow::onMessagesArrived);
 
+    connect(&preWorkSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreProcessWorkFinished);
+    connect(&preWorkSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
+
     connect(this, &MainWindow::configReadFinished, this, &MainWindow::updateOptions);
 
     //underlying work
@@ -171,9 +174,7 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
 void MainWindow::onHistEqualiseButtonClicked()
 {
     if (cgimg.validateHistogramEqualise()) {
-        disconnect(&worker, &WorkerThread::workFinished, 0, 0);
-        connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
-        worker.histogramEqualiseWork(cgimg);
+        preWorkSpace.newHistogramEqualiseWork();
     }
     else {
         emit messageArrived("Abort. This operation is illegal!");
@@ -193,9 +194,7 @@ void MainWindow::onAdaptiveBilateralFilterButtonClicked()
 
 void MainWindow::onAdaptiveBilateralFilterParametersAccepted(int k, double s, double c)
 {
-    disconnect(&worker, &WorkerThread::workFinished, 0, 0);
-    connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
-    worker.adaptiveBilateralFilterWork(cgimg, k, s, c);
+    preWorkSpace.newAdaptiveBilateralFilterWork(k, s, c);
 }
 
 void MainWindow::onMedianBlurButtonClicked()
@@ -204,9 +203,7 @@ void MainWindow::onMedianBlurButtonClicked()
         bool ok;
         int k = QInputDialog::getInt(this, "Median Blur", "Kernel Size (odd only)", 3, 1, 99, 1, &ok, Qt::Tool);
         if (k % 2 == 1 && ok) {
-            disconnect(&worker, &WorkerThread::workFinished, 0, 0);
-            connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onPreProcessWorkFinished);
-            worker.medianBlurWork(cgimg, k);
+            preWorkSpace.newMedianBlurWork(k);
         }
     }
     else {
@@ -216,14 +213,15 @@ void MainWindow::onMedianBlurButtonClicked()
 
 void MainWindow::onPreProcessWorkFinished()
 {
-    ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
+    ui->preProcessViewer->setPixmap(preWorkSpace.getLatestQImg());
 }
 
 void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
 {
     if (ui->preProcessButtonBox->standardButton(b) == QDialogButtonBox::Reset) {//reset
         //TODO
-        ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
+        preWorkSpace.reset(cgimg);
+        this->onPreProcessWorkFinished();
     }
     else {//save
         //TODO

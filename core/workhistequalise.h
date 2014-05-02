@@ -2,11 +2,11 @@
 #define WORKHISTEQUALISE_H
 #include "workbase.h"
 namespace CAIGA {
-class WorkHistEqualise : public WorkBase
+class CORE_LIB WorkHistEqualise : public WorkBase
 {
 public:
-    WorkHistEqualise();
-    virtual void Func();
+    WorkHistEqualise(cv::Mat *s) : WorkBase(s) {}
+    void Func();
 };
 }
 #endif // WORKHISTEQUALISE_H

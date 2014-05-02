@@ -21,6 +21,7 @@
 #include "image.h"
 #include "project.h"
 #include "workerthread.h"
+#include "workspace.h"
 #include "parametersdialog.h"
 
 namespace Ui
@@ -98,6 +99,7 @@ private:
     QAbstractItemModel *imgNameModel;
     QStringList imgNameList;
     CAIGA::WorkerThread worker;
+    CAIGA::WorkSpace preWorkSpace;
 
     //Text in About Dialog
     static QString aboutText;
