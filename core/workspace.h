@@ -46,6 +46,7 @@ private:
     QList<WorkBase *> undoneList;
     QFuture<void> future;
     QFutureWatcher<void> watcher;
+    void clearUndoneList();
 };
 
 }

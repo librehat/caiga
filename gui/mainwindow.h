@@ -51,6 +51,8 @@ private slots:
     void onMedianBlurButtonClicked();
     void onPreProcessWorkFinished();
     void onPreProcessButtonBoxClicked(QAbstractButton *);
+    void onPreProcessUndoClicked();
+    void onPreProcessRedoClicked();
     void onBinaryMethodChanged(int);
     void onBinarySizeChanged(int);
     void onBinaryParametersChanged();

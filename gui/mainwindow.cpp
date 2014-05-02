@@ -69,6 +69,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(adaptiveBilateralDlg, &ParametersDialog::parametersAccepted, this, &MainWindow::onAdaptiveBilateralFilterParametersAccepted);
     connect(ui->medianBlurButton, &QPushButton::clicked, this, &MainWindow::onMedianBlurButtonClicked);
     connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPreProcessButtonBoxClicked);
+    connect(ui->actionUndo, &QAction::triggered, this, &MainWindow::onPreProcessUndoClicked);
+    connect(ui->actionRedo, &QAction::triggered, this, &MainWindow::onPreProcessRedoClicked);
 
     //binaryTab
     connect(this, &MainWindow::binaryParametersChanged, this, &MainWindow::onBinaryParametersChanged);
@@ -226,7 +228,20 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
     }
     else {//save
         //TODO
+        preWorkSpace.simplified();
     }
+}
+
+void MainWindow::onPreProcessUndoClicked()
+{
+    preWorkSpace.undo();
+    this->onPreProcessWorkFinished();
+}
+
+void MainWindow::onPreProcessRedoClicked()
+{
+    preWorkSpace.redo();
+    this->onPreProcessWorkFinished();
 }
 
 void MainWindow::onBinaryMethodChanged(int method)

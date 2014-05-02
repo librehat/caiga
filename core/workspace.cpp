@@ -47,7 +47,11 @@ void WorkSpace::clear()
         }
         workList.clear();
     }
+    this->clearUndoneList();
+}
 
+void WorkSpace::clearUndoneList()
+{
     if (!undoneList.isEmpty()) {
         for (QList<WorkBase *>::iterator it = undoneList.begin(); it != undoneList.end(); ++it) {
             delete (*it);
@@ -83,6 +87,8 @@ void WorkSpace::newHistogramEqualiseWork()
     //use latest dst as new work's src
     WorkBase *w = new WorkHistEqualise(workList.last()->dst);
     workList.append(w);
+    //clear undoneList to avoid corrupted redo action.
+    this->clearUndoneList();
     future = QtConcurrent::run(w, &WorkBase::Func);
     watcher.setFuture(future);
 }
@@ -91,6 +97,7 @@ void WorkSpace::newAdaptiveBilateralFilterWork(int size, double space, double co
 {
     WorkBase *w = new WorkAptBilateralFilter(workList.last()->dst, size, space, colour);
     workList.append(w);
+    this->clearUndoneList();
     future = QtConcurrent::run(w, &WorkBase::Func);
     watcher.setFuture(future);
 }
@@ -99,6 +106,7 @@ void WorkSpace::newMedianBlurWork(int kSize)
 {
     WorkBase *w = new WorkMedianBlur(workList.last()->dst, kSize);
     workList.append(w);
+    this->clearUndoneList();
     future = QtConcurrent::run(w, &WorkBase::Func);
     watcher.setFuture(future);
 }
