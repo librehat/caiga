@@ -18,7 +18,7 @@ WorkSpace::~WorkSpace()
 void WorkSpace::undo()
 {
     if (workList.count() <= 1) {
-        qWarning() << "Abort. Insufficient items to undo.";
+        emit workStatusStringUpdated("Abort. Nothing available to be undone.");
         return;
     }
     undoneList.append(workList.takeLast());
@@ -27,7 +27,7 @@ void WorkSpace::undo()
 void WorkSpace::redo()
 {
     if (undoneList.isEmpty()) {
-        qWarning() << "Abort. undoneList is empty.";
+        emit workStatusStringUpdated("Abort. Nothing available to be redone.");
         return;
     }
     workList.append(undoneList.takeFirst());

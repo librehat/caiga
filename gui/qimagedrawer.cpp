@@ -33,6 +33,11 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
     QPen pen(m_penColour, 2, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
     painter.setPen(pen);
 
+    //don't paint if user didn't draw
+    if ((m_value.pressed - m_value.released).manhattanLength() < 1) {
+        return;
+    }
+
     /*
      * use if statement because switch statement forbids initialising variables inside case clauses
      * recalculate points because the user may change m_scaledImage's size by changing window's size.

@@ -170,7 +170,8 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
     }
     else {//save
         cgimg.setCropCalibreStruct(ui->ccDrawer->getCCStruct());
-        ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
+        preWorkSpace.reset(cgimg);
+        this->onPreProcessWorkFinished();
     }
 }
 
