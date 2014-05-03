@@ -1,5 +1,11 @@
 #include <QtConcurrent>
 #include "workspace.h"
+#include "workhistequalise.h"
+#include "workmedianblur.h"
+#include "workaptbilateralfilter.h"
+#include "workbinaryzation.h"
+#include "workcanny.h"
+#include "workcontours.h"
 using namespace CAIGA;
 
 WorkSpace::WorkSpace(QObject *parent) :
@@ -82,33 +88,49 @@ QImage WorkSpace::getLatestQImg()
     return Image::convertMat2QImage(*workList.last()->dst);
 }
 
-void WorkSpace::newHistogramEqualiseWork()
+void WorkSpace::newGenericWork(WorkBase *work)
 {
-    //use latest dst as new work's src
-    WorkBase *w = new WorkHistEqualise(workList.last()->dst);
-    workList.append(w);
+    workList.append(work);
     //clear undoneList to avoid corrupted redo action.
     this->clearUndoneList();
-    future = QtConcurrent::run(w, &WorkBase::Func);
+    future = QtConcurrent::run(work, &WorkBase::Func);
     watcher.setFuture(future);
+}
+
+void WorkSpace::newHistogramEqualiseWork()
+{
+    WorkBase *w = new WorkHistEqualise(workList.last()->dst);
+    this->newGenericWork(w);
 }
 
 void WorkSpace::newAdaptiveBilateralFilterWork(int size, double space, double colour)
 {
     WorkBase *w = new WorkAptBilateralFilter(workList.last()->dst, size, space, colour);
-    workList.append(w);
-    this->clearUndoneList();
-    future = QtConcurrent::run(w, &WorkBase::Func);
-    watcher.setFuture(future);
+    this->newGenericWork(w);
 }
 
 void WorkSpace::newMedianBlurWork(int kSize)
 {
     WorkBase *w = new WorkMedianBlur(workList.last()->dst, kSize);
-    workList.append(w);
-    this->clearUndoneList();
-    future = QtConcurrent::run(w, &WorkBase::Func);
-    watcher.setFuture(future);
+    this->newGenericWork(w);
+}
+
+void WorkSpace::newBinaryzationWork(int method, int type, int size, double constant)
+{
+    WorkBase *w = new WorkBinaryzation(workList.last()->dst, method, type, size, constant);
+    this->newGenericWork(w);
+}
+
+void WorkSpace::newCannyWork(int aSize, double high, double low, bool l2)
+{
+    WorkBase *w = new WorkCanny(workList.last()->dst, aSize, high, low, l2);
+    this->newGenericWork(w);
+}
+
+void WorkSpace::newContoursWork()
+{
+    WorkBase *w = new WorkContours(workList.last()->dst);
+    this->newGenericWork(w);
 }
 
 void WorkSpace::onLowLevelWorkStarted()

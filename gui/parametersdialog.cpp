@@ -7,7 +7,7 @@ ParametersDialog::ParametersDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowFlags(Qt::Tool);
-    kSizeText = "Kernel Size";
+    this->setMode(-1);
     connect(ui->kSizeSlider, &QSlider::valueChanged, this, &ParametersDialog::onSliderValueChanged);
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ParametersDialog::onAcceptButtonPressed);
 }
@@ -35,10 +35,36 @@ void ParametersDialog::setSigSpaceText(const QString &s)
 void ParametersDialog::setkSizeText(const QString &k)
 {
     kSizeText = k;
-    ui->kSizeLabel->setText(k);
+    this->onSliderValueChanged(ui->kSizeSlider->value());
+}
+
+void ParametersDialog::setMode(int mode)
+{
+    switch (mode) {
+    case 1://adaptiveThreshold(binaryzation)
+        this->setkSizeText("Block Size");
+        ui->sigmaSpaceLabel->setText("Constant C");
+        ui->sigmaColour->setVisible(false);
+        ui->sigmaColourLabel->setVisible(false);
+        break;
+    case 2:
+        this->setkSizeText("Aperture Size");
+        ui->kSizeSlider->setMinimum(2);
+        ui->kSizeSlider->setMaximum(4);
+        ui->sigmaSpaceLabel->setText("High Threshold");
+        ui->sigmaSpace->setValue(300);
+        ui->sigmaColourLabel->setText("Low Threshold");
+        ui->sigmaColour->setValue(100);
+        ui->checkBox->setText("L2 Gradient");
+        break;
+    default://adaptiveBilateralFilter
+        this->setkSizeText("Kernel Size");
+        ui->checkBox->setVisible(false);
+        break;
+    }
 }
 
 void ParametersDialog::onAcceptButtonPressed()
 {
-    emit parametersAccepted(ui->kSizeSlider->value() * 2 - 1, ui->sigmaSpace->value(), ui->sigmaColour->value());
+    emit parametersAccepted(ui->kSizeSlider->value() * 2 - 1, ui->sigmaSpace->value(), ui->sigmaColour->value(), ui->checkBox->isChecked());
 }

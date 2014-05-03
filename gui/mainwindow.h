@@ -47,20 +47,19 @@ private slots:
     void onCCButtonBoxClicked(QAbstractButton *);
     void onHistEqualiseButtonClicked();
     void onAdaptiveBilateralFilterButtonClicked();
-    void onAdaptiveBilateralFilterParametersAccepted(int, double, double);
+    void onAdaptiveBilateralFilterParametersAccepted(int, double, double, bool);
     void onMedianBlurButtonClicked();
+    void onGaussianBinaryzationButtonClicked();
+    void onGaussianBinaryzationParametersAccepted(int, double, double, bool);
+    void onMedianBinaryzationButtonClicked();
+    void onMedianBinaryzationParametersAccepted(int, double, double, bool);
+    void onCannyButtonClicked();
+    void onCannyParametersAccepted(int, double, double, bool);
+    void onContoursButtonClicked();
     void onPreProcessWorkFinished();
     void onPreProcessButtonBoxClicked(QAbstractButton *);
     void onPreProcessUndoClicked();
     void onPreProcessRedoClicked();
-    void onBinaryMethodChanged(int);
-    void onBinarySizeChanged(int);
-    void onBinaryParametersChanged();
-    void onBinaryWorkFinished();
-    void onBinaryInterDrawerClicked(QPoint);
-    void onBinaryButtonBoxClicked(QAbstractButton *);
-    void onContourRefreshButtonPressed();
-    void onContourWorkFinished();
     void onCurrentTabChanged(int);
     void newProject();
     void openProjectDialog();
@@ -82,7 +81,10 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    ParametersDialog *adaptiveBilateralDlg;
+    ParametersDialog adaptiveBilateralDlg;
+    ParametersDialog gaussianBinaryDlg;
+    ParametersDialog medianBinaryDlg;
+    ParametersDialog cannyDlg;
 
     QSettings settings;
     void readConfig();

@@ -8,7 +8,10 @@ SOURCES  += image.cpp\
     workhistequalise.cpp \
     workspace.cpp \
     workmedianblur.cpp \
-    workaptbilateralfilter.cpp
+    workaptbilateralfilter.cpp \
+    workbinaryzation.cpp \
+    workcanny.cpp \
+    workcontours.cpp
 
 HEADERS  += image.h \
             project.h \
@@ -19,6 +22,9 @@ HEADERS  += image.h \
     workbase.h \
     workhistequalise.h \
     workmedianblur.h \
-    workaptbilateralfilter.h
+    workaptbilateralfilter.h \
+    workbinaryzation.h \
+    workcanny.h \
+    workcontours.h
 
 DEFINES  += CORE

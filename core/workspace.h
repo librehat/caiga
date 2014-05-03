@@ -7,9 +7,6 @@
 #include <QFutureWatcher>
 #include "core_lib.h"
 #include "workbase.h"
-#include "workhistequalise.h"
-#include "workmedianblur.h"
-#include "workaptbilateralfilter.h"
 #include "image.h"
 
 namespace CAIGA
@@ -29,6 +26,9 @@ public:
     void newHistogramEqualiseWork();
     void newAdaptiveBilateralFilterWork(int size, double space, double colour);
     void newMedianBlurWork(int kSize);
+    void newBinaryzationWork(int method, int type, int size, double constant);
+    void newCannyWork(int aSize, double high, double low, bool l2);
+    void newContoursWork();
     Mat *getLatestMat();
     QImage getLatestQImg();
 
@@ -47,6 +47,7 @@ private:
     QFuture<void> future;
     QFutureWatcher<void> watcher;
     void clearUndoneList();
+    void newGenericWork(WorkBase *work);
 };
 
 }

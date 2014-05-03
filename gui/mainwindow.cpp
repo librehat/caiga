@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    adaptiveBilateralDlg = new ParametersDialog(this);
 
     restoreGeometry(settings.value("MainGeometry").toByteArray());
     restoreState(settings.value("MainState").toByteArray());
@@ -21,10 +20,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QDir::setCurrent(settings.value("CurrentDir").toString());
 
+    //ParametersDialog settings
+    gaussianBinaryDlg.setMode(1);
+    medianBinaryDlg.setMode(1);
+    cannyDlg.setMode(2);
+
     //Question: is it necessary?
     ui->rawViewer->setNotLarger(true);
     ui->preProcessViewer->setNotLarger(true);
-    ui->contourViewer->setNotLarger(true);
 
 //Windows should use packaged theme since its lacking of **theme**
 #if defined(_WIN32)
@@ -66,25 +69,31 @@ MainWindow::MainWindow(QWidget *parent) :
     //preProcessTab
     connect(ui->histEqualiseButton, &QPushButton::clicked, this, &MainWindow::onHistEqualiseButtonClicked);
     connect(ui->adaptiveBilateralFilter, &QPushButton::clicked, this, &MainWindow::onAdaptiveBilateralFilterButtonClicked);
-    connect(adaptiveBilateralDlg, &ParametersDialog::parametersAccepted, this, &MainWindow::onAdaptiveBilateralFilterParametersAccepted);
+    connect(&adaptiveBilateralDlg, &ParametersDialog::parametersAccepted, this, &MainWindow::onAdaptiveBilateralFilterParametersAccepted);
     connect(ui->medianBlurButton, &QPushButton::clicked, this, &MainWindow::onMedianBlurButtonClicked);
+    connect(ui->gaussianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onGaussianBinaryzationButtonClicked);
+    connect(&gaussianBinaryDlg, &ParametersDialog::parametersAccepted, this, &MainWindow::onGaussianBinaryzationParametersAccepted);
+    connect(ui->medianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onMedianBinaryzationButtonClicked);
+    connect(&medianBinaryDlg, &ParametersDialog::parametersAccepted, this, &MainWindow::onMedianBinaryzationParametersAccepted);
+    connect(ui->cannyButton, &QPushButton::clicked, this, &MainWindow::onCannyButtonClicked);
+    connect(&cannyDlg, &ParametersDialog::parametersAccepted, this, &MainWindow::onCannyParametersAccepted);
+    connect(ui->contoursButton, &QPushButton::clicked, this, &MainWindow::onContoursButtonClicked);
     connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPreProcessButtonBoxClicked);
     connect(ui->actionUndo, &QAction::triggered, this, &MainWindow::onPreProcessUndoClicked);
     connect(ui->actionRedo, &QAction::triggered, this, &MainWindow::onPreProcessRedoClicked);
 
     //binaryTab
-    connect(this, &MainWindow::binaryParametersChanged, this, &MainWindow::onBinaryParametersChanged);
-    connect(ui->binaryMethodComboBox, static_cast<void (QComboBox::*) (int)>(&QComboBox::currentIndexChanged), this, &MainWindow::onBinaryMethodChanged);
-    connect(ui->sizeSlider, &QSlider::valueChanged, this, &MainWindow::onBinarySizeChanged);
-    connect(ui->sizeSlider, &QSlider::valueChanged, this, &MainWindow::onBinaryParametersChanged);
-    connect(ui->highDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBinaryParametersChanged);
-    connect(ui->lowDoubleSpinBox, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &MainWindow::onBinaryParametersChanged);
-    connect(ui->binaryCheckBox, &QCheckBox::toggled, this, &MainWindow::onBinaryParametersChanged);
-    connect(ui->binaryInterDrawer, &QImageInteractiveDrawer::mouseClickedFinished, this, &MainWindow::onBinaryInterDrawerClicked);
-    connect(ui->binaryButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onBinaryButtonBoxClicked);
-
-    //contourTab
-    connect(ui->contourRefreshButton, &QPushButton::clicked, this, &MainWindow::onContourRefreshButtonPressed);
+    ui->sizeLabel->setVisible(false);
+    ui->sizeSlider->setVisible(false);
+    ui->binaryCheckBox->setText("8 Connectivity");
+    ui->highLabel->setText("High Difference");
+    ui->highDoubleSpinBox->setMinimum(0);
+    ui->highDoubleSpinBox->setValue(20);
+    ui->lowLabel->setText("Low Difference");
+    ui->lowLabel->setVisible(true);
+    ui->lowDoubleSpinBox->setMinimum(0);
+    ui->lowDoubleSpinBox->setValue(20);
+    ui->lowDoubleSpinBox->setVisible(true);
 
     //MainWindow
     connect(ui->actionNew_Project, &QAction::triggered, this, &MainWindow::newProject);
@@ -188,15 +197,15 @@ void MainWindow::onHistEqualiseButtonClicked()
 void MainWindow::onAdaptiveBilateralFilterButtonClicked()
 {
     if (cgimg.validateAdaptiveBilateralFilter()) {
-        adaptiveBilateralDlg->show();
-        adaptiveBilateralDlg->exec();
+        adaptiveBilateralDlg.show();
+        adaptiveBilateralDlg.exec();
     }
     else {
         emit messageArrived("Abort. This operation is illegal!");
     }
 }
 
-void MainWindow::onAdaptiveBilateralFilterParametersAccepted(int k, double s, double c)
+void MainWindow::onAdaptiveBilateralFilterParametersAccepted(int k, double s, double c, bool)
 {
     preWorkSpace.newAdaptiveBilateralFilterWork(k, s, c);
 }
@@ -213,6 +222,44 @@ void MainWindow::onMedianBlurButtonClicked()
     else {
         emit messageArrived("Abort. This operation is illegal!");
     }
+}
+
+void MainWindow::onGaussianBinaryzationButtonClicked()
+{
+    gaussianBinaryDlg.show();
+    gaussianBinaryDlg.exec();
+}
+
+void MainWindow::onGaussianBinaryzationParametersAccepted(int s, double c, double, bool inv)
+{
+    preWorkSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_GAUSSIAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
+}
+
+void MainWindow::onMedianBinaryzationButtonClicked()
+{
+    medianBinaryDlg.show();
+    medianBinaryDlg.exec();
+}
+
+void MainWindow::onMedianBinaryzationParametersAccepted(int s, double c, double, bool inv)
+{
+    preWorkSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_MEAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
+}
+
+void MainWindow::onCannyButtonClicked()
+{
+    cannyDlg.show();
+    cannyDlg.exec();
+}
+
+void MainWindow::onCannyParametersAccepted(int aSize, double high, double low, bool l2)
+{
+    preWorkSpace.newCannyWork(aSize, high, low, l2);
+}
+
+void MainWindow::onContoursButtonClicked()
+{
+    preWorkSpace.newContoursWork();
 }
 
 void MainWindow::onPreProcessWorkFinished()
@@ -244,128 +291,14 @@ void MainWindow::onPreProcessRedoClicked()
     preWorkSpace.redo();
     this->onPreProcessWorkFinished();
 }
-
-void MainWindow::onBinaryMethodChanged(int method)
-{
-    switch (method) {
-    case 0://Canny
-        ui->sizeLabel->setText("Aperture Size");
-        ui->sizeLabel->setVisible(true);
-        ui->sizeSlider->setVisible(true);
-        ui->sizeSlider->setMinimum(2);
-        ui->sizeSlider->setMaximum(4);
-        ui->binaryCheckBox->setText("L2 Gradient");
-        ui->highLabel->setText("High Threshold");
-        ui->highDoubleSpinBox->setMinimum(1.1);
-        ui->highDoubleSpinBox->setValue(300);
-        ui->lowLabel->setText("Low Threshold");
-        ui->lowLabel->setVisible(true);
-        ui->lowDoubleSpinBox->setMinimum(1.0);
-        ui->lowDoubleSpinBox->setValue(100);
-        ui->lowDoubleSpinBox->setVisible(true);
-        break;
-    case 1://Median Binaryzation
-    case 2://Gaussian Binaryzation
-        ui->sizeLabel->setText("Block Size");
-        ui->sizeLabel->setVisible(true);
-        ui->sizeSlider->setVisible(true);
-        ui->sizeSlider->setMinimum(1);
-        ui->sizeSlider->setMaximum(999);
-        ui->binaryCheckBox->setText("Invert Threshold");
-        ui->highLabel->setText("Constant C");
-        ui->highDoubleSpinBox->setMinimum(-999.0);
-        ui->highDoubleSpinBox->setValue(0);
-        ui->lowLabel->setVisible(false);
-        ui->lowDoubleSpinBox->setVisible(false);
-        break;
-    case 3://Flood Fill
-        ui->sizeLabel->setVisible(false);
-        ui->sizeSlider->setVisible(false);
-        ui->binaryCheckBox->setText("8 Connectivity");
-        ui->highLabel->setText("High Difference");
-        ui->highDoubleSpinBox->setMinimum(0);
-        ui->highDoubleSpinBox->setValue(20);
-        ui->lowLabel->setText("Low Difference");
-        ui->lowLabel->setVisible(true);
-        ui->lowDoubleSpinBox->setMinimum(0);
-        ui->lowDoubleSpinBox->setValue(20);
-        ui->lowDoubleSpinBox->setVisible(true);
-        break;
-    default:
-        qWarning() << "No such binary method.";
-    }
-}
-
-void MainWindow::onBinarySizeChanged(int i)
-{
-    ui->sizeSlider->setToolTip(QString::number(i * 2 - 1));
-}
-
-void MainWindow::onBinaryParametersChanged()
-{
-    int size = (ui->sizeSlider->value() * 2 - 1);
-    bool check = ui->binaryCheckBox->isChecked();
-    int type = cv::THRESH_BINARY;
-    if (check) {
-        type = cv::THRESH_BINARY_INV;
-    }
-    disconnect(&worker, &WorkerThread::workFinished, 0, 0);
-    connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onBinaryWorkFinished);
-
-    switch (ui->binaryMethodComboBox->currentIndex()) {
-    case 0:
-        worker.cannyEdgesWork(cgimg, ui->highDoubleSpinBox->value(), ui->lowDoubleSpinBox->value(), size, check);
-        break;
-    case 1:
-        worker.binaryzationWork(cgimg, cv::ADAPTIVE_THRESH_MEAN_C, type, size, ui->highDoubleSpinBox->value());
-        break;
-    case 2:
-        worker.binaryzationWork(cgimg, cv::ADAPTIVE_THRESH_GAUSSIAN_C, type, size, ui->highDoubleSpinBox->value());
-        break;
-    case 3:
-        cgimg.prepareFloodFill();
-        this->onBinaryWorkFinished();//prepare image to let user click
-        break;
-    default:
-        qWarning() << "No such binary method.";
-    }
-}
-
-
+/*
 void MainWindow::onBinaryInterDrawerClicked(QPoint p)
 {
     if (ui->binaryMethodComboBox->currentIndex() == 3) {
         worker.floodfillSegmentWork(cgimg, p, static_cast<int>(ui->highDoubleSpinBox->value()), static_cast<int>(ui->lowDoubleSpinBox->value()), !ui->binaryCheckBox->isChecked());
     }
 }
-
-void MainWindow::onBinaryWorkFinished()
-{
-    ui->binaryInterDrawer->setImage(cgimg.getEdgesImage());
-}
-
-void MainWindow::onBinaryButtonBoxClicked(QAbstractButton *b)
-{
-    if (ui->binaryButtonBox->standardButton(b) == QDialogButtonBox::Reset) {
-        //TODO reset control panel
-        ui->binaryInterDrawer->setImage(cgimg.getPreProcessedImage());
-    }
-    else {
-        //TODO Save
-    }
-}
-
-void MainWindow::onContourRefreshButtonPressed()
-{
-    disconnect(&worker, &WorkerThread::workFinished, 0, 0);
-    connect(&worker, &WorkerThread::workFinished, this, &MainWindow::onContourWorkFinished);
-    worker.contoursFindDrawWork(cgimg);
-}
-
-void MainWindow::onContourWorkFinished()
-{
-    ui->contourViewer->setPixmap(cgimg.getProcessedPixmap());
-}
+*/
 
 void MainWindow::onCurrentTabChanged(int i)
 {

@@ -30,8 +30,12 @@ public:
     int oddSize;//should always be an odd number
     int size;//may be odd or even
     cv::Size cvSize;
+    int method;
+    int type;
+    double constant;
     double sigmaX;//sigmaSpace in adaptiveBilateralFilter
     double sigmaY;//sigmaColor in adaptiveBilateralFilter
+    bool b;
 };
 
 }

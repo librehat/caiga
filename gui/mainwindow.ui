@@ -64,7 +64,7 @@
        <enum>QTabWidget::South</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="infoTab">
        <attribute name="title">
@@ -303,6 +303,34 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QPushButton" name="gaussianBinaryzationButton">
+             <property name="text">
+              <string>Gaussian Binaryzation</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="medianBinaryzationButton">
+             <property name="text">
+              <string>Median Binaryzation</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="cannyButton">
+             <property name="text">
+              <string>Canny Edges</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="contoursButton">
+             <property name="text">
+              <string>Find &amp; Draw Contours</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -375,21 +403,9 @@
            </item>
            <item>
             <widget class="QComboBox" name="binaryMethodComboBox">
-             <item>
-              <property name="text">
-               <string>Canny</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Median Binaryzation</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Gaussian Binaryzation</string>
-              </property>
-             </item>
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
              <item>
               <property name="text">
                <string>Flood Fill</string>
@@ -554,51 +570,6 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="contourTab">
-       <attribute name="title">
-        <string>Contours</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QImageViewer" name="contourViewer" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>10</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="contourGroupBox">
-          <property name="title">
-           <string>GroupBox</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_5">
-           <item>
-            <widget class="QPushButton" name="contourRefreshButton">
-             <property name="text">
-              <string>Refresh</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
          </widget>
         </item>
        </layout>

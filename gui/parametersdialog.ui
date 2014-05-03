@@ -26,7 +26,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Kernel Size (6)</string>
+      <string>Kernel Size</string>
      </property>
     </widget>
    </item>
@@ -58,6 +58,9 @@
      <property name="minimum">
       <double>1.000000000000000</double>
      </property>
+     <property name="maximum">
+      <double>999.990000000000009</double>
+     </property>
      <property name="value">
       <double>5.000000000000000</double>
      </property>
@@ -81,8 +84,18 @@
      <property name="minimum">
       <double>1.000000000000000</double>
      </property>
+     <property name="maximum">
+      <double>999.990000000000009</double>
+     </property>
      <property name="value">
       <double>20.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="checkBox">
+     <property name="text">
+      <string>Invert Threshold</string>
      </property>
     </widget>
    </item>
