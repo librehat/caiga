@@ -36,7 +36,7 @@ void WorkSpace::redo()
         emit workStatusStringUpdated("Abort. Nothing available to be redone.");
         return;
     }
-    workList.append(undoneList.takeFirst());
+    workList.append(undoneList.takeLast());
 }
 
 void WorkSpace::simplified()

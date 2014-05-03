@@ -7,7 +7,6 @@ ParametersDialog::ParametersDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowFlags(Qt::Tool);
-    this->setMode(-1);
     connect(ui->kSizeSlider, &QSlider::valueChanged, this, &ParametersDialog::onSliderValueChanged);
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ParametersDialog::onAcceptButtonPressed);
 }
@@ -43,18 +42,20 @@ void ParametersDialog::setMode(int mode)
     switch (mode) {
     case 1://adaptiveThreshold(binaryzation)
         this->setkSizeText("Block Size");
+        ui->sigmaSpace->setMinimum(-999);
         ui->sigmaSpaceLabel->setText("Constant C");
         ui->sigmaColour->setVisible(false);
         ui->sigmaColourLabel->setVisible(false);
         break;
     case 2:
         this->setkSizeText("Aperture Size");
+        ui->kSizeSlider->setValue(2);
         ui->kSizeSlider->setMinimum(2);
         ui->kSizeSlider->setMaximum(4);
         ui->sigmaSpaceLabel->setText("High Threshold");
-        ui->sigmaSpace->setValue(300);
+        ui->sigmaSpace->setValue(400);
         ui->sigmaColourLabel->setText("Low Threshold");
-        ui->sigmaColour->setValue(100);
+        ui->sigmaColour->setValue(150);
         ui->checkBox->setText("L2 Gradient");
         break;
     default://adaptiveBilateralFilter

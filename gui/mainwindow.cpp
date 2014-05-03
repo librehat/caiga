@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QDir::setCurrent(settings.value("CurrentDir").toString());
 
     //ParametersDialog settings
+    adaptiveBilateralDlg.setMode(-1);
     gaussianBinaryDlg.setMode(1);
     medianBinaryDlg.setMode(1);
     cannyDlg.setMode(2);
