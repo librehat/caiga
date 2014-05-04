@@ -7,13 +7,28 @@ ParametersDialog::ParametersDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowFlags(Qt::Tool);
+    ui->viewer->setNotLarger(true);
     connect(ui->kSizeSlider, &QSlider::valueChanged, this, &ParametersDialog::onSliderValueChanged);
-    connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &ParametersDialog::onAcceptButtonPressed);
+    connect(ui->kSizeSlider, &QSlider::valueChanged, this, &ParametersDialog::onValuesChanged);
+    connect(ui->sigmaColour, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &ParametersDialog::onValuesChanged);
+    connect(ui->sigmaSpace, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &ParametersDialog::onValuesChanged);
+    connect(ui->checkBox, &QCheckBox::stateChanged, this, &ParametersDialog::onValuesChanged);
 }
 
 ParametersDialog::~ParametersDialog()
 {
     delete ui;
+}
+
+void ParametersDialog::show()
+{
+    QWidget::show();
+    this->onValuesChanged();
+}
+
+void ParametersDialog::onValuesChanged()
+{
+    emit parametersChanged(ui->kSizeSlider->value() * 2 - 1, ui->sigmaSpace->value(), ui->sigmaColour->value(), ui->checkBox->isChecked());
 }
 
 void ParametersDialog::onSliderValueChanged(int s)
@@ -63,9 +78,4 @@ void ParametersDialog::setMode(int mode)
         ui->checkBox->setVisible(false);
         break;
     }
-}
-
-void ParametersDialog::onAcceptButtonPressed()
-{
-    emit parametersAccepted(ui->kSizeSlider->value() * 2 - 1, ui->sigmaSpace->value(), ui->sigmaColour->value(), ui->checkBox->isChecked());
 }

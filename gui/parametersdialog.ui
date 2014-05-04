@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>270</width>
-    <height>263</height>
+    <height>401</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,10 @@
    <bool>true</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+   <item alignment="Qt::AlignTop">
+    <widget class="QImageViewer" name="viewer" native="true"/>
+   </item>
+   <item alignment="Qt::AlignBottom">
     <widget class="QLabel" name="kSizeLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -30,7 +33,7 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item alignment="Qt::AlignBottom">
     <widget class="QSlider" name="kSizeSlider">
      <property name="value">
       <number>6</number>
@@ -40,7 +43,7 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item alignment="Qt::AlignBottom">
     <widget class="QLabel" name="sigmaSpaceLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -53,7 +56,7 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item alignment="Qt::AlignBottom">
     <widget class="QDoubleSpinBox" name="sigmaSpace">
      <property name="minimum">
       <double>1.000000000000000</double>
@@ -66,7 +69,7 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item alignment="Qt::AlignBottom">
     <widget class="QLabel" name="sigmaColourLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -79,7 +82,7 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item alignment="Qt::AlignBottom">
     <widget class="QDoubleSpinBox" name="sigmaColour">
      <property name="minimum">
       <double>1.000000000000000</double>
@@ -92,7 +95,7 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item alignment="Qt::AlignBottom">
     <widget class="QCheckBox" name="checkBox">
      <property name="text">
       <string>Invert Threshold</string>
@@ -111,6 +114,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QImageViewer</class>
+   <extends>QWidget</extends>
+   <header>qimageviewer.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

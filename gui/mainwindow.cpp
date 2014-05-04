@@ -70,14 +70,18 @@ MainWindow::MainWindow(QWidget *parent) :
     //preProcessTab
     connect(ui->histEqualiseButton, &QPushButton::clicked, this, &MainWindow::onHistEqualiseButtonClicked);
     connect(ui->adaptiveBilateralFilter, &QPushButton::clicked, this, &MainWindow::onAdaptiveBilateralFilterButtonClicked);
-    connect(&adaptiveBilateralDlg, &ParametersDialog::parametersAccepted, this, &MainWindow::onAdaptiveBilateralFilterParametersAccepted);
+    connect(&adaptiveBilateralDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onAdaptiveBilateralFilterParametersChanged);
+    connect(&adaptiveBilateralDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParamteresAccepted);
     connect(ui->medianBlurButton, &QPushButton::clicked, this, &MainWindow::onMedianBlurButtonClicked);
     connect(ui->gaussianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onGaussianBinaryzationButtonClicked);
-    connect(&gaussianBinaryDlg, &ParametersDialog::parametersAccepted, this, &MainWindow::onGaussianBinaryzationParametersAccepted);
+    connect(&gaussianBinaryDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onGaussianBinaryzationParametersChanged);
+    connect(&gaussianBinaryDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParamteresAccepted);
     connect(ui->medianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onMedianBinaryzationButtonClicked);
-    connect(&medianBinaryDlg, &ParametersDialog::parametersAccepted, this, &MainWindow::onMedianBinaryzationParametersAccepted);
+    connect(&medianBinaryDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onMedianBinaryzationParametersChanged);
+    connect(&medianBinaryDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParamteresAccepted);
     connect(ui->cannyButton, &QPushButton::clicked, this, &MainWindow::onCannyButtonClicked);
-    connect(&cannyDlg, &ParametersDialog::parametersAccepted, this, &MainWindow::onCannyParametersAccepted);
+    connect(&cannyDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onCannyParametersChanged);
+    connect(&cannyDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParamteresAccepted);
     connect(ui->contoursButton, &QPushButton::clicked, this, &MainWindow::onContoursButtonClicked);
     connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPreProcessButtonBoxClicked);
     connect(ui->actionUndo, &QAction::triggered, this, &MainWindow::onPreProcessUndoClicked);
@@ -115,6 +119,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, &MainWindow::messageArrived, this, &MainWindow::onMessagesArrived);
     connect(&worker, &CAIGA::WorkerThread::workStatusUpdated, this, &MainWindow::onMessagesArrived);
 
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
     connect(&preWorkSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreProcessWorkFinished);
     connect(&preWorkSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
 
@@ -185,6 +190,11 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
     }
 }
 
+void MainWindow::onPreviewWorkFinished()
+{
+    ui->preProcessViewer->setPixmap(previewSpace.getLatestQImg());
+}
+
 void MainWindow::onHistEqualiseButtonClicked()
 {
     if (cgimg.validateHistogramEqualise()) {
@@ -206,9 +216,10 @@ void MainWindow::onAdaptiveBilateralFilterButtonClicked()
     }
 }
 
-void MainWindow::onAdaptiveBilateralFilterParametersAccepted(int k, double s, double c, bool)
+void MainWindow::onAdaptiveBilateralFilterParametersChanged(int k, double s, double c, bool)
 {
-    preWorkSpace.newAdaptiveBilateralFilterWork(k, s, c);
+    previewSpace.reset(preWorkSpace.getLatestMat());
+    previewSpace.newAdaptiveBilateralFilterWork(k, s, c);
 }
 
 void MainWindow::onMedianBlurButtonClicked()
@@ -231,9 +242,10 @@ void MainWindow::onGaussianBinaryzationButtonClicked()
     gaussianBinaryDlg.exec();
 }
 
-void MainWindow::onGaussianBinaryzationParametersAccepted(int s, double c, double, bool inv)
+void MainWindow::onGaussianBinaryzationParametersChanged(int s, double c, double, bool inv)
 {
-    preWorkSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_GAUSSIAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
+    previewSpace.reset(preWorkSpace.getLatestMat());
+    previewSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_GAUSSIAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
 }
 
 void MainWindow::onMedianBinaryzationButtonClicked()
@@ -242,9 +254,10 @@ void MainWindow::onMedianBinaryzationButtonClicked()
     medianBinaryDlg.exec();
 }
 
-void MainWindow::onMedianBinaryzationParametersAccepted(int s, double c, double, bool inv)
+void MainWindow::onMedianBinaryzationParametersChanged(int s, double c, double, bool inv)
 {
-    preWorkSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_MEAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
+    previewSpace.reset(preWorkSpace.getLatestMat());
+    previewSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_MEAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
 }
 
 void MainWindow::onCannyButtonClicked()
@@ -253,9 +266,20 @@ void MainWindow::onCannyButtonClicked()
     cannyDlg.exec();
 }
 
-void MainWindow::onCannyParametersAccepted(int aSize, double high, double low, bool l2)
+void MainWindow::onCannyParametersChanged(int aSize, double high, double low, bool l2)
 {
-    preWorkSpace.newCannyWork(aSize, high, low, l2);
+    previewSpace.reset(preWorkSpace.getLatestMat());
+    previewSpace.newCannyWork(aSize, high, low, l2);
+}
+
+void MainWindow::onPreParamteresAccepted()
+{
+    preWorkSpace.append(previewSpace.takeLast());
+}
+
+void MainWindow::onPreParamteresRejected()
+{
+    this->onPreProcessWorkFinished();
 }
 
 void MainWindow::onContoursButtonClicked()

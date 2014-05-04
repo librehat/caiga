@@ -12,5 +12,9 @@ WorkBinaryzation::WorkBinaryzation(cv::Mat *s, int m, int t, int size, double C)
 
 void WorkBinaryzation::Func()
 {
-    cv::adaptiveThreshold(*src, *dst, 255, method, type, oddSize, constant);
+    if (oddSize % 2 == 1 && oddSize > 1) {
+        cv::adaptiveThreshold(*src, *dst, 255, method, type, oddSize, constant);
+    }
+    else
+        qWarning() << "Assertion failed (blockSize % 2 == 1 && blockSize > 1) blockSize is " << oddSize;
 }

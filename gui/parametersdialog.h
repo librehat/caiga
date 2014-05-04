@@ -12,11 +12,12 @@ class ParametersDialog : public QDialog
     Q_OBJECT
 
 signals:
-    void parametersAccepted(int, double, double, bool);
+    void parametersChanged(int, double, double, bool);
 
 public:
     explicit ParametersDialog(QWidget *parent = 0);
     ~ParametersDialog();
+    void show();
     void setkSizeText(const QString &);
     void setSigColourText(const QString &);
     void setSigSpaceText(const QString &);
@@ -27,8 +28,8 @@ private:
     QString kSizeText;
 
 private slots:
+    void onValuesChanged();
     void onSliderValueChanged(int);
-    void onAcceptButtonPressed();
 };
 
 #endif // PARAMETERSDIALOG_H

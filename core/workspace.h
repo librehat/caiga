@@ -19,9 +19,13 @@ public:
     ~WorkSpace();
     void undo();
     void redo();
+    void append(WorkBase *);
+    void pop();//pop out the last from worklist
+    WorkBase *takeLast();
     void simplified();
     void clear();
     void reset(CAIGA::Image &cgimg);//reset and use the cropped image from cgimg
+    void reset(cv::Mat *s);
     int count();
     void newHistogramEqualiseWork();
     void newAdaptiveBilateralFilterWork(int size, double space, double colour);

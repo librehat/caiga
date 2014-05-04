@@ -45,16 +45,19 @@ signals:
 private slots:
     void ccModeChanged(int);
     void onCCButtonBoxClicked(QAbstractButton *);
+    void onPreviewWorkFinished();
     void onHistEqualiseButtonClicked();
     void onAdaptiveBilateralFilterButtonClicked();
-    void onAdaptiveBilateralFilterParametersAccepted(int, double, double, bool);
+    void onAdaptiveBilateralFilterParametersChanged(int, double, double, bool);
     void onMedianBlurButtonClicked();
     void onGaussianBinaryzationButtonClicked();
-    void onGaussianBinaryzationParametersAccepted(int, double, double, bool);
+    void onGaussianBinaryzationParametersChanged(int, double, double, bool);
     void onMedianBinaryzationButtonClicked();
-    void onMedianBinaryzationParametersAccepted(int, double, double, bool);
+    void onMedianBinaryzationParametersChanged(int, double, double, bool);
     void onCannyButtonClicked();
-    void onCannyParametersAccepted(int, double, double, bool);
+    void onCannyParametersChanged(int, double, double, bool);
+    void onPreParamteresAccepted();
+    void onPreParamteresRejected();
     void onContoursButtonClicked();
     void onPreProcessWorkFinished();
     void onPreProcessButtonBoxClicked(QAbstractButton *);
@@ -105,6 +108,7 @@ private:
     QStringList imgNameList;
     CAIGA::WorkerThread worker;
     CAIGA::WorkSpace preWorkSpace;
+    CAIGA::WorkSpace previewSpace;
 
     //Text in About Dialog
     const static QString aboutText;

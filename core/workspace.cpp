@@ -39,6 +39,23 @@ void WorkSpace::redo()
     workList.append(undoneList.takeLast());
 }
 
+void WorkSpace::append(WorkBase *w)
+{
+    workList.append(w);
+    this->clearUndoneList();
+    emit workFinished();
+}
+
+void WorkSpace::pop()
+{
+    delete workList.takeLast();
+}
+
+WorkBase *WorkSpace::takeLast()
+{
+    return workList.takeLast();
+}
+
 void WorkSpace::simplified()
 {
     //when user click "save" button.
@@ -73,6 +90,13 @@ void WorkSpace::reset(Image &cgimg)
     workList.append(w);
 }
 
+void WorkSpace::reset(Mat *s)
+{
+    this->clear();
+    WorkBase *w = new WorkBase(s);
+    workList.append(w);
+}
+
 int WorkSpace::count()
 {
     return workList.size();
@@ -91,7 +115,6 @@ QImage WorkSpace::getLatestQImg()
 void WorkSpace::newGenericWork(WorkBase *work)
 {
     workList.append(work);
-    //clear undoneList to avoid corrupted redo action.
     this->clearUndoneList();
     future = QtConcurrent::run(work, &WorkBase::Func);
     watcher.setFuture(future);
