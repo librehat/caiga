@@ -14,18 +14,21 @@ public:
     const QImage *image() const;
 
 signals:
-    void mouseClickedFinished(QPoint);
+    void mousePressed(int, int);
+    void mouseMoved(int, int);
 
 public slots:
     void setImage(const QImage &);
 
 private:
     QImage m_image;
-    QPoint m_mousePressed;//relevant to m_image
+    QImage m_scaledImage;
+    qreal m_scale;
 
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
+    void mouseMoveEvent(QMouseEvent *);
 };
 
 #endif // QIMAGEINTERACTIVEDRAWER_H
