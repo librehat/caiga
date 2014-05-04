@@ -18,10 +18,31 @@ public:
         src = new cv::Mat();
         dst = new cv::Mat();
     }
+
     WorkBase(cv::Mat *s) {
         src = new cv::Mat(s->clone());
         dst = new cv::Mat(s->clone());
     }
+
+    WorkBase(cv::Mat *s, cv::Mat *d) {
+        src = new cv::Mat(s->clone());
+        dst = new cv::Mat(d->clone());
+    }
+
+    WorkBase(WorkBase &base) {
+        src = new cv::Mat(base.src->clone());
+        dst = new cv::Mat(base.dst->clone());
+        oddSize = base.oddSize;
+        size = base.size;
+        cvSize = base.cvSize;
+        method = base.method;
+        type = base.type;
+        constant = base.constant;
+        sigmaX = base.sigmaX;
+        sigmaY = base.sigmaY;
+        b = base.b;
+    }
+
     virtual ~WorkBase() { delete src; delete dst; }
     virtual void Func() {}
     cv::Mat *src;

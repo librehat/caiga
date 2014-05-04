@@ -46,9 +46,21 @@ void WorkSpace::append(WorkBase *w)
     emit workFinished();
 }
 
+void WorkSpace::appendAndClone(WorkBase *w)
+{
+    WorkBase *nw = new WorkBase(*w);
+    workList.append(nw);
+    this->clearUndoneList();
+}
+
 void WorkSpace::pop()
 {
     delete workList.takeLast();
+}
+
+WorkBase *WorkSpace::last()
+{
+    return workList.last();
 }
 
 WorkBase *WorkSpace::takeLast()

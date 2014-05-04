@@ -23,6 +23,10 @@ public:
     void setSigSpaceText(const QString &);
     void setMode(int mode);//should invoke only once because it won't change the default value which may be modified previously
 
+public slots:
+    void handleWorkStarted();
+    void handleWorkFinished();
+
 private:
     Ui::ParametersDialog *ui;
     QString kSizeText;

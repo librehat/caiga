@@ -19,8 +19,10 @@ public:
     ~WorkSpace();
     void undo();
     void redo();
-    void append(WorkBase *);
+    void append(WorkBase *);//this will emit workFinished
+    void appendAndClone(WorkBase *);//it won't emit workFinished
     void pop();//pop out the last from worklist
+    WorkBase *last();
     WorkBase *takeLast();
     void simplified();
     void clear();

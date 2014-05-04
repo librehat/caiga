@@ -7,7 +7,6 @@ ParametersDialog::ParametersDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowFlags(Qt::Tool);
-    ui->viewer->setNotLarger(true);
     connect(ui->kSizeSlider, &QSlider::valueChanged, this, &ParametersDialog::onSliderValueChanged);
     connect(ui->kSizeSlider, &QSlider::valueChanged, this, &ParametersDialog::onValuesChanged);
     connect(ui->sigmaColour, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &ParametersDialog::onValuesChanged);
@@ -57,6 +56,7 @@ void ParametersDialog::setMode(int mode)
     switch (mode) {
     case 1://adaptiveThreshold(binaryzation)
         this->setkSizeText("Block Size");
+        ui->kSizeSlider->setMinimum(2);
         ui->sigmaSpace->setMinimum(-999);
         ui->sigmaSpaceLabel->setText("Constant C");
         ui->sigmaColour->setVisible(false);
@@ -78,4 +78,14 @@ void ParametersDialog::setMode(int mode)
         ui->checkBox->setVisible(false);
         break;
     }
+}
+
+void ParametersDialog::handleWorkStarted()
+{
+    ui->buttonBox->setEnabled(false);
+}
+
+void ParametersDialog::handleWorkFinished()
+{
+    ui->buttonBox->setEnabled(true);
 }

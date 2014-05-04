@@ -72,16 +72,28 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->adaptiveBilateralFilter, &QPushButton::clicked, this, &MainWindow::onAdaptiveBilateralFilterButtonClicked);
     connect(&adaptiveBilateralDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onAdaptiveBilateralFilterParametersChanged);
     connect(&adaptiveBilateralDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParamteresAccepted);
+    connect(&adaptiveBilateralDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParamteresRejected);
+    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &adaptiveBilateralDlg, &ParametersDialog::handleWorkStarted);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &adaptiveBilateralDlg, &ParametersDialog::handleWorkFinished);
     connect(ui->medianBlurButton, &QPushButton::clicked, this, &MainWindow::onMedianBlurButtonClicked);
     connect(ui->gaussianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onGaussianBinaryzationButtonClicked);
     connect(&gaussianBinaryDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onGaussianBinaryzationParametersChanged);
     connect(&gaussianBinaryDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParamteresAccepted);
+    connect(&gaussianBinaryDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParamteresRejected);
+    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &gaussianBinaryDlg, &ParametersDialog::handleWorkStarted);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &gaussianBinaryDlg, &ParametersDialog::handleWorkFinished);
     connect(ui->medianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onMedianBinaryzationButtonClicked);
     connect(&medianBinaryDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onMedianBinaryzationParametersChanged);
     connect(&medianBinaryDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParamteresAccepted);
+    connect(&medianBinaryDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParamteresRejected);
+    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &medianBinaryDlg, &ParametersDialog::handleWorkStarted);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &medianBinaryDlg, &ParametersDialog::handleWorkFinished);
     connect(ui->cannyButton, &QPushButton::clicked, this, &MainWindow::onCannyButtonClicked);
     connect(&cannyDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onCannyParametersChanged);
     connect(&cannyDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParamteresAccepted);
+    connect(&cannyDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParamteresRejected);
+    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &cannyDlg, &ParametersDialog::handleWorkStarted);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &cannyDlg, &ParametersDialog::handleWorkFinished);
     connect(ui->contoursButton, &QPushButton::clicked, this, &MainWindow::onContoursButtonClicked);
     connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPreProcessButtonBoxClicked);
     connect(ui->actionUndo, &QAction::triggered, this, &MainWindow::onPreProcessUndoClicked);
@@ -218,7 +230,7 @@ void MainWindow::onAdaptiveBilateralFilterButtonClicked()
 
 void MainWindow::onAdaptiveBilateralFilterParametersChanged(int k, double s, double c, bool)
 {
-    previewSpace.reset(preWorkSpace.getLatestMat());
+    previewSpace.appendAndClone(preWorkSpace.last());
     previewSpace.newAdaptiveBilateralFilterWork(k, s, c);
 }
 
@@ -244,7 +256,7 @@ void MainWindow::onGaussianBinaryzationButtonClicked()
 
 void MainWindow::onGaussianBinaryzationParametersChanged(int s, double c, double, bool inv)
 {
-    previewSpace.reset(preWorkSpace.getLatestMat());
+    previewSpace.appendAndClone(preWorkSpace.last());
     previewSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_GAUSSIAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
 }
 
@@ -256,7 +268,7 @@ void MainWindow::onMedianBinaryzationButtonClicked()
 
 void MainWindow::onMedianBinaryzationParametersChanged(int s, double c, double, bool inv)
 {
-    previewSpace.reset(preWorkSpace.getLatestMat());
+    previewSpace.appendAndClone(preWorkSpace.last());
     previewSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_MEAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
 }
 
@@ -268,17 +280,19 @@ void MainWindow::onCannyButtonClicked()
 
 void MainWindow::onCannyParametersChanged(int aSize, double high, double low, bool l2)
 {
-    previewSpace.reset(preWorkSpace.getLatestMat());
+    previewSpace.appendAndClone(preWorkSpace.last());
     previewSpace.newCannyWork(aSize, high, low, l2);
 }
 
 void MainWindow::onPreParamteresAccepted()
 {
     preWorkSpace.append(previewSpace.takeLast());
+    previewSpace.clear();
 }
 
 void MainWindow::onPreParamteresRejected()
 {
+    previewSpace.clear();
     this->onPreProcessWorkFinished();
 }
 
