@@ -14,9 +14,8 @@ class QImageDrawer : public QWidget
 public:
     explicit QImageDrawer(QWidget *parent = 0);
     const QImage *image() const;
-    //QImage getCroppedImage();
     ccStruct getCCStruct();
-    void setDrawMode(int);//-2: circle; -3: rect; -4: calibre (QButtonGroup id start with -2)
+    void setDrawMode(int);//-2: circle; -3: rect; -4: calibre; -5 gauge (QButtonGroup id start with -2)
     void setPenColour(const QString &);
     bool isCircle();
     void reset();
@@ -27,6 +26,7 @@ public slots:
 
 signals:
     void calibreFinished(qreal);
+    void gaugeLineResult(qreal);
 
 protected:
     void paintEvent(QPaintEvent *);
@@ -41,6 +41,8 @@ private:
     qreal m_scale;//m_scaledImage.size() / m_image.size()
 
     ccStruct m_value;
+
+    QLine m_gaugeLine;
     /*
      * replaced with ccStruct
      * all these values are calculated based on original image (m_image)

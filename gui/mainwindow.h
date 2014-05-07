@@ -43,8 +43,8 @@ signals:
 
 private slots:
     void ccModeChanged(int);
+    void onGaugeLineFinished(qreal);
     void onCCButtonBoxClicked(QAbstractButton *);
-    void onPreviewWorkFinished();
     void onHistEqualiseButtonClicked();
     void onAdaptiveBilateralFilterButtonClicked();
     void onAdaptiveBilateralFilterParametersChanged(int, double, double, bool);
@@ -63,6 +63,7 @@ private slots:
     void onPreParametersAccepted();
     void onPreParametersRejected();
     void onContoursButtonClicked();
+    void onPreviewWorkFinished();
     void onPreProcessWorkFinished();
     void onPreProcessButtonBoxClicked(QAbstractButton *);
     void onCurrentTabChanged(int);

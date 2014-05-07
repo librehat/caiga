@@ -64,6 +64,14 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
                   m_value.calibreLine.p2().y() * m_scale + (this->height() - m_scaledImage.height()) / 2);
         painter.drawLine(p1, p2);
     }
+    else if (m_value.drawMode == -5) {//gauge
+        QPoint p1(m_gaugeLine.p1().x() * m_scale + (this->width() - m_scaledImage.width()) / 2,
+                  m_gaugeLine.p1().y() * m_scale + (this->height() - m_scaledImage.height()) / 2);
+        QPoint p2(m_gaugeLine.p2().x() * m_scale + (this->width() - m_scaledImage.width()) / 2,
+                  m_gaugeLine.p2().y() * m_scale + (this->height() - m_scaledImage.height()) / 2);
+        painter.drawLine(p1, p2);
+        return;
+    }
 
     //keep circle or rectangle painted
     //resize to m_scaledImage in advance.
@@ -111,6 +119,10 @@ void QImageDrawer::mousePressEvent(QMouseEvent *m)
     if (m->pos().y() > margin_r.y()) {
         m_value.pressed.setY(m_image.height());
     }
+
+    if (m_value.drawMode == -5) {
+        m_gaugeLine.setP1(m_value.pressed);
+    }
 }
 
 void QImageDrawer::mouseMoveEvent(QMouseEvent *m)
@@ -147,6 +159,9 @@ void QImageDrawer::mouseMoveEvent(QMouseEvent *m)
         if (m->pos().y() > margin_r.y()) {
             m_value.released.setY(m_image.height());
         }
+        if (m_value.drawMode == -5) {
+            m_gaugeLine.setP2(m_value.released);
+        }
     }
     this->update();
 }
@@ -164,6 +179,10 @@ void QImageDrawer::mouseReleaseEvent(QMouseEvent *m)
             m_value.calibre = std::max(std::abs(m_value.calibreLine.dx()), std::abs(m_value.calibreLine.dy())) / r;
             emit calibreFinished(m_value.calibre);
         }
+    }
+    else if (m_value.drawMode == -5) {//gauge
+        qreal gaugeResult = std::sqrt(static_cast<qreal>(std::pow(m_gaugeLine.dx(), 2) + std::pow(m_gaugeLine.dy(), 2))) / m_value.calibre;
+        emit gaugeLineResult(gaugeResult);
     }
 }
 
@@ -196,31 +215,6 @@ bool QImageDrawer::isCircle()
     return m_value.isCircle;
 }
 
-/*
- * deprecated
- * let core do the dirty jobs
- *
-QImage QImageDrawer::getCroppedImage()
-{
-    if (m_value.isCircle) {
-        QRect enclosingRect(m_value.centre.x() - m_value.radius, m_value.centre.y() - m_value.radius, m_value.radius * 2, m_value.radius * 2);
-
-        //QPainter cannot paint on an image with the QImage::Format_Indexed8 format
-        QImage enclosingImage = m_image.copy(enclosingRect).convertToFormat(QImage::Format_RGB32);
-        QImage circle(enclosingImage.size(), enclosingImage.format());
-        QPainter p(&circle);
-        QPainterPath path;
-        path.addEllipse(enclosingImage.rect().center(), m_value.radius, m_value.radius);
-        p.setClipPath(path);
-        p.drawImage(0, 0, enclosingImage);
-        return circle;
-    }
-    else {
-        return m_image.copy(m_value.rect);
-    }
-}
-*/
-
 void QImageDrawer::setImage(const QImage &img)
 {
     m_image = img;
@@ -235,7 +229,6 @@ void QImageDrawer::reset()
 
 ccStruct QImageDrawer::getCCStruct()
 {
-    //m_value.croppedImage = Image::convertQImage2Mat(getCroppedImage(), true);//ensure it's a CV_8UC1 Mat.
     return m_value;
 }
 

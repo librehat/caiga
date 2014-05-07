@@ -67,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->buttonGroup, static_cast<void (QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &MainWindow::ccModeChanged);//Operation Mode
     connect(ui->ccButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onCCButtonBoxClicked);
     connect(ui->ccDrawer, &QImageDrawer::calibreFinished, ui->calibreDoubleSpinBox, &QDoubleSpinBox::setValue);
+    connect(ui->ccDrawer, &QImageDrawer::gaugeLineResult, this, &MainWindow::onGaugeLineFinished);
 
     //preProcessTab
     connect(ui->histEqualiseButton, &QPushButton::clicked, this, &MainWindow::onHistEqualiseButtonClicked);
@@ -179,6 +180,11 @@ const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive 
 void MainWindow::ccModeChanged(int i)
 {
     ui->ccDrawer->setDrawMode(i);
+}
+
+void MainWindow::onGaugeLineFinished(qreal r)
+{
+    ui->gaugeResultLabel->setText(QString("%1 μm").arg(r));
 }
 
 void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
