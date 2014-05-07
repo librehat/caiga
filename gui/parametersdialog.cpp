@@ -12,6 +12,10 @@ ParametersDialog::ParametersDialog(QWidget *parent) :
     connect(ui->sigmaColour, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &ParametersDialog::onValuesChanged);
     connect(ui->sigmaSpace, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &ParametersDialog::onValuesChanged);
     connect(ui->checkBox, &QCheckBox::stateChanged, this, &ParametersDialog::onValuesChanged);
+    connect(ui->undoButton, &QPushButton::clicked, this, &ParametersDialog::undoButtonClicked);
+    connect(ui->redoButton, &QPushButton::clicked, this, &ParametersDialog::redoButtonClicked);
+    ui->undoButton->setVisible(false);
+    ui->redoButton->setVisible(false);
 }
 
 ParametersDialog::~ParametersDialog()
@@ -72,6 +76,19 @@ void ParametersDialog::setMode(int mode)
         ui->sigmaColourLabel->setText("Low Threshold");
         ui->sigmaColour->setValue(150);
         ui->checkBox->setText("L2 Gradient");
+        break;
+    case 3://floodfill
+        ui->kSizeLabel->setVisible(false);
+        ui->kSizeSlider->setVisible(false);
+        ui->sigmaSpace->setMinimum(0);
+        ui->sigmaSpace->setValue(20);
+        ui->sigmaSpaceLabel->setText("High Difference");
+        ui->sigmaColour->setMinimum(0);
+        ui->sigmaColour->setValue(20);
+        ui->sigmaColourLabel->setText("Low Difference");
+        ui->checkBox->setText("8 Connectivity Mode");
+        ui->undoButton->setVisible(true);
+        ui->redoButton->setVisible(true);
         break;
     default://adaptiveBilateralFilter
         this->setkSizeText("Kernel Size");

@@ -13,6 +13,8 @@ class ParametersDialog : public QDialog
 
 signals:
     void parametersChanged(int, double, double, bool);
+    void undoButtonClicked();
+    void redoButtonClicked();
 
 public:
     explicit ParametersDialog(QWidget *parent = 0);

@@ -14,8 +14,8 @@ public:
     const QImage *image() const;
 
 signals:
-    void mousePressed(int, int);
-    void mouseMoved(int, int);
+    void mousePressed(QPoint);
+    void mouseMoved(QPoint);
 
 public slots:
     void setImage(const QImage &);

@@ -25,10 +25,11 @@ MainWindow::MainWindow(QWidget *parent) :
     gaussianBinaryDlg.setMode(1);
     medianBinaryDlg.setMode(1);
     cannyDlg.setMode(2);
+    floodFillDlg.setMode(3);
+    floodFillDlg.setModal(false);
 
     //Question: is it necessary?
     ui->rawViewer->setNotLarger(true);
-    ui->preProcessViewer->setNotLarger(true);
 
 //Windows should use packaged theme since its lacking of **theme**
 #if defined(_WIN32)
@@ -71,46 +72,39 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->histEqualiseButton, &QPushButton::clicked, this, &MainWindow::onHistEqualiseButtonClicked);
     connect(ui->adaptiveBilateralFilter, &QPushButton::clicked, this, &MainWindow::onAdaptiveBilateralFilterButtonClicked);
     connect(&adaptiveBilateralDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onAdaptiveBilateralFilterParametersChanged);
-    connect(&adaptiveBilateralDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParamteresAccepted);
-    connect(&adaptiveBilateralDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParamteresRejected);
+    connect(&adaptiveBilateralDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
+    connect(&adaptiveBilateralDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
     connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &adaptiveBilateralDlg, &ParametersDialog::handleWorkStarted);
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &adaptiveBilateralDlg, &ParametersDialog::handleWorkFinished);
     connect(ui->medianBlurButton, &QPushButton::clicked, this, &MainWindow::onMedianBlurButtonClicked);
     connect(ui->gaussianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onGaussianBinaryzationButtonClicked);
     connect(&gaussianBinaryDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onGaussianBinaryzationParametersChanged);
-    connect(&gaussianBinaryDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParamteresAccepted);
-    connect(&gaussianBinaryDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParamteresRejected);
+    connect(&gaussianBinaryDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
+    connect(&gaussianBinaryDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
     connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &gaussianBinaryDlg, &ParametersDialog::handleWorkStarted);
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &gaussianBinaryDlg, &ParametersDialog::handleWorkFinished);
     connect(ui->medianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onMedianBinaryzationButtonClicked);
     connect(&medianBinaryDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onMedianBinaryzationParametersChanged);
-    connect(&medianBinaryDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParamteresAccepted);
-    connect(&medianBinaryDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParamteresRejected);
+    connect(&medianBinaryDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
+    connect(&medianBinaryDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
     connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &medianBinaryDlg, &ParametersDialog::handleWorkStarted);
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &medianBinaryDlg, &ParametersDialog::handleWorkFinished);
+    connect(ui->floodFillButton, &QPushButton::clicked, this, &MainWindow::onFloodFillButtonClicked);
+    connect(&floodFillDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onFloodFillParametersChanged);
+    connect(&floodFillDlg, &ParametersDialog::undoButtonClicked, &previewSpace, &CAIGA::WorkSpace::undo);
+    connect(&floodFillDlg, &ParametersDialog::redoButtonClicked, &previewSpace, &CAIGA::WorkSpace::redo);
+    connect(&floodFillDlg, &ParametersDialog::accepted, this, &MainWindow::onFloodFillAccepted);
+    connect(&floodFillDlg, &ParametersDialog::rejected, this, &MainWindow::onFloodFillRejected);
     connect(ui->cannyButton, &QPushButton::clicked, this, &MainWindow::onCannyButtonClicked);
     connect(&cannyDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onCannyParametersChanged);
-    connect(&cannyDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParamteresAccepted);
-    connect(&cannyDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParamteresRejected);
+    connect(&cannyDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
+    connect(&cannyDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
     connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &cannyDlg, &ParametersDialog::handleWorkStarted);
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &cannyDlg, &ParametersDialog::handleWorkFinished);
     connect(ui->contoursButton, &QPushButton::clicked, this, &MainWindow::onContoursButtonClicked);
     connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPreProcessButtonBoxClicked);
-    connect(ui->actionUndo, &QAction::triggered, this, &MainWindow::onPreProcessUndoClicked);
-    connect(ui->actionRedo, &QAction::triggered, this, &MainWindow::onPreProcessRedoClicked);
-
-    //binaryTab
-    ui->sizeLabel->setVisible(false);
-    ui->sizeSlider->setVisible(false);
-    ui->binaryCheckBox->setText("8 Connectivity");
-    ui->highLabel->setText("High Difference");
-    ui->highDoubleSpinBox->setMinimum(0);
-    ui->highDoubleSpinBox->setValue(20);
-    ui->lowLabel->setText("Low Difference");
-    ui->lowLabel->setVisible(true);
-    ui->lowDoubleSpinBox->setMinimum(0);
-    ui->lowDoubleSpinBox->setValue(20);
-    ui->lowDoubleSpinBox->setVisible(true);
+    connect(ui->actionUndo, &QAction::triggered, &preWorkSpace, &CAIGA::WorkSpace::undo);
+    connect(ui->actionRedo, &QAction::triggered, &preWorkSpace, &CAIGA::WorkSpace::redo);
 
     //MainWindow
     connect(ui->actionNew_Project, &QAction::triggered, this, &MainWindow::newProject);
@@ -129,7 +123,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->imageList, &QListView::activated, this, &MainWindow::setActivateImage);
     connect(ui->imageTabs, &QTabWidget::currentChanged, this, &MainWindow::onCurrentTabChanged);
     connect(this, &MainWindow::messageArrived, this, &MainWindow::onMessagesArrived);
-    connect(&worker, &CAIGA::WorkerThread::workStatusUpdated, this, &MainWindow::onMessagesArrived);
 
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
     connect(&preWorkSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreProcessWorkFinished);
@@ -204,7 +197,7 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
 
 void MainWindow::onPreviewWorkFinished()
 {
-    ui->preProcessViewer->setPixmap(previewSpace.getLatestQImg());
+    ui->preProcessDrawer->setImage(previewSpace.getLatestQImg());
 }
 
 void MainWindow::onHistEqualiseButtonClicked()
@@ -220,6 +213,7 @@ void MainWindow::onHistEqualiseButtonClicked()
 void MainWindow::onAdaptiveBilateralFilterButtonClicked()
 {
     if (cgimg.validateAdaptiveBilateralFilter()) {
+        previewSpace.clear();
         adaptiveBilateralDlg.show();
         adaptiveBilateralDlg.exec();
     }
@@ -250,6 +244,7 @@ void MainWindow::onMedianBlurButtonClicked()
 
 void MainWindow::onGaussianBinaryzationButtonClicked()
 {
+    previewSpace.clear();
     gaussianBinaryDlg.show();
     gaussianBinaryDlg.exec();
 }
@@ -262,6 +257,7 @@ void MainWindow::onGaussianBinaryzationParametersChanged(int s, double c, double
 
 void MainWindow::onMedianBinaryzationButtonClicked()
 {
+    previewSpace.clear();
     medianBinaryDlg.show();
     medianBinaryDlg.exec();
 }
@@ -272,8 +268,40 @@ void MainWindow::onMedianBinaryzationParametersChanged(int s, double c, double, 
     previewSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_MEAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
 }
 
+void MainWindow::onFloodFillButtonClicked()
+{
+    connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
+    previewSpace.clear();
+    floodFillDlg.show();
+    floodFillDlg.exec();
+}
+
+void MainWindow::onFloodFillParametersChanged(int, double h, double l, bool c8)
+{
+    previewSpace.appendAndClone(preWorkSpace.last());
+    previewSpace.setFloodFillWorkParameters(h, l, c8);
+}
+
+void MainWindow::onFloodFillMouseClicked(QPoint p)
+{
+    previewSpace.newFloodFillWork(p.x(), p.y());
+}
+
+void MainWindow::onFloodFillAccepted()
+{
+    this->onPreParametersAccepted();
+    disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
+}
+
+void MainWindow::onFloodFillRejected()
+{
+    this->onPreParametersRejected();
+    disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
+}
+
 void MainWindow::onCannyButtonClicked()
 {
+    previewSpace.clear();
     cannyDlg.show();
     cannyDlg.exec();
 }
@@ -284,15 +312,13 @@ void MainWindow::onCannyParametersChanged(int aSize, double high, double low, bo
     previewSpace.newCannyWork(aSize, high, low, l2);
 }
 
-void MainWindow::onPreParamteresAccepted()
+void MainWindow::onPreParametersAccepted()
 {
     preWorkSpace.append(previewSpace.takeLast());
-    previewSpace.clear();
 }
 
-void MainWindow::onPreParamteresRejected()
+void MainWindow::onPreParametersRejected()
 {
-    previewSpace.clear();
     this->onPreProcessWorkFinished();
 }
 
@@ -303,7 +329,7 @@ void MainWindow::onContoursButtonClicked()
 
 void MainWindow::onPreProcessWorkFinished()
 {
-    ui->preProcessViewer->setPixmap(preWorkSpace.getLatestQImg());
+    ui->preProcessDrawer->setImage(preWorkSpace.getLatestQImg());
 }
 
 void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
@@ -318,26 +344,6 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
         preWorkSpace.simplified();
     }
 }
-
-void MainWindow::onPreProcessUndoClicked()
-{
-    preWorkSpace.undo();
-    this->onPreProcessWorkFinished();
-}
-
-void MainWindow::onPreProcessRedoClicked()
-{
-    preWorkSpace.redo();
-    this->onPreProcessWorkFinished();
-}
-/*
-void MainWindow::onBinaryInterDrawerClicked(QPoint p)
-{
-    if (ui->binaryMethodComboBox->currentIndex() == 3) {
-        worker.floodfillSegmentWork(cgimg, p, static_cast<int>(ui->highDoubleSpinBox->value()), static_cast<int>(ui->lowDoubleSpinBox->value()), !ui->binaryCheckBox->isChecked());
-    }
-}
-*/
 
 void MainWindow::onCurrentTabChanged(int i)
 {
@@ -496,32 +502,7 @@ void MainWindow::setActivateImage(QModelIndex i)
     QString imgfile = imgNameModel->data(i, Qt::DisplayRole).toString();
     cgimg.setRawImage(imgfile);
     ui->rawViewer->setPixmap(cgimg.getRawPixmap());
-
-    if (cgimg.isProcessed()) {
-        ui->analysisLabel->setPixmap(cgimg.getProcessedPixmap());
-    }
-    else {
-        ui->analysisLabel->setPixmap(cgimg.getEdgesPixmap());
-    }
-
-    if (cgimg.hasEdges()) {
-        ui->binaryInterDrawer->setImage(cgimg.getEdgesImage());
-    }
-    else {
-        emit binaryParametersChanged();//Initialise a premature edges image
-    }
-
-    if (cgimg.isPreProcessed()) {
-        ui->preProcessViewer->setPixmap(cgimg.getPreProcessedPixmap());
-    }
-    else {
-        ui->preProcessViewer->setPixmap(cgimg.getCroppedPixmap());
-    }
-
     ui->ccDrawer->setImage(cgimg.getRawImage());
-    if (cgimg.isCropped()) {
-        ui->ccDrawer->restoreState(cgimg.getCropCalibreStruct());
-    }
 }
 
 void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, bool autoSave, int interval, const QString &colour)

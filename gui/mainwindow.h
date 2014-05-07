@@ -20,7 +20,6 @@
 #include <QDir>
 #include "image.h"
 #include "project.h"
-#include "workerthread.h"
 #include "workspace.h"
 #include "parametersdialog.h"
 
@@ -54,15 +53,18 @@ private slots:
     void onGaussianBinaryzationParametersChanged(int, double, double, bool);
     void onMedianBinaryzationButtonClicked();
     void onMedianBinaryzationParametersChanged(int, double, double, bool);
+    void onFloodFillButtonClicked();
+    void onFloodFillParametersChanged(int, double, double, bool);
+    void onFloodFillMouseClicked(QPoint);
+    void onFloodFillAccepted();
+    void onFloodFillRejected();
     void onCannyButtonClicked();
     void onCannyParametersChanged(int, double, double, bool);
-    void onPreParamteresAccepted();
-    void onPreParamteresRejected();
+    void onPreParametersAccepted();
+    void onPreParametersRejected();
     void onContoursButtonClicked();
     void onPreProcessWorkFinished();
     void onPreProcessButtonBoxClicked(QAbstractButton *);
-    void onPreProcessUndoClicked();
-    void onPreProcessRedoClicked();
     void onCurrentTabChanged(int);
     void newProject();
     void openProjectDialog();
@@ -88,6 +90,7 @@ private:
     ParametersDialog gaussianBinaryDlg;
     ParametersDialog medianBinaryDlg;
     ParametersDialog cannyDlg;
+    ParametersDialog floodFillDlg;
 
     QSettings settings;
     void readConfig();
@@ -106,7 +109,6 @@ private:
     CAIGA::Image cgimg;
     QAbstractItemModel *imgNameModel;
     QStringList imgNameList;
-    CAIGA::WorkerThread worker;
     CAIGA::WorkSpace preWorkSpace;
     CAIGA::WorkSpace previewSpace;
 

@@ -52,7 +52,8 @@ void QImageInteractiveDrawer::mousePressEvent(QMouseEvent *m)
         return;
     }
     QPoint margin((this->width() - m_scaledImage.width()) / 2, (this->height() - m_scaledImage.height()) / 2);
-    emit mousePressed((m->pos().x() - margin.x()) / m_scale, (m->pos().y() - margin.y()) / m_scale);
+    QPoint p((m->pos().x() - margin.x()) / m_scale, (m->pos().y() - margin.y()) / m_scale);
+    emit mousePressed(p);
 }
 
 void QImageInteractiveDrawer::mouseMoveEvent(QMouseEvent *m)
@@ -62,5 +63,6 @@ void QImageInteractiveDrawer::mouseMoveEvent(QMouseEvent *m)
         return;
     }
     QPoint margin((this->width() - m_scaledImage.width()) / 2, (this->height() - m_scaledImage.height()) / 2);
-    emit mouseMoved((m->pos().x() - margin.x()) / m_scale, (m->pos().y() - margin.y()) / m_scale);
+    QPoint p((m->pos().x() - margin.x()) / m_scale, (m->pos().y() - margin.y()) / m_scale);
+    emit mouseMoved(p);
 }

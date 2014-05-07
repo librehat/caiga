@@ -41,17 +41,26 @@ public:
 
     virtual ~WorkBase() { delete dst; }
     virtual void Func() {}
+
+    inline bool operator == (const WorkBase &w) const {
+        if (this->src != w.src || this->dst != w.dst) {
+            return false;
+        }
+        else
+            return true;
+    }
+
     const cv::Mat *const src;//share memory with other WorkBase(s)
     cv::Mat *dst;
 
     int oddSize;//should always be an odd number
     int size;//may be odd or even
     cv::Size cvSize;
-    int method;
-    int type;
+    int method;//point.x in ffill
+    int type;//point.y in ffill
     double constant;
-    double sigmaX;//sigmaSpace in adaptiveBilateralFilter
-    double sigmaY;//sigmaColor in adaptiveBilateralFilter
+    double sigmaX;//sigmaSpace in adaptiveBilateralFilter; high_diff in ffill
+    double sigmaY;//sigmaColor in adaptiveBilateralFilter; low_diff in ffill
     bool b;
 };
 

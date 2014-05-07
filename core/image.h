@@ -75,7 +75,6 @@ public:
     static QPixmap convertMat2QPixmap(const cv::Mat &src);
     static Mat convertQImage2Mat(const QImage &qimg, bool indexed = false);
 
-    friend class WorkerThread;
     friend class WorkSpace;
 
 private:

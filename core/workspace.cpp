@@ -5,6 +5,7 @@
 #include "workaptbilateralfilter.h"
 #include "workbinaryzation.h"
 #include "workcanny.h"
+#include "workfloodfill.h"
 #include "workcontours.h"
 using namespace CAIGA;
 
@@ -28,6 +29,7 @@ void WorkSpace::undo()
         return;
     }
     undoneList.append(workList.takeLast());
+    emit workFinished();
 }
 
 void WorkSpace::redo()
@@ -37,11 +39,27 @@ void WorkSpace::redo()
         return;
     }
     workList.append(undoneList.takeLast());
+    emit workFinished();
 }
 
 void WorkSpace::append(WorkBase *w)
 {
     workList.append(w);
+    this->clearUndoneList();
+    emit workFinished();
+}
+
+void WorkSpace::append(QList<WorkBase *> l)
+{
+    //do not take in duplicates
+    for (int i = 0; i < l.size(); ++i) {
+        if (workList.contains(l.at(i))) {
+            delete l.takeAt(i);
+        }
+        else {
+            workList.append(l.takeAt(i));
+        }
+    }
     this->clearUndoneList();
     emit workFinished();
 }
@@ -66,6 +84,15 @@ WorkBase *WorkSpace::last()
 WorkBase *WorkSpace::takeLast()
 {
     return workList.takeLast();
+}
+
+QList<WorkBase *> WorkSpace::takeAll()
+{
+    QList<WorkBase *> ta;
+    while (!workList.isEmpty()) {
+        ta.append(workList.takeFirst());
+    }
+    return ta;
 }
 
 void WorkSpace::simplified()
@@ -159,6 +186,19 @@ void WorkSpace::newBinaryzationWork(int method, int type, int size, double const
 void WorkSpace::newCannyWork(int aSize, double high, double low, bool l2)
 {
     WorkBase *w = new WorkCanny(workList.last()->dst, aSize, high, low, l2);
+    this->newGenericWork(w);
+}
+
+void WorkSpace::setFloodFillWorkParameters(double high, double low, bool con8)
+{
+    m_d1 = high;
+    m_d2 = low;
+    m_bool = con8;
+}
+
+void WorkSpace::newFloodFillWork(int x, int y)
+{
+    WorkBase *w = new WorkFloodFill(workList.last()->dst, m_d1, m_d2, m_bool, x, y);
     this->newGenericWork(w);
 }
 
