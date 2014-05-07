@@ -48,7 +48,6 @@ private slots:
     void onHistEqualiseButtonClicked();
     void onAdaptiveBilateralFilterButtonClicked();
     void onAdaptiveBilateralFilterParametersChanged(int, double, double, bool);
-    void onMedianBlurButtonClicked();
     void onGaussianBinaryzationButtonClicked();
     void onGaussianBinaryzationParametersChanged(int, double, double, bool);
     void onMedianBinaryzationButtonClicked();

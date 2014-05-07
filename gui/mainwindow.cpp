@@ -77,7 +77,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&adaptiveBilateralDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
     connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &adaptiveBilateralDlg, &ParametersDialog::handleWorkStarted);
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &adaptiveBilateralDlg, &ParametersDialog::handleWorkFinished);
-    connect(ui->medianBlurButton, &QPushButton::clicked, this, &MainWindow::onMedianBlurButtonClicked);
     connect(ui->gaussianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onGaussianBinaryzationButtonClicked);
     connect(&gaussianBinaryDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onGaussianBinaryzationParametersChanged);
     connect(&gaussianBinaryDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
@@ -233,7 +232,7 @@ void MainWindow::onAdaptiveBilateralFilterParametersChanged(int k, double s, dou
     previewSpace.appendAndClone(preWorkSpace.last());
     previewSpace.newAdaptiveBilateralFilterWork(k, s, c);
 }
-
+/*
 void MainWindow::onMedianBlurButtonClicked()
 {
     if (cgimg.validateGaussianMedianBlur()) {
@@ -247,7 +246,7 @@ void MainWindow::onMedianBlurButtonClicked()
         emit messageArrived("Abort. This operation is illegal!");
     }
 }
-
+*/
 void MainWindow::onGaussianBinaryzationButtonClicked()
 {
     previewSpace.clear();

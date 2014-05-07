@@ -271,13 +271,6 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="medianBlurButton">
-             <property name="text">
-              <string>Median Blur</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="gaussianBinaryzationButton">
              <property name="text">
               <string>Gaussian Binaryzation</string>

@@ -204,6 +204,10 @@ void WorkSpace::newFloodFillWork(int x, int y)
 
 void WorkSpace::newContoursWork()
 {
+    if (workList.last()->dst->type() != CV_8UC1) {
+        emit workStatusStringUpdated("Abort. 8-bit single channel image needed.");
+        return;
+    }
     WorkBase *w = new WorkContours(workList.last()->dst);
     this->newGenericWork(w);
 }
