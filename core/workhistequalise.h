@@ -5,7 +5,7 @@ namespace CAIGA {
 class CORE_LIB WorkHistEqualise : public WorkBase
 {
 public:
-    WorkHistEqualise(cv::Mat *s) : WorkBase(s) {}
+    WorkHistEqualise(const cv::Mat *const s) : WorkBase(s) {}
     void Func();
 };
 }

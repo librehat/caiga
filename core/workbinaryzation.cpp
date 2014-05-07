@@ -1,7 +1,7 @@
 #include "workbinaryzation.h"
 using namespace CAIGA;
 
-WorkBinaryzation::WorkBinaryzation(cv::Mat *s, int m, int t, int size, double C) :
+WorkBinaryzation::WorkBinaryzation(const cv::Mat * const s, int m, int t, int size, double C) :
     WorkBase(s)
 {
     method = m;

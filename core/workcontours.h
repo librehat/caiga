@@ -6,7 +6,7 @@ namespace CAIGA
 class CORE_LIB WorkContours : public WorkBase
 {
 public:
-    WorkContours(cv::Mat *s) : WorkBase(s) {}
+    WorkContours(const cv::Mat *const s) : WorkBase(s) {}
     void Func();
 };
 }

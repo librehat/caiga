@@ -14,23 +14,19 @@ class CORE_LIB  WorkBase
 {
 public:
     //enum type {Raw, HistEqualise, AdaBilateralFilter, MedianBlur};//seems useless
-    WorkBase() {
-        src = new cv::Mat();
+    WorkBase() : src(NULL) {
         dst = new cv::Mat();
     }
 
-    WorkBase(cv::Mat *s) {
-        src = new cv::Mat(s->clone());
+    WorkBase(const cv::Mat *const s) : src(s) {
         dst = new cv::Mat(s->clone());
     }
 
-    WorkBase(cv::Mat *s, cv::Mat *d) {
-        src = new cv::Mat(s->clone());
+    WorkBase(const cv::Mat *const s, cv::Mat *d) : src(s) {
         dst = new cv::Mat(d->clone());
     }
 
-    WorkBase(WorkBase &base) {
-        src = new cv::Mat(base.src->clone());
+    WorkBase(WorkBase &base) : src(base.src) {
         dst = new cv::Mat(base.dst->clone());
         oddSize = base.oddSize;
         size = base.size;
@@ -43,9 +39,9 @@ public:
         b = base.b;
     }
 
-    virtual ~WorkBase() { delete src; delete dst; }
+    virtual ~WorkBase() { delete dst; }
     virtual void Func() {}
-    cv::Mat *src;
+    const cv::Mat *const src;//share memory with other WorkBase(s)
     cv::Mat *dst;
 
     int oddSize;//should always be an odd number

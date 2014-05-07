@@ -7,7 +7,7 @@ namespace CAIGA
 class WorkCanny : public WorkBase
 {
 public:
-    WorkCanny(cv::Mat *s, int aSize, double high, double low, bool l2);
+    WorkCanny(const cv::Mat *const s, int aSize, double high, double low, bool l2);
     void Func();
 };
 }
