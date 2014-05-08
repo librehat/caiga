@@ -4,6 +4,7 @@
 #include "optionsdialog.h"
 #include "qimageinteractivedrawer.h"
 #include <QDebug>
+#include <QScreen>
 #include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -428,11 +429,18 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
 void MainWindow::onCurrentTabChanged(int i)
 {
     switch (i) {
+    case 2://crop and calibre
+        ui->ccPixelViewer->setLivePreviewEnabled(true);
+        ui->actionRedo->setEnabled(false);
+        ui->actionUndo->setEnabled(false);
+        break;
     case 3://preprocess
+        ui->ccPixelViewer->setLivePreviewEnabled(false);
         ui->actionRedo->setEnabled(true);
         ui->actionUndo->setEnabled(true);
         break;
     default:
+        ui->ccPixelViewer->setLivePreviewEnabled(false);
         ui->actionRedo->setEnabled(false);
         ui->actionUndo->setEnabled(false);
     }

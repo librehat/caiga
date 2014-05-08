@@ -1,5 +1,5 @@
 #include "qimageviewer.h"
-#include <QtDebug>
+#include <QScreen>
 #include <QStyleOption>
 
 QImageViewer::QImageViewer(QWidget *parent) :
@@ -47,7 +47,7 @@ void QImageViewer::setPixmap(const QPixmap &pix)
     this->update();
 }
 
-void QImageViewer::setPixmap(const QImage &qimg)
+void QImageViewer::setImage(const QImage &qimg)
 {
     m_pixmap = QPixmap::fromImage(qimg);
     this->update();

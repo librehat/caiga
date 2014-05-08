@@ -189,11 +189,16 @@ void QImageDrawer::mouseReleaseEvent(QMouseEvent *m)
 void QImageDrawer::setDrawMode(int m)
 {
     m_value.drawMode = m;
-    if (m == -2) {
+    switch (m) {
+    case -2://circle
         m_value.isCircle = true;
-    }
-    else if (m == -3) {
+        break;
+    case -3://rect
         m_value.isCircle = false;
+        break;
+    case -4://calibre
+    case -5://gauge
+        break;
     }
 }
 

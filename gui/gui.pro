@@ -18,7 +18,8 @@ SOURCES  += main.cpp \
             qimageviewer.cpp \
             qimagedrawer.cpp \
     qimageinteractivedrawer.cpp \
-    parametersdialog.cpp
+    parametersdialog.cpp \
+    livepixelviewer.cpp
            
 HEADERS  += cameradialog.h \
             mainwindow.h \
@@ -26,7 +27,8 @@ HEADERS  += cameradialog.h \
             qimageviewer.h \
             qimagedrawer.h \
     qimageinteractivedrawer.h \
-    parametersdialog.h
+    parametersdialog.h \
+    livepixelviewer.h
 
 RESOURCES+= caiga.qrc
 windows: {
