@@ -11,7 +11,10 @@ SOURCES  += image.cpp\
             workbinaryzation.cpp \
             workcanny.cpp \
             workcontours.cpp \
-            workfloodfill.cpp
+            workfloodfill.cpp \
+    workboxfilter.cpp \
+    workpencil.cpp \
+    workeraser.cpp
 
 HEADERS  += image.h \
             project.h \
@@ -25,6 +28,9 @@ HEADERS  += image.h \
             workbinaryzation.h \
             workcanny.h \
             workcontours.h \
-            workfloodfill.h
+            workfloodfill.h \
+    workboxfilter.h \
+    workpencil.h \
+    workeraser.h
 
 DEFINES  += CORE

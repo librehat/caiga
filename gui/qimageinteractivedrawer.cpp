@@ -4,6 +4,9 @@
 QImageInteractiveDrawer::QImageInteractiveDrawer(QWidget *parent) :
     QWidget(parent)
 {
+    m_white = false;
+    m_penColour = QColor(0, 0, 0);//black by default
+    m_drawMode = QImageInteractiveDrawer::NONE;
 }
 
 void QImageInteractiveDrawer::paintEvent(QPaintEvent *event)
@@ -32,6 +35,22 @@ void QImageInteractiveDrawer::paintEvent(QPaintEvent *event)
 
     m_scaledImage = m_image.scaled(pixSize, Qt::KeepAspectRatio, Qt::FastTransformation);
     painter.drawImage(topleft, m_scaledImage);
+
+    //draw points
+    QPen pen(m_penColour, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    switch (m_drawMode) {
+    case NONE:
+        return;
+    case POLY_LINE:
+        painter.setPen(pen);
+        painter.drawPolyline(m_poly);
+        break;
+    case CIRCLE_LINE:
+        pen.setWidth(8);
+        painter.setPen(pen);
+        painter.drawPolyline(m_poly);
+        break;
+    }
 }
 
 const QImage *QImageInteractiveDrawer::image() const
@@ -45,6 +64,27 @@ void QImageInteractiveDrawer::setImage(const QImage &img)
     this->update();
 }
 
+void QImageInteractiveDrawer::setWhite(bool w)
+{
+    m_white = w;
+    if (w) {
+        m_penColour = QColor(255, 255, 255);
+    }
+    else {
+        m_penColour = QColor(0, 0, 0);
+    }
+}
+
+bool QImageInteractiveDrawer::isWhite()
+{
+    return m_white;
+}
+
+void QImageInteractiveDrawer::setDrawMode(DRAW_MODE m)
+{
+    m_drawMode = m;
+}
+
 void QImageInteractiveDrawer::mousePressEvent(QMouseEvent *m)
 {
     QWidget::mousePressEvent(m);
@@ -52,8 +92,10 @@ void QImageInteractiveDrawer::mousePressEvent(QMouseEvent *m)
         return;
     }
     QPoint margin((this->width() - m_scaledImage.width()) / 2, (this->height() - m_scaledImage.height()) / 2);
-    QPoint p((m->pos().x() - margin.x()) / m_scale, (m->pos().y() - margin.y()) / m_scale);
-    emit mousePressed(p);
+    m_pressed.setX((m->pos().x() - margin.x()) / m_scale);
+    m_pressed.setY((m->pos().y() - margin.y()) / m_scale);
+    m_movePoints.append(m_pressed);
+    emit mousePressed(m_pressed);
 }
 
 void QImageInteractiveDrawer::mouseMoveEvent(QMouseEvent *m)
@@ -63,6 +105,23 @@ void QImageInteractiveDrawer::mouseMoveEvent(QMouseEvent *m)
         return;
     }
     QPoint margin((this->width() - m_scaledImage.width()) / 2, (this->height() - m_scaledImage.height()) / 2);
-    QPoint p((m->pos().x() - margin.x()) / m_scale, (m->pos().y() - margin.y()) / m_scale);
-    emit mouseMoved(p);
+    m_released.setX((m->pos().x() - margin.x()) / m_scale);
+    m_released.setY((m->pos().y() - margin.y()) / m_scale);
+    m_movePoints.append(m_released);
+    QPoint p(m_released.x() * m_scale + (this->width() - m_scaledImage.width()) / 2, m_released.y() * m_scale + (this->height() - m_scaledImage.height()) / 2);
+    m_poly << p;
+    emit mouseMoved(m_released);
+    this->update();
+}
+
+void QImageInteractiveDrawer::mouseReleaseEvent(QMouseEvent *m)
+{
+    QWidget::mouseReleaseEvent(m);
+    if (m_image.isNull()) {
+        return;
+    }
+    emit mouseReleased(m_movePoints);
+    m_movePoints.clear();
+    m_poly.clear();
+    this->update();
 }

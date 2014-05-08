@@ -45,7 +45,16 @@ private slots:
     void ccModeChanged(int);
     void onGaugeLineFinished(qreal);
     void onCCButtonBoxClicked(QAbstractButton *);
+    void onMouseNormalArrow();
+    void onMouseWhitePencil();
+    void onMouseBlackPencil();
+    void onPencilDrawFinished(QVector<QPoint>);
+    void onMouseWhiteEraser();
+    void onMouseBlackEraser();
+    void onEraserDrawFinished(QVector<QPoint>);
     void onHistEqualiseButtonClicked();
+    void onBoxFilterButtonClicked();
+    void onBoxFilterParametersChanged(int, double, double, bool);
     void onAdaptiveBilateralFilterButtonClicked();
     void onAdaptiveBilateralFilterParametersChanged(int, double, double, bool);
     void onGaussianBinaryzationButtonClicked();
@@ -86,6 +95,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QMenu *mouseBehaviourMenu;
+    ParametersDialog boxFilterDlg;
     ParametersDialog adaptiveBilateralDlg;
     ParametersDialog gaussianBinaryDlg;
     ParametersDialog medianBinaryDlg;

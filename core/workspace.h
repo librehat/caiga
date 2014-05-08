@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QtConcurrent>
 #include <QFuture>
 #include <QFutureWatcher>
 #include "core_lib.h"
@@ -36,6 +37,7 @@ public:
     void reset(cv::Mat *s);
     int count();
     void newHistogramEqualiseWork();
+    void newBoxFilterWork(int size);
     void newAdaptiveBilateralFilterWork(int size, double space, double colour);
     void newMedianBlurWork(int kSize);
     void newBinaryzationWork(int method, int type, int size, double constant);
@@ -43,6 +45,8 @@ public:
     void setFloodFillWorkParameters(double high, double low, bool con8);//this is not a generic work. it'll be finished by member function lastFloodFillWorkClicked.
     void newFloodFillWork(int x, int y);
     void newContoursWork();
+    void newPencilWork(QVector<QPoint> pts, bool white);
+    void newEraserWork(QVector<QPoint> pts, bool white);
     Mat *getLatestMat();
     QImage getLatestQImg();
 
@@ -56,7 +60,12 @@ private:
     QFuture<void> future;
     QFutureWatcher<void> watcher;
     void clearUndoneList();
-    void newGenericWork(WorkBase *work);
+    inline void newGenericWork(WorkBase *work) {
+        workList.append(work);
+        this->clearUndoneList();
+        future = QtConcurrent::run(work, &WorkBase::Func);
+        watcher.setFuture(future);
+    }
 
 private slots:
     void onLowLevelWorkStarted();

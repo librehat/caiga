@@ -58,6 +58,15 @@ void ParametersDialog::setkSizeText(const QString &k)
 void ParametersDialog::setMode(int mode)
 {
     switch (mode) {
+    case 0://boxFilter
+        this->setkSizeText("Kernel Size");
+        ui->kSizeSlider->setMinimum(1);
+        ui->sigmaColour->setVisible(false);
+        ui->sigmaColourLabel->setVisible(false);
+        ui->sigmaSpace->setVisible(false);
+        ui->sigmaSpaceLabel->setVisible(false);
+        ui->checkBox->setVisible(false);
+        break;
     case 1://adaptiveThreshold(binaryzation)
         this->setkSizeText("Block Size");
         ui->kSizeSlider->setMinimum(2);

@@ -21,12 +21,22 @@ MainWindow::MainWindow(QWidget *parent) :
     QDir::setCurrent(settings.value("CurrentDir").toString());
 
     //ParametersDialog settings
+    boxFilterDlg.setMode(0);
     adaptiveBilateralDlg.setMode(-1);
     gaussianBinaryDlg.setMode(1);
     medianBinaryDlg.setMode(1);
     cannyDlg.setMode(2);
     floodFillDlg.setMode(3);
     floodFillDlg.setModal(false);
+
+    //preProcess tab button menu
+    mouseBehaviourMenu = new QMenu();
+    mouseBehaviourMenu->addAction("Normal Arrow", this, SLOT(onMouseNormalArrow()));
+    mouseBehaviourMenu->addAction("White Pencil", this, SLOT(onMouseWhitePencil()));
+    mouseBehaviourMenu->addAction("Black Pencil", this, SLOT(onMouseBlackPencil()));
+    mouseBehaviourMenu->addAction("White Eraser", this, SLOT(onMouseWhiteEraser()));
+    mouseBehaviourMenu->addAction("Black Eraser", this, SLOT(onMouseBlackEraser()));
+    ui->mouseBehaviourButton->setMenu(mouseBehaviourMenu);
 
     //Question: is it necessary?
     ui->rawViewer->setNotLarger(true);
@@ -70,7 +80,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->ccDrawer, &QImageDrawer::gaugeLineResult, this, &MainWindow::onGaugeLineFinished);
 
     //preProcessTab
+
     connect(ui->histEqualiseButton, &QPushButton::clicked, this, &MainWindow::onHistEqualiseButtonClicked);
+    connect(ui->boxFilterButton, &QPushButton::clicked, this, &MainWindow::onBoxFilterButtonClicked);
+    connect(&boxFilterDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onBoxFilterParametersChanged);
+    connect(&boxFilterDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
+    connect(&boxFilterDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
+    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &boxFilterDlg, &ParametersDialog::handleWorkStarted);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &boxFilterDlg, &ParametersDialog::handleWorkFinished);
     connect(ui->adaptiveBilateralFilter, &QPushButton::clicked, this, &MainWindow::onAdaptiveBilateralFilterButtonClicked);
     connect(&adaptiveBilateralDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onAdaptiveBilateralFilterParametersChanged);
     connect(&adaptiveBilateralDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
@@ -141,6 +158,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete mouseBehaviourMenu;
     delete imgNameModel;
 }
 
@@ -200,6 +218,54 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
     }
 }
 
+void MainWindow::onMouseNormalArrow()
+{
+    ui->mouseBehaviourButton->setText("Normal Arrow");
+    ui->preProcessDrawer->setCursor(QCursor(Qt::ArrowCursor));
+    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::NONE);
+    disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
+}
+
+void MainWindow::onMouseWhitePencil()
+{
+    disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
+    ui->mouseBehaviourButton->setText("White Pencil");
+    ui->preProcessDrawer->setCursor(QCursor(Qt::CrossCursor));
+    ui->preProcessDrawer->setWhite();
+    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::POLY_LINE);
+    connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onPencilDrawFinished);
+}
+
+void MainWindow::onMouseBlackPencil()
+{
+    disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
+    ui->mouseBehaviourButton->setText("Black Pencil");
+    ui->preProcessDrawer->setCursor(QCursor(Qt::CrossCursor));
+    ui->preProcessDrawer->setWhite(false);
+    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::POLY_LINE);
+    connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onPencilDrawFinished);
+}
+
+void MainWindow::onMouseWhiteEraser()
+{
+    disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
+    ui->mouseBehaviourButton->setText("White Eraser");
+    ui->preProcessDrawer->setCursor(QCursor(Qt::CrossCursor));
+    ui->preProcessDrawer->setWhite();
+    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::CIRCLE_LINE);
+    connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onEraserDrawFinished);
+}
+
+void MainWindow::onMouseBlackEraser()
+{
+    disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
+    ui->mouseBehaviourButton->setText("Black Eraser");
+    ui->preProcessDrawer->setCursor(QCursor(Qt::CrossCursor));
+    ui->preProcessDrawer->setWhite(false);
+    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::CIRCLE_LINE);
+    connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onEraserDrawFinished);
+}
+
 void MainWindow::onPreviewWorkFinished()
 {
     ui->preProcessDrawer->setImage(previewSpace.getLatestQImg());
@@ -213,6 +279,19 @@ void MainWindow::onHistEqualiseButtonClicked()
     else {
         emit messageArrived("Abort. This operation is illegal!");
     }
+}
+
+void MainWindow::onBoxFilterButtonClicked()
+{
+    previewSpace.clear();
+    boxFilterDlg.show();
+    boxFilterDlg.exec();
+}
+
+void MainWindow::onBoxFilterParametersChanged(int kSize, double, double, bool)
+{
+    previewSpace.appendAndClone(preWorkSpace.last());
+    previewSpace.newBoxFilterWork(kSize);
 }
 
 void MainWindow::onAdaptiveBilateralFilterButtonClicked()
@@ -232,21 +311,7 @@ void MainWindow::onAdaptiveBilateralFilterParametersChanged(int k, double s, dou
     previewSpace.appendAndClone(preWorkSpace.last());
     previewSpace.newAdaptiveBilateralFilterWork(k, s, c);
 }
-/*
-void MainWindow::onMedianBlurButtonClicked()
-{
-    if (cgimg.validateGaussianMedianBlur()) {
-        bool ok;
-        int k = QInputDialog::getInt(this, "Median Blur", "Kernel Size (odd only)", 3, 1, 99, 1, &ok, Qt::Tool);
-        if (k % 2 == 1 && ok) {
-            preWorkSpace.newMedianBlurWork(k);
-        }
-    }
-    else {
-        emit messageArrived("Abort. This operation is illegal!");
-    }
-}
-*/
+
 void MainWindow::onGaussianBinaryzationButtonClicked()
 {
     previewSpace.clear();
@@ -271,6 +336,16 @@ void MainWindow::onMedianBinaryzationParametersChanged(int s, double c, double, 
 {
     previewSpace.appendAndClone(preWorkSpace.last());
     previewSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_MEAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
+}
+
+void MainWindow::onPencilDrawFinished(QVector<QPoint> pts)
+{
+    preWorkSpace.newPencilWork(pts, ui->preProcessDrawer->isWhite());
+}
+
+void MainWindow::onEraserDrawFinished(QVector<QPoint> pts)
+{
+    preWorkSpace.newEraserWork(pts, ui->preProcessDrawer->isWhite());
 }
 
 void MainWindow::onFloodFillButtonClicked()

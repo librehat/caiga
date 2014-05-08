@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>474</height>
+    <height>496</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -64,7 +64,7 @@
        <enum>QTabWidget::South</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="infoTab">
        <attribute name="title">
@@ -255,11 +255,25 @@
           <property name="title">
            <string>Tools</string>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QPushButton" name="mouseBehaviourButton">
+             <property name="text">
+              <string>Normal Arrow</string>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QPushButton" name="histEqualiseButton">
              <property name="text">
               <string>Histogram Equalisation</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="boxFilterButton">
+             <property name="text">
+              <string>Box Filter</string>
              </property>
             </widget>
            </item>

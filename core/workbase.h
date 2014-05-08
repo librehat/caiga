@@ -26,17 +26,18 @@ public:
         dst = new cv::Mat(d->clone());
     }
 
-    WorkBase(WorkBase &base) : src(base.src) {
-        dst = new cv::Mat(base.dst->clone());
-        oddSize = base.oddSize;
-        size = base.size;
-        cvSize = base.cvSize;
-        method = base.method;
-        type = base.type;
-        constant = base.constant;
-        sigmaX = base.sigmaX;
-        sigmaY = base.sigmaY;
-        b = base.b;
+    WorkBase(WorkBase *base) : src(base->src) {
+        dst = new cv::Mat(base->dst->clone());
+        oddSize = base->oddSize;
+        size = base->size;
+        cvSize = base->cvSize;
+        method = base->method;
+        type = base->type;
+        constant = base->constant;
+        sigmaX = base->sigmaX;
+        sigmaY = base->sigmaY;
+        b = base->b;
+        pointVec = base->pointVec;
     }
 
     virtual ~WorkBase() { delete dst; }
@@ -62,6 +63,7 @@ public:
     double sigmaX;//sigmaSpace in adaptiveBilateralFilter; high_diff in ffill
     double sigmaY;//sigmaColor in adaptiveBilateralFilter; low_diff in ffill
     bool b;
+    std::vector<cv::Point> pointVec;
 };
 
 }

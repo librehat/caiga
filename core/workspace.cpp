@@ -1,12 +1,14 @@
-#include <QtConcurrent>
 #include "workspace.h"
 #include "workhistequalise.h"
 #include "workmedianblur.h"
+#include "workboxfilter.h"
 #include "workaptbilateralfilter.h"
 #include "workbinaryzation.h"
 #include "workcanny.h"
 #include "workfloodfill.h"
 #include "workcontours.h"
+#include "workpencil.h"
+#include "workeraser.h"
 using namespace CAIGA;
 
 WorkSpace::WorkSpace(QObject *parent) :
@@ -66,7 +68,7 @@ void WorkSpace::append(QList<WorkBase *> l)
 
 void WorkSpace::appendAndClone(WorkBase *w)
 {
-    WorkBase *nw = new WorkBase(*w);
+    WorkBase *nw = new WorkBase(w);
     workList.append(nw);
     this->clearUndoneList();
 }
@@ -151,17 +153,15 @@ QImage WorkSpace::getLatestQImg()
     return Image::convertMat2QImage(*workList.last()->dst);
 }
 
-void WorkSpace::newGenericWork(WorkBase *work)
-{
-    workList.append(work);
-    this->clearUndoneList();
-    future = QtConcurrent::run(work, &WorkBase::Func);
-    watcher.setFuture(future);
-}
-
 void WorkSpace::newHistogramEqualiseWork()
 {
     WorkBase *w = new WorkHistEqualise(workList.last()->dst);
+    this->newGenericWork(w);
+}
+
+void WorkSpace::newBoxFilterWork(int size)
+{
+    WorkBase *w = new WorkBoxFilter(workList.last()->dst, size);
     this->newGenericWork(w);
 }
 
@@ -209,6 +209,33 @@ void WorkSpace::newContoursWork()
         return;
     }
     WorkBase *w = new WorkContours(workList.last()->dst);
+    this->newGenericWork(w);
+}
+
+void WorkSpace::newPencilWork(QVector<QPoint> pts, bool white)
+{
+    if (pts.size() < 2) {
+        emit workStatusStringUpdated("Abort. Insufficient points.");
+        return;
+    }
+
+    std::vector<cv::Point> cvPts;
+    for (QVector<QPoint>::iterator it = pts.begin(); it != pts.end(); ++it) {
+        cv::Point p(it->x(), it->y());
+        cvPts.push_back(p);
+    }
+    WorkBase *w = new WorkPencil(workList.last()->dst, cvPts, white);
+    this->newGenericWork(w);
+}
+
+void WorkSpace::newEraserWork(QVector<QPoint> pts, bool white)
+{
+    std::vector<cv::Point> cvPts;
+    for (QVector<QPoint>::iterator it = pts.begin(); it != pts.end(); ++it) {
+        cv::Point p(it->x(), it->y());
+        cvPts.push_back(p);
+    }
+    WorkBase *w = new WorkEraser(workList.last()->dst, cvPts, white);
     this->newGenericWork(w);
 }
 
