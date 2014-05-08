@@ -35,15 +35,15 @@ void LivePixelViewer::paintEvent(QPaintEvent *)
     if (m_bufferPix.isNull()) {
         return;
     }
-    p.scale(4, 4);
+    p.scale(8, 8);
     p.drawPixmap(0, 0, m_bufferPix);
-    p.scale(0.25, 0.25);
+    p.scale(1/8, 1/8);
 
     p.setPen(Qt::black);
-    for (int x = 0; x < w; x += 4) {
+    for (int x = 0; x < w; x += 8) {
         p.drawLine(x, 0, x, h);
     }
-    for (int y = 0; y < h; y += 4) {
+    for (int y = 0; y < h; y += 8) {
         p.drawLine(0, y, w, y);
     }
 }
@@ -55,13 +55,13 @@ void LivePixelViewer::grabScreen()
         return;
     }
 
-    int w = width() / 4;
-    int h = height() / 4;
+    int w = width() / 8;
+    int h = height() / 8;
 
-    if (width() % 4 > 0) {
+    if (width() % 8 > 0) {
         ++w;
     }
-    if (height() % 4 > 0) {
+    if (height() % 8 > 0) {
         ++h;
     }
 
