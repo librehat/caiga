@@ -33,21 +33,11 @@ void LivePixelViewer::paintEvent(QPaintEvent *)
     const int h = height();
 
     if (m_bufferPix.isNull()) {
-        QPixmap pixmap(40, 40);
-        QPainter pt(&pixmap);
-        pt.fillRect(0, 0, 20, 20, Qt::white);
-        pt.fillRect(20, 20, 20, 20, Qt::white);
-        pt.fillRect(20, 0, 20, 20, Qt::lightGray);
-        pt.fillRect(0, 20, 20, 20, Qt::lightGray);
-        pt.end();
-        p.fillRect(0, 0, w, h, pixmap);
+        return;
     }
-
-    p.save();
     p.scale(4, 4);
     p.drawPixmap(0, 0, m_bufferPix);
     p.scale(0.25, 0.25);
-    p.restore();
 
     p.setPen(Qt::black);
     for (int x = 0; x < w; x += 4) {
