@@ -54,6 +54,8 @@ void WatershedMarkerDialog::onMarkFinished(const QVector<QPoint> &pv)
     pts = pv;
     ptsVec.append(pv);
     viewSpace.newPencilWork(pv, m_colour);
+    ui->undoButton->setEnabled(true);
+    ui->previewButton->setEnabled(true);
 }
 
 void WatershedMarkerDialog::onResetButtonClicked()
@@ -61,6 +63,11 @@ void WatershedMarkerDialog::onResetButtonClicked()
     viewSpace.reset();
     pts.clear();
     ptsVec.clear();
+    ptsVecUndone.clear();
+    ui->undoButton->setEnabled(false);
+    ui->previewButton->setEnabled(false);
+    ui->redoButton->setEnabled(false);
+    ui->resetButton->setEnabled(false);
 }
 
 void WatershedMarkerDialog::onUndoButtonClicked()
@@ -69,8 +76,11 @@ void WatershedMarkerDialog::onUndoButtonClicked()
         viewSpace.undo();
         ptsVecUndone.append(ptsVec.last());
         ptsVec.pop_back();
+        ui->redoButton->setEnabled(true);
         if(ptsVec.isEmpty()) {
             pts.clear();
+            ui->undoButton->setEnabled(false);
+            ui->previewButton->setEnabled(false);
         }
         else {
             pts = ptsVec.last();
@@ -85,6 +95,11 @@ void WatershedMarkerDialog::onRedoButtonClicked()
         ptsVec.append(ptsVecUndone.last());
         ptsVecUndone.pop_back();
         pts = ptsVec.last();
+        if (ptsVecUndone.isEmpty()) {
+            ui->redoButton->setEnabled(false);
+        }
+        ui->undoButton->setEnabled(true);
+        ui->previewButton->setEnabled(true);
     }
 }
 

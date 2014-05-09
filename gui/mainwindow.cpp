@@ -36,11 +36,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mouseBehaviourMenu->addAction("Black Eraser", this, SLOT(onMouseBlackEraser()));
     ui->mouseBehaviourButton->setMenu(mouseBehaviourMenu);
 
-//Windows should use packaged theme since its lacking of **theme**
-#if defined(_WIN32)
-    QIcon::setThemeName("Oxygen");
-#endif
-
     /*
      * Setup icons.
      */
@@ -73,26 +68,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&boxFilterDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onBoxFilterParametersChanged);
     connect(&boxFilterDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
     connect(&boxFilterDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
-    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &boxFilterDlg, &ParametersDialog::handleWorkStarted);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &boxFilterDlg, &ParametersDialog::handleWorkFinished);
     connect(ui->adaptiveBilateralFilter, &QPushButton::clicked, this, &MainWindow::onAdaptiveBilateralFilterButtonClicked);
     connect(&adaptiveBilateralDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onAdaptiveBilateralFilterParametersChanged);
     connect(&adaptiveBilateralDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
     connect(&adaptiveBilateralDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
-    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &adaptiveBilateralDlg, &ParametersDialog::handleWorkStarted);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &adaptiveBilateralDlg, &ParametersDialog::handleWorkFinished);
     connect(ui->gaussianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onGaussianBinaryzationButtonClicked);
     connect(&gaussianBinaryDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onGaussianBinaryzationParametersChanged);
     connect(&gaussianBinaryDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
     connect(&gaussianBinaryDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
-    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &gaussianBinaryDlg, &ParametersDialog::handleWorkStarted);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &gaussianBinaryDlg, &ParametersDialog::handleWorkFinished);
     connect(ui->medianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onMedianBinaryzationButtonClicked);
     connect(&medianBinaryDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onMedianBinaryzationParametersChanged);
     connect(&medianBinaryDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
     connect(&medianBinaryDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
-    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &medianBinaryDlg, &ParametersDialog::handleWorkStarted);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &medianBinaryDlg, &ParametersDialog::handleWorkFinished);
     connect(ui->floodFillButton, &QPushButton::clicked, this, &MainWindow::onFloodFillButtonClicked);
     connect(&floodFillDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onFloodFillParametersChanged);
     connect(&floodFillDlg, &ParametersDialog::undoButtonClicked, &previewSpace, &CAIGA::WorkSpace::undo);
@@ -103,14 +90,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&cannyDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onCannyParametersChanged);
     connect(&cannyDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
     connect(&cannyDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
-    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &cannyDlg, &ParametersDialog::handleWorkStarted);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &cannyDlg, &ParametersDialog::handleWorkFinished);
     connect(ui->watershedButton, &QPushButton::clicked, this, &MainWindow::onWatershedButtonClicked);
     connect(&watershedDlg, &WatershedMarkerDialog::previewTriggled, this, &MainWindow::onWatershedPreviewed);
     connect(&watershedDlg, &WatershedMarkerDialog::accepted, this, &MainWindow::onWatershedAccepted);
     connect(&watershedDlg, &WatershedMarkerDialog::rejected, this, &MainWindow::onPreParametersRejected);
-    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &watershedDlg, &WatershedMarkerDialog::onPreviewStarted);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &watershedDlg, &WatershedMarkerDialog::onPreviewFinished);
     connect(ui->contoursButton, &QPushButton::clicked, this, &MainWindow::onContoursButtonClicked);
     connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPreProcessButtonBoxClicked);
     connect(ui->actionUndo, &QAction::triggered, &preWorkSpace, &CAIGA::WorkSpace::undo);
@@ -257,6 +240,8 @@ void MainWindow::onHistEqualiseButtonClicked()
 void MainWindow::onBoxFilterButtonClicked()
 {
     previewSpace.clear();
+    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &boxFilterDlg, &ParametersDialog::handleWorkStarted);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &boxFilterDlg, &ParametersDialog::handleWorkFinished);
     boxFilterDlg.show();
     boxFilterDlg.exec();
 }
@@ -271,6 +256,8 @@ void MainWindow::onAdaptiveBilateralFilterButtonClicked()
 {
     if (cgimg.validateAdaptiveBilateralFilter()) {
         previewSpace.clear();
+        connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &adaptiveBilateralDlg, &ParametersDialog::handleWorkStarted);
+        connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &adaptiveBilateralDlg, &ParametersDialog::handleWorkFinished);
         adaptiveBilateralDlg.show();
         adaptiveBilateralDlg.exec();
     }
@@ -288,6 +275,8 @@ void MainWindow::onAdaptiveBilateralFilterParametersChanged(int k, double s, dou
 void MainWindow::onGaussianBinaryzationButtonClicked()
 {
     previewSpace.clear();
+    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &gaussianBinaryDlg, &ParametersDialog::handleWorkStarted);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &gaussianBinaryDlg, &ParametersDialog::handleWorkFinished);
     gaussianBinaryDlg.show();
     gaussianBinaryDlg.exec();
 }
@@ -301,6 +290,8 @@ void MainWindow::onGaussianBinaryzationParametersChanged(int s, double c, double
 void MainWindow::onMedianBinaryzationButtonClicked()
 {
     previewSpace.clear();
+    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &medianBinaryDlg, &ParametersDialog::handleWorkStarted);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &medianBinaryDlg, &ParametersDialog::handleWorkFinished);
     medianBinaryDlg.show();
     medianBinaryDlg.exec();
 }
@@ -355,6 +346,8 @@ void MainWindow::onFloodFillRejected()
 void MainWindow::onCannyButtonClicked()
 {
     previewSpace.clear();
+    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &cannyDlg, &ParametersDialog::handleWorkStarted);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &cannyDlg, &ParametersDialog::handleWorkFinished);
     cannyDlg.show();
     cannyDlg.exec();
 }
@@ -370,6 +363,8 @@ void MainWindow::onWatershedButtonClicked()
     previewSpace.clear();
     previewSpace.reset(preWorkSpace.getLatestMat());
     watershedDlg.setOrignialMat(preWorkSpace.getLatestMat());
+    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &watershedDlg, &WatershedMarkerDialog::onPreviewStarted);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &watershedDlg, &WatershedMarkerDialog::onPreviewFinished);
     watershedDlg.show();
     watershedDlg.exec();
 }
@@ -381,16 +376,22 @@ void MainWindow::onWatershedPreviewed(const QVector<QVector<QPoint> > &pvv)
 
 void MainWindow::onWatershedAccepted(const QVector<QVector<QPoint> > &pvv)
 {
+    disconnect(&previewSpace, &CAIGA::WorkSpace::workStarted, 0, 0);
+    disconnect(&previewSpace, &CAIGA::WorkSpace::workFinished, 0, 0);
     preWorkSpace.newWatershedWork(pvv, true);
 }
 
 void MainWindow::onPreParametersAccepted()
 {
+    disconnect(&previewSpace, &CAIGA::WorkSpace::workStarted, 0, 0);
+    disconnect(&previewSpace, &CAIGA::WorkSpace::workFinished, 0, 0);
     preWorkSpace.append(previewSpace.takeLast());
 }
 
 void MainWindow::onPreParametersRejected()
 {
+    disconnect(&previewSpace, &CAIGA::WorkSpace::workStarted, 0, 0);
+    disconnect(&previewSpace, &CAIGA::WorkSpace::workFinished, 0, 0);
     this->onPreProcessWorkFinished();
 }
 

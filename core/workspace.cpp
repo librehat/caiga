@@ -283,6 +283,10 @@ void WorkSpace::newEraserWork(const QVector<QPoint> &pts, bool white)
 
 void WorkSpace::newWatershedWork(const QVector<QVector<QPoint> > &markerPts, bool cont)
 {
+    if (markerPts.isEmpty()) {
+        emit workStatusStringUpdated("Abort. Empty markers.");
+        return;
+    }
     std::vector<std::vector<cv::Point> > cvpvv;
     for (QVector<QVector<QPoint> >::const_iterator it = markerPts.begin(); it != markerPts.end(); ++it) {
         std::vector<cv::Point> tempV;

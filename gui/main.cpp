@@ -11,6 +11,11 @@ int main(int argc, char *argv[])
     QCoreApplication::setOrganizationDomain("smse.seu.edu.cn");
     QCoreApplication::setApplicationName("CAIGA");
 
+    //Windows should use packaged theme since its lacking of **theme**
+#if defined(_WIN32)
+    QIcon::setThemeName("Oxygen");
+#endif
+
     //Main GUI
     MainWindow w;
     w.show();
