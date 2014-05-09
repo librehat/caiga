@@ -5,7 +5,7 @@
 QImageViewer::QImageViewer(QWidget *parent) :
     QWidget(parent)
 {
-    m_notLarger = false;
+    m_noScale = false;
 }
 
 void QImageViewer::paintEvent(QPaintEvent *event)
@@ -22,18 +22,19 @@ void QImageViewer::paintEvent(QPaintEvent *event)
         return;
 
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
-    QSize pixSize = m_pixmap.size();
-    if (pixSize.height() > event->rect().size().height() || pixSize.width() > event->rect().size().width() || !m_notLarger) {
-        //scale down anyway if it's too large for event
-        //or scale up if m_notLarger is false
-        pixSize.scale(event->rect().size(), Qt::KeepAspectRatio);
-    }
-
     QPoint topleft;
-    topleft.setX((this->width() - pixSize.width()) / 2);
-    topleft.setY((this->height() - pixSize.height()) / 2);
-
-    painter.drawPixmap(topleft, m_pixmap.scaled(pixSize, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    if (m_noScale) {
+        topleft.setX((this->width() - m_pixmap.width()) / 2);
+        topleft.setY((this->height() - m_pixmap.height()) / 2);
+        painter.drawPixmap(topleft, m_pixmap);
+    }
+    else {
+        QSize pixSize = m_pixmap.size();
+        pixSize.scale(event->rect().size(), Qt::KeepAspectRatio);
+        topleft.setX((this->width() - pixSize.width()) / 2);
+        topleft.setY((this->height() - pixSize.height()) / 2);
+        painter.drawPixmap(topleft, m_pixmap.scaled(pixSize, Qt::KeepAspectRatio, Qt::FastTransformation));
+    }
 }
 
 const QPixmap* QImageViewer::pixmap() const
@@ -53,8 +54,8 @@ void QImageViewer::setImage(const QImage &qimg)
     this->update();
 }
 
-void QImageViewer::setNotLarger(bool n)
+void QImageViewer::setNoScale(bool n)
 {
-    m_notLarger = n;
+    m_noScale = n;
     this->update();
 }

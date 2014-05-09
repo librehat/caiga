@@ -30,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     floodFillDlg.setMode(3);
     floodFillDlg.setModal(false);
 
+    ui->rawViewer->setNoScale();
     //preProcess tab button menu
     mouseBehaviourMenu = new QMenu();
     mouseBehaviourMenu->addAction("Normal Arrow", this, SLOT(onMouseNormalArrow()));
@@ -38,9 +39,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mouseBehaviourMenu->addAction("White Eraser", this, SLOT(onMouseWhiteEraser()));
     mouseBehaviourMenu->addAction("Black Eraser", this, SLOT(onMouseBlackEraser()));
     ui->mouseBehaviourButton->setMenu(mouseBehaviourMenu);
-
-    //Question: is it necessary?
-    ui->rawViewer->setNotLarger(true);
 
 //Windows should use packaged theme since its lacking of **theme**
 #if defined(_WIN32)
