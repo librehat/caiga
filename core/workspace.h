@@ -35,6 +35,7 @@ public:
     void clear();
     void reset(CAIGA::Image &cgimg);//reset and use the cropped image from cgimg
     void reset(cv::Mat *s);
+    void reset();//erase everything except for workList.first()
     int count();
     void newInvertGrayscaleWork();
     void newHistogramEqualiseWork();
@@ -46,8 +47,14 @@ public:
     void setFloodFillWorkParameters(double high, double low, bool con8);//this is not a generic work. it'll be finished by member function lastFloodFillWorkClicked.
     void newFloodFillWork(int x, int y);
     void newContoursWork();
-    void newPencilWork(QVector<QPoint> pts, bool white);
-    void newEraserWork(QVector<QPoint> pts, bool white);
+    void newPencilWork(const QVector<QPoint> &pts, bool white);
+    void newPencilWork(const QVector<QPoint> &pts, QColor colour);
+    void newEraserWork(const QVector<QPoint> &pts, bool white);
+    /*
+     * pass cont = true if you want to use workList.last()->dst as the src image as usual.
+     * it uses the workList.first()->dst as the src image by default
+     */
+    void newWatershedWork(const QVector<QVector<QPoint> > &markerPts, bool cont = false);
     Mat *getLatestMat();
     QImage getLatestQImg();
 

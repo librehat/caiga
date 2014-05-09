@@ -10,6 +10,7 @@
 #include "workpencil.h"
 #include "workeraser.h"
 #include "workinvertgrayscale.h"
+#include "workwatershed.h"
 using namespace CAIGA;
 
 WorkSpace::WorkSpace(QObject *parent) :
@@ -130,6 +131,7 @@ void WorkSpace::reset(Image &cgimg)
     this->clear();
     WorkBase *w = new WorkBase(&cgimg.croppedImage);
     workList.append(w);
+    emit workFinished();
 }
 
 void WorkSpace::reset(Mat *s)
@@ -137,6 +139,18 @@ void WorkSpace::reset(Mat *s)
     this->clear();
     WorkBase *w = new WorkBase(s);
     workList.append(w);
+    emit workFinished();
+}
+
+void WorkSpace::reset()
+{
+    if (workList.size() > 1) {
+        for (QList<WorkBase *>::iterator it = workList.begin() + 1; it != workList.end(); it = workList.erase(it)) {
+            delete (*it);
+        }
+    }
+    this->clearUndoneList();
+    emit workFinished();
 }
 
 int WorkSpace::count()
@@ -219,7 +233,7 @@ void WorkSpace::newContoursWork()
     this->newGenericWork(w);
 }
 
-void WorkSpace::newPencilWork(QVector<QPoint> pts, bool white)
+void WorkSpace::newPencilWork(const QVector<QPoint> &pts, bool white)
 {
     if (pts.size() < 2) {
         emit workStatusStringUpdated("Abort. Insufficient points.");
@@ -227,22 +241,59 @@ void WorkSpace::newPencilWork(QVector<QPoint> pts, bool white)
     }
 
     std::vector<cv::Point> cvPts;
-    for (QVector<QPoint>::iterator it = pts.begin(); it != pts.end(); ++it) {
+    for (QVector<QPoint>::const_iterator it = pts.begin(); it != pts.end(); ++it) {
         cv::Point p(it->x(), it->y());
         cvPts.push_back(p);
     }
-    WorkBase *w = new WorkPencil(workList.last()->dst, cvPts, white);
+    int rgb = white ? 255 : 0;
+    WorkBase *w = new WorkPencil(workList.last()->dst, cvPts, rgb, rgb, rgb);
     this->newGenericWork(w);
 }
 
-void WorkSpace::newEraserWork(QVector<QPoint> pts, bool white)
+void WorkSpace::newPencilWork(const QVector<QPoint> &pts, QColor colour)
+{
+    if (pts.size() < 2) {
+        emit workStatusStringUpdated("Abort. Insufficient points.");
+        return;
+    }
+
+    std::vector<cv::Point> cvPts;
+    for (QVector<QPoint>::const_iterator it = pts.begin(); it != pts.end(); ++it) {
+        cv::Point p(it->x(), it->y());
+        cvPts.push_back(p);
+    }
+
+    int r = colour.blue();//swap red and blue for QImage to cv::Mat
+    int b = colour.red();
+    int g = colour.green();
+    WorkBase *w = new WorkPencil(workList.last()->dst, cvPts, r, g, b);
+    this->newGenericWork(w);
+}
+
+void WorkSpace::newEraserWork(const QVector<QPoint> &pts, bool white)
 {
     std::vector<cv::Point> cvPts;
-    for (QVector<QPoint>::iterator it = pts.begin(); it != pts.end(); ++it) {
+    for (QVector<QPoint>::const_iterator it = pts.begin(); it != pts.end(); ++it) {
         cv::Point p(it->x(), it->y());
         cvPts.push_back(p);
     }
     WorkBase *w = new WorkEraser(workList.last()->dst, cvPts, white);
+    this->newGenericWork(w);
+}
+
+void WorkSpace::newWatershedWork(const QVector<QVector<QPoint> > &markerPts, bool cont)
+{
+    std::vector<std::vector<cv::Point> > cvpvv;
+    for (QVector<QVector<QPoint> >::const_iterator it = markerPts.begin(); it != markerPts.end(); ++it) {
+        std::vector<cv::Point> tempV;
+        for (QVector<QPoint>::const_iterator pit = it->begin(); pit != it->end(); ++pit) {
+            tempV.push_back(cv::Point(pit->x(), pit->y()));
+        }
+        cvpvv.push_back(tempV);
+    }
+
+    cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;   
+    WorkBase *w = new WorkWatershed(s, cvpvv);
     this->newGenericWork(w);
 }
 

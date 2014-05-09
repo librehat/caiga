@@ -105,6 +105,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&cannyDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
     connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &cannyDlg, &ParametersDialog::handleWorkStarted);
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &cannyDlg, &ParametersDialog::handleWorkFinished);
+    connect(ui->watershedButton, &QPushButton::clicked, this, &MainWindow::onWatershedButtonClicked);
+    connect(&watershedDlg, &WatershedMarkerDialog::previewTriggled, this, &MainWindow::onWatershedPreviewed);
+    connect(&watershedDlg, &WatershedMarkerDialog::accepted, this, &MainWindow::onWatershedAccepted);
+    connect(&watershedDlg, &WatershedMarkerDialog::rejected, this, &MainWindow::onPreParametersRejected);
+    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &watershedDlg, &WatershedMarkerDialog::onPreviewStarted);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &watershedDlg, &WatershedMarkerDialog::onPreviewFinished);
     connect(ui->contoursButton, &QPushButton::clicked, this, &MainWindow::onContoursButtonClicked);
     connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPreProcessButtonBoxClicked);
     connect(ui->actionUndo, &QAction::triggered, &preWorkSpace, &CAIGA::WorkSpace::undo);
@@ -187,14 +193,12 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
     else {//save
         cgimg.setCropCalibreStruct(ui->ccDrawer->getCCStruct());
         preWorkSpace.reset(cgimg);
-        this->onPreProcessWorkFinished();
     }
 }
 
 void MainWindow::onMouseNormalArrow()
 {
     ui->mouseBehaviourButton->setText("Normal Arrow");
-    ui->preProcessDrawer->setCursor(QCursor(Qt::ArrowCursor));
     ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::NONE);
     disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
 }
@@ -203,9 +207,8 @@ void MainWindow::onMouseWhitePencil()
 {
     disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
     ui->mouseBehaviourButton->setText("White Pencil");
-    ui->preProcessDrawer->setCursor(QCursor(Qt::CrossCursor));
     ui->preProcessDrawer->setWhite();
-    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::POLY_LINE);
+    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::PENCIL);
     connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onPencilDrawFinished);
 }
 
@@ -213,9 +216,8 @@ void MainWindow::onMouseBlackPencil()
 {
     disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
     ui->mouseBehaviourButton->setText("Black Pencil");
-    ui->preProcessDrawer->setCursor(QCursor(Qt::CrossCursor));
     ui->preProcessDrawer->setWhite(false);
-    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::POLY_LINE);
+    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::PENCIL);
     connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onPencilDrawFinished);
 }
 
@@ -223,9 +225,8 @@ void MainWindow::onMouseWhiteEraser()
 {
     disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
     ui->mouseBehaviourButton->setText("White Eraser");
-    ui->preProcessDrawer->setCursor(QCursor(Qt::CrossCursor));
     ui->preProcessDrawer->setWhite();
-    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::CIRCLE_LINE);
+    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::ERASER);
     connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onEraserDrawFinished);
 }
 
@@ -233,9 +234,8 @@ void MainWindow::onMouseBlackEraser()
 {
     disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
     ui->mouseBehaviourButton->setText("Black Eraser");
-    ui->preProcessDrawer->setCursor(QCursor(Qt::CrossCursor));
     ui->preProcessDrawer->setWhite(false);
-    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::CIRCLE_LINE);
+    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::ERASER);
     connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onEraserDrawFinished);
 }
 
@@ -311,12 +311,12 @@ void MainWindow::onMedianBinaryzationParametersChanged(int s, double c, double, 
     previewSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_MEAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
 }
 
-void MainWindow::onPencilDrawFinished(QVector<QPoint> pts)
+void MainWindow::onPencilDrawFinished(const QVector<QPoint> &pts)
 {
     preWorkSpace.newPencilWork(pts, ui->preProcessDrawer->isWhite());
 }
 
-void MainWindow::onEraserDrawFinished(QVector<QPoint> pts)
+void MainWindow::onEraserDrawFinished(const QVector<QPoint> &pts)
 {
     preWorkSpace.newEraserWork(pts, ui->preProcessDrawer->isWhite());
 }
@@ -365,6 +365,25 @@ void MainWindow::onCannyParametersChanged(int aSize, double high, double low, bo
     previewSpace.newCannyWork(aSize, high, low, l2);
 }
 
+void MainWindow::onWatershedButtonClicked()
+{
+    previewSpace.clear();
+    previewSpace.reset(preWorkSpace.getLatestMat());
+    watershedDlg.setOrignialMat(preWorkSpace.getLatestMat());
+    watershedDlg.show();
+    watershedDlg.exec();
+}
+
+void MainWindow::onWatershedPreviewed(const QVector<QVector<QPoint> > &pvv)
+{
+    previewSpace.newWatershedWork(pvv);
+}
+
+void MainWindow::onWatershedAccepted(const QVector<QVector<QPoint> > &pvv)
+{
+    preWorkSpace.newWatershedWork(pvv, true);
+}
+
 void MainWindow::onPreParametersAccepted()
 {
     preWorkSpace.append(previewSpace.takeLast());
@@ -390,7 +409,6 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
     if (ui->preProcessButtonBox->standardButton(b) == QDialogButtonBox::Reset) {//reset
         //TODO
         preWorkSpace.reset(cgimg);
-        this->onPreProcessWorkFinished();
     }
     else {//save
         //TODO
@@ -504,6 +522,7 @@ void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, const QSt
         qWarning("Invalid Tab Position");
     }
     ui->ccDrawer->setPenColour(colour);
+    watershedDlg.setPenColour(colour);
 }
 
 void MainWindow::readConfig()

@@ -10,17 +10,18 @@ class QImageInteractiveDrawer : public QWidget
 {
     Q_OBJECT
 public:
-    enum DRAW_MODE{ NONE, POLY_LINE, CIRCLE_LINE };
+    enum DRAW_MODE{ NONE, PENCIL, ERASER };
     explicit QImageInteractiveDrawer(QWidget *parent = 0);
     const QImage *image() const;
     void setWhite(bool = true);
+    void setPenColour(const QColor &);
     bool isWhite();
     void setDrawMode(DRAW_MODE);
 
 signals:
     void mousePressed(QPoint);
     void mouseMoved(QPoint);
-    void mouseReleased(QVector<QPoint>);
+    void mouseReleased(const QVector<QPoint> &);
 
 public slots:
     void setImage(const QImage &);

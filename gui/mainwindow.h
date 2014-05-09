@@ -18,6 +18,7 @@
 #include "image.h"
 #include "workspace.h"
 #include "parametersdialog.h"
+#include "watershedmarkerdialog.h"
 
 namespace Ui
 {
@@ -44,10 +45,10 @@ private slots:
     void onMouseNormalArrow();
     void onMouseWhitePencil();
     void onMouseBlackPencil();
-    void onPencilDrawFinished(QVector<QPoint>);
+    void onPencilDrawFinished(const QVector<QPoint> &);
     void onMouseWhiteEraser();
     void onMouseBlackEraser();
-    void onEraserDrawFinished(QVector<QPoint>);
+    void onEraserDrawFinished(const QVector<QPoint> &);
     void onInvertGrayscaleButtonClicked();
     void onHistEqualiseButtonClicked();
     void onBoxFilterButtonClicked();
@@ -65,6 +66,9 @@ private slots:
     void onFloodFillRejected();
     void onCannyButtonClicked();
     void onCannyParametersChanged(int, double, double, bool);
+    void onWatershedButtonClicked();
+    void onWatershedPreviewed(const QVector<QVector<QPoint> > &);
+    void onWatershedAccepted(const QVector<QVector<QPoint> > &);
     void onPreParametersAccepted();
     void onPreParametersRejected();
     void onContoursButtonClicked();
@@ -90,6 +94,7 @@ private:
     ParametersDialog medianBinaryDlg;
     ParametersDialog cannyDlg;
     ParametersDialog floodFillDlg;
+    WatershedMarkerDialog watershedDlg;
 
     QSettings settings;
     void readConfig();

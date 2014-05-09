@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>496</height>
+    <height>529</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -280,6 +280,13 @@
             <widget class="QPushButton" name="floodFillButton">
              <property name="text">
               <string>Flood Fill</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="watershedButton">
+             <property name="text">
+              <string>Watershed</string>
              </property>
             </widget>
            </item>

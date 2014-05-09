@@ -54,16 +54,17 @@ public:
     const cv::Mat *const src;//share memory with other WorkBase(s)
     cv::Mat *dst;
 
-    int oddSize;//should always be an odd number
-    int size;//may be odd or even
+    int oddSize;//should always be an odd number //red
+    int size;//may be odd or even //green
     cv::Size cvSize;
-    int method;//point.x in ffill
+    int method;//point.x in ffill //blue
     int type;//point.y in ffill
     double constant;
     double sigmaX;//sigmaSpace in adaptiveBilateralFilter; high_diff in ffill
     double sigmaY;//sigmaColor in adaptiveBilateralFilter; low_diff in ffill
     bool b;
     std::vector<cv::Point> pointVec;
+    std::vector<std::vector<cv::Point> > markers;
 };
 
 }

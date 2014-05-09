@@ -6,7 +6,7 @@ ParametersDialog::ParametersDialog(QWidget *parent) :
     ui(new Ui::ParametersDialog)
 {
     ui->setupUi(this);
-    this->setWindowFlags(Qt::Tool);
+    this->setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
     connect(ui->kSizeSlider, &QSlider::valueChanged, this, &ParametersDialog::onSliderValueChanged);
     connect(ui->kSizeSlider, &QSlider::valueChanged, this, &ParametersDialog::onValuesChanged);
     connect(ui->sigmaColour, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &ParametersDialog::onValuesChanged);

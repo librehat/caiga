@@ -37,15 +37,15 @@ void QImageInteractiveDrawer::paintEvent(QPaintEvent *event)
     painter.drawImage(topleft, m_scaledImage);
 
     //draw points
-    QPen pen(m_penColour, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(m_penColour, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     switch (m_drawMode) {
     case NONE:
         return;
-    case POLY_LINE:
+    case PENCIL:
         painter.setPen(pen);
         painter.drawPolyline(m_poly);
         break;
-    case CIRCLE_LINE:
+    case ERASER:
         pen.setWidth(8);
         painter.setPen(pen);
         painter.drawPolyline(m_poly);
@@ -75,14 +75,28 @@ void QImageInteractiveDrawer::setWhite(bool w)
     }
 }
 
+void QImageInteractiveDrawer::setPenColour(const QColor &pc)
+{
+    m_penColour = pc;
+}
+
 bool QImageInteractiveDrawer::isWhite()
 {
-    return m_white;
+    return m_penColour == QColor(255, 255, 255);
 }
 
 void QImageInteractiveDrawer::setDrawMode(DRAW_MODE m)
 {
     m_drawMode = m;
+    switch (m_drawMode) {
+    case NONE:
+        this->setCursor(QCursor(Qt::ArrowCursor));
+        break;
+    case PENCIL:
+    case ERASER:
+        this->setCursor(QCursor(Qt::CrossCursor));
+        break;
+    }
 }
 
 void QImageInteractiveDrawer::mousePressEvent(QMouseEvent *m)

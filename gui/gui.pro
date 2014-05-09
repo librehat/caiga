@@ -9,7 +9,8 @@ TARGET    = caiga
 FORMS    += cameradialog.ui \
             mainwindow.ui \
             optionsdialog.ui \
-    parametersdialog.ui
+    parametersdialog.ui \
+    watershedmarkerdialog.ui
          
 SOURCES  += main.cpp \
             cameradialog.cpp \
@@ -19,7 +20,8 @@ SOURCES  += main.cpp \
             qimagedrawer.cpp \
     qimageinteractivedrawer.cpp \
     parametersdialog.cpp \
-    livepixelviewer.cpp
+    livepixelviewer.cpp \
+    watershedmarkerdialog.cpp
            
 HEADERS  += cameradialog.h \
             mainwindow.h \
@@ -28,7 +30,8 @@ HEADERS  += cameradialog.h \
             qimagedrawer.h \
     qimageinteractivedrawer.h \
     parametersdialog.h \
-    livepixelviewer.h
+    livepixelviewer.h \
+    watershedmarkerdialog.h
 
 RESOURCES+= caiga.qrc
 windows: {
