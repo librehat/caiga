@@ -3,7 +3,7 @@
 #include "workbase.h"
 namespace CAIGA
 {
-class CORE_LIB WorkBinaryzation : public WorkBase
+class WorkBinaryzation : public WorkBase
 {
 public:
     WorkBinaryzation(const cv::Mat *const s, int m, int t, int size, double C);

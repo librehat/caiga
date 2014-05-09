@@ -48,6 +48,7 @@ private slots:
     void onMouseWhiteEraser();
     void onMouseBlackEraser();
     void onEraserDrawFinished(QVector<QPoint>);
+    void onInvertGrayscaleButtonClicked();
     void onHistEqualiseButtonClicked();
     void onBoxFilterButtonClicked();
     void onBoxFilterParametersChanged(int, double, double, bool);

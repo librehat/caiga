@@ -2,7 +2,7 @@
 #define WORKMEDIANBLUR_H
 #include "workbase.h"
 namespace CAIGA {
-class CORE_LIB WorkMedianBlur : public WorkBase
+class WorkMedianBlur : public WorkBase
 {
 public:
     WorkMedianBlur(const cv::Mat *const s, int k) : WorkBase(s) { oddSize = k; }

@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->ccDrawer, &QImageDrawer::gaugeLineResult, this, &MainWindow::onGaugeLineFinished);
 
     //preProcessTab
-
+    connect(ui->invertGrayscaleButton, &QPushButton::clicked, this, &MainWindow::onInvertGrayscaleButtonClicked);
     connect(ui->histEqualiseButton, &QPushButton::clicked, this, &MainWindow::onHistEqualiseButtonClicked);
     connect(ui->boxFilterButton, &QPushButton::clicked, this, &MainWindow::onBoxFilterButtonClicked);
     connect(&boxFilterDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onBoxFilterParametersChanged);
@@ -244,14 +244,14 @@ void MainWindow::onPreviewWorkFinished()
     ui->preProcessDrawer->setImage(previewSpace.getLatestQImg());
 }
 
+void MainWindow::onInvertGrayscaleButtonClicked()
+{
+    preWorkSpace.newInvertGrayscaleWork();
+}
+
 void MainWindow::onHistEqualiseButtonClicked()
 {
-    if (cgimg.validateHistogramEqualise()) {
-        preWorkSpace.newHistogramEqualiseWork();
-    }
-    else {
-        emit messageArrived("Abort. This operation is illegal!");
-    }
+    preWorkSpace.newHistogramEqualiseWork();
 }
 
 void MainWindow::onBoxFilterButtonClicked()

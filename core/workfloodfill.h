@@ -4,7 +4,7 @@
 
 namespace CAIGA
 {
-class CORE_LIB WorkFloodFill : public WorkBase
+class WorkFloodFill : public WorkBase
 {
 public:
     WorkFloodFill(const cv::Mat *const src, double high, double low, bool con8, int x, int y);

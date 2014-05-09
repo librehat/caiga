@@ -36,6 +36,7 @@ public:
     void reset(CAIGA::Image &cgimg);//reset and use the cropped image from cgimg
     void reset(cv::Mat *s);
     int count();
+    void newInvertGrayscaleWork();
     void newHistogramEqualiseWork();
     void newBoxFilterWork(int size);
     void newAdaptiveBilateralFilterWork(int size, double space, double colour);

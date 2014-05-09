@@ -3,7 +3,7 @@
 #include "workbase.h"
 namespace CAIGA
 {
-class CORE_LIB WorkContours : public WorkBase
+class WorkContours : public WorkBase
 {
 public:
     WorkContours(const cv::Mat *const s) : WorkBase(s) {}

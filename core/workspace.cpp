@@ -9,6 +9,7 @@
 #include "workcontours.h"
 #include "workpencil.h"
 #include "workeraser.h"
+#include "workinvertgrayscale.h"
 using namespace CAIGA;
 
 WorkSpace::WorkSpace(QObject *parent) :
@@ -151,6 +152,12 @@ Mat *WorkSpace::getLatestMat()
 QImage WorkSpace::getLatestQImg()
 {
     return Image::convertMat2QImage(*workList.last()->dst);
+}
+
+void WorkSpace::newInvertGrayscaleWork()
+{
+    WorkBase *w = new WorkInvertGrayscale(workList.last()->dst);
+    this->newGenericWork(w);
 }
 
 void WorkSpace::newHistogramEqualiseWork()

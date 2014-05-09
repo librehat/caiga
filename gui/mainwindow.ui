@@ -45,7 +45,7 @@
        <enum>QTabWidget::South</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="rawTab">
        <attribute name="title">
@@ -224,6 +224,13 @@
             <widget class="QPushButton" name="mouseBehaviourButton">
              <property name="text">
               <string>Normal Arrow</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="invertGrayscaleButton">
+             <property name="text">
+              <string>Invert Grayscale</string>
              </property>
             </widget>
            </item>

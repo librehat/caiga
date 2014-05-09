@@ -10,7 +10,7 @@
 #include <QDebug>
 
 namespace CAIGA {
-class CORE_LIB  WorkBase
+class WorkBase
 {
 public:
     //enum type {Raw, HistEqualise, AdaBilateralFilter, MedianBlur};//seems useless
