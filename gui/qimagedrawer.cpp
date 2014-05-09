@@ -7,8 +7,6 @@ QImageDrawer::QImageDrawer(QWidget *parent) :
     QWidget(parent)
 {
     m_penColour = QColor(255, 0, 0);//Red
-    m_scaleX = 1.0;
-    m_scaleY = 1.0;
 }
 
 void QImageDrawer::paintEvent(QPaintEvent *event)
@@ -20,17 +18,10 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    QSize pixSize = m_image.size();
-    pixSize.scale(event->rect().size(), Qt::KeepAspectRatio);
-    m_scaleX = static_cast<qreal>(pixSize.width()) / static_cast<qreal>(m_image.width());
-    m_scaleY = static_cast<qreal>(pixSize.height()) / static_cast<qreal>(m_image.height());
-
     QPoint topleft;
-    topleft.setX((this->width() - pixSize.width()) / 2);
-    topleft.setY((this->height() - pixSize.height()) / 2);
-
-    m_scaledImage = m_image.scaled(pixSize, Qt::KeepAspectRatio, Qt::FastTransformation);
-    painter.drawImage(topleft, m_scaledImage);
+    topleft.setX((this->width() - m_image.width()) / 2);
+    topleft.setY((this->height() - m_image.height()) / 2);
+    painter.drawImage(topleft, m_image);
 
     //Draw
     QPen pen(m_penColour, 2, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
@@ -43,7 +34,6 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
 
     /*
      * use if statement because switch statement forbids initialising variables inside case clauses
-     * recalculate points because the user may change m_scaledImage's size by changing window's size.
      */
     if (m_value.drawMode == -2) {//circle
         QPoint delta = m_value.pressed - m_value.released;
@@ -61,38 +51,36 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
         else {
             m_value.calibreLine.setP2(QPoint(m_value.pressed.x(), m_value.released.y()));
         }
-        QPoint p1(m_value.calibreLine.p1().x() * m_scaleX + (this->width() - m_scaledImage.width()) / 2,
-                  m_value.calibreLine.p1().y() * m_scaleY + (this->height() - m_scaledImage.height()) / 2);
-        QPoint p2(m_value.calibreLine.p2().x() * m_scaleX + (this->width() - m_scaledImage.width()) / 2,
-                  m_value.calibreLine.p2().y() * m_scaleY + (this->height() - m_scaledImage.height()) / 2);
+        QPoint p1(m_value.calibreLine.p1().x() + (this->width() - m_image.width()) / 2,
+                  m_value.calibreLine.p1().y() + (this->height() - m_image.height()) / 2);
+        QPoint p2(m_value.calibreLine.p2().x() + (this->width() - m_image.width()) / 2,
+                  m_value.calibreLine.p2().y() + (this->height() - m_image.height()) / 2);
         painter.drawLine(p1, p2);
     }
     else if (m_value.drawMode == -5) {//gauge
-        QPoint p1(m_gaugeLine.p1().x() * m_scaleX+ (this->width() - m_scaledImage.width()) / 2,
-                  m_gaugeLine.p1().y() * m_scaleY + (this->height() - m_scaledImage.height()) / 2);
-        QPoint p2(m_gaugeLine.p2().x() * m_scaleX + (this->width() - m_scaledImage.width()) / 2,
-                  m_gaugeLine.p2().y() * m_scaleY + (this->height() - m_scaledImage.height()) / 2);
+        QPoint p1(m_gaugeLine.p1().x() + (this->width() - m_image.width()) / 2,
+                  m_gaugeLine.p1().y() + (this->height() - m_image.height()) / 2);
+        QPoint p2(m_gaugeLine.p2().x() + (this->width() - m_image.width()) / 2,
+                  m_gaugeLine.p2().y() + (this->height() - m_image.height()) / 2);
         painter.drawLine(p1, p2);
         return;
     }
 
     //keep circle or rectangle painted
-    //resize to m_scaledImage in advance.
     if (m_value.isCircle) {
-        QPoint scaledCentre(m_value.centre.x() * m_scaleX + (this->width() - m_scaledImage.width()) / 2,
-                            m_value.centre.y() * m_scaleY + (this->height() - m_scaledImage.height()) / 2);
-        int scaledRadius = m_value.radius * m_scaleX;
-        QLine vCross(scaledCentre.x(), scaledCentre.y() - 5, scaledCentre.x(), scaledCentre.y() + 5);
-        QLine hCross(scaledCentre.x() - 5, scaledCentre.y(), scaledCentre.x() + 5, scaledCentre.y());
-        painter.drawEllipse(scaledCentre, scaledRadius, scaledRadius);
+        QPoint pCentre(m_value.centre.x() + (this->width() - m_image.width()) / 2,
+                            m_value.centre.y() + (this->height() - m_image.height()) / 2);
+        QLine vCross(pCentre.x(), pCentre.y() - 5, pCentre.x(), pCentre.y() + 5);
+        QLine hCross(pCentre.x() - 5, pCentre.y(), pCentre.x() + 5, pCentre.y());
+        painter.drawEllipse(pCentre, m_value.radius, m_value.radius);
         painter.drawLine(vCross);
         painter.drawLine(hCross);
     }
     else {
-        int tlx = m_value.rect.topLeft().x() * m_scaleX + (this->width() - m_scaledImage.width()) / 2;
-        int tly = m_value.rect.topLeft().y() * m_scaleY + (this->height() - m_scaledImage.height()) / 2;
-        QRect scaledRect(tlx, tly, m_value.rect.width() * m_scaleX, m_value.rect.height() * m_scaleY);
-        painter.drawRect(scaledRect);
+        int tlx = m_value.rect.topLeft().x() + (this->width() - m_image.width()) / 2;
+        int tly = m_value.rect.topLeft().y() + (this->height() - m_image.height()) / 2;
+        QRect pRect(tlx, tly, m_value.rect.width(), m_value.rect.height());
+        painter.drawRect(pRect);
     }
 
 }
@@ -104,11 +92,11 @@ void QImageDrawer::mousePressEvent(QMouseEvent *m)
         return;
     }
 
-    QPoint margin((this->width() - m_scaledImage.width()) / 2, (this->height() - m_scaledImage.height()) / 2);
-    QPoint margin_r = margin + QPoint(m_scaledImage.width(), m_scaledImage.height());
+    QPoint margin((this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2);
+    QPoint margin_r = margin + QPoint(m_image.width(), m_image.height());
 
-    m_value.pressed.setX((m->pos().x() - margin.x()) / m_scaleX);
-    m_value.pressed.setY((m->pos().y() - margin.y()) / m_scaleY);
+    m_value.pressed.setX(m->pos().x() - margin.x());
+    m_value.pressed.setY(m->pos().y() - margin.y());
 
     if (m->pos().x() < margin.x()) {
         m_value.pressed.setX(0);
@@ -135,11 +123,11 @@ void QImageDrawer::mouseMoveEvent(QMouseEvent *m)
         return;
     }
 
-    QPoint margin((this->width() - m_scaledImage.width()) / 2, (this->height() - m_scaledImage.height()) / 2);
-    QPoint margin_r = margin + QPoint(m_scaledImage.width(), m_scaledImage.height());
+    QPoint margin((this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2);
+    QPoint margin_r = margin + QPoint(m_image.width(), m_image.height());
 
-    m_value.released.setX((m->pos().x() - margin.x()) / m_scaleX);
-    m_value.released.setY((m->pos().y() - margin.y()) / m_scaleY);
+    m_value.released.setX(m->pos().x() - margin.x());
+    m_value.released.setY(m->pos().y() - margin.y());
 
     if (m_value.drawMode == -2) {
         int radius = static_cast<int>(std::sqrt(std::pow((m_value.released - m_value.pressed).x(), 2) + std::pow((m_value.released - m_value.pressed).y(), 2)));
@@ -226,6 +214,7 @@ bool QImageDrawer::isCircle()
 void QImageDrawer::setImage(const QImage &img)
 {
     m_image = img;
+    this->setMinimumSize(m_image.size());
     this->update();
 }
 

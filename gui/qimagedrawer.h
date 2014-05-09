@@ -37,9 +37,6 @@ protected:
 private:
     QColor m_penColour;
     QImage m_image;
-    QImage m_scaledImage;//this ensures user always crop correct region
-    qreal m_scaleX;//m_scaledImage.width() / m_image.width()
-    qreal m_scaleY;//divided using height()
 
     ccStruct m_value;
 
