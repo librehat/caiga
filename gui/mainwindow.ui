@@ -34,25 +34,6 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QListView" name="imageList">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>2</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
-      </property>
-      <property name="dragEnabled">
-       <bool>false</bool>
-      </property>
-      <property name="dragDropMode">
-       <enum>QAbstractItemView::DropOnly</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QTabWidget" name="imageTabs">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -64,25 +45,8 @@
        <enum>QTabWidget::South</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
-      <widget class="QWidget" name="infoTab">
-       <attribute name="title">
-        <string>Information</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <property name="margin">
-         <number>4</number>
-        </property>
-        <item>
-         <widget class="QLabel" name="infoLabel">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
       <widget class="QWidget" name="rawTab">
        <attribute name="title">
         <string>Raw</string>
@@ -367,6 +331,23 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="infoTab">
+       <attribute name="title">
+        <string>Information</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_5">
+        <property name="margin">
+         <number>4</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="infoLabel">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -382,41 +363,21 @@
    </property>
    <widget class="QMenu" name="menuProject">
     <property name="title">
-     <string>Project</string>
+     <string>File</string>
     </property>
-    <addaction name="actionNew_Project"/>
-    <addaction name="actionOpen_Project"/>
-    <addaction name="actionRecent"/>
+    <addaction name="actionOpenFile"/>
+    <addaction name="actionOpenCamera"/>
     <addaction name="separator"/>
-    <addaction name="actionSave_Project"/>
-    <addaction name="actionSave_Project_As"/>
-    <addaction name="actionRevert_Project_to_Saved"/>
-    <addaction name="separator"/>
-    <addaction name="actionClose_Project"/>
+    <addaction name="actionReset"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
-   </widget>
-   <widget class="QMenu" name="menuImage">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="title">
-     <string>Image</string>
-    </property>
-    <addaction name="actionAddImgDisk"/>
-    <addaction name="actionAddImgCamera"/>
-    <addaction name="actionDeleteImg"/>
-    <addaction name="separator"/>
-    <addaction name="action"/>
-    <addaction name="actionProcessnAnalyse"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
      <string>Tools</string>
     </property>
+    <addaction name="actionQuick_Export"/>
     <addaction name="actionExportImg_As"/>
-    <addaction name="actionExportPro_As"/>
-    <addaction name="actionProject_Properties"/>
     <addaction name="separator"/>
     <addaction name="actionOptions"/>
    </widget>
@@ -429,16 +390,7 @@
     <addaction name="actionAbout_CAIGA"/>
     <addaction name="actionAbout_Qt"/>
    </widget>
-   <widget class="QMenu" name="menuView">
-    <property name="title">
-     <string>View</string>
-    </property>
-    <addaction name="actionLeftPanel"/>
-    <addaction name="actionToolbar"/>
-   </widget>
    <addaction name="menuProject"/>
-   <addaction name="menuImage"/>
-   <addaction name="menuView"/>
    <addaction name="menuTools"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -470,77 +422,34 @@
    <addaction name="actionUndo"/>
    <addaction name="actionRedo"/>
    <addaction name="separator"/>
-   <addaction name="actionAddImgDisk"/>
-   <addaction name="actionAddImgCamera"/>
-   <addaction name="actionDeleteImg"/>
+   <addaction name="actionOpenFile"/>
+   <addaction name="actionOpenCamera"/>
+   <addaction name="separator"/>
+   <addaction name="actionQuick_Export"/>
+   <addaction name="actionExportImg_As"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionNew_Project">
+  <action name="actionOpenFile">
    <property name="text">
-    <string>New Project</string>
+    <string>Open Image from Disk</string>
    </property>
   </action>
-  <action name="actionOpen_Project">
+  <action name="actionOpenCamera">
    <property name="text">
-    <string>Open Project</string>
+    <string>Open Image from Camera</string>
    </property>
    <property name="toolTip">
     <string>Open An Existing Project From Disk</string>
    </property>
   </action>
-  <action name="actionRecent">
+  <action name="actionReset">
    <property name="text">
-    <string>Recent Projects</string>
-   </property>
-   <property name="toolTip">
-    <string>Open Recent Opened Projects</string>
-   </property>
-  </action>
-  <action name="actionSave_Project">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Save Project</string>
-   </property>
-  </action>
-  <action name="actionSave_Project_As">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Save Project As...</string>
-   </property>
-  </action>
-  <action name="actionRevert_Project_to_Saved">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Revert Project to Saved</string>
-   </property>
-  </action>
-  <action name="actionClose_Project">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Close Project</string>
+    <string>Reset</string>
    </property>
   </action>
   <action name="actionQuit">
    <property name="text">
     <string>Quit</string>
-   </property>
-  </action>
-  <action name="actionAddImgDisk">
-   <property name="text">
-    <string>Add Image From Disk</string>
-   </property>
-  </action>
-  <action name="actionAddImgCamera">
-   <property name="text">
-    <string>Add Image From Camera</string>
    </property>
   </action>
   <action name="actionOptions">
@@ -556,14 +465,6 @@
   <action name="actionHelp">
    <property name="text">
     <string>Help</string>
-   </property>
-  </action>
-  <action name="actionProject_Properties">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Project Properties</string>
    </property>
   </action>
   <action name="actionUndo">
@@ -600,56 +501,16 @@
    </property>
   </action>
   <action name="actionExportImg_As">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
    <property name="text">
     <string>Export Image Information As...</string>
    </property>
   </action>
-  <action name="actionLeftPanel">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
+  <action name="actionQuick_Export">
    <property name="text">
-    <string>Left Panel</string>
+    <string>Quick Export</string>
    </property>
-  </action>
-  <action name="actionToolbar">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Toolbar</string>
-   </property>
-  </action>
-  <action name="actionExportPro_As">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Export Project Information As...</string>
-   </property>
-  </action>
-  <action name="action">
-   <property name="text">
-    <string>Pre-Process</string>
-   </property>
-  </action>
-  <action name="actionProcessnAnalyse">
-   <property name="text">
-    <string>Process and Analyse</string>
-   </property>
-  </action>
-  <action name="actionDeleteImg">
-   <property name="text">
-    <string>Delete</string>
+   <property name="toolTip">
+    <string>Export Information as Text File using the Image name as its filename.</string>
    </property>
   </action>
  </widget>
@@ -697,38 +558,6 @@
     <hint type="destinationlabel">
      <x>202</x>
      <y>153</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionToolbar</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>mainToolBar</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>299</x>
-     <y>36</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionLeftPanel</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>imageList</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>41</x>
-     <y>188</y>
     </hint>
    </hints>
   </connection>

@@ -1,6 +1,6 @@
 include(../common.pri)
 
-QT       += gui widgets multimedia multimediawidgets sql
+QT       += gui multimedia multimediawidgets
 
 TEMPLATE  = app
 

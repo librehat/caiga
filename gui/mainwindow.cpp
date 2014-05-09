@@ -4,7 +4,6 @@
 #include "optionsdialog.h"
 #include "qimageinteractivedrawer.h"
 #include <QDebug>
-#include <QScreen>
 #include <QInputDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -15,9 +14,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     restoreGeometry(settings.value("MainGeometry").toByteArray());
     restoreState(settings.value("MainState").toByteArray());
-    if (ui->mainToolBar->isHidden()) {
-        ui->actionToolbar->setChecked(false);
-    }
 
     QDir::setCurrent(settings.value("CurrentDir").toString());
 
@@ -48,25 +44,17 @@ MainWindow::MainWindow(QWidget *parent) :
     /*
      * Setup icons.
      */
-    ui->actionNew_Project->setIcon(QIcon::fromTheme("document-new"));
-    ui->actionOpen_Project->setIcon(QIcon::fromTheme("document-open-folder"));
-    ui->actionRecent->setIcon(QIcon::fromTheme("document-open-recent"));
-    ui->actionSave_Project->setIcon(QIcon::fromTheme("document-save"));
-    ui->actionSave_Project_As->setIcon(QIcon::fromTheme("document-save-as"));
-    ui->actionRevert_Project_to_Saved->setIcon(QIcon::fromTheme("document-revert"));
-    ui->actionClose_Project->setIcon(QIcon::fromTheme("document-close"));
+    ui->actionReset->setIcon(QIcon::fromTheme("document-revert"));
     ui->actionQuit->setIcon(QIcon::fromTheme("application-exit"));
-    ui->actionProject_Properties->setIcon(QIcon::fromTheme("document-properties"));
-    ui->actionExportImg_As->setIcon(QIcon::fromTheme("document-export"));
-    ui->actionExportPro_As->setIcon(QIcon::fromTheme("document-export"));
+    ui->actionExportImg_As->setIcon(QIcon::fromTheme("document-export", QIcon::fromTheme("fileprint")));
+    ui->actionQuick_Export->setIcon(QIcon::fromTheme("filequickprint", QIcon::fromTheme("document-export")));
     ui->actionRedo->setIcon(QIcon::fromTheme("edit-redo"));
     ui->actionUndo->setIcon(QIcon::fromTheme("edit-undo"));
-    ui->actionAddImgDisk->setIcon(QIcon::fromTheme("document-open"));
-    ui->actionAddImgCamera->setIcon(QIcon::fromTheme("camera-photo"));
-    ui->actionDeleteImg->setIcon(QIcon::fromTheme("edit-delete"));
-    ui->actionOptions->setIcon(QIcon::fromTheme("configure"));
+    ui->actionOpenFile->setIcon(QIcon::fromTheme("document-open"));
+    ui->actionOpenCamera->setIcon(QIcon::fromTheme("camera-photo"));
+    ui->actionOptions->setIcon(QIcon::fromTheme("configure", QIcon::fromTheme("gconf-editor")));
     ui->actionHelp->setIcon(QIcon::fromTheme("help-contents"));
-    ui->actionAbout_CAIGA->setIcon(QIcon::fromTheme("documentinfo"));
+    ui->actionAbout_CAIGA->setIcon(QIcon::fromTheme("help-about", QIcon::fromTheme("documentinfo")));
 
     /*
      * SIGNALs and SLOTs
@@ -123,20 +111,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionRedo, &QAction::triggered, &preWorkSpace, &CAIGA::WorkSpace::redo);
 
     //MainWindow
-    connect(ui->actionNew_Project, &QAction::triggered, this, &MainWindow::newProject);
-    connect(ui->actionOpen_Project, &QAction::triggered, this, &MainWindow::openProjectDialog);
-    connect(ui->actionSave_Project, &QAction::triggered, this, &MainWindow::saveProject);
-    connect(ui->actionSave_Project_As, &QAction::triggered, this, &MainWindow::saveProjectAsDialog);
-    connect(ui->actionClose_Project, &QAction::triggered, this, &MainWindow::closeProject);
-    connect(ui->actionAddImgDisk, &QAction::triggered, this, &MainWindow::addDiskFileDialog);
-    connect(ui->actionAddImgCamera, &QAction::triggered, this, &MainWindow::createCameraDialog);
+    connect(ui->actionOpenFile, &QAction::triggered, this, &MainWindow::addDiskFileDialog);
+    connect(ui->actionOpenCamera, &QAction::triggered, this, &MainWindow::createCameraDialog);
     connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::createOptionsDialog);
     connect(ui->actionExportImg_As, &QAction::triggered, this, &MainWindow::exportImgDialog);
-    connect(ui->actionExportPro_As, &QAction::triggered, this, &MainWindow::exportProDialog);
-    connect(ui->actionProject_Properties, &QAction::triggered, this, &MainWindow::projectPropertiesDialog);
     connect(ui->actionAbout_Qt, &QAction::triggered, this, &MainWindow::aboutQtDialog);
     connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
-    connect(ui->imageList, &QListView::activated, this, &MainWindow::setActivateImage);
     connect(ui->imageTabs, &QTabWidget::currentChanged, this, &MainWindow::onCurrentTabChanged);
     connect(this, &MainWindow::messageArrived, this, &MainWindow::onMessagesArrived);
 
@@ -146,19 +126,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(this, &MainWindow::configReadFinished, this, &MainWindow::updateOptions);
 
-    //underlying work
-    imgNameModel = new QStringListModel();
-    ui->imageList->setModel(imgNameModel);
-
     readConfig();
-    projectUnsaved = false;
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
     delete mouseBehaviourMenu;
-    delete imgNameModel;
 }
 
 const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version Pre Alpha on "
@@ -427,12 +401,12 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
 void MainWindow::onCurrentTabChanged(int i)
 {
     switch (i) {
-    case 2://crop and calibre
+    case 1://crop and calibre
         ui->ccPixelViewer->setLivePreviewEnabled(true);
         ui->actionRedo->setEnabled(false);
         ui->actionUndo->setEnabled(false);
         break;
-    case 3://preprocess
+    case 2://preprocess
         ui->ccPixelViewer->setLivePreviewEnabled(false);
         ui->actionRedo->setEnabled(true);
         ui->actionUndo->setEnabled(true);
@@ -444,77 +418,7 @@ void MainWindow::onCurrentTabChanged(int i)
     }
 }
 
-void MainWindow::newProject()
-{
-    switch (unSavedProject()) {
-    case 2:
-        return;
-        break;
-    default:
-        project.close();
-    }
-
-    project = CAIGA::Project();
-    this->setWidgetsEnabled(true);
-    projectUnsaved = false;
-}
-
-void MainWindow::openProjectDialog()//TODO
-{
-    switch (unSavedProject()) {
-    case 2:
-        return;
-        break;
-    default:
-        project.close();
-    }
-
-    QString filename = QFileDialog::getOpenFileName(this, "Open Project", QDir::currentPath(),
-                                                    "CAIGA Project (*.caigap)");
-    if (filename.isNull()) {
-        return;
-    }
-    setCurrentDirbyFile(filename);
-
-    if(project.setDataBase(filename)) {
-        this->setWidgetsEnabled(true);
-        projectUnsaved = false;
-    }
-}
-
-void MainWindow::saveProject()//TODO
-{
-    if (projectUnsaved) {
-        saveProjectAsDialog();
-    }
-    projectUnsaved = false;
-}
-
-void MainWindow::saveProjectAsDialog()//TODO
-{
-    QString filename = QFileDialog::getSaveFileName(this, "Save Project As", QDir::currentPath(),
-                                                    "CAIGA Project (*.caigap)");
-    if (filename.isNull()) {
-        return;
-    }
-    setCurrentDirbyFile(filename);
-    projectUnsaved = false;
-}
-
-void MainWindow::closeProject()
-{
-    switch (unSavedProject()) {
-    case 2://Cancel
-        return;//ignore
-        break;
-    default:
-        project.close();
-        setWidgetsEnabled(false);
-        projectUnsaved = false;
-    }
-}
-
-void MainWindow::addDiskFileDialog()//TODO
+void MainWindow::addDiskFileDialog()
 {
     QString filename = QFileDialog::getOpenFileName(this, "Add Image from Disk", QDir::currentPath(),
                        "Supported Images (*.png *.jpg *.jpeg *.tif *.tiff *.bmp)");
@@ -522,21 +426,20 @@ void MainWindow::addDiskFileDialog()//TODO
         return;
     }
     setCurrentDirbyFile(filename);
-    int row = imgNameModel->rowCount();
-    //insertRow: Inserts a single row before the given row in the child items of the parent specified.
-    imgNameModel->insertRow(row);
-    imgNameModel->setData(imgNameModel->index(row, 0), QVariant(filename));
+    cgimg.setRawImage(filename);
+    ui->rawViewer->setPixmap(cgimg.getRawPixmap());
+    ui->ccDrawer->setImage(cgimg.getRawImage());
 }
 
 void MainWindow::createCameraDialog()//TODO camera image should be involved with SQLite
 {
-    CameraDialog camDlg;
+    CameraDialog camDlg(this);
     camDlg.exec();
 }
 
 void MainWindow::createOptionsDialog()
 {
-    OptionsDialog optDlg;
+    OptionsDialog optDlg(this);
     connect(&optDlg, &OptionsDialog::optionsAccepted, this, &MainWindow::updateOptions);
     optDlg.exec();
 }
@@ -553,26 +456,6 @@ void MainWindow::exportImgDialog()//TODO
     setCurrentDirbyFile(filename);
 }
 
-void MainWindow::exportProDialog()//TODO
-{
-    QString filename = QFileDialog::getSaveFileName(this ,"Export Project Information As",
-                       QDir::currentPath(), "Open Document SpreadSheet (*.ods)");
-    if (filename.isNull()) {
-        return;
-    }
-    setCurrentDirbyFile(filename);
-}
-
-void MainWindow::projectPropertiesDialog()//TODO
-{
-    QMessageBox proDlg(this);
-    proDlg.setWindowIcon(QIcon::fromTheme("document-properties"));
-    proDlg.setWindowTitle("Properties");
-    proDlg.setText("<strong>TODO</strong>");
-    proDlg.setStandardButtons(QMessageBox::Ok);
-    proDlg.exec();
-}
-
 void MainWindow::aboutQtDialog()
 {
     QMessageBox::aboutQt(this);
@@ -583,15 +466,7 @@ void MainWindow::aboutCAIGADialog()
     QMessageBox::about(this, "About CAIGA", aboutText);
 }
 
-void MainWindow::setActivateImage(QModelIndex i)
-{
-    QString imgfile = imgNameModel->data(i, Qt::DisplayRole).toString();
-    cgimg.setRawImage(imgfile);
-    ui->rawViewer->setPixmap(cgimg.getRawPixmap());
-    ui->ccDrawer->setImage(cgimg.getRawImage());
-}
-
-void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, bool autoSave, int interval, const QString &colour)
+void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, const QString &colour)
 {
     Q_UNUSED(lang);//TODO: i18n
 
@@ -628,10 +503,6 @@ void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, bool auto
     default:
         qWarning("Invalid Tab Position");
     }
-
-    Q_UNUSED(autoSave);//TODO: project saving
-    Q_UNUSED(interval);
-
     ui->ccDrawer->setPenColour(colour);
 }
 
@@ -640,60 +511,15 @@ void MainWindow::readConfig()
     emit configReadFinished(settings.value("Language").toInt(),
                             settings.value("Toolbar Style").toInt(),
                             settings.value("Tab Position", 1).toInt(),
-                            settings.value("AutoSave", false).toBool(),
-                            settings.value("AutoSave Interval", 5).toInt(),
                             settings.value("Pen Colour", "#F00").toString());
-}
-
-void MainWindow::setWidgetsEnabled(bool b)
-{
-    ui->centralWidget->setEnabled(b);
-    ui->actionSave_Project->setEnabled(b);
-    ui->actionSave_Project_As->setEnabled(b);
-    ui->actionRevert_Project_to_Saved->setEnabled(b);
-    ui->actionClose_Project->setEnabled(b);
-    ui->actionExportImg_As->setEnabled(b);
-    ui->actionExportPro_As->setEnabled(b);
-    ui->actionProject_Properties->setEnabled(b);
-    ui->menuImage->setEnabled(b);
-    ui->mainToolBar->setEnabled(b);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    switch (unSavedProject()) {
-    case 2:
-        event->ignore();
-        break;
-    default:
-        settings.setValue("MainGeometry", saveGeometry());//save MainWindow geometry
-        settings.setValue("MainState", saveState());//save MainWindow toolbar state
-        settings.setValue("CurrentDir", QDir::currentPath());
-        event->accept();
-    }
-}
-
-int MainWindow::unSavedProject()
-{
-    if (projectUnsaved) {
-        int Ans = QMessageBox::question(this, "Unsaved Project",
-                  "Do you want to save this unsaved project?",
-                  QMessageBox::Yes, QMessageBox::No, QMessageBox::Cancel);
-        switch (Ans) {
-        case QMessageBox::No:
-            return 0;
-            break;
-        case QMessageBox::Yes:
-            saveProjectAsDialog();
-            return 1;
-            break;
-        default://including Cancel and Escape
-            return 2;
-        }
-    }
-    else {
-        return -1;//No unsaved project
-    }
+    settings.setValue("MainGeometry", saveGeometry());//save MainWindow geometry
+    settings.setValue("MainState", saveState());//save MainWindow toolbar state
+    settings.setValue("CurrentDir", QDir::currentPath());
+    event->accept();
 }
 
 void MainWindow::setCurrentDirbyFile(QString &f)

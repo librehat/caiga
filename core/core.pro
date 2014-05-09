@@ -1,9 +1,6 @@
 include(../common.pri)
 
-QT       += widgets sql
-
 SOURCES  += image.cpp\
-            project.cpp \
             workhistequalise.cpp \
             workspace.cpp \
             workmedianblur.cpp \
@@ -12,12 +9,11 @@ SOURCES  += image.cpp\
             workcanny.cpp \
             workcontours.cpp \
             workfloodfill.cpp \
-    workboxfilter.cpp \
-    workpencil.cpp \
-    workeraser.cpp
+            workboxfilter.cpp \
+            workpencil.cpp \
+            workeraser.cpp
 
 HEADERS  += image.h \
-            project.h \
             core_lib.h \
             datastructure.h \
             workspace.h \
@@ -29,8 +25,8 @@ HEADERS  += image.h \
             workcanny.h \
             workcontours.h \
             workfloodfill.h \
-    workboxfilter.h \
-    workpencil.h \
-    workeraser.h
+            workboxfilter.h \
+            workpencil.h \
+            workeraser.h
 
 DEFINES  += CORE

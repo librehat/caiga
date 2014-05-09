@@ -1,4 +1,4 @@
-QT          += core concurrent
+QT          += core concurrent widgets
 
 unix: VERSION     = 0.1.0
 TEMPLATE    = lib
