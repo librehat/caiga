@@ -1,6 +1,10 @@
 #include <QApplication>
-
 #include "mainwindow.h"
+
+/*#ifdef STATIC
+#include <QtPlugin>
+Q_IMPORT_PLUGIN(qico)
+#endif*/
 
 int main(int argc, char *argv[])
 {

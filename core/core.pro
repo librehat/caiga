@@ -12,8 +12,8 @@ SOURCES  += image.cpp\
             workboxfilter.cpp \
             workpencil.cpp \
             workeraser.cpp \
-    workinvertgrayscale.cpp \
-    workwatershed.cpp
+            workinvertgrayscale.cpp \
+            workwatershed.cpp
 
 HEADERS  += image.h \
             core_lib.h \
@@ -30,7 +30,7 @@ HEADERS  += image.h \
             workboxfilter.h \
             workpencil.h \
             workeraser.h \
-    workinvertgrayscale.h \
-    workwatershed.h
+            workinvertgrayscale.h \
+            workwatershed.h
 
 DEFINES  += CORE

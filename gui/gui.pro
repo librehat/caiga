@@ -9,8 +9,8 @@ TARGET    = caiga
 FORMS    += cameradialog.ui \
             mainwindow.ui \
             optionsdialog.ui \
-    parametersdialog.ui \
-    watershedmarkerdialog.ui
+            parametersdialog.ui \
+            watershedmarkerdialog.ui
          
 SOURCES  += main.cpp \
             cameradialog.cpp \
@@ -18,20 +18,26 @@ SOURCES  += main.cpp \
             optionsdialog.cpp \
             qimageviewer.cpp \
             qimagedrawer.cpp \
-    qimageinteractivedrawer.cpp \
-    parametersdialog.cpp \
-    livepixelviewer.cpp \
-    watershedmarkerdialog.cpp
+            qimageinteractivedrawer.cpp \
+            parametersdialog.cpp \
+            livepixelviewer.cpp \
+            watershedmarkerdialog.cpp
            
 HEADERS  += cameradialog.h \
             mainwindow.h \
             optionsdialog.h \
             qimageviewer.h \
             qimagedrawer.h \
-    qimageinteractivedrawer.h \
-    parametersdialog.h \
-    livepixelviewer.h \
-    watershedmarkerdialog.h
+            qimageinteractivedrawer.h \
+            parametersdialog.h \
+            livepixelviewer.h \
+            watershedmarkerdialog.h
+
+#static: {
+#    QTPLUGIN += qico
+#    DEFINES += STATIC
+#    message("Static build.")
+#}
 
 RESOURCES+= caiga.qrc
 windows: {
