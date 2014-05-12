@@ -24,7 +24,7 @@ private slots:
     void pickColour();
     void optionsChanged();
     void writeConfigFile(int, int, int, const QString &);
-    void configsChanged();
+    inline void configsChanged() { confChanged = true; }
 
 private:
     Ui::OptionsDialog *ui;

@@ -77,8 +77,9 @@ private slots:
     void onPreProcessButtonBoxClicked(QAbstractButton *);
     void onCurrentTabChanged(int);
     void addDiskFileDialog();
-    void createCameraDialog();
-    void createOptionsDialog();
+    void addCameraImageDialog();
+    void onResetActionTriggered();
+    void onOptionsActionTriggered();
     void exportImgDialog();
     void aboutQtDialog();
     void aboutCAIGADialog();
@@ -94,7 +95,7 @@ private:
     ParametersDialog medianBinaryDlg;
     ParametersDialog cannyDlg;
     ParametersDialog floodFillDlg;
-    WatershedMarkerDialog watershedDlg;
+    WatershedMarkerDialog *watershedDlg;
 
     QSettings settings;
     void readConfig();

@@ -10,7 +10,7 @@ class LivePixelViewer : public QWidget
     Q_OBJECT
 public:
     explicit LivePixelViewer(QWidget *parent = 0);
-    void setLivePreviewEnabled(bool = true);
+    inline void setLivePreviewEnabled(bool l = true) { m_live = l; update(); }
 
 private:
     bool m_live;

@@ -13,16 +13,37 @@ class QImageDrawer : public QWidget
     Q_OBJECT
 public:
     explicit QImageDrawer(QWidget *parent = 0);
-    const QImage *image() const;
-    ccStruct getCCStruct();
-    void setDrawMode(int);//-2: circle; -3: rect; -4: calibre; -5 gauge (QButtonGroup id start with -2)
-    void setPenColour(const QString &);
-    bool isCircle();
-    void reset();
-    void restoreState(ccStruct);
+    inline const QImage *image() const { return &m_image; }
+    inline ccStruct getCCStruct() { return m_value; }
+    inline void setDrawMode(int m)//QButtonGroup id start with -2
+    {
+        m_value.drawMode = m;
+        switch (m) {
+        case -2://circle
+            m_value.isCircle = true;
+            break;
+        case -3://rect
+            m_value.isCircle = false;
+            break;
+        case -4://calibre
+        case -5://gauge
+            break;
+        }
+    }
+    inline void setPenColour(const QString &c)
+    {
+        QColor colour(c);
+        if (colour.isValid()) {
+            m_penColour = colour;
+        }
+    }
+    inline QColor getPenColour() { return m_penColour; }
+    inline bool isCircle() { return m_value.isCircle; }
+    inline void reset() { m_value = ccStruct(); update(); }
+    inline void restoreState(ccStruct c) { m_value = c; update(); }
 
 public slots:
-    void setImage(const QImage &);
+    inline void setImage(const QImage &img) { m_image = img; setMinimumSize(m_image.size()); update(); }
 
 signals:
     void calibreFinished(qreal);

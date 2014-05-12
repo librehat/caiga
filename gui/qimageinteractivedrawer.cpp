@@ -53,38 +53,6 @@ void QImageInteractiveDrawer::paintEvent(QPaintEvent *event)
     }
 }
 
-const QImage *QImageInteractiveDrawer::image() const
-{
-    return &m_image;
-}
-
-void QImageInteractiveDrawer::setImage(const QImage &img)
-{
-    m_image = img;
-    this->update();
-}
-
-void QImageInteractiveDrawer::setWhite(bool w)
-{
-    m_white = w;
-    if (w) {
-        m_penColour = QColor(255, 255, 255);
-    }
-    else {
-        m_penColour = QColor(0, 0, 0);
-    }
-}
-
-void QImageInteractiveDrawer::setPenColour(const QColor &pc)
-{
-    m_penColour = pc;
-}
-
-bool QImageInteractiveDrawer::isWhite()
-{
-    return m_penColour == QColor(255, 255, 255);
-}
-
 void QImageInteractiveDrawer::setDrawMode(DRAW_MODE m)
 {
     m_drawMode = m;

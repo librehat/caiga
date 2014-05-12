@@ -41,10 +41,10 @@ private slots:
     void onResetButtonClicked();
     void onUndoButtonClicked();
     void onRedoButtonClicked();
-    void onPreviewButtonClicked();
+    inline void onPreviewButtonClicked() { emit previewTriggled(ptsVec); }
     void onWorkStarted();
     void onWorkFinished();
-    void handleAccepted();
+    inline void handleAccepted() { emit accepted(ptsVec); }
 };
 
 #endif // WATERSHEDMARKERDIALOG_H

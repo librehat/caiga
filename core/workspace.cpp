@@ -75,21 +75,6 @@ void WorkSpace::appendAndClone(WorkBase *w)
     this->clearUndoneList();
 }
 
-void WorkSpace::pop()
-{
-    delete workList.takeLast();
-}
-
-WorkBase *WorkSpace::last()
-{
-    return workList.last();
-}
-
-WorkBase *WorkSpace::takeLast()
-{
-    return workList.takeLast();
-}
-
 QList<WorkBase *> WorkSpace::takeAll()
 {
     QList<WorkBase *> ta;
@@ -153,21 +138,6 @@ void WorkSpace::reset()
     emit workFinished();
 }
 
-int WorkSpace::count()
-{
-    return workList.size();
-}
-
-Mat *WorkSpace::getLatestMat()
-{
-    return workList.last()->dst;
-}
-
-QImage WorkSpace::getLatestQImg()
-{
-    return Image::convertMat2QImage(*workList.last()->dst);
-}
-
 void WorkSpace::newInvertGrayscaleWork()
 {
     WorkBase *w = new WorkInvertGrayscale(workList.last()->dst);
@@ -176,19 +146,29 @@ void WorkSpace::newInvertGrayscaleWork()
 
 void WorkSpace::newHistogramEqualiseWork()
 {
+    if (workList.last()->dst->type() != CV_8UC1) {
+        emit workStatusStringUpdated("Abort. 8-bit single channel image needed.");
+        return;
+    }
     WorkBase *w = new WorkHistEqualise(workList.last()->dst);
     this->newGenericWork(w);
 }
 
-void WorkSpace::newBoxFilterWork(int size)
+void WorkSpace::newBoxFilterWork(int size, bool cont)
 {
-    WorkBase *w = new WorkBoxFilter(workList.last()->dst, size);
+    cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;
+    WorkBase *w = new WorkBoxFilter(s, size);
     this->newGenericWork(w);
 }
 
-void WorkSpace::newAdaptiveBilateralFilterWork(int size, double space, double colour)
+void WorkSpace::newAdaptiveBilateralFilterWork(int size, double space, double colour, bool cont)
 {
-    WorkBase *w = new WorkAptBilateralFilter(workList.last()->dst, size, space, colour);
+    if (workList.last()->dst->type() != CV_8UC1 && workList.last()->dst->type() != CV_8UC3) {
+        emit workStatusStringUpdated("Abort. 8-bit single or 3-channel image needed.");
+        return;
+    }
+    cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;
+    WorkBase *w = new WorkAptBilateralFilter(s, size, space, colour);
     this->newGenericWork(w);
 }
 
@@ -198,28 +178,24 @@ void WorkSpace::newMedianBlurWork(int kSize)
     this->newGenericWork(w);
 }
 
-void WorkSpace::newBinaryzationWork(int method, int type, int size, double constant)
+void WorkSpace::newBinaryzationWork(int method, int type, int size, double constant, bool cont)
 {
-    WorkBase *w = new WorkBinaryzation(workList.last()->dst, method, type, size, constant);
+    cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;
+    WorkBase *w = new WorkBinaryzation(s, method, type, size, constant);
     this->newGenericWork(w);
 }
 
-void WorkSpace::newCannyWork(int aSize, double high, double low, bool l2)
+void WorkSpace::newCannyWork(int aSize, double high, double low, bool l2, bool cont)
 {
-    WorkBase *w = new WorkCanny(workList.last()->dst, aSize, high, low, l2);
+    cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;
+    WorkBase *w = new WorkCanny(s, aSize, high, low, l2);
     this->newGenericWork(w);
 }
 
-void WorkSpace::setFloodFillWorkParameters(double high, double low, bool con8)
+void WorkSpace::newFloodFillWork(int x, int y, bool cont)
 {
-    m_d1 = high;
-    m_d2 = low;
-    m_bool = con8;
-}
-
-void WorkSpace::newFloodFillWork(int x, int y)
-{
-    WorkBase *w = new WorkFloodFill(workList.last()->dst, m_d1, m_d2, m_bool, x, y);
+    cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;
+    WorkBase *w = new WorkFloodFill(s, m_d1, m_d2, m_bool, x, y);
     this->newGenericWork(w);
 }
 
@@ -299,6 +275,12 @@ void WorkSpace::newWatershedWork(const QVector<QVector<QPoint> > &markerPts, boo
     cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;   
     WorkBase *w = new WorkWatershed(s, cvpvv);
     this->newGenericWork(w);
+}
+
+QImage WorkSpace::getImageDisplay()
+{
+    //TODO
+    return QImage();
 }
 
 void WorkSpace::onLowLevelWorkStarted()

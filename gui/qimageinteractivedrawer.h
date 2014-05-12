@@ -12,10 +12,10 @@ class QImageInteractiveDrawer : public QWidget
 public:
     enum DRAW_MODE{ NONE, PENCIL, ERASER };
     explicit QImageInteractiveDrawer(QWidget *parent = 0);
-    const QImage *image() const;
-    void setWhite(bool = true);
-    void setPenColour(const QColor &);
-    bool isWhite();
+    inline const QImage *image() const { return &m_image; }
+    inline void setWhite(bool w = true) { m_white = w; m_penColour = w ? QColor(255, 255, 255) : QColor(0, 0, 0); }
+    inline void setPenColour(const QColor &pc) { m_penColour = pc; }
+    inline bool isWhite() { return m_penColour == QColor(255, 255, 255); }
     void setDrawMode(DRAW_MODE);
 
 signals:
@@ -24,7 +24,7 @@ signals:
     void mouseReleased(const QVector<QPoint> &);
 
 public slots:
-    void setImage(const QImage &);
+    inline void setImage(const QImage &img) { m_image = img; update(); }
 
 private:
     QImage m_image;

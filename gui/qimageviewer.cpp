@@ -36,26 +36,3 @@ void QImageViewer::paintEvent(QPaintEvent *event)
         painter.drawPixmap(topleft, m_pixmap.scaled(pixSize, Qt::KeepAspectRatio, Qt::FastTransformation));
     }
 }
-
-const QPixmap* QImageViewer::pixmap() const
-{
-    return &m_pixmap;
-}
-
-void QImageViewer::setPixmap(const QPixmap &pix)
-{
-    m_pixmap = pix;
-    this->update();
-}
-
-void QImageViewer::setImage(const QImage &qimg)
-{
-    m_pixmap = QPixmap::fromImage(qimg);
-    this->update();
-}
-
-void QImageViewer::setNoScale(bool n)
-{
-    m_noScale = n;
-    this->update();
-}

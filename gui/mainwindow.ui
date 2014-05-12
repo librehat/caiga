@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>529</height>
+    <height>562</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -52,16 +52,7 @@
         <string>Raw</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
@@ -81,19 +72,59 @@
         <string>Crop and Calibre</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
-        <property name="leftMargin">
+        <property name="margin">
          <number>0</number>
         </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item row="0" column="1" rowspan="2" alignment="Qt::AlignTop">
+        <item row="2" column="1" rowspan="3">
+         <widget class="LivePixelViewer" name="ccPixelViewer" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>100</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="8" column="1" alignment="Qt::AlignBottom">
+         <widget class="QDialogButtonBox" name="ccButtonBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="standardButtons">
+           <set>QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" rowspan="9">
+         <widget class="QImageDrawer" name="ccDrawer" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>10</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="cursor">
+           <cursorShape>CrossCursor</cursorShape>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" alignment="Qt::AlignTop">
          <widget class="QGroupBox" name="ccModeGroupBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -180,23 +211,7 @@
           </layout>
          </widget>
         </item>
-        <item row="4" column="1" alignment="Qt::AlignBottom">
-         <widget class="QDialogButtonBox" name="ccButtonBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>1</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="standardButtons">
-           <set>QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="LivePixelViewer" name="ccPixelViewer" native="true"/>
-        </item>
-        <item row="3" column="1">
+        <item row="6" column="1" alignment="Qt::AlignBottom">
          <widget class="QLabel" name="gaugeResultLabel">
           <property name="text">
            <string/>
@@ -206,18 +221,18 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="0" rowspan="5">
-         <widget class="QImageDrawer" name="ccDrawer" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>10</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+        <item row="5" column="1">
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-          <property name="cursor">
-           <cursorShape>CrossCursor</cursorShape>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
           </property>
-         </widget>
+         </spacer>
         </item>
        </layout>
       </widget>
@@ -226,16 +241,7 @@
         <string>Preprocess</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item row="0" column="2" alignment="Qt::AlignTop">
@@ -258,16 +264,9 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="invertGrayscaleButton">
+            <widget class="QPushButton" name="adaptiveBilateralFilter">
              <property name="text">
-              <string>Invert Grayscale</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="histEqualiseButton">
-             <property name="text">
-              <string>Histogram Equalisation</string>
+              <string>Adaptive Bilateral Filter</string>
              </property>
             </widget>
            </item>
@@ -279,9 +278,9 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="adaptiveBilateralFilter">
+            <widget class="QPushButton" name="histEqualiseButton">
              <property name="text">
-              <string>Adaptive Bilateral Filter</string>
+              <string>Histogram Equalisation</string>
              </property>
             </widget>
            </item>
@@ -303,6 +302,13 @@
             <widget class="QPushButton" name="cannyButton">
              <property name="text">
               <string>Canny Edges</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="invertGrayscaleButton">
+             <property name="text">
+              <string>Invert Grayscale</string>
              </property>
             </widget>
            </item>
@@ -360,16 +366,7 @@
         <string>Analysis</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
@@ -389,16 +386,7 @@
         <string>Information</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <property name="leftMargin">
-         <number>4</number>
-        </property>
-        <property name="topMargin">
-         <number>4</number>
-        </property>
-        <property name="rightMargin">
-         <number>4</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>4</number>
         </property>
         <item>
@@ -420,7 +408,7 @@
      <x>0</x>
      <y>0</y>
      <width>700</width>
-     <height>19</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -579,6 +567,12 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>QImageInteractiveDrawer</class>
+   <extends>QWidget</extends>
+   <header>qimageinteractivedrawer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>QImageViewer</class>
    <extends>QWidget</extends>
    <header>qimageviewer.h</header>
@@ -588,12 +582,6 @@
    <class>QImageDrawer</class>
    <extends>QWidget</extends>
    <header>qimagedrawer.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>QImageInteractiveDrawer</class>
-   <extends>QWidget</extends>
-   <header>qimageinteractivedrawer.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

@@ -49,15 +49,8 @@ public:
     QPixmap getCroppedPixmap();
     ccStruct getCropCalibreStruct();
     void setCropCalibreStruct(const ccStruct &);
-    QImage getEdgesImage();
-    QPixmap getEdgesPixmap();
-    bool validateEdgesDetection();
     QImage getPreProcessedImage();
     QPixmap getPreProcessedPixmap();
-    bool validateHistogramEqualise();
-    bool validateGaussianMedianBlur();
-    bool validateAdaptiveBilateralFilter();
-    void prepareFloodFill();
     QImage getProcessedImage();
     QPixmap getProcessedPixmap();
     void setProcessedImage(Mat img);

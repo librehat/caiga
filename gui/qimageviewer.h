@@ -10,12 +10,12 @@ class QImageViewer : public QWidget
     Q_OBJECT
 public:
     explicit QImageViewer(QWidget *parent = 0);
-    const QPixmap *pixmap() const;
-    void setNoScale(bool n = true);
+    inline const QPixmap *pixmap() const { return &m_pixmap; }
+    inline void setNoScale(bool n = true) { m_noScale = n; update();}
 
 public slots:
-    void setPixmap(const QPixmap &pix);
-    void setImage(const QImage &qimg);
+    inline void setPixmap(const QPixmap &pix) { m_pixmap = pix; update(); }
+    inline void setImage(const QImage &qimg) {  m_pixmap = QPixmap::fromImage(qimg); update(); }
 
 protected:
     void paintEvent(QPaintEvent *);

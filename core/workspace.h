@@ -27,36 +27,42 @@ public:
     void append(WorkBase *);//this will emit workFinished
     void append(QList<WorkBase *>);//this will also emit workFinished. WARN: this function will manipulate the QList directly, use it with caution!
     void appendAndClone(WorkBase *);//this won't emit workFinished
-    void pop();//pop out the last from worklist
-    WorkBase *last();
-    WorkBase *takeLast();
+    void pop() { delete workList.takeLast(); }//pop out the last from worklist
+    inline WorkBase *last() { return workList.last(); }
+    inline WorkBase *takeLast() { return workList.takeLast(); }
     QList<WorkBase *> takeAll();
     void simplified();
     void clear();
     void reset(CAIGA::Image &cgimg);//reset and use the cropped image from cgimg
     void reset(cv::Mat *s);
     void reset();//erase everything except for workList.first()
-    int count();
+    inline int count() { return workList.size(); }
     void newInvertGrayscaleWork();
     void newHistogramEqualiseWork();
-    void newBoxFilterWork(int size);
-    void newAdaptiveBilateralFilterWork(int size, double space, double colour);
-    void newMedianBlurWork(int kSize);
-    void newBinaryzationWork(int method, int type, int size, double constant);
-    void newCannyWork(int aSize, double high, double low, bool l2);
-    void setFloodFillWorkParameters(double high, double low, bool con8);//this is not a generic work. it'll be finished by member function lastFloodFillWorkClicked.
-    void newFloodFillWork(int x, int y);
-    void newContoursWork();
-    void newPencilWork(const QVector<QPoint> &pts, bool white);
-    void newPencilWork(const QVector<QPoint> &pts, QColor colour);
-    void newEraserWork(const QVector<QPoint> &pts, bool white);
     /*
      * pass cont = true if you want to use workList.last()->dst as the src image as usual.
      * it uses the workList.first()->dst as the src image by default
      */
+    void newBoxFilterWork(int size, bool cont = false);
+    void newAdaptiveBilateralFilterWork(int size, double space, double colour, bool cont = false);
+    void newMedianBlurWork(int kSize);
+    void newBinaryzationWork(int method, int type, int size, double constant, bool cont = false);
+    void newCannyWork(int aSize, double high, double low, bool l2, bool cont = false);
+    inline void setFloodFillWorkParameters(double high, double low, bool con8)
+    {
+        m_d1 = high;
+        m_d2 = low;
+        m_bool = con8;
+    } //this is not a generic work. it'll be finished by member function lastFloodFillWorkClicked.
+    void newFloodFillWork(int x, int y, bool cont = false);
+    void newContoursWork();
+    void newPencilWork(const QVector<QPoint> &pts, bool white);
+    void newPencilWork(const QVector<QPoint> &pts, QColor colour);
+    void newEraserWork(const QVector<QPoint> &pts, bool white);
     void newWatershedWork(const QVector<QVector<QPoint> > &markerPts, bool cont = false);
-    Mat *getLatestMat();
-    QImage getLatestQImg();
+    inline Mat *getLastMatrix() { return workList.last()->dst; }
+    inline QImage getLastImage() { return Image::convertMat2QImage(*workList.last()->dst); }
+    QImage getImageDisplay();
 
 public slots:
     void undo();
@@ -68,7 +74,8 @@ private:
     QFuture<void> future;
     QFutureWatcher<void> watcher;
     void clearUndoneList();
-    inline void newGenericWork(WorkBase *work) {
+    inline void newGenericWork(WorkBase *work)
+    {
         workList.append(work);
         this->clearUndoneList();
         future = QtConcurrent::run(work, &WorkBase::Func);

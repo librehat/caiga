@@ -14,12 +14,6 @@ LivePixelViewer::LivePixelViewer(QWidget *parent) :
     m_live = true;
 }
 
-void LivePixelViewer::setLivePreviewEnabled(bool l)
-{
-    m_live = l;
-    update();
-}
-
 void LivePixelViewer::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == m_updateId) {

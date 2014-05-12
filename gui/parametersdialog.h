@@ -15,13 +15,14 @@ signals:
     void parametersChanged(int, double, double, bool);
     void undoButtonClicked();
     void redoButtonClicked();
+    void resetButtonClicked();
 
 public:
     explicit ParametersDialog(QWidget *parent = 0);
     ~ParametersDialog();
     void show();
     void setkSizeText(const QString &);
-    void setSigColourText(const QString &);
+    void setSigColourText(const QString &c);
     void setSigSpaceText(const QString &);
     void setMode(int mode);//should invoke only once because it won't change the default value which may be modified previously
 

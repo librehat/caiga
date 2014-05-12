@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     cannyDlg.setMode(2);
     floodFillDlg.setMode(3);
     floodFillDlg.setModal(false);
+    watershedDlg = new WatershedMarkerDialog(this);
 
     ui->rawViewer->setNoScale();
     //preProcess tab button menu
@@ -86,14 +87,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&floodFillDlg, &ParametersDialog::redoButtonClicked, &previewSpace, &CAIGA::WorkSpace::redo);
     connect(&floodFillDlg, &ParametersDialog::accepted, this, &MainWindow::onFloodFillAccepted);
     connect(&floodFillDlg, &ParametersDialog::rejected, this, &MainWindow::onFloodFillRejected);
+    connect(&floodFillDlg, &ParametersDialog::resetButtonClicked, &previewSpace, static_cast<void (CAIGA::WorkSpace::*) (void)>(&CAIGA::WorkSpace::reset));
     connect(ui->cannyButton, &QPushButton::clicked, this, &MainWindow::onCannyButtonClicked);
     connect(&cannyDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onCannyParametersChanged);
     connect(&cannyDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
     connect(&cannyDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
     connect(ui->watershedButton, &QPushButton::clicked, this, &MainWindow::onWatershedButtonClicked);
-    connect(&watershedDlg, &WatershedMarkerDialog::previewTriggled, this, &MainWindow::onWatershedPreviewed);
-    connect(&watershedDlg, &WatershedMarkerDialog::accepted, this, &MainWindow::onWatershedAccepted);
-    connect(&watershedDlg, &WatershedMarkerDialog::rejected, this, &MainWindow::onPreParametersRejected);
     connect(ui->contoursButton, &QPushButton::clicked, this, &MainWindow::onContoursButtonClicked);
     connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPreProcessButtonBoxClicked);
     connect(ui->actionUndo, &QAction::triggered, &preWorkSpace, &CAIGA::WorkSpace::undo);
@@ -101,17 +100,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //MainWindow
     connect(ui->actionOpenFile, &QAction::triggered, this, &MainWindow::addDiskFileDialog);
-    connect(ui->actionOpenCamera, &QAction::triggered, this, &MainWindow::createCameraDialog);
-    connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::createOptionsDialog);
+    connect(ui->actionOpenCamera, &QAction::triggered, this, &MainWindow::addCameraImageDialog);
+    connect(ui->actionReset, &QAction::triggered, this, &MainWindow::onResetActionTriggered);
+    connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::onOptionsActionTriggered);
     connect(ui->actionExportImg_As, &QAction::triggered, this, &MainWindow::exportImgDialog);
     connect(ui->actionAbout_Qt, &QAction::triggered, this, &MainWindow::aboutQtDialog);
     connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
     connect(ui->imageTabs, &QTabWidget::currentChanged, this, &MainWindow::onCurrentTabChanged);
     connect(this, &MainWindow::messageArrived, this, &MainWindow::onMessagesArrived);
 
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
     connect(&preWorkSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreProcessWorkFinished);
     connect(&preWorkSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
+    connect(&previewSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
 
     connect(this, &MainWindow::configReadFinished, this, &MainWindow::updateOptions);
 
@@ -122,6 +122,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete mouseBehaviourMenu;
+    delete watershedDlg;
 }
 
 const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version Pre Alpha on "
@@ -224,7 +225,7 @@ void MainWindow::onMouseBlackEraser()
 
 void MainWindow::onPreviewWorkFinished()
 {
-    ui->preProcessDrawer->setImage(previewSpace.getLatestQImg());
+    ui->preProcessDrawer->setImage(previewSpace.getLastImage());
 }
 
 void MainWindow::onInvertGrayscaleButtonClicked()
@@ -239,66 +240,61 @@ void MainWindow::onHistEqualiseButtonClicked()
 
 void MainWindow::onBoxFilterButtonClicked()
 {
-    previewSpace.clear();
+    previewSpace.reset(preWorkSpace.getLastMatrix());
     connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &boxFilterDlg, &ParametersDialog::handleWorkStarted);
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &boxFilterDlg, &ParametersDialog::handleWorkFinished);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
     boxFilterDlg.show();
     boxFilterDlg.exec();
 }
 
 void MainWindow::onBoxFilterParametersChanged(int kSize, double, double, bool)
 {
-    previewSpace.appendAndClone(preWorkSpace.last());
     previewSpace.newBoxFilterWork(kSize);
 }
 
 void MainWindow::onAdaptiveBilateralFilterButtonClicked()
 {
-    if (cgimg.validateAdaptiveBilateralFilter()) {
-        previewSpace.clear();
-        connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &adaptiveBilateralDlg, &ParametersDialog::handleWorkStarted);
-        connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &adaptiveBilateralDlg, &ParametersDialog::handleWorkFinished);
-        adaptiveBilateralDlg.show();
-        adaptiveBilateralDlg.exec();
-    }
-    else {
-        emit messageArrived("Abort. This operation is illegal!");
-    }
+    previewSpace.reset(preWorkSpace.getLastMatrix());
+    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &adaptiveBilateralDlg, &ParametersDialog::handleWorkStarted);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &adaptiveBilateralDlg, &ParametersDialog::handleWorkFinished);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
+    adaptiveBilateralDlg.show();
+    adaptiveBilateralDlg.exec();
 }
 
 void MainWindow::onAdaptiveBilateralFilterParametersChanged(int k, double s, double c, bool)
 {
-    previewSpace.appendAndClone(preWorkSpace.last());
     previewSpace.newAdaptiveBilateralFilterWork(k, s, c);
 }
 
 void MainWindow::onGaussianBinaryzationButtonClicked()
 {
-    previewSpace.clear();
+    previewSpace.reset(preWorkSpace.getLastMatrix());
     connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &gaussianBinaryDlg, &ParametersDialog::handleWorkStarted);
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &gaussianBinaryDlg, &ParametersDialog::handleWorkFinished);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
     gaussianBinaryDlg.show();
     gaussianBinaryDlg.exec();
 }
 
 void MainWindow::onGaussianBinaryzationParametersChanged(int s, double c, double, bool inv)
 {
-    previewSpace.appendAndClone(preWorkSpace.last());
     previewSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_GAUSSIAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
 }
 
 void MainWindow::onMedianBinaryzationButtonClicked()
 {
-    previewSpace.clear();
+    previewSpace.reset(preWorkSpace.getLastMatrix());
     connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &medianBinaryDlg, &ParametersDialog::handleWorkStarted);
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &medianBinaryDlg, &ParametersDialog::handleWorkFinished);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
     medianBinaryDlg.show();
     medianBinaryDlg.exec();
 }
 
 void MainWindow::onMedianBinaryzationParametersChanged(int s, double c, double, bool inv)
 {
-    previewSpace.appendAndClone(preWorkSpace.last());
     previewSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_MEAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
 }
 
@@ -314,21 +310,21 @@ void MainWindow::onEraserDrawFinished(const QVector<QPoint> &pts)
 
 void MainWindow::onFloodFillButtonClicked()
 {
+    previewSpace.reset(preWorkSpace.getLastMatrix());
     connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
-    previewSpace.clear();
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
     floodFillDlg.show();
     floodFillDlg.exec();
 }
 
 void MainWindow::onFloodFillParametersChanged(int, double h, double l, bool c8)
 {
-    previewSpace.appendAndClone(preWorkSpace.last());
     previewSpace.setFloodFillWorkParameters(h, l, c8);
 }
 
 void MainWindow::onFloodFillMouseClicked(QPoint p)
 {
-    previewSpace.newFloodFillWork(p.x(), p.y());
+    previewSpace.newFloodFillWork(p.x(), p.y(), true);
 }
 
 void MainWindow::onFloodFillAccepted()
@@ -345,28 +341,34 @@ void MainWindow::onFloodFillRejected()
 
 void MainWindow::onCannyButtonClicked()
 {
-    previewSpace.clear();
+    previewSpace.reset(preWorkSpace.getLastMatrix());
     connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &cannyDlg, &ParametersDialog::handleWorkStarted);
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &cannyDlg, &ParametersDialog::handleWorkFinished);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
     cannyDlg.show();
     cannyDlg.exec();
 }
 
 void MainWindow::onCannyParametersChanged(int aSize, double high, double low, bool l2)
 {
-    previewSpace.appendAndClone(preWorkSpace.last());
     previewSpace.newCannyWork(aSize, high, low, l2);
 }
 
 void MainWindow::onWatershedButtonClicked()
 {
-    previewSpace.clear();
-    previewSpace.reset(preWorkSpace.getLatestMat());
-    watershedDlg.setOrignialMat(preWorkSpace.getLatestMat());
-    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &watershedDlg, &WatershedMarkerDialog::onPreviewStarted);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &watershedDlg, &WatershedMarkerDialog::onPreviewFinished);
-    watershedDlg.show();
-    watershedDlg.exec();
+    previewSpace.reset(preWorkSpace.getLastMatrix());
+    delete watershedDlg;
+    watershedDlg = new WatershedMarkerDialog(this);
+    watershedDlg->setOrignialMat(preWorkSpace.getLastMatrix());
+    watershedDlg->setPenColour(ui->ccDrawer->getPenColour());
+    connect(watershedDlg, &WatershedMarkerDialog::previewTriggled, this, &MainWindow::onWatershedPreviewed);
+    connect(watershedDlg, &WatershedMarkerDialog::accepted, this, &MainWindow::onWatershedAccepted);
+    connect(watershedDlg, &WatershedMarkerDialog::rejected, this, &MainWindow::onPreParametersRejected);
+    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, watershedDlg, &WatershedMarkerDialog::onPreviewStarted);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, watershedDlg, &WatershedMarkerDialog::onPreviewFinished);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
+    watershedDlg->show();
+    watershedDlg->exec();
 }
 
 void MainWindow::onWatershedPreviewed(const QVector<QVector<QPoint> > &pvv)
@@ -402,7 +404,7 @@ void MainWindow::onContoursButtonClicked()
 
 void MainWindow::onPreProcessWorkFinished()
 {
-    ui->preProcessDrawer->setImage(preWorkSpace.getLatestQImg());
+    ui->preProcessDrawer->setImage(preWorkSpace.getLastImage());
 }
 
 void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
@@ -415,6 +417,7 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
         //TODO
         preWorkSpace.simplified();
     }
+    previewSpace.clear();
 }
 
 void MainWindow::onCurrentTabChanged(int i)
@@ -450,13 +453,22 @@ void MainWindow::addDiskFileDialog()
     ui->ccDrawer->setImage(cgimg.getRawImage());
 }
 
-void MainWindow::createCameraDialog()//TODO camera image should be involved with SQLite
+void MainWindow::addCameraImageDialog()//TODO camera image should be involved with SQLite
 {
     CameraDialog camDlg(this);
     camDlg.exec();
 }
 
-void MainWindow::createOptionsDialog()
+void MainWindow::onResetActionTriggered()
+{
+    ui->ccDrawer->reset();
+    ui->imageTabs->setCurrentIndex(0);
+    ui->preProcessDrawer->setImage(QImage());
+    preWorkSpace.clear();
+    previewSpace.clear();
+}
+
+void MainWindow::onOptionsActionTriggered()
 {
     OptionsDialog optDlg(this);
     connect(&optDlg, &OptionsDialog::optionsAccepted, this, &MainWindow::updateOptions);
@@ -523,7 +535,6 @@ void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, const QSt
         qWarning("Invalid Tab Position");
     }
     ui->ccDrawer->setPenColour(colour);
-    watershedDlg.setPenColour(colour);
 }
 
 void MainWindow::readConfig()

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>384</width>
-    <height>265</height>
+    <width>387</width>
+    <height>205</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -70,9 +70,6 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0" colspan="7">
-    <widget class="QImageInteractiveDrawer" name="drawer" native="true"/>
-   </item>
    <item row="1" column="1" colspan="3">
     <widget class="QPushButton" name="undoButton">
      <property name="enabled">
@@ -100,6 +97,19 @@
       <iconset theme="document-export">
        <normaloff/>
       </iconset>
+     </property>
+     <property name="shortcut">
+      <string>Space</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="7">
+    <widget class="QImageInteractiveDrawer" name="drawer" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
     </widget>
    </item>

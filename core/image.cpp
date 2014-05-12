@@ -49,16 +49,6 @@ QImage Image::getCroppedImage()
         return convertMat2QImage(croppedImage);
 }
 
-QImage Image::getEdgesImage()
-{
-    if (isCircle()) {
-        edgesCircularImage = makeInCircle(edgesImage);
-        return convertMat2QImage(edgesCircularImage);
-    }
-    else
-        return convertMat2QImage(edgesImage);
-}
-
 QImage Image::getPreProcessedImage()
 {
     if (isCircle()) {
@@ -102,16 +92,6 @@ QPixmap Image::getPreProcessedPixmap()
     }
     else
         return convertMat2QPixmap(preprocessedImage);
-}
-
-QPixmap Image::getEdgesPixmap()
-{
-    if (isCircle()) {
-        edgesCircularImage = makeInCircle(edgesImage);
-        return convertMat2QPixmap(edgesCircularImage);
-    }
-    else
-        return convertMat2QPixmap(edgesImage);
 }
 
 QPixmap Image::getProcessedPixmap()
@@ -162,54 +142,9 @@ void Image::setCropCalibreStruct(const ccStruct &c)
     }
 }
 
-bool Image::validateHistogramEqualise()
-{
-    if (croppedImage.empty() || croppedImage.type() != CV_8UC1) {
-        qWarning("Abort. CroppedImage is invalid. Its Mat type is: %d", croppedImage.type());
-        return false;
-    }
-    else
-        return true;
-}
-
-bool Image::validateGaussianMedianBlur()
-{
-    if (croppedImage.empty()) {
-        qWarning("Abort. Cropped Image is invalid.");
-        return false;
-    }
-    else
-        return true;
-}
-
-bool Image::validateAdaptiveBilateralFilter()
-{
-    if ((croppedImage.type() != CV_8UC1 && croppedImage.type() != CV_8UC3) || croppedImage.empty()) {
-        qWarning("Abort. CroppedImage is invalid. Its Mat type is: %d", croppedImage.type());
-        return false;
-    }
-    else
-        return true;
-}
-
-bool Image::validateEdgesDetection()
-{
-    if (preprocessedImage.empty()) {
-        qWarning("Abort. Image has not been preProcessed.");
-        return false;
-    }
-    else
-        return true;
-}
-
 void Image::setProcessedImage(Mat img)
 {
     processedImage = img;
-}
-
-void Image::prepareFloodFill()
-{
-    cvtColor(preprocessedImage, edgesImage, CV_GRAY2RGB);
 }
 
 bool Image::isCircle()

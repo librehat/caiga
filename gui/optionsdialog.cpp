@@ -47,11 +47,6 @@ void OptionsDialog::readConfigFile()
     ui->penColourEdit->setText(settings.value("Pen Colour", "#F00").toString());
 }
 
-void OptionsDialog::configsChanged()
-{
-    confChanged = true;
-}
-
 void OptionsDialog::pickColour()
 {
     QColor c = QColorDialog::getColor(QColor(ui->penColourEdit->text()), this);

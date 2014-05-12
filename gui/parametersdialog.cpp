@@ -14,8 +14,10 @@ ParametersDialog::ParametersDialog(QWidget *parent) :
     connect(ui->checkBox, &QCheckBox::stateChanged, this, &ParametersDialog::onValuesChanged);
     connect(ui->undoButton, &QPushButton::clicked, this, &ParametersDialog::undoButtonClicked);
     connect(ui->redoButton, &QPushButton::clicked, this, &ParametersDialog::redoButtonClicked);
+    connect(ui->resetButton, &QPushButton::clicked, this, &ParametersDialog::resetButtonClicked);
     ui->undoButton->setVisible(false);
     ui->redoButton->setVisible(false);
+    ui->resetButton->setVisible(false);
 }
 
 ParametersDialog::~ParametersDialog()
@@ -29,14 +31,14 @@ void ParametersDialog::show()
     this->onValuesChanged();
 }
 
-void ParametersDialog::onValuesChanged()
-{
-    emit parametersChanged(ui->kSizeSlider->value() * 2 - 1, ui->sigmaSpace->value(), ui->sigmaColour->value(), ui->checkBox->isChecked());
-}
-
 void ParametersDialog::onSliderValueChanged(int s)
 {
     ui->kSizeLabel->setText(kSizeText + "(" + QString::number(s * 2 - 1) + ")");
+}
+
+void ParametersDialog::onValuesChanged()
+{
+    emit parametersChanged(ui->kSizeSlider->value() * 2 - 1, ui->sigmaSpace->value(), ui->sigmaColour->value(), ui->checkBox->isChecked());
 }
 
 void ParametersDialog::setSigColourText(const QString &c)
@@ -98,6 +100,7 @@ void ParametersDialog::setMode(int mode)
         ui->checkBox->setText("8 Connectivity Mode");
         ui->undoButton->setVisible(true);
         ui->redoButton->setVisible(true);
+        ui->resetButton->setVisible(true);
         break;
     default://adaptiveBilateralFilter
         this->setkSizeText("Kernel Size");
