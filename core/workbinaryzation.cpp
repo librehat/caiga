@@ -4,6 +4,7 @@ using namespace CAIGA;
 WorkBinaryzation::WorkBinaryzation(const cv::Mat * const s, int m, int t, int size, double C) :
     WorkBase(s)
 {
+    workType = Binaryzation;
     method = m;
     type = t;
     oddSize = size;

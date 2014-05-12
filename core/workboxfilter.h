@@ -7,7 +7,12 @@ namespace CAIGA
 class WorkBoxFilter : public WorkBase
 {
 public:
-    WorkBoxFilter(const cv::Mat *const src, int size) : WorkBase(src) { cvSize = cv::Size(size, size); }
+    WorkBoxFilter(const cv::Mat *const src, int size)
+        : WorkBase(src)
+    {
+        cvSize = cv::Size(size, size);
+        workType = BoxFilter;
+    }
     void Func();
 };
 }

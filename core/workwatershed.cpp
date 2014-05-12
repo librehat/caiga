@@ -7,6 +7,7 @@ WorkWatershed::WorkWatershed(const cv::Mat * const src, std::vector<std::vector<
         cv::cvtColor(*src, *dst, CV_GRAY2RGB);
     }
 
+    workType = Watershed;
     markers = m;
 }
 

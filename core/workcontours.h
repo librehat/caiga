@@ -6,7 +6,7 @@ namespace CAIGA
 class WorkContours : public WorkBase
 {
 public:
-    WorkContours(const cv::Mat *const s) : WorkBase(s) {}
+    WorkContours(const cv::Mat *const s) : WorkBase(s) { workType = Contours; }
     void Func();
 };
 }

@@ -3,6 +3,7 @@ using namespace CAIGA;
 
 WorkAptBilateralFilter::WorkAptBilateralFilter(cv::Mat *s, int k, double space, double colour) : WorkBase(s)
 {
+    workType = AptBilateralFilter;
     cvSize = cv::Size(k, k);
     sigmaX = space;
     sigmaY = colour;

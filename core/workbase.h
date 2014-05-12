@@ -13,20 +13,25 @@ namespace CAIGA {
 class WorkBase
 {
 public:
-    //enum type {Raw, HistEqualise, AdaBilateralFilter, MedianBlur};//seems useless
+    enum WorkTypes {Raw, AptBilateralFilter, Binaryzation, BoxFilter, Canny, Contours, Eraser, FloodFill, HistEqualise, InvertGrayscale, MedianBlur, Pencil, Watershed};
+
     WorkBase() : src(NULL) {
+        workType = Raw;
         dst = new cv::Mat();
     }
 
     WorkBase(const cv::Mat *const s) : src(s) {
+        workType = Raw;
         dst = new cv::Mat(s->clone());
     }
 
     WorkBase(const cv::Mat *const s, cv::Mat *d) : src(s) {
+        workType = Raw;
         dst = new cv::Mat(d->clone());
     }
 
     WorkBase(WorkBase *base) : src(base->src) {
+        workType = base->workType;
         dst = new cv::Mat(base->dst->clone());
         oddSize = base->oddSize;
         size = base->size;
@@ -44,13 +49,14 @@ public:
     virtual void Func() {}
 
     inline bool operator == (const WorkBase &w) const {
-        if (this->src != w.src || this->dst != w.dst) {
+        if (this->src != w.src || this->dst != w.dst || this->workType != w.workType) {
             return false;
         }
         else
             return true;
     }
 
+    WorkTypes workType;
     const cv::Mat *const src;//share memory with other WorkBase(s)
     cv::Mat *dst;
 

@@ -4,6 +4,7 @@ using namespace CAIGA;
 WorkCanny::WorkCanny(const cv::Mat *const s, int aSize, double high, double low, bool l2) :
     WorkBase(s)
 {
+    workType = Canny;
     oddSize = aSize;
     sigmaX = high;
     sigmaY = low;

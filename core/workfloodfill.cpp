@@ -7,6 +7,7 @@ WorkFloodFill::WorkFloodFill(const cv::Mat * const src, double high, double low,
     if (dst->type() == CV_8UC1) {
         cv::cvtColor(*src, *dst, CV_GRAY2RGB);
     }
+    workType = FloodFill;
     sigmaX = high;
     sigmaY = low;
     b = con8;
