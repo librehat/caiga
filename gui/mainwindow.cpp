@@ -225,7 +225,7 @@ void MainWindow::onMouseBlackEraser()
 
 void MainWindow::onPreviewWorkFinished()
 {
-    ui->preProcessDrawer->setImage(previewSpace.getLastImage());
+    ui->preProcessDrawer->setImage(previewSpace.getLastDisplayImage());
 }
 
 void MainWindow::onInvertGrayscaleButtonClicked()
@@ -404,7 +404,7 @@ void MainWindow::onContoursButtonClicked()
 
 void MainWindow::onPreProcessWorkFinished()
 {
-    ui->preProcessDrawer->setImage(preWorkSpace.getLastImage());
+    ui->preProcessDrawer->setImage(preWorkSpace.getLastDisplayImage());
 }
 
 void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)

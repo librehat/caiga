@@ -18,21 +18,25 @@ public:
     WorkBase() : src(NULL) {
         workType = Raw;
         dst = new cv::Mat();
+        display = dst;
     }
 
     WorkBase(const cv::Mat *const s) : src(s) {
         workType = Raw;
         dst = new cv::Mat(s->clone());
+        display = dst;
     }
 
     WorkBase(const cv::Mat *const s, cv::Mat *d) : src(s) {
         workType = Raw;
         dst = new cv::Mat(d->clone());
+        display = dst;
     }
 
     WorkBase(WorkBase *base) : src(base->src) {
         workType = base->workType;
         dst = new cv::Mat(base->dst->clone());
+        display = dst;
         oddSize = base->oddSize;
         size = base->size;
         cvSize = base->cvSize;
@@ -45,7 +49,13 @@ public:
         pointVec = base->pointVec;
     }
 
-    virtual ~WorkBase() { delete dst; }
+    virtual ~WorkBase()
+    {
+        if (display != dst) {//don't delete the same pointer twice
+            delete display;
+        }
+        delete dst;
+    }
     virtual void Func() {}
 
     inline bool operator == (const WorkBase &w) const {
@@ -58,7 +68,12 @@ public:
 
     WorkTypes workType;
     const cv::Mat *const src;//share memory with other WorkBase(s)
-    cv::Mat *dst;
+    cv::Mat *dst;//to be next work's source Mat
+    /*
+     * sometimes *display may be the same Mat as *dst
+     * if it's not, commonly seen where there is a mask, handle it carefully.
+     */
+    cv::Mat *display;//used to display on screen
 
     int oddSize;//should always be an odd number //red
     int size;//may be odd or even //green

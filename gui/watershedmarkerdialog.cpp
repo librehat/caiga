@@ -44,7 +44,7 @@ void WatershedMarkerDialog::setOrignialMat(cv::Mat *src)
     viewSpace.reset(m_originalMat);
     pts.clear();
     ptsVec.clear();
-    QSize s = viewSpace.getLastImage().size();
+    QSize s = viewSpace.getLastDisplayImage().size();
     ui->drawer->setMinimumSize(s);
     ui->drawer->setMaximumSize(s);
 }
@@ -105,7 +105,7 @@ void WatershedMarkerDialog::onRedoButtonClicked()
 
 void WatershedMarkerDialog::updateMarkers()
 {
-    ui->drawer->setImage(viewSpace.getLastImage());
+    ui->drawer->setImage(viewSpace.getLastDisplayImage());
 }
 
 void WatershedMarkerDialog::onPreviewStarted()

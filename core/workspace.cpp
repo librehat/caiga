@@ -163,11 +163,11 @@ void WorkSpace::newBoxFilterWork(int size, bool cont)
 
 void WorkSpace::newAdaptiveBilateralFilterWork(int size, double space, double colour, bool cont)
 {
-    if (workList.last()->dst->type() != CV_8UC1 && workList.last()->dst->type() != CV_8UC3) {
+    cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;
+    if (s->type() != CV_8UC1 && s->type() != CV_8UC3) {
         emit workStatusStringUpdated("Abort. 8-bit single or 3-channel image needed.");
         return;
     }
-    cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;
     WorkBase *w = new WorkAptBilateralFilter(s, size, space, colour);
     this->newGenericWork(w);
 }
@@ -263,6 +263,11 @@ void WorkSpace::newWatershedWork(const QVector<QVector<QPoint> > &markerPts, boo
         emit workStatusStringUpdated("Abort. Empty markers.");
         return;
     }
+    cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;
+    if (s->type() != CV_8UC1) {
+        emit workStatusStringUpdated("Abort. 8-bit single channel image needed.");
+        return;
+    }
     std::vector<std::vector<cv::Point> > cvpvv;
     for (QVector<QVector<QPoint> >::const_iterator it = markerPts.begin(); it != markerPts.end(); ++it) {
         std::vector<cv::Point> tempV;
@@ -272,15 +277,13 @@ void WorkSpace::newWatershedWork(const QVector<QVector<QPoint> > &markerPts, boo
         cvpvv.push_back(tempV);
     }
 
-    cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;   
     WorkBase *w = new WorkWatershed(s, cvpvv);
     this->newGenericWork(w);
 }
 
-QImage WorkSpace::getImageDisplay()
+QImage WorkSpace::getLastDisplayImage()
 {
-    //TODO
-    return QImage();
+    return Image::convertMat2QImage(*workList.last()->display);
 }
 
 void WorkSpace::onLowLevelWorkStarted()

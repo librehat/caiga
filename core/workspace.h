@@ -61,8 +61,8 @@ public:
     void newEraserWork(const QVector<QPoint> &pts, bool white);
     void newWatershedWork(const QVector<QVector<QPoint> > &markerPts, bool cont = false);
     inline Mat *getLastMatrix() { return workList.last()->dst; }
-    inline QImage getLastImage() { return Image::convertMat2QImage(*workList.last()->dst); }
-    QImage getImageDisplay();
+    inline QImage getLastDstImage() { return Image::convertMat2QImage(*workList.last()->dst); }
+    QImage getLastDisplayImage();
 
 public slots:
     void undo();
