@@ -47,6 +47,8 @@ public:
         sigmaY = base->sigmaY;
         b = base->b;
         pointVec = base->pointVec;
+        markers = base->markers;
+        contours = base->contours;
     }
 
     virtual ~WorkBase()
@@ -86,6 +88,9 @@ public:
     bool b;
     std::vector<cv::Point> pointVec;
     std::vector<std::vector<cv::Point> > markers;
+
+    //analysis is based on contours
+    std::vector<std::vector<cv::Point> > contours;
 };
 
 }

@@ -24,6 +24,7 @@ public slots:
     void onPreviewFinished();
 
 signals:
+    void reseted();
     void previewTriggled(const QVector<QVector<QPoint> > &);
     void accepted(const QVector<QVector<QPoint> > &);
 
