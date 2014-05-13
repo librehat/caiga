@@ -25,7 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
     cannyDlg.setMode(2);
     floodFillDlg.setMode(3);
     floodFillDlg.setModal(false);
-    watershedDlg = new WatershedMarkerDialog(this);
+    watershedDlg = NULL;
+    analyser = NULL;
 
     ui->rawViewer->setNoScale();
     //preProcess tab button menu
@@ -122,7 +123,12 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete mouseBehaviourMenu;
-    delete watershedDlg;
+    if (watershedDlg != NULL) {
+        delete watershedDlg;
+    }
+    if (analyser != NULL) {
+        delete analyser;
+    }
 }
 
 const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version Pre Alpha on "
@@ -177,6 +183,7 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
     else {//save
         cgimg.setCropCalibreStruct(ui->ccDrawer->getCCStruct());
         preWorkSpace.reset(cgimg);
+        ui->imageTabs->setCurrentIndex(2);
     }
 }
 
@@ -357,7 +364,9 @@ void MainWindow::onCannyParametersChanged(int aSize, double high, double low, bo
 void MainWindow::onWatershedButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
-    delete watershedDlg;
+    if (watershedDlg != NULL) {
+        delete watershedDlg;
+    }
     watershedDlg = new WatershedMarkerDialog(this);
     watershedDlg->setOrignialMat(preWorkSpace.getLastMatrix());
     watershedDlg->setPenColour(ui->ccDrawer->getPenColour());
@@ -415,10 +424,22 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
         preWorkSpace.reset(cgimg);
     }
     else {//save
-        //TODO
         preWorkSpace.simplified();
+        ui->analysisInteracter->setImage(preWorkSpace.getLastDisplayImage());
+        if (analyser != NULL) {
+            delete analyser;
+        }
+        analyser = new CAIGA::Analyser(preWorkSpace.getContours(), this);
+        connect(ui->analysisInteracter, &QImageInteractiveDrawer::mousePressed, analyser, &CAIGA::Analyser::findContourHasPoint);
+        connect(analyser, &CAIGA::Analyser::statusString, this, &MainWindow::onMessagesArrived);
+        ui->imageTabs->setCurrentIndex(3);
     }
     previewSpace.clear();
+}
+
+void MainWindow::onInformationUpdated(const QString &info)
+{
+    ui->currentObjLabel->setText(info);
 }
 
 void MainWindow::onCurrentTabChanged(int i)

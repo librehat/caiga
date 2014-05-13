@@ -19,6 +19,7 @@
 #include "workspace.h"
 #include "parametersdialog.h"
 #include "watershedmarkerdialog.h"
+#include "analyser.h"
 
 namespace Ui
 {
@@ -39,9 +40,12 @@ signals:
     void messageArrived(const QString &);//to display on statusbar
 
 private slots:
+    //crop and calibre
     void ccModeChanged(int);
     void onGaugeLineFinished(qreal);
     void onCCButtonBoxClicked(QAbstractButton *);
+
+    //preProcess
     void onMouseNormalArrow();
     void onMouseWhitePencil();
     void onMouseBlackPencil();
@@ -75,6 +79,11 @@ private slots:
     void onPreviewWorkFinished();
     void onPreProcessWorkFinished();
     void onPreProcessButtonBoxClicked(QAbstractButton *);
+
+    //analysis
+    void onInformationUpdated(const QString &);
+
+    //menu and toolbar
     void onCurrentTabChanged(int);
     void addDiskFileDialog();
     void addCameraImageDialog();
@@ -96,6 +105,7 @@ private:
     ParametersDialog cannyDlg;
     ParametersDialog floodFillDlg;
     WatershedMarkerDialog *watershedDlg;
+    CAIGA::Analyser *analyser;
 
     QSettings settings;
     void readConfig();

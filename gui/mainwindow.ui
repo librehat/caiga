@@ -365,17 +365,66 @@
        <attribute name="title">
         <string>Analysis</string>
        </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <layout class="QGridLayout" name="gridLayout_2">
         <property name="margin">
          <number>0</number>
         </property>
-        <item>
-         <widget class="QImageViewer" name="analysisLabel" native="true">
+        <item row="1" column="1" alignment="Qt::AlignTop">
+         <widget class="QTableView" name="analysisTableView"/>
+        </item>
+        <item row="0" column="0" rowspan="3">
+         <widget class="QImageInteractiveDrawer" name="analysisInteracter" native="true">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-            <horstretch>0</horstretch>
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>10</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" alignment="Qt::AlignTop">
+         <widget class="QGroupBox" name="analysisGroupBox">
+          <property name="title">
+           <string>Current Object</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_4">
+           <item row="1" column="1">
+            <widget class="QToolButton" name="toolButton">
+             <property name="text">
+              <string>+</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QComboBox" name="classComboBox">
+             <item>
+              <property name="text">
+               <string>Base Class</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QToolButton" name="toolButton_2">
+             <property name="text">
+              <string>-</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" colspan="3">
+            <widget class="QLabel" name="currentObjLabel">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="1" alignment="Qt::AlignBottom">
+         <widget class="QDialogButtonBox" name="buttonBox">
+          <property name="standardButtons">
+           <set>QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
           </property>
          </widget>
         </item>

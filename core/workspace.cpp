@@ -286,6 +286,11 @@ QImage WorkSpace::getLastDisplayImage()
     return Image::convertMat2QImage(*workList.last()->display);
 }
 
+std::vector<std::vector<cv::Point> > WorkSpace::getContours()
+{
+    return workList.last()->contours;
+}
+
 void WorkSpace::onLowLevelWorkStarted()
 {
     emit workStarted();
