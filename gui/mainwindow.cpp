@@ -499,6 +499,7 @@ void MainWindow::addDiskFileDialog()
     cgimg.setRawImage(filename);
     ui->rawViewer->setPixmap(cgimg.getRawPixmap());
     ui->ccDrawer->setImage(cgimg.getRawImage());
+    ui->imageTabs->setCurrentIndex(0);
 }
 
 void MainWindow::addCameraImageDialog()//TODO camera image should be involved with SQLite
