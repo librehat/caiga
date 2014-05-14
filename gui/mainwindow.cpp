@@ -436,15 +436,18 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
         ui->imageTabs->setCurrentIndex(3);
 
         //setup analyser and retrive information
+        onMessagesArrived("Analysing... Please Wait......");
         analyser = new CAIGA::Analyser(preWorkSpace.getContours(), this);
         ui->analysisTableView->setModel(analyser->getDataModel());
         ui->analysisTableView->resizeColumnsToContents();
+        //ui->analysisGeneralLabel->setText();//TODO
         ui->classComboBox->insertItems(0, analyser->getClassesList());
         connect(ui->analysisInteracter, &QImageInteractiveDrawer::mousePressed, analyser, &CAIGA::Analyser::findContourHasPoint);
         connect(analyser, &CAIGA::Analyser::statusString, this, &MainWindow::onMessagesArrived);
-        connect(analyser, &CAIGA::Analyser::foundContourGeoInformation, ui->currentObjLabel, &QLabel::setText);
         connect(analyser, &CAIGA::Analyser::foundContourClass, ui->classComboBox, &QComboBox::setCurrentText);
+        connect(analyser, &CAIGA::Analyser::foundContourIndex, ui->analysisTableView, &QTableView::setCurrentIndex);
         connect(ui->classComboBox, static_cast<void (QComboBox::*) (int)>(&QComboBox::currentIndexChanged), analyser, &CAIGA::Analyser::changeClass);
+        onMessagesArrived("Analysed.");
     }
     previewSpace.clear();
 }

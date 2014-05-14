@@ -25,7 +25,7 @@ public:
     void deleteClass(int classIndex);
 
 signals:
-    void foundContourGeoInformation(const QString &);
+    void foundContourIndex(const QModelIndex &);
     void foundContourClass(const QString &);
     void statusString(const QString &);
     void classesChanged(const QStringList &);
@@ -40,7 +40,6 @@ private:
     QStringList m_classes;
     QVector<QList<QStandardItem *> > dataVector;
     QStandardItemModel *contoursModel;
-    void calculateAndSendContourInformation();
     static const QStringList headerLabels;
 
 };

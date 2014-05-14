@@ -87,22 +87,11 @@ void Analyser::findContourHasPoint(const QPoint &pt)
     }
     if (found) {
         currentSelectedIdx = idx;
-        calculateAndSendContourInformation();
-        emit statusString(QString("Contour Found. ID ") + QString::number(idx + 1));
+        emit foundContourIndex(contoursModel->index(currentSelectedIdx, 0));
+        emit foundContourClass(dataVector[currentSelectedIdx][3]->data(Qt::DisplayRole).toString());
+        emit statusString("Contour Found");
     }
     else {
         emit statusString("Error. No contour contains the point.");
-    }
-}
-
-void Analyser::calculateAndSendContourInformation()
-{
-    if (currentSelectedIdx < dataVector.size()) { //prevent application from crashes
-        QString info = QString("Area: ") + QString::number(dataVector[currentSelectedIdx][1]->data(Qt::DisplayRole).toDouble()) + QString("\nPerimeter: ") + QString::number(dataVector[currentSelectedIdx][2]->data(Qt::DisplayRole).toDouble());
-        emit foundContourGeoInformation(info);
-        emit foundContourClass(dataVector[currentSelectedIdx][3]->data(Qt::DisplayRole).toString());
-    }
-    else {
-        qWarning() << "Error. Current selected index is out of data vector's range.";
     }
 }
