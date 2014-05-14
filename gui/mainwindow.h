@@ -81,7 +81,8 @@ private slots:
     void onPreProcessButtonBoxClicked(QAbstractButton *);
 
     //analysis
-    void onInformationUpdated(const QString &);
+    void onClassAddButtonClicked();
+    void onClassDelButtonClicked();
 
     //menu and toolbar
     void onCurrentTabChanged(int);

@@ -99,6 +99,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionUndo, &QAction::triggered, &preWorkSpace, &CAIGA::WorkSpace::undo);
     connect(ui->actionRedo, &QAction::triggered, &preWorkSpace, &CAIGA::WorkSpace::redo);
 
+    //Analysis
+    connect(ui->classAddToolButton, &QToolButton::clicked, this, &MainWindow::onClassAddButtonClicked);
+    connect(ui->classDelToolButton, &QToolButton::clicked, this, &MainWindow::onClassDelButtonClicked);
+
     //MainWindow
     connect(ui->actionOpenFile, &QAction::triggered, this, &MainWindow::addDiskFileDialog);
     connect(ui->actionOpenCamera, &QAction::triggered, this, &MainWindow::addCameraImageDialog);
@@ -429,17 +433,39 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
         if (analyser != NULL) {
             delete analyser;
         }
+        ui->imageTabs->setCurrentIndex(3);
+
+        //setup analyser and retrive information
         analyser = new CAIGA::Analyser(preWorkSpace.getContours(), this);
+        ui->analysisTableView->setModel(analyser->getDataModel());
+        ui->analysisTableView->resizeColumnsToContents();
+        ui->classComboBox->insertItems(0, analyser->getClassesList());
         connect(ui->analysisInteracter, &QImageInteractiveDrawer::mousePressed, analyser, &CAIGA::Analyser::findContourHasPoint);
         connect(analyser, &CAIGA::Analyser::statusString, this, &MainWindow::onMessagesArrived);
-        ui->imageTabs->setCurrentIndex(3);
+        connect(analyser, &CAIGA::Analyser::foundContourGeoInformation, ui->currentObjLabel, &QLabel::setText);
+        connect(analyser, &CAIGA::Analyser::foundContourClass, ui->classComboBox, &QComboBox::setCurrentText);
+        connect(ui->classComboBox, static_cast<void (QComboBox::*) (int)>(&QComboBox::currentIndexChanged), analyser, &CAIGA::Analyser::changeClass);
     }
     previewSpace.clear();
 }
 
-void MainWindow::onInformationUpdated(const QString &info)
+void MainWindow::onClassAddButtonClicked()
 {
-    ui->currentObjLabel->setText(info);
+    bool ok;
+    QString clsName = QInputDialog::getText(this, "New Class", "Name", QLineEdit::Normal, QString(), &ok);
+    if (analyser != NULL && ok) {
+        analyser->addClass(clsName);
+        ui->classComboBox->addItem(clsName);
+    }
+}
+
+void MainWindow::onClassDelButtonClicked()
+{
+    int i = ui->classComboBox->currentIndex();
+    if (ui->classComboBox->count() > 1 || i > 0) {
+        analyser->deleteClass(i);
+        ui->classComboBox->removeItem(i);
+    }
 }
 
 void MainWindow::onCurrentTabChanged(int i)
