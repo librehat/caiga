@@ -1,6 +1,6 @@
 include(../common.pri)
 
-QT       += gui multimedia multimediawidgets
+QT       += gui multimedia multimediawidgets printsupport
 
 TEMPLATE  = app
 
