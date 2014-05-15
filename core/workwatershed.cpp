@@ -31,11 +31,11 @@ void WorkWatershed::Func()
 
     const int compCount = static_cast<int>(contours.size());
     cv::Mat markerMatrix(markerMask.size(), CV_32S);
-    markerMatrix = cv::Scalar::all(0);
+    markerMatrix = cv::Scalar::all(0);//0-value pixels' relation to outlined regions are determined by watershed algorithm
     std::vector<cv::Vec3b> colourTab;//store random colour values
 
     for (int idx = 0; idx < compCount; ++idx) {
-        cv::drawContours(markerMatrix, contours, idx, cv::Scalar::all(idx + 1), CV_FILLED, 8);
+        cv::drawContours(markerMatrix, contours, idx, cv::Scalar::all(idx + 1), CV_FILLED, 8);//idx + 1 because 0 is reserved for watershed algorithm
         uchar b = static_cast<uchar>(cv::theRNG().uniform(0, 255));
         uchar g = static_cast<uchar>(cv::theRNG().uniform(0, 255));
         uchar r = static_cast<uchar>(cv::theRNG().uniform(0, 255));
@@ -50,13 +50,16 @@ void WorkWatershed::Func()
         for(int j = 0; j < markerMatrix.cols; ++j) {
             int index = markerMatrix.at<int>(i, j);
             if(index == -1) {//means edges
-                display->at<cv::Vec3b>(i, j) = cv::Vec3b(255, 255, 255);
+                display->at<cv::Vec3b>(i, j) = cv::Vec3b(255, 255, 255);//white line
+                dst->at<uchar>(i, j) = static_cast<uchar>(255);
             }
             else if( index <= 0 || index > compCount ) {//should not get here
                 display->at<cv::Vec3b>(i, j) = cv::Vec3b(0, 0, 0);
+                dst->at<uchar>(i, j) = static_cast<uchar>(0);
             }
             else {//inside a region
-                display->at<cv::Vec3b>(i, j) = colourTab[index - 1];
+                display->at<cv::Vec3b>(i, j) = colourTab[index - 1];//defined with its idx
+                dst->at<uchar>(i, j) = static_cast<uchar>(0);
             }
         }
     }
