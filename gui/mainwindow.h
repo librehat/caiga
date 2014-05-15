@@ -55,6 +55,8 @@ private slots:
     void onEraserDrawFinished(const QVector<QPoint> &);
     void onInvertGrayscaleButtonClicked();
     void onHistEqualiseButtonClicked();
+    void onGradientButtonClicked();
+    void onGradientParamatersChanged(int, double, double, bool);
     void onBoxFilterButtonClicked();
     void onBoxFilterParametersChanged(int, double, double, bool);
     void onAdaptiveBilateralFilterButtonClicked();
@@ -99,14 +101,11 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QMenu *mouseBehaviourMenu;
-    ParametersDialog boxFilterDlg;
-    ParametersDialog adaptiveBilateralDlg;
-    ParametersDialog gaussianBinaryDlg;
-    ParametersDialog medianBinaryDlg;
-    ParametersDialog cannyDlg;
-    ParametersDialog floodFillDlg;
+    ParametersDialog *parametersDlg;
     WatershedMarkerDialog *watershedDlg;
     CAIGA::Analyser *analyser;
+
+    void handleParametersDialogue(void (MainWindow::*) (int, double, double, bool));
 
     QSettings settings;
     void readConfig();

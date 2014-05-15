@@ -60,6 +60,7 @@ public:
     void newPencilWork(const QVector<QPoint> &pts, QColor colour);
     void newEraserWork(const QVector<QPoint> &pts, bool white);
     void newWatershedWork(const QVector<QVector<QPoint> > &markerPts, bool cont = false);
+    void newGradientWork(int k, bool cont = false);
     inline Mat *getLastMatrix() { return workList.last()->dst; }
     inline QImage getLastDstImage() { return Image::convertMat2QImage(*workList.last()->dst); }
     QImage getLastDisplayImage();

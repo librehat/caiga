@@ -14,7 +14,8 @@ SOURCES  += image.cpp\
             workeraser.cpp \
             workinvertgrayscale.cpp \
             workwatershed.cpp \
-    analyser.cpp
+    analyser.cpp \
+    workgradient.cpp
 
 HEADERS  += image.h \
             core_lib.h \
@@ -33,6 +34,7 @@ HEADERS  += image.h \
             workeraser.h \
             workinvertgrayscale.h \
             workwatershed.h \
-    analyser.h
+    analyser.h \
+    workgradient.h
 
 DEFINES  += CORE

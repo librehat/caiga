@@ -13,7 +13,7 @@ namespace CAIGA {
 class WorkBase
 {
 public:
-    enum WorkTypes {Raw, AptBilateralFilter, Binaryzation, BoxFilter, Canny, Contours, Eraser, FloodFill, HistEqualise, InvertGrayscale, MedianBlur, Pencil, Watershed};
+    enum WorkTypes {Raw, AptBilateralFilter, Binaryzation, BoxFilter, Canny, Contours, Eraser, FloodFill, HistEqualise, InvertGrayscale, MedianBlur, Pencil, Watershed, Gradient};
 
     WorkBase() : src(NULL) {
         workType = Raw;

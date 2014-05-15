@@ -11,6 +11,7 @@
 #include "workeraser.h"
 #include "workinvertgrayscale.h"
 #include "workwatershed.h"
+#include "workgradient.h"
 using namespace CAIGA;
 
 WorkSpace::WorkSpace(QObject *parent) :
@@ -278,6 +279,13 @@ void WorkSpace::newWatershedWork(const QVector<QVector<QPoint> > &markerPts, boo
     }
 
     WorkBase *w = new WorkWatershed(s, cvpvv);
+    this->newGenericWork(w);
+}
+
+void WorkSpace::newGradientWork(int k, bool cont)
+{
+    cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;
+    WorkBase *w = new WorkGradient(s, k);
     this->newGenericWork(w);
 }
 

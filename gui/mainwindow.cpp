@@ -18,19 +18,13 @@ MainWindow::MainWindow(QWidget *parent) :
     QDir::setCurrent(settings.value("CurrentDir").toString());
 
     //ParametersDialog settings
-    boxFilterDlg.setMode(0);
-    adaptiveBilateralDlg.setMode(-1);
-    gaussianBinaryDlg.setMode(1);
-    medianBinaryDlg.setMode(1);
-    cannyDlg.setMode(2);
-    floodFillDlg.setMode(3);
-    floodFillDlg.setModal(false);
+    parametersDlg = NULL;
     watershedDlg = NULL;
     analyser = new Analyser(this);
 
     ui->rawViewer->setNoScale();
     //preProcess tab button menu
-    mouseBehaviourMenu = new QMenu();
+    mouseBehaviourMenu = new QMenu(this);
     mouseBehaviourMenu->addAction("Normal Arrow", this, SLOT(onMouseNormalArrow()));
     mouseBehaviourMenu->addAction("White Pencil", this, SLOT(onMouseWhitePencil()));
     mouseBehaviourMenu->addAction("Black Pencil", this, SLOT(onMouseBlackPencil()));
@@ -66,33 +60,13 @@ MainWindow::MainWindow(QWidget *parent) :
     //preProcessTab
     connect(ui->invertGrayscaleButton, &QPushButton::clicked, this, &MainWindow::onInvertGrayscaleButtonClicked);
     connect(ui->histEqualiseButton, &QPushButton::clicked, this, &MainWindow::onHistEqualiseButtonClicked);
+    connect(ui->gradientButton, &QPushButton::clicked, this, &MainWindow::onGradientButtonClicked);
     connect(ui->boxFilterButton, &QPushButton::clicked, this, &MainWindow::onBoxFilterButtonClicked);
-    connect(&boxFilterDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onBoxFilterParametersChanged);
-    connect(&boxFilterDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
-    connect(&boxFilterDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
     connect(ui->adaptiveBilateralFilter, &QPushButton::clicked, this, &MainWindow::onAdaptiveBilateralFilterButtonClicked);
-    connect(&adaptiveBilateralDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onAdaptiveBilateralFilterParametersChanged);
-    connect(&adaptiveBilateralDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
-    connect(&adaptiveBilateralDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
     connect(ui->gaussianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onGaussianBinaryzationButtonClicked);
-    connect(&gaussianBinaryDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onGaussianBinaryzationParametersChanged);
-    connect(&gaussianBinaryDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
-    connect(&gaussianBinaryDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
     connect(ui->medianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onMedianBinaryzationButtonClicked);
-    connect(&medianBinaryDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onMedianBinaryzationParametersChanged);
-    connect(&medianBinaryDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
-    connect(&medianBinaryDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
     connect(ui->floodFillButton, &QPushButton::clicked, this, &MainWindow::onFloodFillButtonClicked);
-    connect(&floodFillDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onFloodFillParametersChanged);
-    connect(&floodFillDlg, &ParametersDialog::undoButtonClicked, &previewSpace, &CAIGA::WorkSpace::undo);
-    connect(&floodFillDlg, &ParametersDialog::redoButtonClicked, &previewSpace, &CAIGA::WorkSpace::redo);
-    connect(&floodFillDlg, &ParametersDialog::accepted, this, &MainWindow::onFloodFillAccepted);
-    connect(&floodFillDlg, &ParametersDialog::rejected, this, &MainWindow::onFloodFillRejected);
-    connect(&floodFillDlg, &ParametersDialog::resetButtonClicked, &previewSpace, static_cast<void (CAIGA::WorkSpace::*) (void)>(&CAIGA::WorkSpace::reset));
     connect(ui->cannyButton, &QPushButton::clicked, this, &MainWindow::onCannyButtonClicked);
-    connect(&cannyDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onCannyParametersChanged);
-    connect(&cannyDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
-    connect(&cannyDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
     connect(ui->watershedButton, &QPushButton::clicked, this, &MainWindow::onWatershedButtonClicked);
     connect(ui->contoursButton, &QPushButton::clicked, this, &MainWindow::onContoursButtonClicked);
     connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPreProcessButtonBoxClicked);
@@ -127,6 +101,9 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete mouseBehaviourMenu;
+    if (parametersDlg != NULL) {
+        delete parametersDlg;
+    }
     if (watershedDlg != NULL) {
         delete watershedDlg;
     }
@@ -247,14 +224,29 @@ void MainWindow::onHistEqualiseButtonClicked()
     preWorkSpace.newHistogramEqualiseWork();
 }
 
+void MainWindow::onGradientButtonClicked()
+{
+    previewSpace.reset(preWorkSpace.getLastMatrix());
+    if (parametersDlg != NULL) {
+        delete parametersDlg;
+    }
+    parametersDlg = new ParametersDialog(CAIGA::WorkBase::Gradient, this);
+    handleParametersDialogue(&MainWindow::onGradientParamatersChanged);
+}
+
+void MainWindow::onGradientParamatersChanged(int kSize, double, double, bool)
+{
+    previewSpace.newGradientWork(kSize);
+}
+
 void MainWindow::onBoxFilterButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
-    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &boxFilterDlg, &ParametersDialog::handleWorkStarted);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &boxFilterDlg, &ParametersDialog::handleWorkFinished);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
-    boxFilterDlg.show();
-    boxFilterDlg.exec();
+    if (parametersDlg != NULL) {
+        delete parametersDlg;
+    }
+    parametersDlg = new ParametersDialog(CAIGA::WorkBase::BoxFilter, this);
+    handleParametersDialogue(&MainWindow::onBoxFilterParametersChanged);
 }
 
 void MainWindow::onBoxFilterParametersChanged(int kSize, double, double, bool)
@@ -265,11 +257,11 @@ void MainWindow::onBoxFilterParametersChanged(int kSize, double, double, bool)
 void MainWindow::onAdaptiveBilateralFilterButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
-    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &adaptiveBilateralDlg, &ParametersDialog::handleWorkStarted);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &adaptiveBilateralDlg, &ParametersDialog::handleWorkFinished);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
-    adaptiveBilateralDlg.show();
-    adaptiveBilateralDlg.exec();
+    if (parametersDlg != NULL) {
+        delete parametersDlg;
+    }
+    parametersDlg = new ParametersDialog(CAIGA::WorkBase::AptBilateralFilter, this);
+    handleParametersDialogue(&MainWindow::onAdaptiveBilateralFilterParametersChanged);
 }
 
 void MainWindow::onAdaptiveBilateralFilterParametersChanged(int k, double s, double c, bool)
@@ -280,11 +272,11 @@ void MainWindow::onAdaptiveBilateralFilterParametersChanged(int k, double s, dou
 void MainWindow::onGaussianBinaryzationButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
-    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &gaussianBinaryDlg, &ParametersDialog::handleWorkStarted);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &gaussianBinaryDlg, &ParametersDialog::handleWorkFinished);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
-    gaussianBinaryDlg.show();
-    gaussianBinaryDlg.exec();
+    if (parametersDlg != NULL) {
+        delete parametersDlg;
+    }
+    parametersDlg = new ParametersDialog(CAIGA::WorkBase::Binaryzation, this);
+    handleParametersDialogue(&MainWindow::onGaussianBinaryzationParametersChanged);
 }
 
 void MainWindow::onGaussianBinaryzationParametersChanged(int s, double c, double, bool inv)
@@ -295,11 +287,11 @@ void MainWindow::onGaussianBinaryzationParametersChanged(int s, double c, double
 void MainWindow::onMedianBinaryzationButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
-    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &medianBinaryDlg, &ParametersDialog::handleWorkStarted);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &medianBinaryDlg, &ParametersDialog::handleWorkFinished);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
-    medianBinaryDlg.show();
-    medianBinaryDlg.exec();
+    if (parametersDlg != NULL) {
+        delete parametersDlg;
+    }
+    parametersDlg = new ParametersDialog(CAIGA::WorkBase::Binaryzation, this);
+    handleParametersDialogue(&MainWindow::onMedianBinaryzationParametersChanged);
 }
 
 void MainWindow::onMedianBinaryzationParametersChanged(int s, double c, double, bool inv)
@@ -320,10 +312,22 @@ void MainWindow::onEraserDrawFinished(const QVector<QPoint> &pts)
 void MainWindow::onFloodFillButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
-    connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
+    if (parametersDlg != NULL) {
+        delete parametersDlg;
+    }
+    parametersDlg = new ParametersDialog(CAIGA::WorkBase::FloodFill, this);
+
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
-    floodFillDlg.show();
-    floodFillDlg.exec();
+    connect(parametersDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onFloodFillParametersChanged);
+    connect(parametersDlg, &ParametersDialog::undoButtonClicked, &previewSpace, &CAIGA::WorkSpace::undo);
+    connect(parametersDlg, &ParametersDialog::redoButtonClicked, &previewSpace, &CAIGA::WorkSpace::redo);
+    connect(parametersDlg, &ParametersDialog::accepted, this, &MainWindow::onFloodFillAccepted);
+    connect(parametersDlg, &ParametersDialog::rejected, this, &MainWindow::onFloodFillRejected);
+    connect(parametersDlg, &ParametersDialog::resetButtonClicked, &previewSpace, static_cast<void (CAIGA::WorkSpace::*) (void)>(&CAIGA::WorkSpace::reset));
+    connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
+    parametersDlg->setModal(false);
+    parametersDlg->show();
+    parametersDlg->exec();
 }
 
 void MainWindow::onFloodFillParametersChanged(int, double h, double l, bool c8)
@@ -351,11 +355,11 @@ void MainWindow::onFloodFillRejected()
 void MainWindow::onCannyButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
-    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, &cannyDlg, &ParametersDialog::handleWorkStarted);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, &cannyDlg, &ParametersDialog::handleWorkFinished);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
-    cannyDlg.show();
-    cannyDlg.exec();
+    if (parametersDlg != NULL) {
+        delete parametersDlg;
+    }
+    parametersDlg = new ParametersDialog(CAIGA::WorkBase::Canny, this);
+    handleParametersDialogue(&MainWindow::onCannyParametersChanged);
 }
 
 void MainWindow::onCannyParametersChanged(int aSize, double high, double low, bool l2)
@@ -412,6 +416,18 @@ void MainWindow::onPreParametersRejected()
 void MainWindow::onContoursButtonClicked()
 {
     preWorkSpace.newContoursWork();
+}
+
+void MainWindow::handleParametersDialogue(void (MainWindow::*paraChangedSlot)(int, double, double, bool))
+{
+    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, parametersDlg, &ParametersDialog::handleWorkStarted);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, parametersDlg, &ParametersDialog::handleWorkFinished);
+    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
+    connect(parametersDlg, &ParametersDialog::parametersChanged, this, paraChangedSlot);
+    connect(parametersDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
+    connect(parametersDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
+    parametersDlg->show();
+    parametersDlg->exec();
 }
 
 void MainWindow::onPreProcessWorkFinished()

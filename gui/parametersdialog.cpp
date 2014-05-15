@@ -1,7 +1,7 @@
 #include "parametersdialog.h"
 #include "ui_parametersdialog.h"
 
-ParametersDialog::ParametersDialog(QWidget *parent) :
+ParametersDialog::ParametersDialog(CAIGA::WorkBase::WorkTypes mode, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ParametersDialog)
 {
@@ -18,6 +18,7 @@ ParametersDialog::ParametersDialog(QWidget *parent) :
     ui->undoButton->setVisible(false);
     ui->redoButton->setVisible(false);
     ui->resetButton->setVisible(false);
+    this->setMode(mode);
 }
 
 ParametersDialog::~ParametersDialog()
@@ -57,10 +58,11 @@ void ParametersDialog::setkSizeText(const QString &k)
     this->onSliderValueChanged(ui->kSizeSlider->value());
 }
 
-void ParametersDialog::setMode(int mode)
+void ParametersDialog::setMode(CAIGA::WorkBase::WorkTypes mode)
 {
     switch (mode) {
-    case 0://boxFilter
+    case CAIGA::WorkBase::BoxFilter:
+    case CAIGA::WorkBase::Gradient:
         this->setkSizeText("Kernel Size");
         ui->kSizeSlider->setMinimum(1);
         ui->sigmaColour->setVisible(false);
@@ -69,7 +71,7 @@ void ParametersDialog::setMode(int mode)
         ui->sigmaSpaceLabel->setVisible(false);
         ui->checkBox->setVisible(false);
         break;
-    case 1://adaptiveThreshold(binaryzation)
+    case CAIGA::WorkBase::Binaryzation:
         this->setkSizeText("Block Size");
         ui->kSizeSlider->setMinimum(2);
         ui->sigmaSpace->setMinimum(-999);
@@ -77,7 +79,7 @@ void ParametersDialog::setMode(int mode)
         ui->sigmaColour->setVisible(false);
         ui->sigmaColourLabel->setVisible(false);
         break;
-    case 2:
+    case CAIGA::WorkBase::Canny:
         this->setkSizeText("Aperture Size");
         ui->kSizeSlider->setValue(2);
         ui->kSizeSlider->setMinimum(2);
@@ -88,7 +90,7 @@ void ParametersDialog::setMode(int mode)
         ui->sigmaColour->setValue(150);
         ui->checkBox->setText("L2 Gradient");
         break;
-    case 3://floodfill
+    case CAIGA::WorkBase::FloodFill:
         ui->kSizeLabel->setVisible(false);
         ui->kSizeSlider->setVisible(false);
         ui->sigmaSpace->setMinimum(0);
