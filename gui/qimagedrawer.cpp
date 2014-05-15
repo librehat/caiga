@@ -167,7 +167,8 @@ void QImageDrawer::mouseReleaseEvent(QMouseEvent *m)
         bool ok;
         qreal r = static_cast<qreal>(QInputDialog::getDouble(this, "Input the real size", "Unit: μm", 0, 0, 9999, 4, &ok));
         if (ok) {
-            m_value.calibre = std::max(std::abs(m_value.calibreLine.dx()), std::abs(m_value.calibreLine.dy())) / r;
+            qreal scale = std::max(std::abs(m_value.calibreLine.dx()), std::abs(m_value.calibreLine.dy())) / r;
+            setScaleValue(scale);
             emit calibreFinished(m_value.calibre);
         }
     }

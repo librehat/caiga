@@ -30,9 +30,11 @@ void LivePixelViewer::paintEvent(QPaintEvent *)
     if (m_bufferPix.isNull()) {
         return;
     }
+    p.save();
     p.scale(8, 8);
     p.drawPixmap(0, 0, m_bufferPix);
     p.scale(1/8, 1/8);
+    p.restore();
 
     p.setPen(Qt::black);
     for (int x = 0; x < w; x += 8) {

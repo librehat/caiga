@@ -44,6 +44,7 @@ public:
 
 public slots:
     inline void setImage(const QImage &img) { m_image = img; setMinimumSize(m_image.size()); update(); }
+    inline void setScaleValue(qreal s) { m_value.calibre = s ;}
 
 signals:
     void calibreFinished(qreal);

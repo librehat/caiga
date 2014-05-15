@@ -53,9 +53,10 @@ MainWindow::MainWindow(QWidget *parent) :
      */
     //crop and calibre tab
     connect(ui->buttonGroup, static_cast<void (QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &MainWindow::ccModeChanged);//Operation Mode
-    connect(ui->ccButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onCCButtonBoxClicked);
     connect(ui->ccDrawer, &QImageDrawer::calibreFinished, ui->scaleDoubleSpinBox, &QDoubleSpinBox::setValue);
+    connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), ui->ccDrawer, &QImageDrawer::setScaleValue);
     connect(ui->ccDrawer, &QImageDrawer::gaugeLineResult, this, &MainWindow::onGaugeLineFinished);
+    connect(ui->ccButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onCCButtonBoxClicked);
 
     //preProcessTab
     connect(ui->invertGrayscaleButton, &QPushButton::clicked, this, &MainWindow::onInvertGrayscaleButtonClicked);
@@ -156,13 +157,18 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
 {
     if (ui->ccButtonBox->standardButton(b) == QDialogButtonBox::Reset) {
         ui->ccDrawer->reset();
-        ui->scaleDoubleSpinBox->setValue(0.0);
+        ui->scaleDoubleSpinBox->setValue(0);
         ui->cropCircleRadio->setChecked(true);
     }
     else {//save
+        if (ui->scaleDoubleSpinBox->value() == 0) {
+            onMessagesArrived("You must calibre image scale before move to next step.");
+            return;
+        }
         cgimg.setCropCalibreStruct(ui->ccDrawer->getCCStruct());
         preWorkSpace.reset(cgimg);
         ui->imageTabs->setCurrentIndex(2);
+        onMessagesArrived("Pre-Process the image, then segment it.");
     }
 }
 
