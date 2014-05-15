@@ -15,7 +15,6 @@
 #define IMAGE_H
 
 #include "core_lib.h"
-#include "datastructure.h"
 #include <QStringList>
 #include <QImage>
 #include <QPixmap>
@@ -47,14 +46,12 @@ public:
     Mat getCroppedMatrix();
     QImage getCroppedImage();
     QPixmap getCroppedPixmap();
-    ccStruct getCropCalibreStruct();
-    void setCropCalibreStruct(const ccStruct &);
     QImage getPreProcessedImage();
     QPixmap getPreProcessedPixmap();
     QImage getProcessedImage();
     QPixmap getProcessedPixmap();
     void setProcessedImage(Mat img);
-    bool isCircle();
+    inline bool isCircle() { return m_isCircle; }
     bool isCropped();
     bool isPreProcessed();
     bool hasEdges();
@@ -69,10 +66,11 @@ public:
     static Mat convertQImage2Mat(const QImage &qimg, bool indexed = false);
 
     friend class WorkSpace;
+    friend class CCSpace;
 
 private:
+    bool m_isCircle;
     Mat rawImage;//original image
-    ccStruct cropCalibre;
     Mat croppedImage;//preProcess later on take in this image. when isCircle, we use mask to make a circular image and store it in croppedCircularImage
     Mat croppedCircularImage;//when isCircle, return this
     Mat preprocessedImage;//pre-processed image. same thing here

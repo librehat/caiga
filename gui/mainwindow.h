@@ -43,6 +43,7 @@ private slots:
     //crop and calibre
     void ccModeChanged(int);
     void onGaugeLineFinished(qreal);
+    void onCCLoadMacroButtonClicked();
     void onCCButtonBoxClicked(QAbstractButton *);
 
     //preProcess

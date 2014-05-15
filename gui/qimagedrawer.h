@@ -5,7 +5,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QMouseEvent>
-#include "datastructure.h"
+#include "ccspace.h"
 using namespace CAIGA;
 
 class QImageDrawer : public QWidget
@@ -14,16 +14,15 @@ class QImageDrawer : public QWidget
 public:
     explicit QImageDrawer(QWidget *parent = 0);
     inline const QImage *image() const { return &m_image; }
-    inline ccStruct getCCStruct() { return m_value; }
     inline void setDrawMode(int m)//QButtonGroup id start with -2
     {
-        m_value.drawMode = m;
+        ccSpace.drawMode = m;
         switch (m) {
         case -2://circle
-            m_value.isCircle = true;
+            ccSpace.setCircle(true);
             break;
         case -3://rect
-            m_value.isCircle = false;
+            ccSpace.setCircle(false);
             break;
         case -4://calibre
         case -5://gauge
@@ -38,13 +37,12 @@ public:
         }
     }
     inline QColor getPenColour() { return m_penColour; }
-    inline bool isCircle() { return m_value.isCircle; }
-    inline void reset() { m_value = ccStruct(); update(); }
-    inline void restoreState(ccStruct c) { m_value = c; update(); }
+    inline bool isCircle() { return ccSpace.isCircle; }
+    inline void reset() { ccSpace.reset(); update(); }
 
 public slots:
-    inline void setImage(const QImage &img) { m_image = img; setMinimumSize(m_image.size()); update(); }
-    inline void setScaleValue(qreal s) { m_value.calibre = s ;}
+    inline void setImage(Image *img) { m_image = img->getRawImage(); ccSpace.setImage(img); setMinimumSize(m_image.size()); update(); }
+    inline void setScaleValue(qreal s) { ccSpace.scaleValue = s;}
 
 signals:
     void calibreFinished(qreal);
@@ -60,20 +58,18 @@ private:
     QColor m_penColour;
     QImage m_image;
 
-    ccStruct m_value;
+    CCSpace ccSpace;
 
     QLine m_gaugeLine;
+
     /*
-     * replaced with ccStruct
-     * all these values are calculated based on original image (m_image)
     QPoint m_mousePressed;
     QPoint m_mouseReleased;
     QPoint m_drawedCircleCentre;
     int m_drawedCircleRadius;
     QRect m_drawedRect;
     QLine m_drawedCalibre;
-    qreal m_calibreRealSize;
-    */
+    qreal m_calibreRealSize;*/
 };
 
 #endif // QIMAGEDRAWER_H

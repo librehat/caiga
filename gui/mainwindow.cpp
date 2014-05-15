@@ -3,6 +3,7 @@
 #include "cameradialog.h"
 #include "optionsdialog.h"
 #include "qimageinteractivedrawer.h"
+#include "macro.h"
 #include <QDebug>
 #include <QInputDialog>
 
@@ -56,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->ccDrawer, &QImageDrawer::calibreFinished, ui->scaleDoubleSpinBox, &QDoubleSpinBox::setValue);
     connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), ui->ccDrawer, &QImageDrawer::setScaleValue);
     connect(ui->ccDrawer, &QImageDrawer::gaugeLineResult, this, &MainWindow::onGaugeLineFinished);
+    connect(ui->ccLoadMacroButton, &QPushButton::clicked, this, &MainWindow::onCCLoadMacroButtonClicked);
     connect(ui->ccButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onCCButtonBoxClicked);
 
     //preProcessTab
@@ -153,6 +155,20 @@ void MainWindow::onGaugeLineFinished(qreal r)
     ui->gaugeResultLabel->setText(QString("%1 μm").arg(r));
 }
 
+void MainWindow::onCCLoadMacroButtonClicked()
+{
+    QString macroFile = QFileDialog::getOpenFileName(this, "Load Macro for Crop and Calibre", QDir::currentPath(),
+                       "Macro Text File (*.txt)");
+    if (macroFile.isNull()) {
+        return;
+    }
+    setCurrentDirbyFile(macroFile);
+    CAIGA::Macro macro(this);
+    macro.setImageObject(&cgimg);
+    macro.doCropAndCalibreMacroFromFile(macroFile);
+    macro.deleteLater();
+}
+
 void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
 {
     if (ui->ccButtonBox->standardButton(b) == QDialogButtonBox::Reset) {
@@ -165,7 +181,6 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
             onMessagesArrived("You must calibre image scale before move to next step.");
             return;
         }
-        cgimg.setCropCalibreStruct(ui->ccDrawer->getCCStruct());
         preWorkSpace.reset(cgimg);
         ui->imageTabs->setCurrentIndex(2);
         onMessagesArrived("Pre-Process the image, then segment it.");
@@ -523,7 +538,7 @@ void MainWindow::addDiskFileDialog()
     setCurrentDirbyFile(filename);
     cgimg.setRawImage(filename);
     ui->rawViewer->setPixmap(cgimg.getRawPixmap());
-    ui->ccDrawer->setImage(cgimg.getRawImage());
+    ui->ccDrawer->setImage(&cgimg);
     ui->imageTabs->setCurrentIndex(0);
 }
 

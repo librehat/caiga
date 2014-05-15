@@ -104,11 +104,6 @@ QPixmap Image::getProcessedPixmap()
         return convertMat2QPixmap(processedImage);
 }
 
-ccStruct Image::getCropCalibreStruct()
-{
-    return cropCalibre;
-}
-
 void Image::setRawImage(Mat img)
 {
     rawImage = img;
@@ -124,32 +119,9 @@ void Image::setRawImage(const QString &imgfile)
     rawImage = cv::imread(imgfile.toStdString(), CV_LOAD_IMAGE_GRAYSCALE);
 }
 
-void Image::setCropCalibreStruct(const ccStruct &c)
-{
-    cropCalibre = c;
-    if(c.isCircle) {
-        cv::Point tl(c.centre.x() - c.radius, c.centre.y() - c.radius);
-        cv::Point br(c.centre.x() + c.radius, c.centre.y() + c.radius);
-        cv::Rect enclosingRect(tl, br);
-        croppedImage = rawImage(enclosingRect).clone();
-        croppedCircularImage = makeInCircle(croppedImage);
-    }
-    else {
-        cv::Point tl(c.rect.topLeft().x(), c.rect.topLeft().y());
-        cv::Point br(c.rect.bottomRight().x(), c.rect.bottomRight().y());
-        cv::Rect rect(tl, br);
-        croppedImage = rawImage(rect).clone();
-    }
-}
-
 void Image::setProcessedImage(Mat img)
 {
     processedImage = img;
-}
-
-bool Image::isCircle()
-{
-    return cropCalibre.isCircle;
 }
 
 bool Image::isCropped()

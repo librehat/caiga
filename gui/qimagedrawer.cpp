@@ -28,36 +28,36 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
     painter.setPen(pen);
 
     //don't paint if user didn't draw
-    if ((m_value.pressed - m_value.released).manhattanLength() < 1) {
+    if ((ccSpace.mousePressed - ccSpace.mouseReleased).manhattanLength() < 1) {
         return;
     }
 
     /*
      * use if statement because switch statement forbids initialising variables inside case clauses
      */
-    if (m_value.drawMode == -2) {//circle
-        QPoint delta = m_value.pressed - m_value.released;
-        m_value.radius = static_cast<int>(std::sqrt(std::pow(delta.x(), 2) + std::pow(delta.y(), 2)));
-        m_value.centre = m_value.pressed;
+    if (ccSpace.drawMode == -2) {//circle
+        QPoint delta = ccSpace.mousePressed - ccSpace.mouseReleased;
+        ccSpace.circleRadius = static_cast<int>(std::sqrt(std::pow(delta.x(), 2) + std::pow(delta.y(), 2)));
+        ccSpace.circleCentre = ccSpace.mousePressed;
     }
-    else if (m_value.drawMode == -3) {//rectangle
-        m_value.rect = QRect(m_value.pressed, m_value.released);
+    else if (ccSpace.drawMode == -3) {//rectangle
+        ccSpace.qrect = QRect(ccSpace.mousePressed, ccSpace.mouseReleased);
     }
-    else if (m_value.drawMode == -4) {//calibre
-        m_value.calibreLine = QLine(m_value.pressed, m_value.released);
-        if (std::abs(m_value.calibreLine.dx()) > std::abs(m_value.calibreLine.dy())) {
-            m_value.calibreLine.setP2(QPoint(m_value.released.x(), m_value.pressed.y()));
+    else if (ccSpace.drawMode == -4) {//calibre
+        ccSpace.calibreLine = QLine(ccSpace.mousePressed, ccSpace.mouseReleased);
+        if (std::abs(ccSpace.calibreLine.dx()) > std::abs(ccSpace.calibreLine.dy())) {
+            ccSpace.calibreLine.setP2(QPoint(ccSpace.mouseReleased.x(), ccSpace.mousePressed.y()));
         }
         else {
-            m_value.calibreLine.setP2(QPoint(m_value.pressed.x(), m_value.released.y()));
+            ccSpace.calibreLine.setP2(QPoint(ccSpace.mousePressed.x(), ccSpace.mouseReleased.y()));
         }
-        QPoint p1(m_value.calibreLine.p1().x() + (this->width() - m_image.width()) / 2,
-                  m_value.calibreLine.p1().y() + (this->height() - m_image.height()) / 2);
-        QPoint p2(m_value.calibreLine.p2().x() + (this->width() - m_image.width()) / 2,
-                  m_value.calibreLine.p2().y() + (this->height() - m_image.height()) / 2);
+        QPoint p1(ccSpace.calibreLine.p1().x() + (this->width() - m_image.width()) / 2,
+                  ccSpace.calibreLine.p1().y() + (this->height() - m_image.height()) / 2);
+        QPoint p2(ccSpace.calibreLine.p2().x() + (this->width() - m_image.width()) / 2,
+                  ccSpace.calibreLine.p2().y() + (this->height() - m_image.height()) / 2);
         painter.drawLine(p1, p2);
     }
-    else if (m_value.drawMode == -5) {//gauge
+    else if (ccSpace.drawMode == -5) {//gauge
         QPoint p1(m_gaugeLine.p1().x() + (this->width() - m_image.width()) / 2,
                   m_gaugeLine.p1().y() + (this->height() - m_image.height()) / 2);
         QPoint p2(m_gaugeLine.p2().x() + (this->width() - m_image.width()) / 2,
@@ -67,19 +67,19 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
     }
 
     //keep circle or rectangle painted
-    if (m_value.isCircle) {
-        QPoint pCentre(m_value.centre.x() + (this->width() - m_image.width()) / 2,
-                            m_value.centre.y() + (this->height() - m_image.height()) / 2);
+    if (ccSpace.isCircle) {
+        QPoint pCentre(ccSpace.circleCentre.x() + (this->width() - m_image.width()) / 2,
+                            ccSpace.circleCentre.y() + (this->height() - m_image.height()) / 2);
         QLine vCross(pCentre.x(), pCentre.y() - 5, pCentre.x(), pCentre.y() + 5);
         QLine hCross(pCentre.x() - 5, pCentre.y(), pCentre.x() + 5, pCentre.y());
-        painter.drawEllipse(pCentre, m_value.radius, m_value.radius);
+        painter.drawEllipse(pCentre, ccSpace.circleRadius, ccSpace.circleRadius);
         painter.drawLine(vCross);
         painter.drawLine(hCross);
     }
     else {
-        int tlx = m_value.rect.topLeft().x() + (this->width() - m_image.width()) / 2;
-        int tly = m_value.rect.topLeft().y() + (this->height() - m_image.height()) / 2;
-        QRect pRect(tlx, tly, m_value.rect.width(), m_value.rect.height());
+        int tlx = ccSpace.qrect.topLeft().x() + (this->width() - m_image.width()) / 2;
+        int tly = ccSpace.qrect.topLeft().y() + (this->height() - m_image.height()) / 2;
+        QRect pRect(tlx, tly, ccSpace.qrect.width(), ccSpace.qrect.height());
         painter.drawRect(pRect);
     }
 
@@ -95,24 +95,24 @@ void QImageDrawer::mousePressEvent(QMouseEvent *m)
     QPoint margin((this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2);
     QPoint margin_r = margin + QPoint(m_image.width(), m_image.height());
 
-    m_value.pressed.setX(m->pos().x() - margin.x());
-    m_value.pressed.setY(m->pos().y() - margin.y());
+    ccSpace.mousePressed.setX(m->pos().x() - margin.x());
+    ccSpace.mousePressed.setY(m->pos().y() - margin.y());
 
     if (m->pos().x() < margin.x()) {
-        m_value.pressed.setX(0);
+        ccSpace.mousePressed.setX(0);
     }
     if (m->pos().y() < margin.y()) {
-        m_value.pressed.setY(0);
+        ccSpace.mousePressed.setY(0);
     }
     if (m->pos().x() > margin_r.x()) {
-        m_value.pressed.setX(m_image.width());
+        ccSpace.mousePressed.setX(m_image.width());
     }
     if (m->pos().y() > margin_r.y()) {
-        m_value.pressed.setY(m_image.height());
+        ccSpace.mousePressed.setY(m_image.height());
     }
 
-    if (m_value.drawMode == -5) {
-        m_gaugeLine.setP1(m_value.pressed);
+    if (ccSpace.drawMode == -5) {
+        m_gaugeLine.setP1(ccSpace.mousePressed);
     }
 }
 
@@ -126,32 +126,32 @@ void QImageDrawer::mouseMoveEvent(QMouseEvent *m)
     QPoint margin((this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2);
     QPoint margin_r = margin + QPoint(m_image.width(), m_image.height());
 
-    m_value.released.setX(m->pos().x() - margin.x());
-    m_value.released.setY(m->pos().y() - margin.y());
+    ccSpace.mouseReleased.setX(m->pos().x() - margin.x());
+    ccSpace.mouseReleased.setY(m->pos().y() - margin.y());
 
-    if (m_value.drawMode == -2) {
-        int radius = static_cast<int>(std::sqrt(std::pow((m_value.released - m_value.pressed).x(), 2) + std::pow((m_value.released - m_value.pressed).y(), 2)));
-        int maxRadius = std::min(std::min(m_value.pressed.x(), m_value.pressed.y()),  std::min(m_image.width() - m_value.pressed.x(), m_image.height() - m_value.pressed.y()));
+    if (ccSpace.drawMode == -2) {
+        int radius = static_cast<int>(std::sqrt(std::pow((ccSpace.mouseReleased - ccSpace.mousePressed).x(), 2) + std::pow((ccSpace.mouseReleased - ccSpace.mousePressed).y(), 2)));
+        int maxRadius = std::min(std::min(ccSpace.mousePressed.x(), ccSpace.mousePressed.y()),  std::min(m_image.width() - ccSpace.mousePressed.x(), m_image.height() - ccSpace.mousePressed.y()));
         if (radius > maxRadius) {
-            m_value.released.setX(m_value.pressed.x() + maxRadius);
-            m_value.released.setY(m_value.pressed.y());
+            ccSpace.mouseReleased.setX(ccSpace.mousePressed.x() + maxRadius);
+            ccSpace.mouseReleased.setY(ccSpace.mousePressed.y());
         }
     }
     else {
         if (m->pos().x() < margin.x()) {
-            m_value.released.setX(0);
+            ccSpace.mouseReleased.setX(0);
         }
         if (m->pos().y() < margin.y()) {
-            m_value.released.setY(0);
+            ccSpace.mouseReleased.setY(0);
         }
         if (m->pos().x() > margin_r.x()) {
-            m_value.released.setX(m_image.width());
+            ccSpace.mouseReleased.setX(m_image.width());
         }
         if (m->pos().y() > margin_r.y()) {
-            m_value.released.setY(m_image.height());
+            ccSpace.mouseReleased.setY(m_image.height());
         }
-        if (m_value.drawMode == -5) {
-            m_gaugeLine.setP2(m_value.released);
+        if (ccSpace.drawMode == -5) {
+            m_gaugeLine.setP2(ccSpace.mouseReleased);
         }
     }
     this->update();
@@ -163,17 +163,17 @@ void QImageDrawer::mouseReleaseEvent(QMouseEvent *m)
     if (m_image.isNull()) {
         return;
     }
-    if (m_value.drawMode == -4) {//calibre, we should pop up a dialog and get the real size
+    if (ccSpace.drawMode == -4) {//calibre, we should pop up a dialog and get the real size
         bool ok;
         qreal r = static_cast<qreal>(QInputDialog::getDouble(this, "Input the real size", "Unit: μm", 0, 0, 9999, 4, &ok));
         if (ok) {
-            qreal scale = std::max(std::abs(m_value.calibreLine.dx()), std::abs(m_value.calibreLine.dy())) / r;
+            qreal scale = std::max(std::abs(ccSpace.calibreLine.dx()), std::abs(ccSpace.calibreLine.dy())) / r;
             setScaleValue(scale);
-            emit calibreFinished(m_value.calibre);
+            emit calibreFinished(ccSpace.scaleValue);
         }
     }
-    else if (m_value.drawMode == -5) {//gauge
-        qreal gaugeResult = std::sqrt(static_cast<qreal>(std::pow(m_gaugeLine.dx(), 2) + std::pow(m_gaugeLine.dy(), 2))) / m_value.calibre;
+    else if (ccSpace.drawMode == -5) {//gauge
+        qreal gaugeResult = std::sqrt(static_cast<qreal>(std::pow(m_gaugeLine.dx(), 2) + std::pow(m_gaugeLine.dy(), 2))) / ccSpace.scaleValue;
         emit gaugeLineResult(gaugeResult);
     }
 }

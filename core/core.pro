@@ -14,12 +14,13 @@ SOURCES  += image.cpp\
             workeraser.cpp \
             workinvertgrayscale.cpp \
             workwatershed.cpp \
-    analyser.cpp \
-    workgradient.cpp
+            analyser.cpp \
+            workgradient.cpp \
+            macro.cpp \
+            ccspace.cpp
 
 HEADERS  += image.h \
             core_lib.h \
-            datastructure.h \
             workspace.h \
             workbase.h \
             workhistequalise.h \
@@ -34,7 +35,9 @@ HEADERS  += image.h \
             workeraser.h \
             workinvertgrayscale.h \
             workwatershed.h \
-    analyser.h \
-    workgradient.h
+            analyser.h \
+            workgradient.h \
+            macro.h \
+            ccspace.h
 
 DEFINES  += CORE
