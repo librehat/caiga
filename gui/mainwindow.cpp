@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     floodFillDlg.setMode(3);
     floodFillDlg.setModal(false);
     watershedDlg = NULL;
-    analyser = NULL;
+    analyser = new Analyser(this);
 
     ui->rawViewer->setNoScale();
     //preProcess tab button menu
@@ -130,9 +130,7 @@ MainWindow::~MainWindow()
     if (watershedDlg != NULL) {
         delete watershedDlg;
     }
-    if (analyser != NULL) {
-        delete analyser;
-    }
+    delete analyser;
 }
 
 const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version Pre Alpha on "
@@ -430,14 +428,11 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
     else {//save
         preWorkSpace.simplified();
         ui->analysisInteracter->setImage(preWorkSpace.getLastDisplayImage());
-        if (analyser != NULL) {
-            delete analyser;
-        }
         ui->imageTabs->setCurrentIndex(3);
 
         //setup analyser and retrive information
         onMessagesArrived("Analysing... Please Wait......");
-        analyser = new CAIGA::Analyser(preWorkSpace.getContours(), this);
+        analyser->setContours(preWorkSpace.getContours());
         ui->analysisTableView->setModel(analyser->getDataModel());
         ui->analysisTableView->resizeColumnsToContents();
         //ui->analysisGeneralLabel->setText();//TODO
@@ -456,7 +451,7 @@ void MainWindow::onClassAddButtonClicked()
 {
     bool ok;
     QString clsName = QInputDialog::getText(this, "New Class", "Name", QLineEdit::Normal, QString(), &ok);
-    if (analyser != NULL && ok) {
+    if (ok) {
         analyser->addClass(clsName);
         ui->classComboBox->addItem(clsName);
     }

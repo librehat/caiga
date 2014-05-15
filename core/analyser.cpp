@@ -3,18 +3,27 @@
 #include <QDebug>
 using namespace CAIGA;
 
+const QStringList Analyser::headerLabels = QStringList() << "ID" << "Area" << "Perimeter" << "Class";
+
 Analyser::Analyser(QObject *parent) :
     QObject(parent)
 {
-    contoursModel = NULL;
-}
-
-Analyser::Analyser(std::vector<std::vector<cv::Point> > contours, QObject *parent) :
-    QObject(parent)
-{
-    m_contours = contours;
     addClass(QString("Base"));
     contoursModel = new QStandardItemModel(0, 4, this);
+}
+
+Analyser::~Analyser()
+{
+    if (contoursModel != NULL) {
+        delete contoursModel;//this will destroy all items
+    }
+}
+
+void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
+{
+    m_contours = contours;
+    contoursModel->clear();
+    dataVector.clear();
     contoursModel->setHorizontalHeaderLabels(headerLabels);
     //calculate data
     int size = static_cast<int>(m_contours.size());
@@ -31,15 +40,6 @@ Analyser::Analyser(std::vector<std::vector<cv::Point> > contours, QObject *paren
         items << idItem << areaItem << periItem << new QStandardItem(m_classes[0]);
         dataVector << items;
         contoursModel->appendRow(items);
-    }
-}
-
-const QStringList Analyser::headerLabels = QStringList() << "ID" << "Area" << "Perimeter" << "Class";
-
-Analyser::~Analyser()
-{
-    if (contoursModel != NULL) {
-        delete contoursModel;//this will destroy all items
     }
 }
 

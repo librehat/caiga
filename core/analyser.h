@@ -17,8 +17,8 @@ class CORE_LIB Analyser : public QObject
     Q_OBJECT
 public:
     explicit Analyser(QObject *parent = 0);
-    Analyser(std::vector<std::vector <cv::Point> > contours, QObject *parent = 0);
     ~Analyser();
+    void setContours(const std::vector<std::vector <cv::Point> > &contours);
     QStandardItemModel *getDataModel();
     QStringList getClassesList() const;
     void addClass(const QString &);
