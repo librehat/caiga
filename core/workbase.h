@@ -19,18 +19,21 @@ public:
         workType = Raw;
         dst = new cv::Mat();
         display = dst;
+        markerMatrix = NULL;
     }
 
     WorkBase(const cv::Mat *const s) : src(s) {
         workType = Raw;
         dst = new cv::Mat(s->clone());
         display = dst;
+        markerMatrix = NULL;
     }
 
     WorkBase(const cv::Mat *const s, cv::Mat *d) : src(s) {
         workType = Raw;
         dst = new cv::Mat(d->clone());
         display = dst;
+        markerMatrix = NULL;
     }
 
     WorkBase(WorkBase *base) : src(base->src) {
@@ -49,6 +52,7 @@ public:
         pointVec = base->pointVec;
         markers = base->markers;
         contours = base->contours;
+        markerMatrix = base->markerMatrix;
     }
 
     virtual ~WorkBase()
@@ -56,8 +60,12 @@ public:
         if (display != dst) {//don't delete the same pointer twice
             delete display;
         }
+        if (markerMatrix != NULL) {
+            delete markerMatrix;
+        }
         delete dst;
     }
+
     virtual void Func() {}
 
     inline bool operator == (const WorkBase &w) const {
@@ -76,6 +84,7 @@ public:
      * if it's not, commonly seen where there is a mask, handle it carefully.
      */
     cv::Mat *display;//used to display on screen
+    cv::Mat *markerMatrix;//keep watershed output
 
     int oddSize;//should always be an odd number //red
     int size;//may be odd or even //green

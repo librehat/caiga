@@ -449,6 +449,11 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
         //setup analyser and retrive information
         onMessagesArrived("Analysing... Please Wait......");
         analyser->setContours(preWorkSpace.getContours());
+
+        if (preWorkSpace.last()->workType == CAIGA::WorkBase::Watershed) {
+            analyser->setMarkers(preWorkSpace.getMarkerMatrix());
+        }
+
         ui->analysisTableView->setModel(analyser->getDataModel());
         ui->analysisTableView->resizeColumnsToContents();
         //ui->analysisGeneralLabel->setText();//TODO

@@ -30,25 +30,25 @@ void WorkWatershed::Func()
     }
 
     const int compCount = static_cast<int>(contours.size());
-    cv::Mat markerMatrix(markerMask.size(), CV_32S);
-    markerMatrix = cv::Scalar::all(0);//0-value pixels' relation to outlined regions are determined by watershed algorithm
+    markerMatrix = new cv::Mat(markerMask.size(), CV_32S);
+    *markerMatrix = cv::Scalar::all(0);//0-value pixels' relation to outlined regions are determined by watershed algorithm
     std::vector<cv::Vec3b> colourTab;//store random colour values
 
     for (int idx = 0; idx < compCount; ++idx) {
-        cv::drawContours(markerMatrix, contours, idx, cv::Scalar::all(idx + 1), CV_FILLED, 8);//idx + 1 because 0 is reserved for watershed algorithm
+        cv::drawContours(*markerMatrix, contours, idx, cv::Scalar::all(idx + 1), CV_FILLED, 8);//idx + 1 because 0 is reserved for watershed algorithm
         uchar b = static_cast<uchar>(cv::theRNG().uniform(0, 255));
         uchar g = static_cast<uchar>(cv::theRNG().uniform(0, 255));
         uchar r = static_cast<uchar>(cv::theRNG().uniform(0, 255));
         colourTab.push_back(cv::Vec3b(b, g, r));
     }
 
-    cv::watershed(imgColourful, markerMatrix);
+    cv::watershed(imgColourful, *markerMatrix);
 
-    display = new cv::Mat(markerMatrix.size(), CV_8UC3);
+    display = new cv::Mat(markerMatrix->size(), CV_8UC3);
     // paint the watershed image
-    for(int i = 0; i < markerMatrix.rows; ++i) {
-        for(int j = 0; j < markerMatrix.cols; ++j) {
-            int index = markerMatrix.at<int>(i, j);
+    for(int i = 0; i < markerMatrix->rows; ++i) {
+        for(int j = 0; j < markerMatrix->cols; ++j) {
+            int index = markerMatrix->at<int>(i, j);
             if(index == -1) {//means edges
                 display->at<cv::Vec3b>(i, j) = cv::Vec3b(255, 255, 255);//white line
                 dst->at<uchar>(i, j) = static_cast<uchar>(255);

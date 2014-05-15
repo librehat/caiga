@@ -10,6 +10,7 @@ Analyser::Analyser(QObject *parent) :
 {
     addClass(QString("Base"));
     contoursModel = new QStandardItemModel(0, 4, this);
+    m_markersMatrix = NULL;
 }
 
 Analyser::~Analyser()
@@ -43,6 +44,15 @@ void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
     }
 }
 
+void Analyser::setMarkers(cv::Mat * const markersMatrix)
+{
+    if (markersMatrix == NULL) {
+        qWarning() << "Error. markersMatrix pointer is NULL!";
+        return;
+    }
+    m_markersMatrix = markersMatrix;
+}
+
 QStandardItemModel *Analyser::getDataModel()
 {
     return contoursModel;
@@ -74,24 +84,38 @@ void Analyser::changeClass(int classIndex)
 
 void Analyser::findContourHasPoint(const QPoint &pt)
 {
-    cv::Point cvPt(pt.x(), pt.y());
     int size = static_cast<int>(m_contours.size());
-    int idx = 0;
-    bool found = false;
-    for (; idx < size; ++idx) {
-        double dist = cv::pointPolygonTest(m_contours[idx], cvPt, false);
-        if (dist > 0) {
-            found = true;
-            break;
+    if (m_markersMatrix == NULL) {
+        cv::Point cvPt(pt.x(), pt.y());
+        int idx = 0;
+        bool found = false;
+        for (; idx < size; ++idx) {
+            double dist = cv::pointPolygonTest(m_contours[idx], cvPt, false);
+            if (dist > 0) {
+                found = true;
+                break;
+            }
+        }
+        if (found) {
+            currentSelectedIdx = idx;
+            emit foundContourIndex(contoursModel->index(currentSelectedIdx, 0));
+            emit foundContourClass(dataVector[currentSelectedIdx][3]->data(Qt::DisplayRole).toString());
+            emit statusString("Contour Found");
+        }
+        else {
+            emit statusString("Error. No contour contains the point.");
         }
     }
-    if (found) {
-        currentSelectedIdx = idx;
-        emit foundContourIndex(contoursModel->index(currentSelectedIdx, 0));
-        emit foundContourClass(dataVector[currentSelectedIdx][3]->data(Qt::DisplayRole).toString());
-        emit statusString("Contour Found");
-    }
     else {
-        emit statusString("Error. No contour contains the point.");
+        int indexVal = m_markersMatrix->at<int>(pt.y(), pt.x());//(row, col) == (y, x)
+        if(indexVal > 0 && indexVal <= size) {
+            currentSelectedIdx = indexVal - 1;
+            emit foundContourIndex(contoursModel->index(currentSelectedIdx, 0));
+            emit foundContourClass(dataVector[currentSelectedIdx][3]->data(Qt::DisplayRole).toString());
+            emit statusString("Contour Found");
+        }
+        else {
+            emit statusString("Error. No contour contains the point.");
+        }
     }
 }

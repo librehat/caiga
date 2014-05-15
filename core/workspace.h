@@ -65,6 +65,7 @@ public:
     inline QImage getLastDstImage() { return Image::convertMat2QImage(*workList.last()->dst); }
     QImage getLastDisplayImage();
     std::vector<std::vector<cv::Point> > getContours();
+    cv::Mat *getMarkerMatrix();
 
 public slots:
     void undo();

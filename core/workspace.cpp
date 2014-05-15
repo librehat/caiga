@@ -299,6 +299,11 @@ std::vector<std::vector<cv::Point> > WorkSpace::getContours()
     return workList.last()->contours;
 }
 
+cv::Mat *WorkSpace::getMarkerMatrix()
+{
+    return workList.last()->markerMatrix;
+}
+
 void WorkSpace::onLowLevelWorkStarted()
 {
     emit workStarted();
