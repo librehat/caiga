@@ -71,6 +71,7 @@ public:
 public slots:
     void undo();
     void redo();
+    void newAutoWatershedWork();
 
 private:
     QList<WorkBase *> workList;

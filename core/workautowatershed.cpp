@@ -1,36 +1,40 @@
-#include "workwatershed.h"
+#include "workautowatershed.h"
+
 using namespace CAIGA;
 
-WorkWatershed::WorkWatershed(const cv::Mat * const src, std::vector<std::vector<cv::Point> > m) : WorkBase (src)
+void WorkAutoWatershed::Func()
 {
-    workType = Watershed;
-    markers = m;
-}
+    //code is based on Page 109 of Pratical OpenCV
 
-void WorkWatershed::Func()
-{
-    cv::Mat markerMask = dst->clone();
-    cv::Mat imgColourful;
-    cv::cvtColor(*dst, imgColourful, CV_GRAY2RGB);
-    markerMask = cv::Scalar::all(0);
-    for(std::vector<std::vector<cv::Point> >::iterator it = markers.begin(); it != markers.end(); ++it) {
-        if ((*it).size() < 2) {
-            continue;
+    cv::Mat temp;
+    cv::equalizeHist(*src, temp);//euqalise the histogram to improve contrast
+
+    cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(7, 7));
+    cv::dilate(temp, *dst, element);//dilate to remove small black spots
+
+    //open and close to highlight the objects (foreground)
+    element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(13, 13));
+    cv::morphologyEx(*dst, temp, cv::MORPH_OPEN, element);
+    cv::morphologyEx(temp, *dst, cv::MORPH_CLOSE, element);
+
+    //create binary image
+    cv::adaptiveThreshold(*dst, temp, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, 105, 0);
+
+    //erode twice to seperate regions
+    cv::erode(temp, *dst, element, cv::Point(-1, -1), 2);
+
+    std::vector<std::vector<cv::Point> > c;
+
+    cv::findContours(*dst, c, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+
+    for (int i = 0; i < static_cast<int>(c.size()); ++i) {
+        if (cv::contourArea(c[i], false) > 20) {
+            contours.push_back(c[i]);
         }
-        for(std::vector<cv::Point>::iterator pit = (*it).begin(); pit != (*it).end() - 1; ++pit) {
-            cv::line(markerMask, *pit, *(pit + 1), cv::Scalar::all(255), 2, CV_AA);
-        }
-    }
-
-    cv::findContours(markerMask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
-
-    if (contours.empty()) {
-        qWarning() << "Watershed Aborted. Cannot find contours.";
-        return;
     }
 
     const int compCount = static_cast<int>(contours.size());
-    markerMatrix = new cv::Mat(markerMask.size(), CV_32S);
+    markerMatrix = new cv::Mat(dst->size(), CV_32S);
     *markerMatrix = cv::Scalar::all(0);//0-value pixels' relation to outlined regions are determined by watershed algorithm
     std::vector<cv::Vec3b> colourTab;//store random colour values
 
@@ -42,7 +46,10 @@ void WorkWatershed::Func()
         colourTab.push_back(cv::Vec3b(b, g, r));
     }
 
-    cv::watershed(imgColourful, *markerMatrix);
+    cv::Mat imgColor;
+    cv::cvtColor(*src, imgColor, CV_GRAY2BGR);
+
+    cv::watershed(imgColor, *markerMatrix);
 
     display = new cv::Mat(markerMatrix->size(), CV_8UC3);
     // paint the watershed image
@@ -63,5 +70,5 @@ void WorkWatershed::Func()
             }
         }
     }
-    *display = (*display) * 0.5 + imgColourful * 0.5;
+    *display = (*display) * 0.5 + imgColor * 0.5;
 }

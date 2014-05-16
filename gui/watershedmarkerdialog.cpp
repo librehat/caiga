@@ -29,6 +29,7 @@ WatershedMarkerDialog::WatershedMarkerDialog(QWidget *parent) :
     connect(&viewSpace, &CAIGA::WorkSpace::workStarted, this, &WatershedMarkerDialog::onWorkStarted);
     connect(&viewSpace, &CAIGA::WorkSpace::workFinished, this, &WatershedMarkerDialog::onWorkFinished);
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &WatershedMarkerDialog::handleAccepted);
+    connect(ui->autoButton, &QPushButton::clicked, this, &WatershedMarkerDialog::autoMarked);
 
     m_originalMat = new cv::Mat();
 }

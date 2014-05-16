@@ -25,6 +25,7 @@ public slots:
 
 signals:
     void reseted();
+    void autoMarked();
     void previewTriggled(const QVector<QVector<QPoint> > &);
     void accepted(const QVector<QVector<QPoint> > &);
 

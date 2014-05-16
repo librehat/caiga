@@ -11,6 +11,7 @@
 #include "workeraser.h"
 #include "workinvertgrayscale.h"
 #include "workwatershed.h"
+#include "workautowatershed.h"
 #include "workgradient.h"
 #include "workscharr.h"
 using namespace CAIGA;
@@ -280,6 +281,12 @@ void WorkSpace::newWatershedWork(const QVector<QVector<QPoint> > &markerPts, boo
     }
 
     WorkBase *w = new WorkWatershed(s, cvpvv);
+    this->newGenericWork(w);
+}
+
+void WorkSpace::newAutoWatershedWork()
+{
+    WorkBase *w = new WorkAutoWatershed(workList.last()->dst);
     this->newGenericWork(w);
 }
 

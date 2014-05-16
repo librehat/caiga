@@ -422,6 +422,7 @@ void MainWindow::onWatershedButtonClicked()
     watershedDlg->setOrignialMat(preWorkSpace.getLastMatrix());
     watershedDlg->setPenColour(ui->ccDrawer->getPenColour());
     connect(watershedDlg, &WatershedMarkerDialog::reseted, this, &MainWindow::onPreProcessWorkFinished);
+    connect(watershedDlg, &WatershedMarkerDialog::autoMarked, &previewSpace, &CAIGA::WorkSpace::newAutoWatershedWork);
     connect(watershedDlg, &WatershedMarkerDialog::previewTriggled, this, &MainWindow::onWatershedPreviewed);
     connect(watershedDlg, &WatershedMarkerDialog::accepted, this, &MainWindow::onWatershedAccepted);
     connect(watershedDlg, &WatershedMarkerDialog::rejected, this, &MainWindow::onPreParametersRejected);
@@ -441,7 +442,13 @@ void MainWindow::onWatershedAccepted(const QVector<QVector<QPoint> > &pvv)
 {
     disconnect(&previewSpace, &CAIGA::WorkSpace::workStarted, 0, 0);
     disconnect(&previewSpace, &CAIGA::WorkSpace::workFinished, 0, 0);
-    preWorkSpace.newWatershedWork(pvv, true);
+
+    if (previewSpace.getMarkerMatrix() == NULL) {
+        preWorkSpace.newWatershedWork(pvv, true);
+    }
+    else {
+        preWorkSpace.append(previewSpace.takeLast());
+    }
 }
 
 void MainWindow::onPreParametersAccepted()
