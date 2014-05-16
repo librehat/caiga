@@ -8,7 +8,15 @@ void WorkContours::Func()
      * anyway, we don't have objects inside an object.
      * thus, we don't need hierarchy neither.
      */
-    cv::findContours(*dst, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    std::vector<std::vector<cv::Point> > allContours;
+    cv::findContours(*dst, allContours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+
+    //remove those tiny contours since they usually are artefacts.
+    for (int i = 0; i < static_cast<int>(allContours.size()); ++i) {
+        if (cv::contourArea(allContours[i], false) > 20) {
+            contours.push_back(allContours[i]);
+        }
+    }
 
     display = new cv::Mat(cv::Mat::zeros(dst->rows, dst->cols, CV_8UC3));
     //draw each contour in its own random colour
