@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionOpenCamera->setIcon(QIcon::fromTheme("camera-photo"));
     ui->actionOptions->setIcon(QIcon::fromTheme("configure", QIcon::fromTheme("gconf-editor")));
     ui->actionHelp->setIcon(QIcon::fromTheme("help-contents"));
-    ui->actionAbout_CAIGA->setIcon(QIcon::fromTheme("help-about", QIcon::fromTheme("documentinfo")));
+    ui->actionAbout_CAIGA->setIcon(QIcon::fromTheme("help-about"));
 
     /*
      * SIGNALs and SLOTs
