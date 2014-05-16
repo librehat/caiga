@@ -83,6 +83,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //Analysis
     connect(ui->classAddToolButton, &QToolButton::clicked, this, &MainWindow::onClassAddButtonClicked);
     connect(ui->classDelToolButton, &QToolButton::clicked, this, &MainWindow::onClassDelButtonClicked);
+    connect(ui->classComboBox, &QComboBox::currentTextChanged, this, &MainWindow::onCurrentClassChanged);
+    connect(ui->analysisTableView, &QTableView::activated, this, &MainWindow::onAnalysisTableIndexChanged);
 
     //MainWindow
     connect(ui->actionOpenFile, &QAction::triggered, this, &MainWindow::addDiskFileDialog);
@@ -517,10 +519,8 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
         analyser->setScaleValue(cgimg.getScaleValue());
         analyser->setMarkers(preWorkSpace.getMarkerMatrix());
         analyser->setContours(preWorkSpace.getContours());
-
         ui->analysisTableView->setModel(analyser->getDataModel());
         ui->analysisTableView->resizeColumnsToContents();
-        //ui->analysisGeneralLabel->setText();//TODO
         ui->classComboBox->insertItems(0, analyser->getClassesList());
         connect(ui->analysisInteracter, &QImageInteractiveDrawer::mousePressed, analyser, &CAIGA::Analyser::findContourHasPoint);
         connect(analyser, &CAIGA::Analyser::statusString, this, &MainWindow::onMessagesArrived);
@@ -549,6 +549,16 @@ void MainWindow::onClassDelButtonClicked()
         analyser->deleteClass(i);
         ui->classComboBox->removeItem(i);
     }
+}
+
+void MainWindow::onCurrentClassChanged(const QString &)
+{
+    //TODO get current class's information such as grain size rate
+}
+
+void MainWindow::onAnalysisTableIndexChanged(const QModelIndex &i)
+{
+    analyser->setCurrentSelectedIdx(i.row());
 }
 
 void MainWindow::onCurrentTabChanged(int i)

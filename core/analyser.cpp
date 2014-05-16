@@ -25,14 +25,18 @@ void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
 {
     m_contours = contours;
     contoursModel->clear();
-    dataVector.clear();
+    areaVector.clear();
+    perimeterVector.clear();
+    classIdxVector.clear();
     contoursModel->setHorizontalHeaderLabels(headerLabels);
     //calculate data
     int size = static_cast<int>(m_contours.size());
     for (int id = 0; id < size; ++id) {
         QList<QStandardItem *> items;
         qreal area = calculateContourAreaByPixels(id);
+        areaVector.push_back(area);
         qreal perimeter = calculatePerimeter(id);
+        perimeterVector.push_back(perimeter);
         QStandardItem *idItem = new QStandardItem();
         idItem->setData(QVariant(id + 1), Qt::DisplayRole);
         QStandardItem *areaItem = new QStandardItem();
@@ -40,7 +44,7 @@ void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
         QStandardItem *periItem = new QStandardItem();
         periItem->setData(QVariant(perimeter), Qt::DisplayRole);
         items << idItem << areaItem << periItem << new QStandardItem(m_classes[0]);
-        dataVector << items;
+        classIdxVector.push_back(0);
         contoursModel->appendRow(items);
     }
 }
@@ -80,7 +84,8 @@ void Analyser::changeClass(int classIndex)
         qWarning() << "Error. New class index is out of classes's range.";
         return;
     }
-    dataVector[currentSelectedIdx][3]->setData(QVariant(m_classes[classIndex]), Qt::DisplayRole);
+    classIdxVector.replace(currentSelectedIdx, classIndex);
+    contoursModel->setData(contoursModel->index(currentSelectedIdx, 3), QVariant(m_classes[classIndex]));
 }
 
 void Analyser::findContourHasPoint(const QPoint &pt)
@@ -98,10 +103,8 @@ void Analyser::findContourHasPoint(const QPoint &pt)
             }
         }
         if (found) {
-            currentSelectedIdx = idx;
+            setCurrentSelectedIdx(idx);
             emit foundContourIndex(contoursModel->index(currentSelectedIdx, 0));
-            emit foundContourClass(dataVector[currentSelectedIdx][3]->data(Qt::DisplayRole).toString());
-            emit statusString("Contour Found");
         }
         else {
             emit statusString("Error. No contour contains the point.");
@@ -110,15 +113,20 @@ void Analyser::findContourHasPoint(const QPoint &pt)
     else {
         int indexVal = m_markersMatrix->at<int>(pt.y(), pt.x());//(row, col) == (y, x)
         if(indexVal > 0 && indexVal <= size) {
-            currentSelectedIdx = indexVal - 1;
+            setCurrentSelectedIdx(indexVal - 1);
             emit foundContourIndex(contoursModel->index(currentSelectedIdx, 0));
-            emit foundContourClass(dataVector[currentSelectedIdx][3]->data(Qt::DisplayRole).toString());
-            emit statusString("Contour Found");
         }
         else {
             emit statusString("Error. No contour contains the point.");
         }
     }
+}
+
+void Analyser::setCurrentSelectedIdx(int i)
+{
+    currentSelectedIdx = i;
+    emit foundContourClass(m_classes.at(classIdxVector[currentSelectedIdx]));
+    emit statusString("Contour Found");
 }
 
 qreal Analyser::calculatePerimeter(int idx)

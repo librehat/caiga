@@ -25,6 +25,7 @@ public:
     void addClass(const QString &);
     void deleteClass(int classIndex);
     inline void setScaleValue(qreal s) { scaleValue = s; }
+    void setCurrentSelectedIdx(int i);
 
 signals:
     void foundContourIndex(const QModelIndex &);
@@ -42,7 +43,10 @@ private:
     cv::Mat *m_markersMatrix;
     std::vector<std::vector <cv::Point> > m_contours;
     QStringList m_classes;
-    QVector<QList<QStandardItem *> > dataVector;
+    //QVector<QList<QStandardItem *> > dataVector;
+    QVector<qreal> areaVector;
+    QVector<qreal> perimeterVector;
+    QVector<int> classIdxVector;//Idx is the same index of m_classes
     QStandardItemModel *contoursModel;
     static const QStringList headerLabels;
 

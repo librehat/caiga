@@ -91,6 +91,8 @@ private slots:
     //analysis
     void onClassAddButtonClicked();
     void onClassDelButtonClicked();
+    void onCurrentClassChanged(const QString &);
+    void onAnalysisTableIndexChanged(const QModelIndex &);
 
     //menu and toolbar
     void onCurrentTabChanged(int);
