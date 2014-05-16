@@ -17,6 +17,7 @@ public:
     inline void setWorkSpace(WorkSpace *w) { m_space = w; }
     void doCropAndCalibreMacroFromFile(const QString &);
     void doWorkMacroFromFile(const QString &);
+    void saveCropAndCalibreAsMacroFile(const QString &);
 
 signals:
     void workStatusUpdated(const QString &);

@@ -45,6 +45,7 @@ private slots:
     void ccModeChanged(int);
     void onGaugeLineFinished(qreal);
     void onCCLoadMacroButtonClicked();
+    void onCCSaveMacroButtonClicked();
     void onCCButtonBoxClicked(QAbstractButton *);
 
     //preProcess

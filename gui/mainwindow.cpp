@@ -59,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), &ccSpace, &CAIGA::CCSpace::setScaleValue);
     connect(ui->ccDrawer, &QImageDrawer::gaugeLineResult, this, &MainWindow::onGaugeLineFinished);
     connect(ui->ccLoadMacroButton, &QPushButton::clicked, this, &MainWindow::onCCLoadMacroButtonClicked);
+    connect(ui->ccSaveMacroButton, &QPushButton::clicked, this, &MainWindow::onCCSaveMacroButtonClicked);
     connect(ui->ccButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onCCButtonBoxClicked);
 
     //preProcessTab
@@ -160,8 +161,7 @@ void MainWindow::onGaugeLineFinished(qreal r)
 
 void MainWindow::onCCLoadMacroButtonClicked()
 {
-    QString macroFile = QFileDialog::getOpenFileName(this, "Load Macro for Crop and Calibre", QDir::currentPath(),
-                       "Macro Text File (*.txt)");
+    QString macroFile = QFileDialog::getOpenFileName(this, "Load Macro for Crop and Calibre", QDir::currentPath(), "Macro Text File (*.txt)");
     if (macroFile.isNull()) {
         return;
     }
@@ -171,6 +171,19 @@ void MainWindow::onCCLoadMacroButtonClicked()
     macro.doCropAndCalibreMacroFromFile(macroFile);
     macro.deleteLater();
     ui->ccDrawer->update();
+}
+
+void MainWindow::onCCSaveMacroButtonClicked()
+{
+    QString macroFile = QFileDialog::getSaveFileName(this, "Save as Macro File for Crop and Calibre", QDir::currentPath(), "Macro Text File (*.txt)");
+    if (macroFile.isNull()) {
+        return;
+    }
+    setCurrentDirbyFile(macroFile);
+    CAIGA::Macro macro(this);
+    macro.setCCSpace(&ccSpace);
+    macro.saveCropAndCalibreAsMacroFile(macroFile);
+    macro.deleteLater();
 }
 
 void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)

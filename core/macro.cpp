@@ -32,7 +32,7 @@ void Macro::doCropAndCalibreMacroFromFile(const QString &f)
      * finally the last value has a type of qreal (aka double), which is the scale
      *
      * blank lines or those start with # will be ignored.
-     *
+     * only the first valid line will make effects.
      * any error in the macro file would cause this operation fail.
      */
 
@@ -85,6 +85,39 @@ void Macro::doCropAndCalibreMacroFromFile(const QString &f)
             }
         }
     } while (ongoing);
+}
+
+void Macro::saveCropAndCalibreAsMacroFile(const QString &f)
+{
+    if (m_ccSpace == NULL) {
+        qWarning() << "Error. CCSpace pointer is NULL.";
+        return;
+    }
+
+    QFile macroFile(f);
+    macroFile.open(QIODevice::WriteOnly | QIODevice::Text);
+    if (!macroFile.isWritable()) {
+        qWarning() << "Error. Cannot write to macro file. It may not be saved.";
+        return;
+    }
+
+    QByteArray arrayToBeWritten;
+    if (m_ccSpace->getIsCircle()) {
+        arrayToBeWritten.append("c;");
+        QString center = QString::number(m_ccSpace->circleCentre.x()) + "," + QString::number(m_ccSpace->circleCentre.y()) + ";";
+        arrayToBeWritten.append(center);
+        arrayToBeWritten.append(QString::number(m_ccSpace->circleRadius) + QString(";"));
+    }
+    else {
+        arrayToBeWritten.append("r;");
+        QString topleft = QString::number(m_ccSpace->qrect.topLeft().x()) + "," + QString::number(m_ccSpace->qrect.topLeft().y()) + ";";
+        QString bottomright = QString::number(m_ccSpace->qrect.bottomRight().x()) + "," + QString::number(m_ccSpace->qrect.bottomRight().y()) + QString(";");
+        arrayToBeWritten.append(topleft);
+        arrayToBeWritten.append(bottomright);
+    }
+    arrayToBeWritten.append(QString::number(m_ccSpace->getScaleValue()));
+    arrayToBeWritten.append('\n');
+    macroFile.write(arrayToBeWritten);
 }
 
 void Macro::doWorkMacroFromFile(const QString &)
