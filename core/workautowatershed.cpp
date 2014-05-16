@@ -6,25 +6,39 @@ void WorkAutoWatershed::Func()
 {
     //code is based on Page 109 of Pratical OpenCV
 
-    cv::Mat temp;
-    cv::equalizeHist(*src, temp);//euqalise the histogram to improve contrast
+    cv::Mat temp = dst->clone();
+    /*
+     * euqalise the histogram to improve contrast. but noises grow as well.
+     * just disable it for now.
+     * we should use adaptive histogram equalisation if it's usable in future version of openCV
+     */
+    //cv::equalizeHist(*src, temp);
 
-    cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(7, 7));
-    cv::dilate(temp, *dst, element);//dilate to remove small black spots
+    cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+    cv::erode(temp, *dst, element);//erode to remove small white spots
+    /*
+     * dilate to remove small black spots, but our grains are black.
+     * so we use erode above to remove white spots instead of dialte.
+     */
+    //cv::dilate(temp, *dst, element);
 
-    //open and close to highlight the objects (foreground)
-    element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(13, 13));
+    //open and close to highlight the objects
+    element = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(13, 13));
     cv::morphologyEx(*dst, temp, cv::MORPH_OPEN, element);
     cv::morphologyEx(temp, *dst, cv::MORPH_CLOSE, element);
 
     //create binary image
-    cv::adaptiveThreshold(*dst, temp, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, 105, 0);
+    cv::adaptiveThreshold(*dst, temp, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY_INV, 105, 0);
 
     //erode twice to seperate regions
     cv::erode(temp, *dst, element, cv::Point(-1, -1), 2);
 
-    std::vector<std::vector<cv::Point> > c;
+    /*
+     * note dst becomes a Mat which contains only the generated seeds.
+     * we could find a way to display *dst on watershed dialogue.
+     */
 
+    std::vector<std::vector<cv::Point> > c;
     cv::findContours(*dst, c, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
 
     for (int i = 0; i < static_cast<int>(c.size()); ++i) {
@@ -58,15 +72,12 @@ void WorkAutoWatershed::Func()
             int index = markerMatrix->at<int>(i, j);
             if(index == -1) {//means edges
                 display->at<cv::Vec3b>(i, j) = cv::Vec3b(255, 255, 255);//white line
-                dst->at<uchar>(i, j) = static_cast<uchar>(255);
             }
             else if( index <= 0 || index > compCount ) {//should not get here
                 display->at<cv::Vec3b>(i, j) = cv::Vec3b(0, 0, 0);
-                dst->at<uchar>(i, j) = static_cast<uchar>(0);
             }
             else {//inside a region
                 display->at<cv::Vec3b>(i, j) = colourTab[index - 1];//defined with its idx
-                dst->at<uchar>(i, j) = static_cast<uchar>(0);
             }
         }
     }

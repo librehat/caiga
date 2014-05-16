@@ -29,7 +29,7 @@ WatershedMarkerDialog::WatershedMarkerDialog(QWidget *parent) :
     connect(&viewSpace, &CAIGA::WorkSpace::workStarted, this, &WatershedMarkerDialog::onWorkStarted);
     connect(&viewSpace, &CAIGA::WorkSpace::workFinished, this, &WatershedMarkerDialog::onWorkFinished);
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &WatershedMarkerDialog::handleAccepted);
-    connect(ui->autoButton, &QPushButton::clicked, this, &WatershedMarkerDialog::autoMarked);
+    connect(ui->autoButton, &QPushButton::clicked, this, &WatershedMarkerDialog::onAutoClicked);
 
     m_originalMat = new cv::Mat();
 }
@@ -59,6 +59,12 @@ void WatershedMarkerDialog::setOrignialMat(cv::Mat *src)
     QSize s = viewSpace.getLastDisplayImage().size();
     ui->drawer->setMinimumSize(s);
     ui->drawer->setMaximumSize(s);
+}
+
+void WatershedMarkerDialog::onAutoClicked()
+{
+    //TODO: draw automatically generated seeds on screen
+    emit autoMarked();
 }
 
 void WatershedMarkerDialog::onMarkFinished(const QVector<QPoint> &pv)

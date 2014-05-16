@@ -39,6 +39,7 @@ private:
     CAIGA::WorkSpace viewSpace;
 
 private slots:
+    void onAutoClicked();
     void onMarkFinished(const QVector<QPoint> &);
     void onResetButtonClicked();
     void onUndoButtonClicked();
