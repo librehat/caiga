@@ -29,36 +29,20 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
     painter.setPen(pen);
 
     //don't paint if user didn't draw
-    if ((m_mousePressed - m_mouseReleased).manhattanLength() < 1) {
+    if (ccSpace->circleRadius < 2 && ccSpace->qrect.width() < 2) {
         return;
     }
 
-    /*
-     * use if statement because switch statement forbids initialising variables inside case clauses
-     */
-    if (m_drawMode == -2) {//circle
-        QPoint delta = m_mousePressed - m_mouseReleased;
-        ccSpace->circleRadius = static_cast<int>(std::sqrt(std::pow(delta.x(), 2) + std::pow(delta.y(), 2)));
-        ccSpace->circleCentre = m_mousePressed;
-    }
-    else if (m_drawMode == -3) {//rectangle
-        ccSpace->qrect = QRect(m_mousePressed, m_mouseReleased);
-    }
-    else if (m_drawMode == -4) {//calibre
-        m_calibreLine = QLine(m_mousePressed, m_mouseReleased);
-        if (std::abs(m_calibreLine.dx()) > std::abs(m_calibreLine.dy())) {
-            m_calibreLine.setP2(QPoint(m_mouseReleased.x(), m_mousePressed.y()));
-        }
-        else {
-            m_calibreLine.setP2(QPoint(m_mousePressed.x(), m_mouseReleased.y()));
-        }
+    if (m_drawMode == -4) {
         QPoint p1(m_calibreLine.p1().x() + (this->width() - m_image.width()) / 2,
                   m_calibreLine.p1().y() + (this->height() - m_image.height()) / 2);
         QPoint p2(m_calibreLine.p2().x() + (this->width() - m_image.width()) / 2,
                   m_calibreLine.p2().y() + (this->height() - m_image.height()) / 2);
         painter.drawLine(p1, p2);
+        return;
     }
-    else if (m_drawMode == -5) {//gauge
+    else if (m_drawMode == -5)
+    {
         QPoint p1(m_gaugeLine.p1().x() + (this->width() - m_image.width()) / 2,
                   m_gaugeLine.p1().y() + (this->height() - m_image.height()) / 2);
         QPoint p2(m_gaugeLine.p2().x() + (this->width() - m_image.width()) / 2,
@@ -67,7 +51,6 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
         return;
     }
 
-    //keep circle or rectangle painted
     if (ccSpace->getIsCircle()) {
         QPoint pCentre(ccSpace->circleCentre.x() + (this->width() - m_image.width()) / 2,
                             ccSpace->circleCentre.y() + (this->height() - m_image.height()) / 2);
@@ -137,6 +120,9 @@ void QImageDrawer::mouseMoveEvent(QMouseEvent *m)
             m_mouseReleased.setX(m_mousePressed.x() + maxRadius);
             m_mouseReleased.setY(m_mousePressed.y());
         }
+        QPoint delta = m_mousePressed - m_mouseReleased;
+        ccSpace->circleRadius = static_cast<int>(std::sqrt(std::pow(delta.x(), 2) + std::pow(delta.y(), 2)));
+        ccSpace->circleCentre = m_mousePressed;
     }
     else {
         if (m->pos().x() < margin.x()) {
@@ -155,6 +141,20 @@ void QImageDrawer::mouseMoveEvent(QMouseEvent *m)
             m_gaugeLine.setP2(m_mouseReleased);
         }
     }
+
+    if (m_drawMode == -3) {//rectangle
+        ccSpace->qrect = QRect(m_mousePressed, m_mouseReleased);
+    }
+    else if (m_drawMode == -4) {//calibre
+        m_calibreLine = QLine(m_mousePressed, m_mouseReleased);
+        if (std::abs(m_calibreLine.dx()) > std::abs(m_calibreLine.dy())) {
+            m_calibreLine.setP2(QPoint(m_mouseReleased.x(), m_mousePressed.y()));
+        }
+        else {
+            m_calibreLine.setP2(QPoint(m_mousePressed.x(), m_mouseReleased.y()));
+        }
+    }
+
     this->update();
 }
 
@@ -170,7 +170,6 @@ void QImageDrawer::mouseReleaseEvent(QMouseEvent *m)
         if (ok) {
             qreal scale = std::max(std::abs(m_calibreLine.dx()), std::abs(m_calibreLine.dy())) / r;
             ccSpace->setScaleValue(scale);
-            emit calibreFinished(scale);
         }
     }
     else if (m_drawMode == -5) {//gauge

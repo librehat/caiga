@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include "core_lib.h"
-#include "image.h"
+#include "ccspace.h"
 #include "workspace.h"
 
 namespace CAIGA
@@ -13,8 +13,8 @@ class CORE_LIB Macro : public QObject
     Q_OBJECT
 public:
     explicit Macro(QObject *parent = 0);
-    void setImageObject(Image *);
-    void setWorkSpace(WorkSpace *);
+    inline void setCCSpace(CCSpace *c) { m_ccSpace = c; }
+    inline void setWorkSpace(WorkSpace *w) { m_space = w; }
     void doCropAndCalibreMacroFromFile(const QString &);
     void doWorkMacroFromFile(const QString &);
 
@@ -27,7 +27,7 @@ public slots:
 
 private:
     WorkSpace *m_space;
-    Image *m_img;
+    CCSpace *m_ccSpace;
 };
 }
 

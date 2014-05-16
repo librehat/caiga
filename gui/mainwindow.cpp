@@ -167,9 +167,10 @@ void MainWindow::onCCLoadMacroButtonClicked()
     }
     setCurrentDirbyFile(macroFile);
     CAIGA::Macro macro(this);
-    macro.setImageObject(&cgimg);
+    macro.setCCSpace(&ccSpace);
     macro.doCropAndCalibreMacroFromFile(macroFile);
     macro.deleteLater();
+    ui->ccDrawer->update();
 }
 
 void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)

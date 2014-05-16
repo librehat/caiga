@@ -14,7 +14,7 @@ class QImageDrawer : public QWidget
 public:
     explicit QImageDrawer(QWidget *parent = 0);
     inline const QImage *image() const { return &m_image; }
-    inline void setSpace(CCSpace *s) { ccSpace = s; }
+    inline void setSpace(CCSpace *s) { ccSpace = s; connect(s, &CCSpace::scaleValueChanged, this, &QImageDrawer::calibreFinished); }
     inline void setDrawMode(int m)//QButtonGroup id start with -2
     {
         m_drawMode = m;
@@ -29,6 +29,7 @@ public:
         case -5://gauge
             break;
         }
+        update();
     }
     inline void setPenColour(const QString &c)
     {

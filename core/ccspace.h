@@ -17,7 +17,7 @@ public:
     inline void setCircleCentre(QPoint c) { circleCentre = c; }
     inline void setCircleRadius(int r) { circleRadius = r; }
     inline void setRectangle(QRect r) { qrect = r; }
-    inline void setScaleValue(qreal s) { *scaleValue = s; }
+    inline void setScaleValue(qreal s) { *scaleValue = s; emit scaleValueChanged(*scaleValue); }
 
     inline bool getIsCircle() { return *isCircle; }
     inline qreal getScaleValue() { return *scaleValue; }
@@ -30,6 +30,7 @@ public:
     QRect qrect;
 
 signals:
+    void scaleValueChanged(qreal);
 
 public slots:
 
