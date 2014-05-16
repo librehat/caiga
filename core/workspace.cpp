@@ -12,6 +12,7 @@
 #include "workinvertgrayscale.h"
 #include "workwatershed.h"
 #include "workgradient.h"
+#include "workscharr.h"
 using namespace CAIGA;
 
 WorkSpace::WorkSpace(QObject *parent) :
@@ -286,6 +287,12 @@ void WorkSpace::newGradientWork(int k, bool cont)
 {
     cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;
     WorkBase *w = new WorkGradient(s, k);
+    this->newGenericWork(w);
+}
+
+void WorkSpace::newScharrWork()
+{
+    WorkBase *w = new WorkScharr(workList.last()->dst);
     this->newGenericWork(w);
 }
 

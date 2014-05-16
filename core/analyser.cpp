@@ -11,6 +11,7 @@ Analyser::Analyser(QObject *parent) :
     addClass(QString("Base"));
     contoursModel = new QStandardItemModel(0, 4, this);
     m_markersMatrix = NULL;
+    scaleValue = 0;
 }
 
 Analyser::~Analyser()
@@ -30,8 +31,8 @@ void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
     int size = static_cast<int>(m_contours.size());
     for (int id = 0; id < size; ++id) {
         QList<QStandardItem *> items;
-        double area = cv::contourArea(m_contours[id], false);
-        double perimeter = cv::arcLength(m_contours[id], true);//get perimeter of closed contour
+        qreal area = calculateContourAreaByPixels(id);
+        qreal perimeter = calculatePerimeter(id);
         QStandardItem *idItem = new QStandardItem();
         idItem->setData(QVariant(id + 1), Qt::DisplayRole);
         QStandardItem *areaItem = new QStandardItem();
@@ -118,4 +119,32 @@ void Analyser::findContourHasPoint(const QPoint &pt)
             emit statusString("Error. No contour contains the point.");
         }
     }
+}
+
+qreal Analyser::calculatePerimeter(int idx)
+{
+    return (cv::arcLength(m_contours[idx], true) / scaleValue);//get perimeter of closed contour
+}
+
+qreal Analyser::calculateContourAreaByGreenFormula(int idx)
+{
+    return (cv::contourArea(m_contours[idx], false) / scaleValue / scaleValue);
+}
+
+qreal Analyser::calculateContourAreaByPixels(int idx)
+{
+    if (m_markersMatrix == NULL) {
+        qWarning() << "Warning. markers matrix is NULL. Using green formula to calculate the area instead.";
+        return calculateContourAreaByGreenFormula(idx);
+    }
+    qreal pixels = 0;
+    for (int i = 0; i < m_markersMatrix->rows; ++i) {
+        for (int j = 0; j < m_markersMatrix->cols; ++j) {
+            int idxVal = m_markersMatrix->at<int>(i, j) - 1;
+            if (idxVal == idx) {
+                ++pixels;//treat every pixel as 1*1 rectangle, then pixels equals to the area
+            }
+        }
+    }
+    return (pixels / scaleValue / scaleValue);
 }

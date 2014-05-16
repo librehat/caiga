@@ -1,18 +1,27 @@
 #include "ccspace.h"
+#include <QDebug>
 using namespace CAIGA;
 
 CCSpace::CCSpace(Image *img, QObject *parent) :
     QObject(parent)
 {
+    setImage(img);
+    reset();
+}
+
+void CCSpace::setImage(Image *img)
+{
     m_image = img;
-    drawMode = -2;
-    isCircle = true;
-    circleRadius = 0;
-    scaleValue = 0;
+    isCircle = img == NULL ? NULL : &img->m_isCircle;
+    scaleValue = img == NULL ? NULL : &img->m_scale;
 }
 
 void CCSpace::cropImage()
 {
+    if (m_image == NULL) {
+        qWarning() << "Abort. Image pointer is NULL.";
+        return;
+    }
     if(isCircle) {
         cv::Point tl(circleCentre.x() - circleRadius, circleCentre.y() - circleRadius);
         cv::Point br(circleCentre.x() + circleRadius, circleCentre.y() + circleRadius);
@@ -30,5 +39,9 @@ void CCSpace::cropImage()
 
 void CCSpace::reset()
 {
-    //TODO
+    circleCentre.setX(0);
+    circleCentre.setY(0);
+    circleRadius = 0;
+    qrect.setTopLeft(QPoint(0, 0));
+    qrect.setBottomRight(QPoint(0, 0));
 }

@@ -6,6 +6,7 @@ ParametersDialog::ParametersDialog(CAIGA::WorkBase::WorkTypes mode, QWidget *par
     ui(new Ui::ParametersDialog)
 {
     ui->setupUi(this);
+
     this->setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
     connect(ui->kSizeSlider, &QSlider::valueChanged, this, &ParametersDialog::onSliderValueChanged);
     connect(ui->kSizeSlider, &QSlider::valueChanged, this, &ParametersDialog::onValuesChanged);
@@ -62,9 +63,10 @@ void ParametersDialog::setMode(CAIGA::WorkBase::WorkTypes mode)
 {
     switch (mode) {
     case CAIGA::WorkBase::BoxFilter:
+    case CAIGA::WorkBase::MedianBlur:
     case CAIGA::WorkBase::Gradient:
         this->setkSizeText("Kernel Size");
-        ui->kSizeSlider->setMinimum(1);
+        ui->kSizeSlider->setMinimum(2);
         ui->sigmaColour->setVisible(false);
         ui->sigmaColourLabel->setVisible(false);
         ui->sigmaSpace->setVisible(false);

@@ -24,6 +24,7 @@ public:
     QStringList getClassesList() const;
     void addClass(const QString &);
     void deleteClass(int classIndex);
+    inline void setScaleValue(qreal s) { scaleValue = s; }
 
 signals:
     void foundContourIndex(const QModelIndex &);
@@ -36,6 +37,7 @@ public slots:
     void changeClass(int classIndex);
 
 private:
+    qreal scaleValue;//pixel / um
     int currentSelectedIdx;
     cv::Mat *m_markersMatrix;
     std::vector<std::vector <cv::Point> > m_contours;
@@ -43,6 +45,10 @@ private:
     QVector<QList<QStandardItem *> > dataVector;
     QStandardItemModel *contoursModel;
     static const QStringList headerLabels;
+
+    qreal calculatePerimeter(int idx);
+    qreal calculateContourAreaByGreenFormula(int idx);
+    qreal calculateContourAreaByPixels(int idx);
 
 };
 }

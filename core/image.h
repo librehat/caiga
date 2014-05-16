@@ -52,6 +52,7 @@ public:
     QPixmap getProcessedPixmap();
     void setProcessedImage(Mat img);
     inline bool isCircle() { return m_isCircle; }
+    inline qreal getScaleValue() { return m_scale; }
     bool isCropped();
     bool isPreProcessed();
     bool hasEdges();
@@ -70,6 +71,8 @@ public:
 
 private:
     bool m_isCircle;
+    qreal m_scale;
+
     Mat rawImage;//original image
     Mat croppedImage;//preProcess later on take in this image. when isCircle, we use mask to make a circular image and store it in croppedCircularImage
     Mat croppedCircularImage;//when isCircle, return this

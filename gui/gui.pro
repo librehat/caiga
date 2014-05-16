@@ -2,6 +2,8 @@ include(../common.pri)
 
 QT       += gui multimedia multimediawidgets printsupport
 
+windows: QT += winextras
+
 TEMPLATE  = app
 
 TARGET    = caiga

@@ -24,5 +24,5 @@ void WorkFloodFill::Func()
     int red = (unsigned)cv::theRNG() & 255;
     cv::Scalar colour(blue, green, red);
     cv::Rect ccomp;
-    cv::floodFill(*dst, seed, colour, &ccomp, cv::Scalar(sigmaY, sigmaY, sigmaY), cv::Scalar(sigmaX, sigmaX, sigmaX), flags);
+    cv::floodFill(*dst, seed, colour, &ccomp, cv::Scalar(sigmaY, sigmaY, sigmaY), cv::Scalar(sigmaX, sigmaX, sigmaX), flags);   
 }

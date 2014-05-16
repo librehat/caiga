@@ -13,7 +13,7 @@ namespace CAIGA {
 class WorkBase
 {
 public:
-    enum WorkTypes {Raw, AptBilateralFilter, Binaryzation, BoxFilter, Canny, Contours, Eraser, FloodFill, HistEqualise, InvertGrayscale, MedianBlur, Pencil, Watershed, Gradient};
+    enum WorkTypes {Raw, AptBilateralFilter, Binaryzation, BoxFilter, Canny, Contours, Eraser, FloodFill, HistEqualise, InvertGrayscale, MedianBlur, Pencil, Watershed, Gradient, Scharr};
 
     WorkBase() : src(NULL) {
         workType = Raw;
@@ -69,7 +69,7 @@ public:
     virtual void Func() {}
 
     inline bool operator == (const WorkBase &w) const {
-        if (this->src != w.src || this->dst != w.dst || this->workType != w.workType) {
+        if (this->src != w.src || this->dst != w.dst || this->display != w.display || this->workType != w.workType) {
             return false;
         }
         else

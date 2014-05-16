@@ -13,8 +13,13 @@ void WorkContours::Func()
     display = new cv::Mat(cv::Mat::zeros(dst->rows, dst->cols, CV_8UC3));
     //draw each contour in its own random colour
     const int size = static_cast<int>(contours.size());
+
+    markerMatrix = new cv::Mat(dst->size(), CV_32S);
+    *markerMatrix = cv::Scalar::all(0);//set background to 0
+
     for (int idx = 0; idx < size ; ++idx) {
         cv::Scalar colour(rand() & 255, rand() & 255, rand() & 255);
         cv::drawContours(*display, contours, idx, colour, CV_FILLED, 8);
+        cv::drawContours(*markerMatrix, contours, idx, cv::Scalar::all(idx + 1), CV_FILLED, 8);
     }
 }

@@ -3,20 +3,26 @@
 using namespace CAIGA;
 
 Image::Image()
-{}
+{
+    m_isCircle = true;
+    m_scale = 0;
+}
 
 Image::Image(QImage img)
 {
+    Image();
     setRawImage(img);
 }
 
 Image::Image(Mat matImg)
 {
+    Image();
     setRawImage(matImg);
 }
 
 Image::Image(const QString &imgfile)
 {
+    Image();
     setRawImage(imgfile);
 }
 

@@ -16,6 +16,7 @@
 #include <QSettings>
 #include <QDir>
 #include "image.h"
+#include "ccspace.h"
 #include "workspace.h"
 #include "parametersdialog.h"
 #include "watershedmarkerdialog.h"
@@ -62,6 +63,8 @@ private slots:
     void onBoxFilterParametersChanged(int, double, double, bool);
     void onAdaptiveBilateralFilterButtonClicked();
     void onAdaptiveBilateralFilterParametersChanged(int, double, double, bool);
+    void onMedianBlurButtonClicked();
+    void onMedianBlurParametersChanged(int, double, double, bool);
     void onGaussianBinaryzationButtonClicked();
     void onGaussianBinaryzationParametersChanged(int, double, double, bool);
     void onMedianBinaryzationButtonClicked();
@@ -71,6 +74,7 @@ private slots:
     void onFloodFillMouseClicked(QPoint);
     void onFloodFillAccepted();
     void onFloodFillRejected();
+    void onScharrButtonClicked();
     void onCannyButtonClicked();
     void onCannyParametersChanged(int, double, double, bool);
     void onWatershedButtonClicked();
@@ -112,6 +116,7 @@ private:
     void readConfig();
     void setCurrentDirbyFile(QString &);
     CAIGA::Image cgimg;
+    CAIGA::CCSpace ccSpace;
     CAIGA::WorkSpace preWorkSpace;
     CAIGA::WorkSpace previewSpace;
 

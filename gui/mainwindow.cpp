@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     watershedDlg = NULL;
     analyser = new Analyser(this);
 
+    ui->ccDrawer->setSpace(&ccSpace);
     ui->rawViewer->setNoScale();
     //preProcess tab button menu
     mouseBehaviourMenu = new QMenu(this);
@@ -55,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //crop and calibre tab
     connect(ui->buttonGroup, static_cast<void (QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &MainWindow::ccModeChanged);//Operation Mode
     connect(ui->ccDrawer, &QImageDrawer::calibreFinished, ui->scaleDoubleSpinBox, &QDoubleSpinBox::setValue);
-    connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), ui->ccDrawer, &QImageDrawer::setScaleValue);
+    connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), &ccSpace, &CAIGA::CCSpace::setScaleValue);
     connect(ui->ccDrawer, &QImageDrawer::gaugeLineResult, this, &MainWindow::onGaugeLineFinished);
     connect(ui->ccLoadMacroButton, &QPushButton::clicked, this, &MainWindow::onCCLoadMacroButtonClicked);
     connect(ui->ccButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onCCButtonBoxClicked);
@@ -66,9 +67,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->gradientButton, &QPushButton::clicked, this, &MainWindow::onGradientButtonClicked);
     connect(ui->boxFilterButton, &QPushButton::clicked, this, &MainWindow::onBoxFilterButtonClicked);
     connect(ui->adaptiveBilateralFilter, &QPushButton::clicked, this, &MainWindow::onAdaptiveBilateralFilterButtonClicked);
+    connect(ui->medianBlurButton, &QPushButton::clicked, this, &MainWindow::onMedianBlurButtonClicked);
     connect(ui->gaussianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onGaussianBinaryzationButtonClicked);
     connect(ui->medianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onMedianBinaryzationButtonClicked);
     connect(ui->floodFillButton, &QPushButton::clicked, this, &MainWindow::onFloodFillButtonClicked);
+    connect(ui->scharrButton, &QPushButton::clicked, this, &MainWindow::onScharrButtonClicked);
     connect(ui->cannyButton, &QPushButton::clicked, this, &MainWindow::onCannyButtonClicked);
     connect(ui->watershedButton, &QPushButton::clicked, this, &MainWindow::onWatershedButtonClicked);
     connect(ui->contoursButton, &QPushButton::clicked, this, &MainWindow::onContoursButtonClicked);
@@ -177,10 +180,11 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
         ui->cropCircleRadio->setChecked(true);
     }
     else {//save
-        if (ui->scaleDoubleSpinBox->value() == 0) {
+        if (cgimg.getScaleValue() == 0) {
             onMessagesArrived("You must calibre image scale before move to next step.");
             return;
         }
+        ccSpace.cropImage();
         preWorkSpace.reset(cgimg);
         ui->imageTabs->setCurrentIndex(2);
         onMessagesArrived("Pre-Process the image, then segment it.");
@@ -290,6 +294,21 @@ void MainWindow::onAdaptiveBilateralFilterParametersChanged(int k, double s, dou
     previewSpace.newAdaptiveBilateralFilterWork(k, s, c);
 }
 
+void MainWindow::onMedianBlurButtonClicked()
+{
+    previewSpace.reset(preWorkSpace.getLastMatrix());
+    if (parametersDlg != NULL) {
+        delete parametersDlg;
+    }
+    parametersDlg = new ParametersDialog(CAIGA::WorkBase::MedianBlur, this);
+    handleParametersDialogue(&MainWindow::onMedianBlurParametersChanged);
+}
+
+void MainWindow::onMedianBlurParametersChanged(int k, double, double, bool)
+{
+    previewSpace.newMedianBlurWork(k);
+}
+
 void MainWindow::onGaussianBinaryzationButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
@@ -371,6 +390,11 @@ void MainWindow::onFloodFillRejected()
 {
     this->onPreParametersRejected();
     disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
+}
+
+void MainWindow::onScharrButtonClicked()
+{
+    preWorkSpace.newScharrWork();
 }
 
 void MainWindow::onCannyButtonClicked()
@@ -469,11 +493,9 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
 
         //setup analyser and retrive information
         onMessagesArrived("Analysing... Please Wait......");
+        analyser->setScaleValue(cgimg.getScaleValue());
+        analyser->setMarkers(preWorkSpace.getMarkerMatrix());
         analyser->setContours(preWorkSpace.getContours());
-
-        if (preWorkSpace.last()->workType == CAIGA::WorkBase::Watershed) {
-            analyser->setMarkers(preWorkSpace.getMarkerMatrix());
-        }
 
         ui->analysisTableView->setModel(analyser->getDataModel());
         ui->analysisTableView->resizeColumnsToContents();
@@ -538,7 +560,8 @@ void MainWindow::addDiskFileDialog()
     setCurrentDirbyFile(filename);
     cgimg.setRawImage(filename);
     ui->rawViewer->setPixmap(cgimg.getRawPixmap());
-    ui->ccDrawer->setImage(&cgimg);
+    ui->ccDrawer->setImage(cgimg.getRawImage());
+    ccSpace.setImage(&cgimg);
     ui->imageTabs->setCurrentIndex(0);
 }
 
