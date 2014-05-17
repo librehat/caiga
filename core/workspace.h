@@ -54,7 +54,7 @@ public:
         m_d2 = low;
         m_bool = con8;
     } //this is not a generic work. it'll be finished by member function lastFloodFillWorkClicked.
-    void newFloodFillWork(int x, int y, bool cont = false);
+    void newFloodFillWork(QVector<QPoint> pts, bool cont = false);
     void newContoursWork();
     void newPencilWork(const QVector<QPoint> &pts, bool white);
     void newPencilWork(const QVector<QPoint> &pts, QColor colour);
@@ -86,6 +86,7 @@ private:
         future = QtConcurrent::run(work, &WorkBase::Func);
         watcher.setFuture(future);
     }
+    cv::Mat displayMat;//used to display on screen
 
 private slots:
     void onLowLevelWorkStarted();

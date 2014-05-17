@@ -22,7 +22,7 @@ void CCSpace::cropImage()
         qWarning() << "Abort. Image pointer is NULL.";
         return;
     }
-    if(isCircle) {
+    if(getIsCircle()) {
         cv::Point tl(circleCentre.x() - circleRadius, circleCentre.y() - circleRadius);
         cv::Point br(circleCentre.x() + circleRadius, circleCentre.y() + circleRadius);
         cv::Rect enclosingRect(tl, br);

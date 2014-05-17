@@ -1,6 +1,6 @@
 #include "qimagedrawer.h"
 #include <QDebug>
-#include <cmath>
+#include <qmath.h>
 #include <QInputDialog>
 
 QImageDrawer::QImageDrawer(QWidget *parent) :
@@ -114,14 +114,15 @@ void QImageDrawer::mouseMoveEvent(QMouseEvent *m)
     m_mouseReleased.setY(m->pos().y() - margin.y());
 
     if (m_drawMode == -2) {
-        int radius = static_cast<int>(std::sqrt(std::pow((m_mouseReleased - m_mousePressed).x(), 2) + std::pow((m_mouseReleased - m_mousePressed).y(), 2)));
+        QPoint delta = m_mousePressed - m_mouseReleased;
+        int radius = static_cast<int>(qSqrt(delta.x() * delta.x() + delta.y() * delta.y()));
         int maxRadius = std::min(std::min(m_mousePressed.x(), m_mousePressed.y()),  std::min(m_image.width() - m_mousePressed.x(), m_image.height() - m_mousePressed.y()));
         if (radius > maxRadius) {
             m_mouseReleased.setX(m_mousePressed.x() + maxRadius);
             m_mouseReleased.setY(m_mousePressed.y());
         }
-        QPoint delta = m_mousePressed - m_mouseReleased;
-        ccSpace->circleRadius = static_cast<int>(std::sqrt(std::pow(delta.x(), 2) + std::pow(delta.y(), 2)));
+        delta = m_mousePressed - m_mouseReleased;
+        ccSpace->circleRadius = static_cast<int>(qSqrt(delta.x() * delta.x() + delta.y() * delta.y()));
         ccSpace->circleCentre = m_mousePressed;
     }
     else {
@@ -173,7 +174,7 @@ void QImageDrawer::mouseReleaseEvent(QMouseEvent *m)
         }
     }
     else if (m_drawMode == -5) {//gauge
-        qreal gaugeResult = std::sqrt(static_cast<qreal>(std::pow(m_gaugeLine.dx(), 2) + std::pow(m_gaugeLine.dy(), 2))) / ccSpace->getScaleValue();
+        qreal gaugeResult = qSqrt(m_gaugeLine.dx() * m_gaugeLine.dx() + m_gaugeLine.dy() * m_gaugeLine.dy()) / ccSpace->getScaleValue();
         emit gaugeLineResult(gaugeResult);
     }
 }

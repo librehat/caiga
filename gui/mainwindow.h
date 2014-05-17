@@ -21,6 +21,7 @@
 #include "parametersdialog.h"
 #include "watershedmarkerdialog.h"
 #include "analyser.h"
+#include "analysisitemdelegate.h"
 
 namespace Ui
 {
@@ -89,10 +90,7 @@ private slots:
     void onPreProcessButtonBoxClicked(QAbstractButton *);
 
     //analysis
-    void onClassAddButtonClicked();
-    void onClassDelButtonClicked();
-    void onCurrentClassChanged(const QString &);
-    void onAnalysisTableIndexChanged(const QModelIndex &);
+    void onCurrentClassChanged(int);
 
     //menu and toolbar
     void onCurrentTabChanged(int);
@@ -112,6 +110,7 @@ private:
     ParametersDialog *parametersDlg;
     WatershedMarkerDialog *watershedDlg;
     CAIGA::Analyser *analyser;
+    AnalysisItemDelegate *analysisDelegate;
 
     void handleParametersDialogue(void (MainWindow::*) (int, double, double, bool));
 
@@ -122,6 +121,7 @@ private:
     CAIGA::CCSpace ccSpace;
     CAIGA::WorkSpace preWorkSpace;
     CAIGA::WorkSpace previewSpace;
+    QVector<QPoint> floodfillPts;
 
     //Text in About Dialog
     const static QString aboutText;

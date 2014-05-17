@@ -63,5 +63,4 @@ void WorkWatershed::Func()
             }
         }
     }
-    *display = (*display) * 0.5 + imgColourful * 0.5;
 }

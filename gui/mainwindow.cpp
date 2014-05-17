@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //ParametersDialog settings
     parametersDlg = NULL;
     watershedDlg = NULL;
-    analyser = new Analyser(this);
+    analyser = NULL;
 
     ui->ccDrawer->setSpace(&ccSpace);
     ui->rawViewer->setNoScale();
@@ -33,6 +33,10 @@ MainWindow::MainWindow(QWidget *parent) :
     mouseBehaviourMenu->addAction("White Eraser", this, SLOT(onMouseWhiteEraser()));
     mouseBehaviourMenu->addAction("Black Eraser", this, SLOT(onMouseBlackEraser()));
     ui->mouseBehaviourButton->setMenu(mouseBehaviourMenu);
+
+    //analysis
+    analysisDelegate = new AnalysisItemDelegate(ui->analysisTableView);
+    ui->analysisTableView->setItemDelegate(analysisDelegate);
 
     /*
      * Setup icons.
@@ -81,10 +85,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionRedo, &QAction::triggered, &preWorkSpace, &CAIGA::WorkSpace::redo);
 
     //Analysis
-    connect(ui->classAddToolButton, &QToolButton::clicked, this, &MainWindow::onClassAddButtonClicked);
-    connect(ui->classDelToolButton, &QToolButton::clicked, this, &MainWindow::onClassDelButtonClicked);
-    connect(ui->classComboBox, &QComboBox::currentTextChanged, this, &MainWindow::onCurrentClassChanged);
-    connect(ui->analysisTableView, &QTableView::activated, this, &MainWindow::onAnalysisTableIndexChanged);
+
 
     //MainWindow
     connect(ui->actionOpenFile, &QAction::triggered, this, &MainWindow::addDiskFileDialog);
@@ -109,14 +110,15 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete mouseBehaviourMenu;
+    // Qt delete children objects automatically once the parent is deleted
+    /*delete mouseBehaviourMenu;
     if (parametersDlg != NULL) {
         delete parametersDlg;
     }
     if (watershedDlg != NULL) {
         delete watershedDlg;
     }
-    delete analyser;
+    delete analyser;*/
 }
 
 const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version Pre Alpha on "
@@ -393,19 +395,22 @@ void MainWindow::onFloodFillParametersChanged(int, double h, double l, bool c8)
 
 void MainWindow::onFloodFillMouseClicked(QPoint p)
 {
-    previewSpace.newFloodFillWork(p.x(), p.y(), true);
+    floodfillPts.append(p);
+    previewSpace.newFloodFillWork(floodfillPts);
 }
 
 void MainWindow::onFloodFillAccepted()
 {
     this->onPreParametersAccepted();
     disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
+    floodfillPts.clear();
 }
 
 void MainWindow::onFloodFillRejected()
 {
     this->onPreParametersRejected();
     disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
+    floodfillPts.clear();
 }
 
 void MainWindow::onScharrButtonClicked()
@@ -515,50 +520,38 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
         ui->imageTabs->setCurrentIndex(3);
 
         //setup analyser and retrive information
+        if (analyser != NULL) {
+            delete analyser;
+        }
+        analyser = new CAIGA::Analyser(this);
         onMessagesArrived("Analysing... Please Wait......");
         analyser->setScaleValue(cgimg.getScaleValue());
         analyser->setMarkers(preWorkSpace.getMarkerMatrix());
         analyser->setContours(preWorkSpace.getContours());
+        analysisDelegate->setClassesList(analyser->getClassesList());
         ui->analysisTableView->setModel(analyser->getDataModel());
         ui->analysisTableView->resizeColumnsToContents();
-        ui->classComboBox->insertItems(0, analyser->getClassesList());
-        connect(ui->analysisInteracter, &QImageInteractiveDrawer::mousePressed, analyser, &CAIGA::Analyser::findContourHasPoint);
-        connect(analyser, &CAIGA::Analyser::statusString, this, &MainWindow::onMessagesArrived);
-        connect(analyser, &CAIGA::Analyser::foundContourClass, ui->classComboBox, &QComboBox::setCurrentText);
         connect(analyser, &CAIGA::Analyser::foundContourIndex, ui->analysisTableView, &QTableView::setCurrentIndex);
-        connect(ui->classComboBox, static_cast<void (QComboBox::*) (int)>(&QComboBox::currentIndexChanged), analyser, &CAIGA::Analyser::changeClass);
+        connect(analyser, &CAIGA::Analyser::currentClassChanged, this, &MainWindow::onCurrentClassChanged);
+        connect(ui->analysisInteracter, &QImageInteractiveDrawer::mousePressed, analyser, &CAIGA::Analyser::findContourHasPoint);
+        connect(ui->analysisTableView, &QTableView::activated, analyser, &CAIGA::Analyser::onModelIndexChanged);
+        connect(analysisDelegate, &AnalysisItemDelegate::classChanged, analyser, &CAIGA::Analyser::onClassChanged);
         onMessagesArrived("Analysed.");
     }
     previewSpace.clear();
 }
 
-void MainWindow::onClassAddButtonClicked()
+void MainWindow::onCurrentClassChanged(int idx)
 {
-    bool ok;
-    QString clsName = QInputDialog::getText(this, "New Class", "Name", QLineEdit::Normal, QString(), &ok);
-    if (ok) {
-        analyser->addClass(clsName);
-        ui->classComboBox->addItem(clsName);
-    }
-}
-
-void MainWindow::onClassDelButtonClicked()
-{
-    int i = ui->classComboBox->currentIndex();
-    if (ui->classComboBox->count() > 1 || i > 0) {
-        analyser->deleteClass(i);
-        ui->classComboBox->removeItem(i);
-    }
-}
-
-void MainWindow::onCurrentClassChanged(const QString &)
-{
-    //TODO get current class's information such as grain size rate
-}
-
-void MainWindow::onAnalysisTableIndexChanged(const QModelIndex &i)
-{
-    analyser->setCurrentSelectedIdx(i.row());
+    int number;
+    qreal areaPercentage;
+    qreal averageArea;
+    qreal averagePerimeter;
+    qreal intercepts;
+    qreal grainSizeLevel;
+    analyser->getClassValues(idx, number, areaPercentage, averageArea, averagePerimeter, intercepts, grainSizeLevel);
+    QString info = QString("Count: %1 \nPercentage: %2 \nAverage Area: %3 \nAverage Perimeter: %4 \nAverage Intercept: %5 \nGrain Size Level: %6").arg(number).arg(areaPercentage).arg(averageArea).arg(averagePerimeter).arg(intercepts).arg(grainSizeLevel);
+    ui->analysisCurrentClassLabel->setText(info);
 }
 
 void MainWindow::onCurrentTabChanged(int i)

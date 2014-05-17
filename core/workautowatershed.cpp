@@ -81,5 +81,4 @@ void WorkAutoWatershed::Func()
             }
         }
     }
-    *display = (*display) * 0.5 + imgColor * 0.5;
 }

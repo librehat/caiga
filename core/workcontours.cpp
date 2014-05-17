@@ -23,7 +23,7 @@ void WorkContours::Func()
     const int size = static_cast<int>(contours.size());
 
     markerMatrix = new cv::Mat(dst->size(), CV_32S);
-    *markerMatrix = cv::Scalar::all(0);//set background to 0
+    *markerMatrix = cv::Scalar::all(-1);//set background to -1. those area that won't be filled are the boundary
 
     for (int idx = 0; idx < size ; ++idx) {
         cv::Scalar colour(rand() & 255, rand() & 255, rand() & 255);

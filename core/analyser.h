@@ -21,38 +21,58 @@ public:
     void setContours(const std::vector<std::vector <cv::Point> > &contours);
     void setMarkers(cv::Mat * const markersMatrix);//setMarkers if the result is obtained by watershed, if markersMatrix is set, then contours won't be used when querying the contour id
     QStandardItemModel *getDataModel();
-    QStringList getClassesList() const;
+    QStringList* getClassesList() { return &m_classes; }
     void addClass(const QString &);
     void deleteClass(int classIndex);
     inline void setScaleValue(qreal s) { scaleValue = s; }
-    void setCurrentSelectedIdx(int i);
+    void getClassValues(int classIdx, int &number, qreal &areaPercent, qreal &avgArea, qreal &avgPerimeter, qreal &l, qreal &g);
 
 signals:
     void foundContourIndex(const QModelIndex &);
-    void foundContourClass(const QString &);
-    void statusString(const QString &);
-    void classesChanged(const QStringList &);
+    void currentClassChanged(int classIdx);
 
 public slots:
     void findContourHasPoint(const QPoint &pt);
-    void changeClass(int classIndex);
+    void onModelIndexChanged(const QModelIndex &mIdx);
+    void onClassChanged(const QModelIndex &mIndex, int classIdx);
 
 private:
     qreal scaleValue;//pixel / um
     int currentSelectedIdx;
-    cv::Mat *m_markersMatrix;
+    cv::Mat *m_markerMatrix;
     std::vector<std::vector <cv::Point> > m_contours;
-    QStringList m_classes;
-    //QVector<QList<QStandardItem *> > dataVector;
+
     QVector<qreal> areaVector;
     QVector<qreal> perimeterVector;
-    QVector<int> classIdxVector;//Idx is the same index of m_classes
+    QVector<int> classIdxVector;//classIdx has the same index of m_classes
+
+    /*
+     * calculated information are stored by classIdx
+     */
+    QStringList m_classes;
+    QVector<int> classNumber;
+    QVector<qreal> grainAreaPercentageVector;
+    QVector<qreal> grainAverageAreaVector;
+    QVector<qreal> grainAveragePerimeterVector;
+    QVector<qreal> grainAverageInterceptVector;// = Total Length / Total Intercept
+    QVector<qreal> grainSizeLevelVector;//G, calculated by intercept method
+
+    qreal averageInterceptsLength;
+
     QStandardItemModel *contoursModel;
     static const QStringList headerLabels;
 
     qreal calculatePerimeter(int idx);
     qreal calculateContourAreaByGreenFormula(int idx);
     qreal calculateContourAreaByPixels(int idx);
+
+    int getBoundaryJointNeighbours(int row, int col);//leave at least 1 position from Mat edge
+
+    /*
+     * calculate all sorts of information class by class
+     * these functions would clear the previous values
+     */
+    void calculateClassValues();
 
 };
 }

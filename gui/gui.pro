@@ -24,7 +24,8 @@ SOURCES  += main.cpp \
             parametersdialog.cpp \
             livepixelviewer.cpp \
             watershedmarkerdialog.cpp \
-			3rdparty/qcustomplot.cpp
+			3rdparty/qcustomplot.cpp \
+    analysisitemdelegate.cpp
            
 HEADERS  += cameradialog.h \
             mainwindow.h \
@@ -35,7 +36,8 @@ HEADERS  += cameradialog.h \
             parametersdialog.h \
             livepixelviewer.h \
             watershedmarkerdialog.h \
-			3rdparty/qcustomplot.h
+			3rdparty/qcustomplot.h \
+    analysisitemdelegate.h
 
 #static: {
 #    QTPLUGIN += qico

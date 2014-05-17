@@ -7,7 +7,7 @@ namespace CAIGA
 class WorkFloodFill : public WorkBase
 {
 public:
-    WorkFloodFill(const cv::Mat *const src, double high, double low, bool con8, int x, int y);
+    WorkFloodFill(const cv::Mat *const src, double high, double low, bool con8, std::vector<cv::Point> pts);
     void Func();
 };
 }
