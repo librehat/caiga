@@ -12,6 +12,9 @@
         <file alias="48x48/document-open-folder.png">icons/Oxygen/48x48/document-open-folder.png</file>
         <file alias="22x22/document-open-folder.png">icons/Oxygen/22x22/document-open-folder.png</file>
         <file alias="32x32/document-open-folder.png">icons/Oxygen/32x32/document-open-folder.png</file>
+        <file alias="22x22/text-plain.png">icons/Oxygen/22x22/text-plain.png</file>
+        <file alias="32x32/text-plain.png">icons/Oxygen/32x32/text-plain.png</file>
+        <file alias="48x48/text-plain.png">icons/Oxygen/48x48/text-plain.png</file>
         <file alias="48x48/document-export.png">icons/Oxygen/48x48/document-export.png</file>
         <file alias="22x22/document-export.png">icons/Oxygen/22x22/document-export.png</file>
         <file alias="32x32/document-export.png">icons/Oxygen/32x32/document-export.png</file>

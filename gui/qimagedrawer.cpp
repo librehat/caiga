@@ -8,6 +8,7 @@ QImageDrawer::QImageDrawer(QWidget *parent) :
 {
     m_penColour = QColor(255, 0, 0);//Red
     m_drawMode = -2;
+    m_mousePressed = QPoint(0, 0);
 }
 
 void QImageDrawer::paintEvent(QPaintEvent *event)
@@ -29,7 +30,7 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
     painter.setPen(pen);
 
     //don't paint if user didn't draw
-    if (ccSpace->circleRadius < 2 && ccSpace->qrect.width() < 2) {
+    if (ccSpace->circleRadius < 2 && ccSpace->qrect.width() < 2 && m_mousePressed.manhattanLength() < 2) {
         return;
     }
 

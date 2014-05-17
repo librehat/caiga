@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>690</width>
-    <height>603</height>
+    <width>680</width>
+    <height>620</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>CAIGA</string>
+   <string>Computer-Aid Interactive Grain Analyser</string>
   </property>
   <property name="windowIcon">
    <iconset resource="caiga.qrc">
@@ -45,7 +45,7 @@
        <enum>QTabWidget::South</enum>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="rawTab">
        <attribute name="title">
@@ -488,7 +488,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>690</width>
+     <width>680</width>
      <height>22</height>
     </rect>
    </property>
@@ -561,11 +561,21 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpenFile">
+   <property name="icon">
+    <iconset theme="document-open">
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
     <string>Open Image from Disk</string>
    </property>
   </action>
   <action name="actionOpenCamera">
+   <property name="icon">
+    <iconset theme="camera-photo">
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
     <string>Open Image from Camera</string>
    </property>
@@ -574,11 +584,21 @@
    </property>
   </action>
   <action name="actionReset">
+   <property name="icon">
+    <iconset theme="document-revert">
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
     <string>Reset</string>
    </property>
   </action>
   <action name="actionQuit">
+   <property name="icon">
+    <iconset theme="application-exit">
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
     <string>Quit</string>
    </property>
@@ -589,11 +609,21 @@
    </property>
   </action>
   <action name="actionAbout_CAIGA">
+   <property name="icon">
+    <iconset theme="help-about">
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
     <string>About CAIGA</string>
    </property>
   </action>
   <action name="actionHelp">
+   <property name="icon">
+    <iconset theme="help-contents">
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
     <string>Help</string>
    </property>
@@ -601,6 +631,11 @@
   <action name="actionUndo">
    <property name="enabled">
     <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="edit-undo">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="text">
     <string>Undo</string>
@@ -615,6 +650,11 @@
   <action name="actionRedo">
    <property name="enabled">
     <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="edit-redo">
+     <normaloff/>
+    </iconset>
    </property>
    <property name="text">
     <string>Redo</string>
@@ -632,16 +672,26 @@
    </property>
   </action>
   <action name="actionExportImg_As">
+   <property name="icon">
+    <iconset theme="document-export">
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
     <string>Export Image Information As...</string>
    </property>
   </action>
   <action name="actionQuick_Export">
+   <property name="icon">
+    <iconset theme="text-plain">
+     <normaloff/>
+    </iconset>
+   </property>
    <property name="text">
-    <string>Quick Export</string>
+    <string>Quick Export As Text File</string>
    </property>
    <property name="toolTip">
-    <string>Export Information as Text File using the Image name as its filename.</string>
+    <string>Export information as plain text file using the image's filename as its filename.</string>
    </property>
   </action>
  </widget>

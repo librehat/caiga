@@ -202,16 +202,17 @@ void Analyser::calculateClassValues()
         grainSizeLevelVector.append(0);
     }
 
+    qreal totalArea = 0;
     //sum up area and perimeter first
     for (int idx = 0; idx < classIdxVector.size(); ++idx) {//global contour index
         int classIdx = classIdxVector.at(idx);
         classNumber[classIdx] += 1;
         grainAverageAreaVector[classIdx] += areaVector.at(idx);
+        totalArea += areaVector.at(idx);
         grainAveragePerimeterVector[classIdx] += perimeterVector.at(idx);
     }
 
     //calculate the percentage and average value at last
-    qreal totalArea = (m_markerMatrix->cols * m_markerMatrix->rows) / scaleValue / scaleValue;
     for (int ci = 0; ci < classNumber.size(); ++ci) {//class Index
         grainAreaPercentageVector[ci] = grainAverageAreaVector.at(ci) / totalArea;
         grainAverageAreaVector[ci] /= classNumber.at(ci);
@@ -271,8 +272,8 @@ void Analyser::calculateClassValues()
     totalInterceptsVertical /= 5.0;//that makes them average intercepts now
     totalInterceptsHorizontal /= 5.0;
 
-    qreal horizontalLineLength = (right - 2) / scaleValue / 1000.0;//convert to minimeter
-    qreal verticalLineLength = (bottom - 2) / scaleValue / 1000.0;
+    qreal horizontalLineLength = (right - 2) / scaleValue;//um
+    qreal verticalLineLength = (bottom - 2) / scaleValue;//um
     averageInterceptsLength = ((horizontalLineLength / totalInterceptsHorizontal) + (verticalLineLength / totalInterceptsVertical)) / 2.0;
 
     /*
@@ -281,6 +282,7 @@ void Analyser::calculateClassValues()
      */
     for (int ci = 0; ci < classNumber.size(); ++ci) {
         grainAverageInterceptVector[ci] = averageInterceptsLength * grainAreaPercentageVector.at(ci);
-        grainSizeLevelVector[ci] = (-6.643856 * log10(grainAverageInterceptVector.at(ci))) - 3.288 ;
+        //intercepts length need to be converted to minimeter (divided by 1000)
+        grainSizeLevelVector[ci] = (-6.643856 * log10(grainAverageInterceptVector.at(ci) / 1000)) - 3.288 ;
     }
 }

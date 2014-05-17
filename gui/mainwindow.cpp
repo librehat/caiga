@@ -39,19 +39,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->analysisTableView->setItemDelegate(analysisDelegate);
 
     /*
-     * Setup icons.
+     * Setup icons (only those can't be done with Designer)
      */
-    ui->actionReset->setIcon(QIcon::fromTheme("document-revert"));
-    ui->actionQuit->setIcon(QIcon::fromTheme("application-exit"));
-    ui->actionExportImg_As->setIcon(QIcon::fromTheme("document-export", QIcon::fromTheme("fileprint")));
-    ui->actionQuick_Export->setIcon(QIcon::fromTheme("filequickprint", QIcon::fromTheme("document-export")));
-    ui->actionRedo->setIcon(QIcon::fromTheme("edit-redo"));
-    ui->actionUndo->setIcon(QIcon::fromTheme("edit-undo"));
-    ui->actionOpenFile->setIcon(QIcon::fromTheme("document-open"));
-    ui->actionOpenCamera->setIcon(QIcon::fromTheme("camera-photo"));
     ui->actionOptions->setIcon(QIcon::fromTheme("configure", QIcon::fromTheme("gconf-editor")));
-    ui->actionHelp->setIcon(QIcon::fromTheme("help-contents"));
-    ui->actionAbout_CAIGA->setIcon(QIcon::fromTheme("help-about"));
 
     /*
      * SIGNALs and SLOTs
@@ -515,6 +505,12 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
         preWorkSpace.reset(cgimg);
     }
     else {//save
+        //check if it's eligible
+        if (preWorkSpace.getMarkerMatrix() == NULL) {
+            onMessagesArrived("Error. Processing is not finished yet!");
+            return;
+        }
+
         preWorkSpace.simplified();
         ui->analysisInteracter->setImage(preWorkSpace.getLastDisplayImage());
         ui->imageTabs->setCurrentIndex(3);
@@ -531,7 +527,7 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
         analysisDelegate->setClassesList(analyser->getClassesList());
         ui->analysisTableView->setModel(analyser->getDataModel());
         ui->analysisTableView->resizeColumnsToContents();
-        connect(analyser, &CAIGA::Analyser::foundContourIndex, ui->analysisTableView, &QTableView::setCurrentIndex);
+        connect(analyser, &CAIGA::Analyser::foundContourIndex, this, &MainWindow::onContourIndexFound);
         connect(analyser, &CAIGA::Analyser::currentClassChanged, this, &MainWindow::onCurrentClassChanged);
         connect(ui->analysisInteracter, &QImageInteractiveDrawer::mousePressed, analyser, &CAIGA::Analyser::findContourHasPoint);
         connect(ui->analysisTableView, &QTableView::activated, analyser, &CAIGA::Analyser::onModelIndexChanged);
@@ -539,6 +535,16 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
         onMessagesArrived("Analysed.");
     }
     previewSpace.clear();
+}
+
+void MainWindow::onContourIndexFound(const QModelIndex &i)
+{
+    /*
+     * setCurrentIndex won't emit the activated signal
+     * so we need to send out this signal manually
+     */
+    ui->analysisTableView->setCurrentIndex(i);
+    emit ui->analysisTableView->activated(i);
 }
 
 void MainWindow::onCurrentClassChanged(int idx)
@@ -550,7 +556,7 @@ void MainWindow::onCurrentClassChanged(int idx)
     qreal intercepts;
     qreal grainSizeLevel;
     analyser->getClassValues(idx, number, areaPercentage, averageArea, averagePerimeter, intercepts, grainSizeLevel);
-    QString info = QString("Count: %1 \nPercentage: %2 \nAverage Area: %3 \nAverage Perimeter: %4 \nAverage Intercept: %5 \nGrain Size Level: %6").arg(number).arg(areaPercentage).arg(averageArea).arg(averagePerimeter).arg(intercepts).arg(grainSizeLevel);
+    QString info = QString("Count: %1 <br />Percentage: %2 %<br />Average Area: %3 μm<sup>2</sup><br />Average Perimeter: %4 μm<br />Average Intercept: %5 μm<br />Grain Size Level: %6").arg(number).arg(areaPercentage * 100).arg(averageArea).arg(averagePerimeter).arg(intercepts).arg(grainSizeLevel);
     ui->analysisCurrentClassLabel->setText(info);
 }
 

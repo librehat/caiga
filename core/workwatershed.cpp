@@ -22,7 +22,7 @@ void WorkWatershed::Func()
         }
     }
 
-    cv::findContours(markerMask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+    cv::findContours(markerMask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
     if (contours.empty()) {
         qWarning() << "Watershed Aborted. Cannot find contours.";

@@ -90,6 +90,7 @@ private slots:
     void onPreProcessButtonBoxClicked(QAbstractButton *);
 
     //analysis
+    void onContourIndexFound(const QModelIndex &);
     void onCurrentClassChanged(int);
 
     //menu and toolbar

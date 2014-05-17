@@ -313,13 +313,13 @@ QImage WorkSpace::getLastDisplayImage()
 
     //only apply for these operations that lose lots of original image informations
     WorkBase::WorkTypes t = workList.last()->workType;
-    if (t == WorkBase::AutoWatershed || t == WorkBase::Watershed || t == WorkBase::Contours) {
+    if (t == WorkBase::FloodFill || t == WorkBase::AutoWatershed || t == WorkBase::Watershed || t == WorkBase::Contours) {
         cv::Mat colourImg;
         cv::cvtColor(*workList.last()->src, colourImg, CV_GRAY2BGR);
         if (displayMat.type() != CV_8UC3) {
             cv::cvtColor(displayMat, displayMat, CV_GRAY2BGR);
         }
-        displayMat = colourImg * 0.4 +  displayMat * 0.6;
+        displayMat = colourImg * 0.6 +  displayMat * 0.4;
     }
 
     return Image::convertMat2QImage(displayMat);

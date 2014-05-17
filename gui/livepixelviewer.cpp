@@ -10,7 +10,7 @@ LivePixelViewer::LivePixelViewer(QWidget *parent) :
 {
     setAttribute(Qt::WA_OpaquePaintEvent);
     setMouseTracking(true);
-    m_updateId = startTimer(50);
+    m_updateId = startTimer(40);
     m_live = true;
 }
 
