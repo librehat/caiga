@@ -36,6 +36,14 @@ public:
     inline QString getAreaAt(int idx) { return QString::number(areaVector.at(idx)); }
     inline QString getPerimeterAt(int idx) { return QString::number(perimeterVector.at(idx)); }
     inline QString getRadiusAt(int idx) { return QString::number(equivalentRadiusVector.at(idx)); }
+    //below are based on class index
+    inline QString getCountOfClass(int i) { return QString::number(classNumber.at(i)); }
+    inline QString getAvgPercentOfClass(int i) { return QString::number(grainAreaPercentageVector.at(i) * 100); }
+    inline QString getAvgAreaOfClass(int i) { return QString::number(grainAverageAreaVector.at(i)); }
+    inline QString getAvgPerimeterOfClass(int i) { return QString::number(grainAveragePerimeterVector.at(i)); }
+    inline QString getAvgRadiusOfClass(int i) { return QString::number(grainAverageEquivalentRadiusVector.at(i)); }
+    inline QString getAvgInterLengthOfClass(int i) { return QString::number(grainAverageInterceptVector.at(i)); }
+    inline QString getSizeLevelOfClass(int i) { return QString::number(grainSizeLevelVector.at(i)); }
 
 signals:
     void foundContourIndex(const QModelIndex &);

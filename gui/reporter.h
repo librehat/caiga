@@ -5,6 +5,7 @@
 #include "workspace.h"
 #include "analyser.h"
 #include "3rdparty/qcustomplot.h"
+#include "3rdparty/qcpdocumentobject.h"
 
 class Reporter : public QObject
 {
@@ -15,7 +16,11 @@ public:
     void setBarChart(QCustomPlot *plot);
     void setTextBrowser(QTextBrowser *tb);
 
+signals:
+    void workStatusStrUpdated(const QString &);
+
 private:
+    QCustomPlot *m_plot;
     CAIGA::Analyser *m_analyser;
     CAIGA::WorkSpace *m_workSpace;
     QTextDocument *textDoc;
@@ -25,9 +30,13 @@ private:
     static QTextBlockFormat alignCentreBlockFormat();
     static QTextBlockFormat alignJustifyBlockFormat();
     static QTextCharFormat boldRomanFormat();
-    static QTextCharFormat cambriaFormat();
+    static QTextCharFormat cambriaMathFormat();
+    static QTextCharFormat cambriaMathBoldFormat();
+    static QTextCharFormat romanFormat();
+    static QTextCharFormat figureInfoFormat();
 
-    inline void insertTextAndMoveNextCell(QTextCursor *cursor, const QString &text) { cursor->insertText(text); cursor->movePosition(QTextCursor::NextCell); }
+    inline void insertTextAndMoveNextCell(QTextCursor *cursor, const QString &text) { cursor->insertText(text, cambriaMathFormat()); cursor->movePosition(QTextCursor::NextCell); }
+    inline void insertHeaderAndMoveNextCell(QTextCursor *cursor, const QString &text) { cursor->insertText(text, cambriaMathBoldFormat()); cursor->movePosition(QTextCursor::NextCell); }
     inline void insertHtmlAndMoveNextCell(QTextCursor *cursor, const QString &html) { cursor->insertHtml(html); cursor->movePosition(QTextCursor::NextCell); }
 
     QTextTableFormat tableFormat;

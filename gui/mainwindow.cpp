@@ -39,6 +39,9 @@ MainWindow::MainWindow(QWidget *parent) :
     analysisDelegate = new AnalysisItemDelegate(ui->analysisTableView);
     ui->analysisTableView->setItemDelegate(analysisDelegate);
 
+    //information
+    ui->infoPlotter->setFont(QFont("Cambria Math"));
+
     /*
      * Setup icons (only those can't be done with Designer)
      */
@@ -577,6 +580,7 @@ void MainWindow::updateInformationReport(int split)
         delete reporter;
     }
     reporter = new Reporter(analyser, &preWorkSpace, split, this);
+    connect(reporter, &Reporter::workStatusStrUpdated, this, &MainWindow::onMessagesArrived);
     reporter->setBarChart(ui->infoPlotter);
     reporter->setTextBrowser(ui->infoTextBrowser);
 }

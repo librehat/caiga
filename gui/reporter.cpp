@@ -11,12 +11,18 @@ Reporter::Reporter(CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int s
 
     tableFormat.setBorderStyle(QTextFrameFormat::BorderStyle_Solid);
     tableFormat.setBorder(1);
-    tableFormat.setCellPadding(6);
+    tableFormat.setCellPadding(2);
     tableFormat.setHeaderRowCount(1);
+    tableFormat.setAlignment(Qt::AlignLeft);
+
+    // register the plot document object (only needed once, no matter how many plots will be in the QTextDocument):
+    QCPDocumentObject *iface = new QCPDocumentObject(this);
+    textDoc->documentLayout()->registerHandler(QCPDocumentObject::PlotTextFormat, iface);
 }
 
 void Reporter::setBarChart(QCustomPlot *plot)
 {
+    m_plot = plot;
     plot->clearPlottables();
     QVector<double> xticks;
 
@@ -66,7 +72,7 @@ void Reporter::setBarChart(QCustomPlot *plot)
     plot->xAxis->setSubTickLength(6);
     plot->xAxis->setSubTickCount(1);
     plot->xAxis->grid()->setVisible(false);
-    plot->xAxis->setLabel("Equivalent Radii / μm");
+    plot->xAxis->setLabel("Equivalent Radii (μm)");
 
     plot->yAxis->setRange(0, static_cast<double>(maxCountBySlice + 1));
     plot->yAxis->setTickLabelType(QCPAxis::ltNumber);
@@ -105,21 +111,74 @@ void Reporter::setBarChart(QCustomPlot *plot)
 
 void Reporter::setTextBrowser(QTextBrowser *tb)
 {
+    emit workStatusStrUpdated("Generating report... Please wait......");
     QTextCursor cursor(textDoc);
-    cursor.setBlockFormat(alignJustifyBlockFormat());
+    cursor.setBlockFormat(alignCentreBlockFormat());
     cursor.insertBlock(alignCentreBlockFormat(), boldRomanFormat());
     cursor.insertText("School of Materials Science and Engineering, Southeast University");
     cursor.movePosition(QTextCursor::End);
     cursor.insertHtml("<hr /><br />");
     cursor.movePosition(QTextCursor::End);
-    cursor.insertBlock(alignJustifyBlockFormat(), cambriaFormat());
-    cursor.insertImage(m_workSpace->getRawImage(), "Orignial Image");
+
+    //insert the Date
+    cursor.insertBlock(alignJustifyBlockFormat(), romanFormat());
+    cursor.insertText("Report was generated at  ");
+    cursor.insertText(QDateTime::currentDateTime().toString(Qt::DefaultLocaleLongDate));
+    cursor.insertHtml("<br /><br />");
+    cursor.movePosition(QTextCursor::End);
+
+    //insert the original image
+    cursor.insertBlock(alignCentreBlockFormat(), romanFormat());
+    cursor.insertImage(m_workSpace->getRawImage());
+    cursor.insertHtml("<br />");
+    cursor.insertText("Figure 1. Orignial Image", figureInfoFormat());
+    cursor.insertHtml("<br /><br />");
+    //insert the processed image
+    cursor.insertImage(m_workSpace->getLastDisplayImage());
+    cursor.insertHtml("<br />");
+    cursor.insertText("Figure 2. Segmented Image Result", figureInfoFormat());
+    cursor.insertHtml("<br /><br />");
+
+    cursor.insertText(QString(QChar::ObjectReplacementCharacter), QCPDocumentObject::generatePlotFormat(m_plot, 400, 300));
+    cursor.insertHtml("<br />");
+    cursor.insertText("Figure 3. Equivalent Radii Bar Chart", figureInfoFormat());
+    cursor.insertHtml("<br /><br />");
+    cursor.movePosition(QTextCursor::End);
+
+    //insert class information table
+    cursor.insertBlock(alignCentreBlockFormat(), romanFormat());
+    cursor.insertTable(m_analyser->classCount() + 1, 8, tableFormat);
+    insertHeaderAndMoveNextCell(&cursor, "Class");
+    insertHeaderAndMoveNextCell(&cursor, "Count");
+    insertHeaderAndMoveNextCell(&cursor, "Area Percentage (%)");
+    insertHeaderAndMoveNextCell(&cursor, "Area (μm^2)");
+    insertHeaderAndMoveNextCell(&cursor, "Perimeter (μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Equivalent Radius (μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Intercept Length (μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Grain Size Level (G)");
+    for (int i = 0; i < m_analyser->classCount(); ++i) {
+        insertTextAndMoveNextCell(&cursor, m_analyser->getClassesList()->at(i));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getCountOfClass(i));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getAvgPercentOfClass(i));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getAvgAreaOfClass(i));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getAvgPerimeterOfClass(i));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getAvgRadiusOfClass(i));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getAvgInterLengthOfClass(i));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getSizeLevelOfClass(i));
+    }
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertBlock(alignCentreBlockFormat(), romanFormat());
+    cursor.insertHtml("<br />");
+    cursor.insertText("Table 1. Analysis results (average values)", figureInfoFormat());
+    cursor.insertHtml("<br /><br />");
+
+    //insert the detailed table
     cursor.insertTable(m_analyser->count() + 1, 5, tableFormat);
-    insertHtmlAndMoveNextCell(&cursor, "<b>Index</b>");
-    insertHtmlAndMoveNextCell(&cursor, "<b>Class</b>");
-    insertHtmlAndMoveNextCell(&cursor, "<b>Area</b><br />(μm<sup>2</sup>)");
-    insertHtmlAndMoveNextCell(&cursor, "<b>Perimeter</b><br />(μm)");
-    insertHtmlAndMoveNextCell(&cursor, "<b>Equivalent Radius</b><br />(μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Index");
+    insertHeaderAndMoveNextCell(&cursor, "Class");
+    insertHeaderAndMoveNextCell(&cursor, "Area (μm^2)");
+    insertHeaderAndMoveNextCell(&cursor, "Perimeter (μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Equivalent Radius (μm)");
     for (int i = 0; i < m_analyser->count(); ++i) {
         insertTextAndMoveNextCell(&cursor, QString::number(i + 1));
         insertTextAndMoveNextCell(&cursor, m_analyser->getClassNameAt(i));
@@ -127,40 +186,72 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
         insertTextAndMoveNextCell(&cursor, m_analyser->getPerimeterAt(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getRadiusAt(i));
     }
-    cursor.movePosition(QTextCursor::EndOfBlock);
-    cursor.insertImage(m_workSpace->getLastDisplayImage(), "Segmented Image");
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertBlock(alignCentreBlockFormat(), romanFormat());
+    cursor.insertHtml("<br />");
+    cursor.insertText("Table 2. Details of each grain", figureInfoFormat());
+    cursor.insertHtml("<br />");
 
     tb->setDocument(textDoc);
+    emit workStatusStrUpdated("Report Generated.");
 }
 
 QTextBlockFormat Reporter::alignCentreBlockFormat()
 {
-    static QTextBlockFormat cbf;
+    QTextBlockFormat cbf;
     cbf.setAlignment(Qt::AlignCenter);
     return cbf;
 }
 
 QTextBlockFormat Reporter::alignJustifyBlockFormat()
 {
-    static QTextBlockFormat lbf;
+    QTextBlockFormat lbf;
     lbf.setAlignment(Qt::AlignJustify | Qt::AlignBaseline);
     return lbf;
 }
 
 QTextCharFormat Reporter::boldRomanFormat()
 {
-    static QTextCharFormat hf;
+    QTextCharFormat hf;
     hf.setFontFamily("Times New Roman");
-    hf.setFontPointSize(16);
+    hf.setFontPointSize(14);
     hf.setFontWeight(QFont::Bold);
     return hf;
 }
 
-QTextCharFormat Reporter::cambriaFormat()
+QTextCharFormat Reporter::cambriaMathFormat()
 {
-    static QTextCharFormat mf;
-    mf.setFontFamily("Cambria");
-    mf.setFontPointSize(12);
+    QTextCharFormat mf;
+    mf.setFontFamily("Cambria Math");
+    mf.setFontPointSize(10);
     mf.setFontWeight(QFont::Normal);
     return mf;
+}
+
+QTextCharFormat Reporter::cambriaMathBoldFormat()
+{
+    QTextCharFormat cf;
+    cf.setFontFamily("Cambria Math");
+    cf.setFontPointSize(10);
+    cf.setFontWeight(QFont::Bold);
+    return cf;
+}
+
+QTextCharFormat Reporter::romanFormat()
+{
+    QTextCharFormat mf;
+    mf.setFontFamily("Times New Roman");
+    mf.setFontPointSize(10);
+    mf.setFontWeight(QFont::Normal);
+    return mf;
+}
+
+QTextCharFormat Reporter::figureInfoFormat()
+{
+    QTextCharFormat ff;
+    ff.setFontFamily("Times New Roman");
+    ff.setFontItalic(true);
+    ff.setFontPointSize(9);
+    ff.setFontWeight(QFont::DemiBold);
+    return ff;
 }
