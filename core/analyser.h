@@ -25,7 +25,7 @@ public:
     void addClass(const QString &);
     void deleteClass(int classIndex);
     inline void setScaleValue(qreal s) { scaleValue = s; }
-    void getClassValues(int classIdx, int &number, qreal &areaPercent, qreal &avgArea, qreal &avgPerimeter, qreal &l, qreal &g);
+    QString getClassValues(int classIdx) const;
 
 signals:
     void foundContourIndex(const QModelIndex &);
@@ -45,6 +45,7 @@ private:
 
     QVector<qreal> areaVector;
     QVector<qreal> perimeterVector;
+    QVector<qreal> equivalentRadiusVector;//the radius of the circle with the same area
     QVector<int> classIdxVector;//classIdx has the same index of m_classes
 
     /*
@@ -55,6 +56,7 @@ private:
     QVector<qreal> grainAreaPercentageVector;
     QVector<qreal> grainAverageAreaVector;
     QVector<qreal> grainAveragePerimeterVector;
+    QVector<qreal> grainAverageEquivalentRadiusVector;
     QVector<qreal> grainAverageInterceptVector;// = Total Length / Total Intercept
     QVector<qreal> grainSizeLevelVector;//G, calculated by intercept method
 

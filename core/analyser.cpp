@@ -1,10 +1,11 @@
 #include "analyser.h"
 #include <opencv2/imgproc/imgproc.hpp>
 #include <cmath>
+#include <qmath.h>
 #include <QDebug>
 using namespace CAIGA;
 
-const QStringList Analyser::headerLabels = QStringList() << "ID" << "Class" << "Area" << "Perimeter";
+const QStringList Analyser::headerLabels = QStringList() << "ID" << "Class" << "Area" << "Perimeter" << "Radius";
 
 Analyser::Analyser(QObject *parent) :
     QObject(parent)
@@ -32,6 +33,7 @@ void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
     contoursModel->clear();
     areaVector.clear();
     perimeterVector.clear();
+    equivalentRadiusVector.clear();
     classIdxVector.clear();
     contoursModel->setHorizontalHeaderLabels(headerLabels);
     //calculate data
@@ -42,13 +44,23 @@ void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
         areaVector.push_back(area);
         qreal perimeter = calculatePerimeter(id);
         perimeterVector.push_back(perimeter);
+        qreal radius = qSqrt((area / M_PI));//M_PI, which is accurate pi, is defined in <cmath>
+        equivalentRadiusVector.push_back(radius);
+
+        /*
+         * insert number instead of QString by using setData()
+         * otherwise, the sort function would become odd.
+         */
         QStandardItem *idItem = new QStandardItem();
         idItem->setData(QVariant(id + 1), Qt::DisplayRole);
         QStandardItem *areaItem = new QStandardItem();
         areaItem->setData(QVariant(area), Qt::DisplayRole);
         QStandardItem *periItem = new QStandardItem();
         periItem->setData(QVariant(perimeter), Qt::DisplayRole);
-        items << idItem << new QStandardItem(m_classes[0]) << areaItem << periItem;
+        QStandardItem *radiusItem = new QStandardItem();
+        radiusItem->setData(QVariant(radius), Qt::DisplayRole);
+
+        items << idItem << new QStandardItem(m_classes[0]) << areaItem << periItem << radiusItem;
         classIdxVector.push_back(0);
         contoursModel->appendRow(items);
     }
@@ -136,18 +148,13 @@ void Analyser::onClassChanged(const QModelIndex &mIndex, const QString classText
     onModelIndexChanged(mIndex);
 }
 
-void Analyser::getClassValues(int classIdx, int &number, qreal &areaPercent, qreal &avgArea, qreal &avgPerimeter, qreal &l, qreal &g)
+QString Analyser::getClassValues(int classIdx) const
 {
     if (classIdx < 0 || classIdx >= m_classes.size()) {
-        qWarning() << "Error. Class index is out of classes's range.";
-        return;
+        return QString("Error. Class index is out of classes's range.");
     }
-    number = classNumber[classIdx];
-    areaPercent = grainAreaPercentageVector[classIdx];
-    avgArea = grainAverageAreaVector[classIdx];
-    avgPerimeter = grainAveragePerimeterVector[classIdx];
-    l = grainAverageInterceptVector[classIdx];
-    g = grainSizeLevelVector[classIdx];
+    QString info = QString("Count: %1 <br />Percentage: %2 %<br />Average Area: %3 μm<sup>2</sup><br />Average Perimeter: %4 μm<br />Average Radius: %5 μm<br /> Average Intercept: %6 μm<br />Grain Size Level: %7").arg(classNumber.at(classIdx)).arg(grainAreaPercentageVector.at(classIdx) * 100).arg(grainAverageAreaVector.at(classIdx)).arg(grainAveragePerimeterVector.at(classIdx)).arg(grainAverageEquivalentRadiusVector.at(classIdx)).arg(grainAverageInterceptVector.at(classIdx)).arg(grainSizeLevelVector.at(classIdx));
+    return info;
 }
 
 qreal Analyser::calculatePerimeter(int idx)
@@ -201,6 +208,7 @@ void Analyser::calculateClassValues()
     grainAreaPercentageVector.clear();
     grainAverageAreaVector.clear();
     grainAveragePerimeterVector.clear();
+    grainAverageEquivalentRadiusVector.clear();
     grainAverageInterceptVector.clear();
     grainSizeLevelVector.clear();
     for (int i = 0; i < m_classes.size(); ++i) {
@@ -208,6 +216,7 @@ void Analyser::calculateClassValues()
         grainAreaPercentageVector.append(0);
         grainAverageAreaVector.append(0);
         grainAveragePerimeterVector.append(0);
+        grainAverageEquivalentRadiusVector.append(0);
         grainAverageInterceptVector.append(0);
         grainSizeLevelVector.append(0);
     }
@@ -220,6 +229,7 @@ void Analyser::calculateClassValues()
         grainAverageAreaVector[classIdx] += areaVector.at(idx);
         totalArea += areaVector.at(idx);
         grainAveragePerimeterVector[classIdx] += perimeterVector.at(idx);
+        grainAverageEquivalentRadiusVector[classIdx] += equivalentRadiusVector.at(idx);
     }
 
     //calculate the percentage and average value at last
@@ -227,6 +237,7 @@ void Analyser::calculateClassValues()
         grainAreaPercentageVector[ci] = grainAverageAreaVector.at(ci) / totalArea;
         grainAverageAreaVector[ci] /= classNumber.at(ci);
         grainAveragePerimeterVector[ci] /= classNumber.at(ci);
+        grainAverageEquivalentRadiusVector[ci] /= classNumber.at(ci);
     }
 
     //calculate the grain size using intercept method, which is noted in GB/T 6394-2002

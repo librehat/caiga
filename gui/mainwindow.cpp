@@ -549,15 +549,7 @@ void MainWindow::onContourIndexFound(const QModelIndex &i)
 
 void MainWindow::onCurrentClassChanged(int idx)
 {
-    int number;
-    qreal areaPercentage;
-    qreal averageArea;
-    qreal averagePerimeter;
-    qreal intercepts;
-    qreal grainSizeLevel;
-    analyser->getClassValues(idx, number, areaPercentage, averageArea, averagePerimeter, intercepts, grainSizeLevel);
-    QString info = QString("Count: %1 <br />Percentage: %2 %<br />Average Area: %3 μm<sup>2</sup><br />Average Perimeter: %4 μm<br />Average Intercept: %5 μm<br />Grain Size Level: %6").arg(number).arg(areaPercentage * 100).arg(averageArea).arg(averagePerimeter).arg(intercepts).arg(grainSizeLevel);
-    ui->analysisCurrentClassLabel->setText(info);
+    ui->analysisCurrentClassLabel->setText(analyser->getClassValues(idx));
 }
 
 void MainWindow::onCurrentTabChanged(int i)
