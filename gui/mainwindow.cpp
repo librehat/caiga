@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     parametersDlg = NULL;
     watershedDlg = NULL;
     analyser = NULL;
+    reporter = NULL;
 
     ui->ccDrawer->setSpace(&ccSpace);
     ui->rawViewer->setNoScale();
@@ -75,7 +76,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionRedo, &QAction::triggered, &preWorkSpace, &CAIGA::WorkSpace::redo);
 
     //Analysis
+    connect(ui->analysisButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onAnalysisButtonBoxClicked);
 
+    //Information
 
     //MainWindow
     connect(ui->actionOpenFile, &QAction::triggered, this, &MainWindow::addDiskFileDialog);
@@ -101,14 +104,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
     // Qt delete children objects automatically once the parent is deleted
-    /*delete mouseBehaviourMenu;
-    if (parametersDlg != NULL) {
-        delete parametersDlg;
-    }
-    if (watershedDlg != NULL) {
-        delete watershedDlg;
-    }
-    delete analyser;*/
 }
 
 const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version Pre Alpha on "
@@ -141,7 +136,7 @@ const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive 
         + "Unkown compiler"
 #endif
 
-        + "</p><p>Copyright &copy; 2014 <a href='http://www.librehat.com'>William Wong</a> (<a href='mailto:hzwhuang@gmail.com'>hzwhuang@gmail.com</a>) and other contributors.<br /><a href= 'http://smse.seu.edu.cn'>School of Materials Science and Engineering</a>, <a href='http://www.seu.edu.cn'>Southeast University</a>.</p><p>Licensed under <a href='http://en.wikipedia.org/wiki/MIT_License'>The MIT License</a>.<br /></p><p><strong>The software contains third-party libraries and artworks below.</strong><br /><a href='http://opencv.org'>OpenCV</a> licensed under <a href='https://github.com/Itseez/opencv/blob/master/LICENSE'>3-clause BSD License</a><br /><a href='http://www.oxygen-icons.org'>Oxygen Icons</a> licensed under <a href='http://www.gnu.org/licenses/lgpl-3.0.txt'>LGPLv3 License</a><br /></p><div>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</div>";
+        + "</p><p>Copyright &copy; 2014 <a href='http://www.librehat.com'>William Wong</a> (<a href='mailto:hzwhuang@gmail.com'>hzwhuang@gmail.com</a>) and other contributors.<br /><a href= 'http://smse.seu.edu.cn'>School of Materials Science and Engineering</a>, <a href='http://www.seu.edu.cn'>Southeast University</a>.</p><p>Licensed under <a href='http://en.wikipedia.org/wiki/MIT_License'>The MIT License</a>.<br /></p><p><strong>The software contains third-party libraries and artwork below.</strong><br /><a href='http://qcustomplot.com'>QCustomPlot</a> licensed under <a href='http://www.gnu.org/licenses/gpl.html'>GPL</a><br /><a href='http://opencv.org'>OpenCV</a> licensed under <a href='https://github.com/Itseez/opencv/blob/master/LICENSE'>3-clause BSD License</a><br /><a href='http://www.oxygen-icons.org'>Oxygen Icons</a> licensed under <a href='http://www.gnu.org/licenses/lgpl-3.0.txt'>LGPLv3 License</a><br /></p><div>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</div>";
 
 void MainWindow::ccModeChanged(int i)
 {
@@ -552,23 +547,46 @@ void MainWindow::onCurrentClassChanged(int idx)
     ui->analysisCurrentClassLabel->setText(analyser->getClassValues(idx));
 }
 
+void MainWindow::onAnalysisButtonBoxClicked(QAbstractButton *b)
+{
+    if (ui->analysisButtonBox->standardButton(b) == QDialogButtonBox::Reset) {
+        //TODO
+    }
+    else {//save
+        updateInformationBarCharts();
+        ui->imageTabs->setCurrentIndex(4);
+    }
+}
+
+void MainWindow::updateInformationBarCharts()
+{
+    if (reporter != NULL) {
+        delete reporter;
+    }
+    reporter = new Reporter(analyser, this);
+    reporter->setBarChart(ui->infoPlotter);
+}
+
 void MainWindow::onCurrentTabChanged(int i)
 {
+    ui->actionExportImg_As->setEnabled(false);
+    ui->actionQuick_Export->setEnabled(false);
+    ui->ccPixelViewer->setLivePreviewEnabled(false);
+    ui->actionRedo->setEnabled(false);
+    ui->actionUndo->setEnabled(false);
+
     switch (i) {
     case 1://crop and calibre
         ui->ccPixelViewer->setLivePreviewEnabled(true);
-        ui->actionRedo->setEnabled(false);
-        ui->actionUndo->setEnabled(false);
         break;
     case 2://preprocess
-        ui->ccPixelViewer->setLivePreviewEnabled(false);
         ui->actionRedo->setEnabled(true);
         ui->actionUndo->setEnabled(true);
         break;
-    default:
-        ui->ccPixelViewer->setLivePreviewEnabled(false);
-        ui->actionRedo->setEnabled(false);
-        ui->actionUndo->setEnabled(false);
+    case 4:
+        ui->actionExportImg_As->setEnabled(true);
+        ui->actionQuick_Export->setEnabled(true);
+        break;
     }
 }
 

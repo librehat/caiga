@@ -22,6 +22,7 @@
 #include "watershedmarkerdialog.h"
 #include "analyser.h"
 #include "analysisitemdelegate.h"
+#include "reporter.h"
 
 namespace Ui
 {
@@ -92,6 +93,10 @@ private slots:
     //analysis
     void onContourIndexFound(const QModelIndex &);
     void onCurrentClassChanged(int);
+    void onAnalysisButtonBoxClicked(QAbstractButton *);
+
+    //information
+    void updateInformationBarCharts();
 
     //menu and toolbar
     void onCurrentTabChanged(int);
@@ -112,6 +117,7 @@ private:
     WatershedMarkerDialog *watershedDlg;
     CAIGA::Analyser *analyser;
     AnalysisItemDelegate *analysisDelegate;
+    Reporter *reporter;
 
     void handleParametersDialogue(void (MainWindow::*) (int, double, double, bool));
 

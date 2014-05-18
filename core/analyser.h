@@ -22,6 +22,8 @@ public:
     void setMarkers(cv::Mat * const markersMatrix);//setMarkers if the result is obtained by watershed, if markersMatrix is set, then contours won't be used when querying the contour id
     QStandardItemModel *getDataModel();
     QStringList* getClassesList() { return &m_classes; }
+    inline QVector<qreal> *getEquivalentRadii() { return &equivalentRadiusVector; }
+    inline QVector<int> *getClassIndice() { return &classIdxVector; }
     void addClass(const QString &);
     void deleteClass(int classIndex);
     inline void setScaleValue(qreal s) { scaleValue = s; }
