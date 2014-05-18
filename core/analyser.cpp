@@ -13,7 +13,8 @@ Analyser::Analyser(QObject *parent) :
     contoursModel = new QStandardItemModel(0, 4, this);
     m_markerMatrix = NULL;
     scaleValue = 0;
-    currentSelectedIdx = -1;
+    currentSelectedIdx = 0;
+    previousClassIdx = -1;
 }
 
 Analyser::~Analyser()
@@ -106,24 +107,33 @@ void Analyser::findContourHasPoint(const QPoint &pt)
 
 void Analyser::onModelIndexChanged(const QModelIndex &mIdx)
 {
-    if (currentSelectedIdx < 0) {//it means just off initialisation
-        emit currentClassChanged(classIdxVector.at(mIdx.row()));
-    }
-    else if (classIdxVector.at(mIdx.row()) != classIdxVector.at(currentSelectedIdx)) {
-        emit currentClassChanged(classIdxVector.at(mIdx.row()));
-    }
     currentSelectedIdx = mIdx.row();
+    if (classIdxVector.at(currentSelectedIdx) != previousClassIdx) {
+        emit currentClassChanged(classIdxVector.at(currentSelectedIdx));
+    }
+    previousClassIdx = classIdxVector.at(currentSelectedIdx);
 }
 
-void Analyser::onClassChanged(const QModelIndex &mIndex, int classIdx)
+void Analyser::onClassChanged(const QModelIndex &mIndex, const QString classText)
 {
     int idx = mIndex.row();
-    if (classIdx >= m_classes.size() || classIdx < 0) {
-        qWarning() << "Error. Class index to change is out of classes's range.";
-        return;
+    int classIdx = m_classes.indexOf(classText);
+    if (classIdx >= 0) {
+        classIdxVector.replace(idx, classIdx);
+        calculateClassValues();
     }
-    classIdxVector.replace(idx, classIdx);
-    calculateClassValues();
+    else {
+        m_classes << classText;
+        classIdx = m_classes.indexOf(classText);
+        if (classIdx >= 0) {
+            classIdxVector.replace(idx, classIdx);
+            calculateClassValues();
+        }
+        else {
+            qWarning() << "Critical Error. Change class failed. Please report a bug.";
+        }
+    }
+    onModelIndexChanged(mIndex);
 }
 
 void Analyser::getClassValues(int classIdx, int &number, qreal &areaPercent, qreal &avgArea, qreal &avgPerimeter, qreal &l, qreal &g)

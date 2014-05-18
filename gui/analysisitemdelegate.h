@@ -17,7 +17,7 @@ public:
     inline void setClassesList(QStringList *list) { classesList = list; }
 
 signals:
-    void classChanged(const QModelIndex&, int) const;
+    void classChanged(const QModelIndex&, const QString &) const;
 
 private:
     QStringList *classesList;

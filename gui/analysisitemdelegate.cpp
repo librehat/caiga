@@ -1,4 +1,5 @@
 #include <QComboBox>
+#include <QDebug>
 #include "analysisitemdelegate.h"
 
 AnalysisItemDelegate::AnalysisItemDelegate(QObject *parent) :
@@ -18,7 +19,7 @@ QWidget *AnalysisItemDelegate::createEditor(QWidget *parent, const QStyleOptionV
     QComboBox *cb = new QComboBox(parent);
     cb->setEditable(true);
     if (classesList == NULL) {
-        cb->addItem(QString("Base"));
+        qWarning() << "Error. Classes List cannot be NULL.";
     }
     else {
         cb->addItems(*classesList);
@@ -35,16 +36,15 @@ void AnalysisItemDelegate::setEditorData(QWidget *editor, const QModelIndex &ind
         // if it is valid, adjust the combobox
         if(cbIndex >= 0) {
             cb->setCurrentIndex(cbIndex);
-            emit classChanged(index, cbIndex);
+            currentText = cb->currentText();//in case of caseSensitive checking in classesList
         }
         // otherwise, create a new item
         else {
-            classesList->append(currentText);
             cb->addItem(currentText);
-            int newIndex = cb->findText(currentText);
+            int newIndex = cb->findText(currentText, Qt::MatchFixedString);
             cb->setCurrentIndex(newIndex);
-            emit classChanged(index, newIndex);
         }
+        emit classChanged(index, currentText);
     } else {
         QAbstractItemDelegate::setEditorData(editor, index);
     }

@@ -34,11 +34,12 @@ signals:
 public slots:
     void findContourHasPoint(const QPoint &pt);
     void onModelIndexChanged(const QModelIndex &mIdx);
-    void onClassChanged(const QModelIndex &mIndex, int classIdx);
+    void onClassChanged(const QModelIndex &mIndex, const QString classText);
 
 private:
     qreal scaleValue;//pixel / um
     int currentSelectedIdx;
+    int previousClassIdx;
     cv::Mat *m_markerMatrix;
     std::vector<std::vector <cv::Point> > m_contours;
 
