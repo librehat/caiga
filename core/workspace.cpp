@@ -19,6 +19,7 @@ using namespace CAIGA;
 WorkSpace::WorkSpace(QObject *parent) :
     QObject(parent)
 {
+    m_image = NULL;
     connect(&watcher, &QFutureWatcher<void>::started, this, &WorkSpace::onLowLevelWorkStarted);
     connect(&watcher, &QFutureWatcher<void>::finished, this, &WorkSpace::onLowLevelWorkFinished);
     workList.append(new WorkBase);
@@ -51,6 +52,11 @@ void WorkSpace::redo()
 
 void WorkSpace::append(WorkBase *w)
 {
+    //check if the w->src == workList().dst
+    //otherwise change src pointer to avoid crashes later
+    if (w->src != workList.last()->dst) {
+        w->src = workList.last()->dst;
+    }
     workList.append(w);
     this->clearUndoneList();
     emit workFinished();
@@ -114,10 +120,11 @@ void WorkSpace::clearUndoneList()
     }
 }
 
-void WorkSpace::reset(Image &cgimg)
+void WorkSpace::setImage(Image *cgimg)
 {
     this->clear();
-    WorkBase *w = new WorkBase(&cgimg.croppedImage);
+    m_image = cgimg;
+    WorkBase *w = new WorkBase(&cgimg->croppedImage);
     workList.append(w);
     emit workFinished();
 }
@@ -290,7 +297,8 @@ void WorkSpace::newWatershedWork(const QVector<QVector<QPoint> > &markerPts, boo
 
 void WorkSpace::newAutoWatershedWork()
 {
-    WorkBase *w = new WorkAutoWatershed(workList.last()->dst);
+    //note the autoWatershed have to use fisrt workBase
+    WorkBase *w = new WorkAutoWatershed(workList.first()->dst);
     this->newGenericWork(w);
 }
 
@@ -315,7 +323,7 @@ QImage WorkSpace::getLastDisplayImage()
     WorkBase::WorkTypes t = workList.last()->workType;
     if (t == WorkBase::FloodFill || t == WorkBase::AutoWatershed || t == WorkBase::Watershed || t == WorkBase::Contours) {
         cv::Mat colourImg;
-        cv::cvtColor(*workList.last()->src, colourImg, CV_GRAY2BGR);
+        cv::cvtColor(*(workList.last()->src), colourImg, CV_GRAY2BGR);
         if (displayMat.type() != CV_8UC3) {
             cv::cvtColor(displayMat, displayMat, CV_GRAY2BGR);
         }

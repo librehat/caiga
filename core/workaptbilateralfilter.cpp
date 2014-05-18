@@ -1,7 +1,7 @@
 #include "workaptbilateralfilter.h"
 using namespace CAIGA;
 
-WorkAptBilateralFilter::WorkAptBilateralFilter(cv::Mat *s, int k, double space, double colour) : WorkBase(s)
+WorkAptBilateralFilter::WorkAptBilateralFilter(const cv::Mat *s, int k, double space, double colour) : WorkBase(s)
 {
     workType = AptBilateralFilter;
     cvSize = cv::Size(k, k);

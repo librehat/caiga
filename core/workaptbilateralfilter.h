@@ -6,7 +6,7 @@ namespace CAIGA {
 class WorkAptBilateralFilter : public WorkBase
 {
 public:
-    WorkAptBilateralFilter(cv::Mat *s, int k, double space, double colour);
+    WorkAptBilateralFilter(const cv::Mat *s, int k, double space, double colour);
     void Func();
 };
 }

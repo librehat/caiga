@@ -5,7 +5,7 @@ namespace CAIGA {
 class WorkMedianBlur : public WorkBase
 {
 public:
-    WorkMedianBlur(const cv::Mat *const s, int k) : WorkBase(s) { oddSize = k; workType = MedianBlur; }
+    WorkMedianBlur(const cv::Mat *s, int k) : WorkBase(s) { oddSize = k; workType = MedianBlur; }
     void Func();
 };
 }

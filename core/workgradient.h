@@ -8,7 +8,7 @@ namespace CAIGA
 class WorkGradient : public WorkBase
 {
 public:
-    WorkGradient(const cv::Mat *const src, int kSize);
+    WorkGradient(const cv::Mat *src, int kSize);
     void Func();
 };
 }

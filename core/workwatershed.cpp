@@ -1,7 +1,7 @@
 #include "workwatershed.h"
 using namespace CAIGA;
 
-WorkWatershed::WorkWatershed(const cv::Mat * const src, std::vector<std::vector<cv::Point> > m) : WorkBase (src)
+WorkWatershed::WorkWatershed(const cv::Mat *src, std::vector<std::vector<cv::Point> > m) : WorkBase (src)
 {
     workType = Watershed;
     markers = m;

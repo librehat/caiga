@@ -5,7 +5,7 @@ namespace CAIGA {
 class WorkHistEqualise : public WorkBase
 {
 public:
-    WorkHistEqualise(const cv::Mat *const s) : WorkBase(s) { workType = HistEqualise; }
+    WorkHistEqualise(const cv::Mat *s) : WorkBase(s) { workType = HistEqualise; }
     void Func();
 };
 }

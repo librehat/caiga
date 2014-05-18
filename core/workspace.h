@@ -33,7 +33,7 @@ public:
     QList<WorkBase *> takeAll();
     void simplified();
     void clear();
-    void reset(CAIGA::Image &cgimg);//reset and use the cropped image from cgimg
+    void setImage(Image *cgimg);//reset and use the cropped image from cgimg
     void reset(cv::Mat *s);
     void reset();//erase everything except for workList.first()
     inline int count() { return workList.size(); }
@@ -65,6 +65,7 @@ public:
     inline Mat *getLastMatrix() { return workList.last()->dst; }
     inline QImage getLastDstImage() { return Image::convertMat2QImage(*workList.last()->dst); }
     QImage getLastDisplayImage();
+    inline QImage getRawImage() { return m_image->getRawImage(); }
     std::vector<std::vector<cv::Point> > getContours();
     cv::Mat *getMarkerMatrix();
 
@@ -87,6 +88,7 @@ private:
         watcher.setFuture(future);
     }
     cv::Mat displayMat;//used to display on screen
+    CAIGA::Image *m_image;
 
 private slots:
     void onLowLevelWorkStarted();

@@ -7,7 +7,7 @@ namespace CAIGA
 class WorkWatershed : public WorkBase
 {
 public:
-    WorkWatershed(const cv::Mat *const src, std::vector<std::vector<cv::Point> > m);
+    WorkWatershed(const cv::Mat *src, std::vector<std::vector<cv::Point> > m);
     void Func();
 };
 }

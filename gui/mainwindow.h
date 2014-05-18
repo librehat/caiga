@@ -96,7 +96,8 @@ private slots:
     void onAnalysisButtonBoxClicked(QAbstractButton *);
 
     //information
-    void updateInformationBarCharts();
+    void onSplitSpinBoxValueChanged(int);
+    void onSplitButtonClicked();
 
     //menu and toolbar
     void onCurrentTabChanged(int);
@@ -120,6 +121,7 @@ private:
     Reporter *reporter;
 
     void handleParametersDialogue(void (MainWindow::*) (int, double, double, bool));
+    void updateInformationReport(int);
 
     QSettings settings;
     void readConfig();

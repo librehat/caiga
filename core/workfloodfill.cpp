@@ -1,7 +1,7 @@
 #include "workfloodfill.h"
 using namespace CAIGA;
 
-WorkFloodFill::WorkFloodFill(const cv::Mat * const src, double high, double low, bool con8, std::vector<cv::Point> pts) :
+WorkFloodFill::WorkFloodFill(const cv::Mat *src, double high, double low, bool con8, std::vector<cv::Point> pts) :
     WorkBase(src)
 {
     workType = FloodFill;

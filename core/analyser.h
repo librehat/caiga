@@ -28,6 +28,14 @@ public:
     void deleteClass(int classIndex);
     inline void setScaleValue(qreal s) { scaleValue = s; }
     QString getClassValues(int classIdx) const;
+    inline int count() const { return classIdxVector.size(); }
+    inline int classCount() const { return m_classes.size(); }
+
+    //below are functions that get the value at a specified index in type of QString
+    inline QString getClassNameAt(int idx) { return m_classes.at(classIdxVector.at(idx)); }
+    inline QString getAreaAt(int idx) { return QString::number(areaVector.at(idx)); }
+    inline QString getPerimeterAt(int idx) { return QString::number(perimeterVector.at(idx)); }
+    inline QString getRadiusAt(int idx) { return QString::number(equivalentRadiusVector.at(idx)); }
 
 signals:
     void foundContourIndex(const QModelIndex &);

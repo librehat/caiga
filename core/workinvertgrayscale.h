@@ -7,7 +7,7 @@ namespace CAIGA
 class WorkInvertGrayscale : public WorkBase
 {
 public:
-    WorkInvertGrayscale(const cv::Mat *const src) : WorkBase(src) { workType = InvertGrayscale; }
+    WorkInvertGrayscale(const cv::Mat *src) : WorkBase(src) { workType = InvertGrayscale; }
     void Func();
 };
 }

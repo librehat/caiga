@@ -22,14 +22,14 @@ public:
         markerMatrix = NULL;
     }
 
-    WorkBase(const cv::Mat *const s) : src(s) {
+    WorkBase(const cv::Mat *s) : src(s) {
         workType = Raw;
         dst = new cv::Mat(s->clone());
         display = dst;
         markerMatrix = NULL;
     }
 
-    WorkBase(const cv::Mat *const s, cv::Mat *d) : src(s) {
+    WorkBase(const cv::Mat *s, cv::Mat *d) : src(s) {
         workType = Raw;
         dst = new cv::Mat(d->clone());
         display = dst;
@@ -77,7 +77,7 @@ public:
     }
 
     WorkTypes workType;
-    const cv::Mat *const src;//share memory with other WorkBase(s)
+    const cv::Mat *src;//share memory with other WorkBase(s)
     cv::Mat *dst;//to be next work's source Mat
     /*
      * sometimes *display may be the same Mat as *dst

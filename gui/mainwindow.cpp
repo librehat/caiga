@@ -79,6 +79,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->analysisButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onAnalysisButtonBoxClicked);
 
     //Information
+    connect(ui->splitSpinBox, static_cast<void (QSpinBox::*) (int)>(&QSpinBox::valueChanged), this, &MainWindow::onSplitSpinBoxValueChanged);
+    connect(ui->splitOKPushButton,  &QPushButton::clicked, this, &MainWindow::onSplitButtonClicked);
 
     //MainWindow
     connect(ui->actionOpenFile, &QAction::triggered, this, &MainWindow::addDiskFileDialog);
@@ -188,7 +190,7 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
             return;
         }
         ccSpace.cropImage();
-        preWorkSpace.reset(cgimg);
+        preWorkSpace.setImage(&cgimg);
         ui->imageTabs->setCurrentIndex(2);
         onMessagesArrived("Pre-Process the image, then segment it.");
     }
@@ -497,7 +499,7 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
 {
     if (ui->preProcessButtonBox->standardButton(b) == QDialogButtonBox::Reset) {//reset
         //TODO
-        preWorkSpace.reset(cgimg);
+        preWorkSpace.setImage(&cgimg);
     }
     else {//save
         //check if it's eligible
@@ -553,18 +555,30 @@ void MainWindow::onAnalysisButtonBoxClicked(QAbstractButton *b)
         //TODO
     }
     else {//save
-        updateInformationBarCharts();
+        onSplitButtonClicked();
         ui->imageTabs->setCurrentIndex(4);
     }
 }
 
-void MainWindow::updateInformationBarCharts()
+void MainWindow::onSplitSpinBoxValueChanged(int)
+{
+    ui->splitOKPushButton->setEnabled(true);
+}
+
+void MainWindow::onSplitButtonClicked()
+{
+    updateInformationReport(ui->splitSpinBox->value());
+    ui->splitOKPushButton->setEnabled(false);
+}
+
+void MainWindow::updateInformationReport(int split)
 {
     if (reporter != NULL) {
         delete reporter;
     }
-    reporter = new Reporter(analyser, this);
+    reporter = new Reporter(analyser, &preWorkSpace, split, this);
     reporter->setBarChart(ui->infoPlotter);
+    reporter->setTextBrowser(ui->infoTextBrowser);
 }
 
 void MainWindow::onCurrentTabChanged(int i)

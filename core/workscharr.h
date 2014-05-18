@@ -8,7 +8,7 @@ namespace CAIGA
 class WorkScharr : public WorkBase
 {
 public:
-    WorkScharr(const cv::Mat *const src) : WorkBase(src) { workType = Scharr; }
+    WorkScharr(const cv::Mat *src) : WorkBase(src) { workType = Scharr; }
     void Func();
 };
 }

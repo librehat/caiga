@@ -1,7 +1,7 @@
 #include "workgradient.h"
 using namespace CAIGA;
 
-WorkGradient::WorkGradient(const cv::Mat * const src, int kSize) :
+WorkGradient::WorkGradient(const cv::Mat *src, int kSize) :
     WorkBase(src)
 {
     workType = Gradient;

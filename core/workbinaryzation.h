@@ -6,7 +6,7 @@ namespace CAIGA
 class WorkBinaryzation : public WorkBase
 {
 public:
-    WorkBinaryzation(const cv::Mat *const s, int m, int t, int size, double C);
+    WorkBinaryzation(const cv::Mat *s, int m, int t, int size, double C);
     void Func();
 };
 }
