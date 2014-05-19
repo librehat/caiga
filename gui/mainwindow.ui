@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>676</width>
+    <width>674</width>
     <height>620</height>
    </rect>
   </property>
@@ -562,7 +562,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>676</width>
+     <width>674</width>
      <height>22</height>
     </rect>
    </property>
@@ -757,15 +757,15 @@
   </action>
   <action name="actionQuick_Export">
    <property name="icon">
-    <iconset theme="text-plain">
+    <iconset theme="application-pdf">
      <normaloff/>
     </iconset>
    </property>
    <property name="text">
-    <string>Quick Export As Text File</string>
+    <string>Quick Export As PDF</string>
    </property>
    <property name="toolTip">
-    <string>Export information as plain text file using the image's filename as its filename.</string>
+    <string>Export information as PDF using the image's filename as its filename.</string>
    </property>
   </action>
  </widget>

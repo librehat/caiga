@@ -18,15 +18,6 @@ Analyser::Analyser(QObject *parent) :
     previousClassIdx = -1;
 }
 
-Analyser::~Analyser()
-{
-    /* Qt takes care of its child QObject
-    if (contoursModel != NULL) {
-        delete contoursModel;//this will destroy all items
-    }
-    */
-}
-
 void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
 {
     m_contours = contours;

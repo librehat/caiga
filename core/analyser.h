@@ -17,7 +17,7 @@ class CORE_LIB Analyser : public QObject
     Q_OBJECT
 public:
     explicit Analyser(QObject *parent = 0);
-    ~Analyser();
+    ~Analyser() {}
     void setContours(const std::vector<std::vector <cv::Point> > &contours);
     void setMarkers(cv::Mat * const markersMatrix);//setMarkers if the result is obtained by watershed, if markersMatrix is set, then contours won't be used when querying the contour id
     QStandardItemModel *getDataModel();
