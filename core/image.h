@@ -42,7 +42,7 @@ public:
     QImage getRawImage();
     void setRawImage(Mat img);
     void setRawImage(QImage qimg);
-    void setRawImage(const QString &imgfile);
+    void setRawImageByFile(const QString &imgfile);
     Mat getCroppedMatrix();
     QImage getCroppedImage();
     QPixmap getCroppedPixmap();
@@ -59,7 +59,7 @@ public:
     bool isProcessed();
     bool isAnalysed();
 
-    QStringList getInfoList();
+    inline QString getFileName() { return m_filename; }
 
     static Mat makeInCircle(const cv::Mat &rect);
     static QImage convertMat2QImage(const cv::Mat &src);
@@ -73,6 +73,7 @@ private:
     bool m_isCircle;
     qreal m_scale;
 
+    QString m_filename;
     Mat rawImage;//original image
     Mat croppedImage;//preProcess later on take in this image. when isCircle, we use mask to make a circular image and store it in croppedCircularImage
     Mat croppedCircularImage;//when isCircle, return this
@@ -82,12 +83,6 @@ private:
     Mat edgesCircularImage;//return this when isCircle
     Mat processedImage;//image ready to be analysed (shed colour already)
     Mat processedCircularImage;
-
-    /*
-     * analysis data are defined below
-     */
-    QStringList infoList;//information displayed on the info text browser
-
 };
 
 }

@@ -4,6 +4,7 @@ using namespace CAIGA;
 
 Image::Image()
 {
+    m_filename = QString("CAIGA_Image");
     m_isCircle = true;
     m_scale = 0;
 }
@@ -23,7 +24,7 @@ Image::Image(Mat matImg)
 Image::Image(const QString &imgfile)
 {
     Image();
-    setRawImage(imgfile);
+    setRawImageByFile(imgfile);
 }
 
 Image::~Image()
@@ -120,9 +121,10 @@ void Image::setRawImage(QImage qimg)
     rawImage = convertQImage2Mat(qimg, true);
 }
 
-void Image::setRawImage(const QString &imgfile)
+void Image::setRawImageByFile(const QString &imgfile)
 {
     rawImage = cv::imread(imgfile.toStdString(), CV_LOAD_IMAGE_GRAYSCALE);
+    m_filename = imgfile;
 }
 
 void Image::setProcessedImage(Mat img)
@@ -148,16 +150,6 @@ bool Image::isPreProcessed()
 bool Image::isProcessed()
 {
     return !processedImage.empty();
-}
-
-bool Image::isAnalysed()
-{
-    return !infoList.empty();
-}
-
-QStringList Image::getInfoList()
-{
-    return infoList;
 }
 
 Mat Image::makeInCircle(const Mat &rect)

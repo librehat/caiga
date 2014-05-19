@@ -90,7 +90,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionOpenCamera, &QAction::triggered, this, &MainWindow::addCameraImageDialog);
     connect(ui->actionReset, &QAction::triggered, this, &MainWindow::onResetActionTriggered);
     connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::onOptionsActionTriggered);
-    connect(ui->actionExportImg_As, &QAction::triggered, this, &MainWindow::exportImgDialog);
+    connect(ui->actionQuick_Export, &QAction::triggered, this, &MainWindow::onQuickExportTriggered);
+    connect(ui->actionExportImg_As, &QAction::triggered, this, &MainWindow::onInformationExportTriggered);
     connect(ui->actionAbout_Qt, &QAction::triggered, this, &MainWindow::aboutQtDialog);
     connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
     connect(ui->imageTabs, &QTabWidget::currentChanged, this, &MainWindow::onCurrentTabChanged);
@@ -626,7 +627,7 @@ void MainWindow::addDiskFileDialog()
         return;
     }
     setCurrentDirbyFile(filename);
-    cgimg.setRawImage(filename);
+    cgimg.setRawImageByFile(filename);
     ui->rawViewer->setPixmap(cgimg.getRawPixmap());
     ui->ccDrawer->setImage(cgimg.getRawImage());
     ccSpace.setImage(&cgimg);
@@ -655,16 +656,37 @@ void MainWindow::onOptionsActionTriggered()
     optDlg.exec();
 }
 
-void MainWindow::exportImgDialog()//TODO
+void MainWindow::onQuickExportTriggered()
 {
+    QFileInfo imgFile(cgimg.getFileName());
+    QString pdfname = imgFile.canonicalPath() + QString("/") + imgFile.completeBaseName();
+    reporter->exportAsPDF(pdfname);
+}
+
+void MainWindow::onInformationExportTriggered()
+{
+    QString filter;
     QString filename = QFileDialog::getSaveFileName(this,
                        "Export Image Information As",
                        QDir::currentPath(),
-                       "Adobe Portable Document Format (*.pdf);;Open Document File (*.odf);;HTML Document (*.html)");
+                       "Adobe Portable Document Format (*.pdf);;Open Document File (*.odf);;HyperText Markup Language (*.html)", &filter);
     if (filename.isNull()) {
         return;
     }
     setCurrentDirbyFile(filename);
+    if (filter.contains("pdf")) {
+        reporter->exportAsPDF(filename);
+    }
+    else {
+        QByteArray format;
+        if (filter.contains("odf")) {
+            format.append("ODF");
+        }
+        else {
+            format.append("HTML");
+        }
+        reporter->exportAsFormat(filename, format);
+    }
 }
 
 void MainWindow::aboutQtDialog()

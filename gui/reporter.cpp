@@ -1,3 +1,4 @@
+#include <QPrinter>
 #include <opencv2/core/core.hpp>
 #include "reporter.h"
 
@@ -120,8 +121,7 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
     QTextCursor cursor(&textDoc);
     cursor.setBlockFormat(alignCentreBlockFormat());
     cursor.insertBlock(alignCentreBlockFormat(), boldRomanFormat());
-    cursor.insertText("Computer-Aid Interactive Grain Analyser");
-    cursor.insertText("Analysis Report");
+    cursor.insertText("Computer-Aid Interactive Grain Analyser\nAnalysis Report");
     cursor.movePosition(QTextCursor::End);
     cursor.insertHtml("<hr /><br />");
     cursor.movePosition(QTextCursor::End);
@@ -155,13 +155,13 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
     cursor.insertTable(m_analyser->classCount() + 1, 9, tableFormat);
     insertHeaderAndMoveNextCell(&cursor, "Class");
     insertHeaderAndMoveNextCell(&cursor, "Count");
-    insertHeaderAndMoveNextCell(&cursor, "Area Percentage\n(%)");
-    insertHeaderAndMoveNextCell(&cursor, "Area\n(μm^2)");
-    insertHeaderAndMoveNextCell(&cursor, "Perimeter (μm)");
-    insertHeaderAndMoveNextCell(&cursor, "Equivalent Radius\n(μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Area\nPercentage\n(%)");
+    insertHeaderAndMoveNextCell(&cursor, "Area\n\n(μm^2)");
+    insertHeaderAndMoveNextCell(&cursor, "Perimeter\n\n(μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Equivalent\nRadius\n(μm)");
     insertHeaderAndMoveNextCell(&cursor, "Flattening");
-    insertHeaderAndMoveNextCell(&cursor, "Intercept\n(μm)");
-    insertHeaderAndMoveNextCell(&cursor, "Grain Size Level\n(G)");
+    insertHeaderAndMoveNextCell(&cursor, "Intercept\n\n(μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Grain Size\nLevel\n(G)");
     for (int i = 0; i < m_analyser->classCount(); ++i) {
         insertTextAndMoveNextCell(&cursor, m_analyser->getClassesList()->at(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getCountOfClass(i));
@@ -263,4 +263,42 @@ QTextCharFormat Reporter::figureInfoFormat()
     ff.setFontPointSize(9);
     ff.setFontWeight(QFont::DemiBold);
     return ff;
+}
+
+void Reporter::exportAsPDF(QString &filename)
+{
+    QPrinter printer;
+    if (filename.right(4).compare(".pdf", Qt::CaseInsensitive) != 0) {
+        filename.append(".pdf");
+    }
+    printer.setOutputFileName(filename);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+#ifdef __linux__
+    //these functions are only supported on X11
+    printer.setFontEmbeddingEnabled(true);
+    printer.setCreator("Computer-Aid Interactive Grain Analyser");
+#endif
+    printer.setPaperSize(QPrinter::A4);
+    printer.setPageMargins(20, 26, 20, 26, QPrinter::Millimeter);
+    printer.setFullPage(true);
+    textDoc.setPageSize(QSizeF(printer.pageRect().size()));
+    textDoc.print(&printer);
+    emit workStatusStrUpdated("PDF exported as " + filename);
+}
+
+void Reporter::exportAsFormat(QString &filename, const QByteArray &format)
+{
+    QString formatStr = QString(format);
+    formatStr.prepend('.');
+    if (filename.right(4).compare(formatStr, Qt::CaseInsensitive) != 0) {
+        filename.append(formatStr);
+    }
+    QTextDocumentWriter writer(filename, format);
+    bool ok = writer.write(&textDoc);
+    if (ok) {
+        emit workStatusStrUpdated("Exported Successfully.");
+    }
+    else {
+        emit workStatusStrUpdated("Export Failed.");
+    }
 }

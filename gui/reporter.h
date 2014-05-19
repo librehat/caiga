@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTextBrowser>
+#include <QTextDocumentWriter>
 #include "workspace.h"
 #include "analyser.h"
 #include "3rdparty/qcustomplot.h"
@@ -16,6 +17,8 @@ public:
     ~Reporter() {}
     void setBarChart(QCustomPlot *plot);
     void setTextBrowser(QTextBrowser *tb);
+    void exportAsPDF(QString &filename);
+    void exportAsFormat(QString &filename, const QByteArray &format);
 
 signals:
     void workStatusStrUpdated(const QString &);

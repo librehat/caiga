@@ -105,7 +105,8 @@ private slots:
     void addCameraImageDialog();
     void onResetActionTriggered();
     void onOptionsActionTriggered();
-    void exportImgDialog();
+    void onQuickExportTriggered();
+    void onInformationExportTriggered();
     void aboutQtDialog();
     void aboutCAIGADialog();
     void onMessagesArrived(const QString &);
