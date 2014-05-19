@@ -16,6 +16,7 @@ public:
     explicit WatershedMarkerDialog(QWidget *parent = 0);
     ~WatershedMarkerDialog();
     void setPenColour(const QColor &c);
+    inline void setOrignialImage(CAIGA::Image *img) { viewSpace.setImage(img); }//invoke this function before setOriginalMat, otherwise it may fail
     void setOrignialMat(cv::Mat *src);
 
 public slots:

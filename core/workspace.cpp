@@ -120,7 +120,7 @@ void WorkSpace::clearUndoneList()
     }
 }
 
-void WorkSpace::setImage(Image *cgimg)
+void WorkSpace::resetToImage(Image *cgimg)
 {
     this->clear();
     m_image = cgimg;
@@ -330,6 +330,10 @@ QImage WorkSpace::getLastDisplayImage()
         displayMat = colourImg * 0.6 +  displayMat * 0.4;
     }
 
+    //circular?
+    if (m_image->isCircle()) {
+        displayMat = Image::makeInCircle(displayMat);
+    }
     return Image::convertMat2QImage(displayMat);
 }
 

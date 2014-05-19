@@ -2,6 +2,7 @@
 #define REPORTER_H
 
 #include <QObject>
+#include <QTextBrowser>
 #include "workspace.h"
 #include "analyser.h"
 #include "3rdparty/qcustomplot.h"
@@ -21,9 +22,10 @@ signals:
 
 private:
     QCustomPlot *m_plot;
+    QTextBrowser *m_textBrowser;
     CAIGA::Analyser *m_analyser;
     CAIGA::WorkSpace *m_workSpace;
-    QTextDocument *textDoc;
+    QTextDocument textDoc;
     int split;
     qreal maxRadius;
 

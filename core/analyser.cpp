@@ -5,7 +5,7 @@
 #include <QDebug>
 using namespace CAIGA;
 
-const QStringList Analyser::headerLabels = QStringList() << "ID" << "Class" << "Area" << "Perimeter" << "Radius";
+const QStringList Analyser::headerLabels = QStringList() << "ID" << "Class" << "Area" << "Perimeter" << "Radius" << "Flattening";
 
 Analyser::Analyser(QObject *parent) :
     QObject(parent)
@@ -35,6 +35,7 @@ void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
     perimeterVector.clear();
     equivalentRadiusVector.clear();
     classIdxVector.clear();
+    flatteningVector.clear();
     contoursModel->setHorizontalHeaderLabels(headerLabels);
     //calculate data
     int size = static_cast<int>(m_contours.size());
@@ -46,6 +47,8 @@ void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
         perimeterVector.push_back(perimeter);
         qreal radius = qSqrt((area / M_PI));//M_PI, which is accurate pi, is defined in <cmath>
         equivalentRadiusVector.push_back(radius);
+        qreal flatng = calculateFlattening(id);
+        flatteningVector.push_back(flatng);
 
         /*
          * insert number instead of QString by using setData()
@@ -59,8 +62,10 @@ void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
         periItem->setData(QVariant(perimeter), Qt::DisplayRole);
         QStandardItem *radiusItem = new QStandardItem();
         radiusItem->setData(QVariant(radius), Qt::DisplayRole);
+        QStandardItem *flatngItem = new QStandardItem();
+        flatngItem->setData(QVariant(flatng), Qt::DisplayRole);
 
-        items << idItem << new QStandardItem(m_classes[0]) << areaItem << periItem << radiusItem;
+        items << idItem << new QStandardItem(m_classes[0]) << areaItem << periItem << radiusItem << flatngItem;
         classIdxVector.push_back(0);
         contoursModel->appendRow(items);
     }
@@ -153,7 +158,7 @@ QString Analyser::getClassValues(int classIdx) const
     if (classIdx < 0 || classIdx >= m_classes.size()) {
         return QString("Error. Class index is out of classes's range.");
     }
-    QString info = QString("Count: %1 <br />Percentage: %2 %<br />Average Area: %3 μm<sup>2</sup><br />Average Perimeter: %4 μm<br />Average Radius: %5 μm<br /> Average Intercept: %6 μm<br />Grain Size Level: %7").arg(classNumber.at(classIdx)).arg(grainAreaPercentageVector.at(classIdx) * 100).arg(grainAverageAreaVector.at(classIdx)).arg(grainAveragePerimeterVector.at(classIdx)).arg(grainAverageEquivalentRadiusVector.at(classIdx)).arg(grainAverageInterceptVector.at(classIdx)).arg(grainSizeLevelVector.at(classIdx));
+    QString info = QString("Count: %1<br />Percentage: %2%<br />Average Area: %3 μm<sup>2</sup><br />Average Perimeter: %4 μm<br />Average Radius: %5 μm<br />Average Flattening: %6<br />Average Intercept: %7 μm<br />Grain Size Level: %8").arg(classNumber.at(classIdx)).arg(grainAreaPercentageVector.at(classIdx) * 100).arg(grainAverageAreaVector.at(classIdx)).arg(grainAveragePerimeterVector.at(classIdx)).arg(grainAverageEquivalentRadiusVector.at(classIdx)).arg(grainAverageFlatteningVector.at(classIdx)).arg(grainAverageInterceptVector.at(classIdx)).arg(grainSizeLevelVector.at(classIdx));
     return info;
 }
 
@@ -174,29 +179,43 @@ qreal Analyser::calculateContourAreaByPixels(int idx)
         return calculateContourAreaByGreenFormula(idx);
     }
     qreal pixels = 0;
-    for (int i = 0; i < m_markerMatrix->rows; ++i) {
-        for (int j = 0; j < m_markerMatrix->cols; ++j) {
-            int idxVal = m_markerMatrix->at<int>(i, j) - 1;
-            if (idxVal == idx) {
-                ++pixels;//treat every pixel as 1*1 rectangle, then pixels equals to the area
-            }
+    //using STL itreator to get rid of tedious double-for-loop
+    for (cv::MatConstIterator_<int> it = m_markerMatrix->begin<int>(); it != m_markerMatrix->end<int>(); ++it) {
+        if (((*it) - 1) == idx) {
+            ++pixels;//treat every pixel as 1*1 rectangle, then pixels equals to the area
         }
     }
     return (pixels / scaleValue / scaleValue);
+}
+
+qreal Analyser::calculateFlattening(int idx)
+{
+    /*
+     * fit a minimum ellipse
+     * use the ellipse's axes to finish calculation
+     */
+    std::vector<cv::Point> pts = findValuePoints(idx + 1, *m_markerMatrix);
+    cv::RotatedRect ellipse = cv::fitEllipse(pts);
+    float h = ellipse.size.height;
+    float w =ellipse.size.width;
+    qreal delta = qFabs(static_cast<qreal>(h - w));
+    qreal flattening = static_cast<qreal>(h > w ? delta / h : delta / w);//has to be divided by longer axis
+    return flattening;
 }
 
 int Analyser::getBoundaryJointNeighbours(int row, int col)
 {
     //8 neighbours
     QSet<int> neighbours;//because QSet doesn't allow duplicates, the size of neighbours is exactly the grain neighbours number
-    neighbours << (m_markerMatrix->at<int>(row, col - 1) - 1);//west
-    neighbours << (m_markerMatrix->at<int>(row, col + 1) - 1);//east
-    neighbours << (m_markerMatrix->at<int>(row - 1, col) - 1);//north
-    neighbours << (m_markerMatrix->at<int>(row + 1, col) - 1);//south
-    neighbours << (m_markerMatrix->at<int>(row - 1, col + 1) - 1);//northeast
-    neighbours << (m_markerMatrix->at<int>(row - 1, col - 1) - 1);//northwest
-    neighbours << (m_markerMatrix->at<int>(row + 1, col - 1) - 1);//southwest
-    neighbours << (m_markerMatrix->at<int>(row + 1, col + 1) - 1);//southeast
+    neighbours << m_markerMatrix->at<int>(row, col - 1);//west
+    neighbours << m_markerMatrix->at<int>(row, col + 1);//east
+    neighbours << m_markerMatrix->at<int>(row - 1, col);//north
+    neighbours << m_markerMatrix->at<int>(row + 1, col);//south
+    neighbours << m_markerMatrix->at<int>(row - 1, col + 1);//northeast
+    neighbours << m_markerMatrix->at<int>(row - 1, col - 1);//northwest
+    neighbours << m_markerMatrix->at<int>(row + 1, col - 1);//southwest
+    neighbours << m_markerMatrix->at<int>(row + 1, col + 1);//southeast
+    neighbours.remove(-1);//-1 means boundary which doesn't count
 
     return neighbours.size();
 }
@@ -210,16 +229,17 @@ void Analyser::calculateClassValues()
     grainAveragePerimeterVector.clear();
     grainAverageEquivalentRadiusVector.clear();
     grainAverageInterceptVector.clear();
+    grainAverageFlatteningVector.clear();
     grainSizeLevelVector.clear();
-    for (int i = 0; i < m_classes.size(); ++i) {
-        classNumber.append(0);
-        grainAreaPercentageVector.append(0);
-        grainAverageAreaVector.append(0);
-        grainAveragePerimeterVector.append(0);
-        grainAverageEquivalentRadiusVector.append(0);
-        grainAverageInterceptVector.append(0);
-        grainSizeLevelVector.append(0);
-    }
+
+    classNumber.fill(0, m_classes.size());
+    grainAreaPercentageVector.fill(0, m_classes.size());
+    grainAverageAreaVector.fill(0, m_classes.size());
+    grainAveragePerimeterVector.fill(0, m_classes.size());
+    grainAverageEquivalentRadiusVector.fill(0, m_classes.size());
+    grainAverageInterceptVector.fill(0, m_classes.size());
+    grainSizeLevelVector.fill(0, m_classes.size());
+    grainAverageFlatteningVector.fill(0, m_classes.size());
 
     qreal totalArea = 0;
     //sum up area and perimeter first
@@ -230,6 +250,7 @@ void Analyser::calculateClassValues()
         totalArea += areaVector.at(idx);
         grainAveragePerimeterVector[classIdx] += perimeterVector.at(idx);
         grainAverageEquivalentRadiusVector[classIdx] += equivalentRadiusVector.at(idx);
+        grainAverageFlatteningVector[classIdx] += flatteningVector.at(idx);
     }
 
     //calculate the percentage and average value at last
@@ -238,9 +259,10 @@ void Analyser::calculateClassValues()
         grainAverageAreaVector[ci] /= classNumber.at(ci);
         grainAveragePerimeterVector[ci] /= classNumber.at(ci);
         grainAverageEquivalentRadiusVector[ci] /= classNumber.at(ci);
+        grainAverageFlatteningVector[ci] /= classNumber.at(ci);
     }
 
-    //calculate the grain size using intercept method, which is noted in GB/T 6394-2002
+    //calculate the grain size using intercept method, which is noted as a standard way in GB/T 6394-2002
     int perWidth = m_markerMatrix->cols / 6; //need 5 slices vertically. this is the gap. so does the below
     int perHeight = m_markerMatrix->rows / 6;//need 5 slices horizontally.
     int bottom = m_markerMatrix->rows - 2;//margin 2 pos
@@ -306,4 +328,18 @@ void Analyser::calculateClassValues()
         //intercepts length need to be converted to minimeter (divided by 1000)
         grainSizeLevelVector[ci] = (-6.643856 * log10(grainAverageInterceptVector.at(ci) / 1000)) - 3.288 ;
     }
+}
+
+std::vector<cv::Point> Analyser::findValuePoints(int key, const cv::Mat &m)
+{
+    int pos = 0;
+    std::vector<cv::Point> pts;
+    for (cv::MatConstIterator_<int> it = m.begin<int>(); it != m.end<int>(); ++it) {
+        if ((*it) == key) {
+            cv::Point p(pos % m.cols, pos / m.rows);
+            pts.push_back(p);
+        }
+        ++pos;
+    }
+    return pts;
 }

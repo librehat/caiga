@@ -33,7 +33,8 @@ public:
     QList<WorkBase *> takeAll();
     void simplified();
     void clear();
-    void setImage(Image *cgimg);//reset and use the cropped image from cgimg
+    inline void setImage(Image *cgimg) { m_image = cgimg; }
+    void resetToImage(Image *cgimg);//reset and use the cropped image from cgimg
     void reset(cv::Mat *s);
     void reset();//erase everything except for workList.first()
     inline int count() { return workList.size(); }

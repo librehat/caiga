@@ -193,7 +193,7 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
             return;
         }
         ccSpace.cropImage();
-        preWorkSpace.setImage(&cgimg);
+        preWorkSpace.resetToImage(&cgimg);
         ui->imageTabs->setCurrentIndex(2);
         onMessagesArrived("Pre-Process the image, then segment it.");
     }
@@ -260,6 +260,7 @@ void MainWindow::onHistEqualiseButtonClicked()
 void MainWindow::onGradientButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
+    previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
         delete parametersDlg;
     }
@@ -275,6 +276,7 @@ void MainWindow::onGradientParamatersChanged(int kSize, double, double, bool)
 void MainWindow::onBoxFilterButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
+    previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
         delete parametersDlg;
     }
@@ -290,6 +292,7 @@ void MainWindow::onBoxFilterParametersChanged(int kSize, double, double, bool)
 void MainWindow::onAdaptiveBilateralFilterButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
+    previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
         delete parametersDlg;
     }
@@ -305,6 +308,7 @@ void MainWindow::onAdaptiveBilateralFilterParametersChanged(int k, double s, dou
 void MainWindow::onMedianBlurButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
+    previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
         delete parametersDlg;
     }
@@ -320,6 +324,7 @@ void MainWindow::onMedianBlurParametersChanged(int k, double, double, bool)
 void MainWindow::onGaussianBinaryzationButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
+    previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
         delete parametersDlg;
     }
@@ -335,6 +340,7 @@ void MainWindow::onGaussianBinaryzationParametersChanged(int s, double c, double
 void MainWindow::onMedianBinaryzationButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
+    previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
         delete parametersDlg;
     }
@@ -360,6 +366,7 @@ void MainWindow::onEraserDrawFinished(const QVector<QPoint> &pts)
 void MainWindow::onFloodFillButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
+    previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
         delete parametersDlg;
     }
@@ -411,6 +418,7 @@ void MainWindow::onScharrButtonClicked()
 void MainWindow::onCannyButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
+    previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
         delete parametersDlg;
     }
@@ -426,10 +434,12 @@ void MainWindow::onCannyParametersChanged(int aSize, double high, double low, bo
 void MainWindow::onWatershedButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
+    previewSpace.setImage(&cgimg);
     if (watershedDlg != NULL) {
         delete watershedDlg;
     }
     watershedDlg = new WatershedMarkerDialog(this);
+    watershedDlg->setOrignialImage(&cgimg);
     watershedDlg->setOrignialMat(preWorkSpace.getLastMatrix());
     watershedDlg->setPenColour(ui->ccDrawer->getPenColour());
     connect(watershedDlg, &WatershedMarkerDialog::reseted, this, &MainWindow::onPreProcessWorkFinished);
@@ -502,7 +512,7 @@ void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
 {
     if (ui->preProcessButtonBox->standardButton(b) == QDialogButtonBox::Reset) {//reset
         //TODO
-        preWorkSpace.setImage(&cgimg);
+        preWorkSpace.resetToImage(&cgimg);
     }
     else {//save
         //check if it's eligible

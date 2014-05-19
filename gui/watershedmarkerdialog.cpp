@@ -31,13 +31,13 @@ WatershedMarkerDialog::WatershedMarkerDialog(QWidget *parent) :
     connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &WatershedMarkerDialog::handleAccepted);
     connect(ui->autoButton, &QPushButton::clicked, this, &WatershedMarkerDialog::onAutoClicked);
 
-    m_originalMat = new cv::Mat();
+    m_originalMat = NULL;
 }
 
 WatershedMarkerDialog::~WatershedMarkerDialog()
 {
     delete ui;
-    delete m_originalMat;
+    if (m_originalMat != NULL) delete m_originalMat;
 }
 
 void WatershedMarkerDialog::setPenColour(const QColor &c)
@@ -48,7 +48,7 @@ void WatershedMarkerDialog::setPenColour(const QColor &c)
 
 void WatershedMarkerDialog::setOrignialMat(cv::Mat *src)
 {
-    delete m_originalMat;
+    if (m_originalMat != NULL) delete m_originalMat;
     m_originalMat = new cv::Mat(src->clone());
     if (m_originalMat->type() == CV_8UC1) {
         cv::cvtColor(*src, *m_originalMat, CV_GRAY2RGB);

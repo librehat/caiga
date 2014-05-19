@@ -7,17 +7,16 @@ Reporter::Reporter(CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int s
     m_analyser = analyser;
     m_workSpace = workSpace;
     split = s;
-    textDoc = new QTextDocument(this);
 
     tableFormat.setBorderStyle(QTextFrameFormat::BorderStyle_Solid);
     tableFormat.setBorder(1);
     tableFormat.setCellPadding(2);
     tableFormat.setHeaderRowCount(1);
-    tableFormat.setAlignment(Qt::AlignLeft);
+    tableFormat.setAlignment(Qt::AlignCenter);
 
     // register the plot document object (only needed once, no matter how many plots will be in the QTextDocument):
     QCPDocumentObject *iface = new QCPDocumentObject(this);
-    textDoc->documentLayout()->registerHandler(QCPDocumentObject::PlotTextFormat, iface);
+    textDoc.documentLayout()->registerHandler(QCPDocumentObject::PlotTextFormat, iface);
 }
 
 void Reporter::setBarChart(QCustomPlot *plot)
@@ -62,17 +61,20 @@ void Reporter::setBarChart(QCustomPlot *plot)
     }
 
     //setup QCustomPlot x axis and y axis
+    QFont cambriaMath("Cambria Math");
     plot->xAxis->setRange(-maxRadius / split, maxRadius + 2);
     plot->xAxis->setTickLabelType(QCPAxis::ltNumber);
     plot->xAxis->setNumberPrecision(4);
     plot->xAxis->setAutoTicks(false);
     plot->xAxis->setTickVector(xticks);
-    plot->xAxis->setTickLabelRotation(-20);
+    plot->xAxis->setTickLabelRotation(-30);
     plot->xAxis->setTickLength(2);
     plot->xAxis->setSubTickLength(6);
     plot->xAxis->setSubTickCount(1);
     plot->xAxis->grid()->setVisible(false);
     plot->xAxis->setLabel("Equivalent Radii (μm)");
+    plot->xAxis->setLabelFont(cambriaMath);
+    plot->xAxis->setTickLabelFont(cambriaMath);
 
     plot->yAxis->setRange(0, static_cast<double>(maxCountBySlice + 1));
     plot->yAxis->setTickLabelType(QCPAxis::ltNumber);
@@ -80,6 +82,8 @@ void Reporter::setBarChart(QCustomPlot *plot)
     plot->yAxis->setSubTickCount(0);
     plot->yAxis->setTickStep(static_cast<double>(maxCountBySlice > 20 ? 5 : 2));
     plot->yAxis->setLabel("Grain Count");
+    plot->yAxis->setLabelFont(cambriaMath);
+    plot->yAxis->setTickLabelFont(cambriaMath);
 
     //setup data
     for (int i = 0; i < m_analyser->classCount(); ++i) {
@@ -112,17 +116,19 @@ void Reporter::setBarChart(QCustomPlot *plot)
 void Reporter::setTextBrowser(QTextBrowser *tb)
 {
     emit workStatusStrUpdated("Generating report... Please wait......");
-    QTextCursor cursor(textDoc);
+    m_textBrowser = tb;
+    QTextCursor cursor(&textDoc);
     cursor.setBlockFormat(alignCentreBlockFormat());
     cursor.insertBlock(alignCentreBlockFormat(), boldRomanFormat());
-    cursor.insertText("School of Materials Science and Engineering, Southeast University");
+    cursor.insertText("Computer-Aid Interactive Grain Analyser");
+    cursor.insertText("Analysis Report");
     cursor.movePosition(QTextCursor::End);
     cursor.insertHtml("<hr /><br />");
     cursor.movePosition(QTextCursor::End);
 
     //insert the Date
     cursor.insertBlock(alignJustifyBlockFormat(), romanFormat());
-    cursor.insertText("Report was generated at  ");
+    cursor.insertText("Report was generated on  ");
     cursor.insertText(QDateTime::currentDateTime().toString(Qt::DefaultLocaleLongDate));
     cursor.insertHtml("<br /><br />");
     cursor.movePosition(QTextCursor::End);
@@ -139,23 +145,23 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
     cursor.insertText("Figure 2. Segmented Image Result", figureInfoFormat());
     cursor.insertHtml("<br /><br />");
 
-    cursor.insertText(QString(QChar::ObjectReplacementCharacter), QCPDocumentObject::generatePlotFormat(m_plot, 400, 300));
+    cursor.insertText(QString(QChar::ObjectReplacementCharacter), QCPDocumentObject::generatePlotFormat(m_plot, 600, 400));
     cursor.insertHtml("<br />");
-    cursor.insertText("Figure 3. Equivalent Radii Bar Chart", figureInfoFormat());
+    cursor.insertText("Figure 3. Equivalent Radii Histogram", figureInfoFormat());
     cursor.insertHtml("<br /><br />");
     cursor.movePosition(QTextCursor::End);
 
     //insert class information table
-    cursor.insertBlock(alignCentreBlockFormat(), romanFormat());
-    cursor.insertTable(m_analyser->classCount() + 1, 8, tableFormat);
+    cursor.insertTable(m_analyser->classCount() + 1, 9, tableFormat);
     insertHeaderAndMoveNextCell(&cursor, "Class");
     insertHeaderAndMoveNextCell(&cursor, "Count");
-    insertHeaderAndMoveNextCell(&cursor, "Area Percentage (%)");
-    insertHeaderAndMoveNextCell(&cursor, "Area (μm^2)");
+    insertHeaderAndMoveNextCell(&cursor, "Area Percentage\n(%)");
+    insertHeaderAndMoveNextCell(&cursor, "Area\n(μm^2)");
     insertHeaderAndMoveNextCell(&cursor, "Perimeter (μm)");
-    insertHeaderAndMoveNextCell(&cursor, "Equivalent Radius (μm)");
-    insertHeaderAndMoveNextCell(&cursor, "Intercept Length (μm)");
-    insertHeaderAndMoveNextCell(&cursor, "Grain Size Level (G)");
+    insertHeaderAndMoveNextCell(&cursor, "Equivalent Radius\n(μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Flattening");
+    insertHeaderAndMoveNextCell(&cursor, "Intercept\n(μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Grain Size Level\n(G)");
     for (int i = 0; i < m_analyser->classCount(); ++i) {
         insertTextAndMoveNextCell(&cursor, m_analyser->getClassesList()->at(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getCountOfClass(i));
@@ -163,6 +169,7 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgAreaOfClass(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgPerimeterOfClass(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgRadiusOfClass(i));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getAvgFlatteningOfClass(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgInterLengthOfClass(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getSizeLevelOfClass(i));
     }
@@ -173,18 +180,20 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
     cursor.insertHtml("<br /><br />");
 
     //insert the detailed table
-    cursor.insertTable(m_analyser->count() + 1, 5, tableFormat);
+    cursor.insertTable(m_analyser->count() + 1, 6, tableFormat);
     insertHeaderAndMoveNextCell(&cursor, "Index");
     insertHeaderAndMoveNextCell(&cursor, "Class");
-    insertHeaderAndMoveNextCell(&cursor, "Area (μm^2)");
-    insertHeaderAndMoveNextCell(&cursor, "Perimeter (μm)");
-    insertHeaderAndMoveNextCell(&cursor, "Equivalent Radius (μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Area\n(μm^2)");
+    insertHeaderAndMoveNextCell(&cursor, "Perimeter\n(μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Equivalent Radius\n(μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Flattening");
     for (int i = 0; i < m_analyser->count(); ++i) {
         insertTextAndMoveNextCell(&cursor, QString::number(i + 1));
         insertTextAndMoveNextCell(&cursor, m_analyser->getClassNameAt(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getAreaAt(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getPerimeterAt(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getRadiusAt(i));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getFlatteningAt(i));
     }
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock(alignCentreBlockFormat(), romanFormat());
@@ -192,7 +201,7 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
     cursor.insertText("Table 2. Details of each grain", figureInfoFormat());
     cursor.insertHtml("<br />");
 
-    tb->setDocument(textDoc);
+    tb->setDocument(&textDoc);
     emit workStatusStrUpdated("Report Generated.");
 }
 
