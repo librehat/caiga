@@ -193,6 +193,7 @@ qreal Analyser::calculateFlattening(int idx)
     /*
      * fit a minimum ellipse
      * use the ellipse's axes to finish calculation
+     * Flattening: http://en.wikipedia.org/wiki/Flattening
      */
     std::vector<cv::Point> pts = findValuePoints(idx + 1, *m_markerMatrix);
     cv::RotatedRect ellipse = cv::fitEllipse(pts);
