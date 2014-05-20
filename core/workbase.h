@@ -20,6 +20,7 @@ public:
         dst = new cv::Mat();
         display = dst;
         markerMatrix = NULL;
+        inputMarker = NULL;
     }
 
     WorkBase(const cv::Mat *s) : src(s) {
@@ -27,6 +28,7 @@ public:
         dst = new cv::Mat(s->clone());
         display = dst;
         markerMatrix = NULL;
+        inputMarker = NULL;
     }
 
     WorkBase(const cv::Mat *s, cv::Mat *d) : src(s) {
@@ -34,12 +36,14 @@ public:
         dst = new cv::Mat(d->clone());
         display = dst;
         markerMatrix = NULL;
+        inputMarker = NULL;
     }
 
     WorkBase(WorkBase *base) : src(base->src) {
         workType = base->workType;
         dst = new cv::Mat(base->dst->clone());
         display = dst;
+        inputMarker = base->inputMarker;
         oddSize = base->oddSize;
         size = base->size;
         cvSize = base->cvSize;
@@ -79,6 +83,7 @@ public:
     WorkTypes workType;
     const cv::Mat *src;//share memory with other WorkBase(s)
     cv::Mat *dst;//to be next work's source Mat
+    const cv::Mat *inputMarker;//inputMarker is drawed manually and (or) automatically. it's used to watershed and you should not delete it externally during the process.
     /*
      * sometimes *display may be the same Mat as *dst
      * if it's not, commonly seen where there is a mask, handle it carefully.

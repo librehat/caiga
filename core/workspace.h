@@ -28,6 +28,7 @@ public:
     void append(QList<WorkBase *>);//this will also emit workFinished. WARN: this function will manipulate the QList directly, use it with caution!
     void appendAndClone(WorkBase *);//this won't emit workFinished
     void pop() { delete workList.takeLast(); }//pop out the last from worklist
+    inline WorkBase *first() { return workList.first(); }
     inline WorkBase *last() { return workList.last(); }
     inline WorkBase *takeLast() { return workList.takeLast(); }
     QList<WorkBase *> takeAll();
@@ -35,6 +36,7 @@ public:
     void clear();
     inline void setImage(Image *cgimg) { m_image = cgimg; }
     void resetToImage(Image *cgimg);//reset and use the cropped image from cgimg
+    void reset(WorkBase *base);//workSpace won't control the input pointer. instead, it will clone a new one.
     void reset(cv::Mat *s);
     void reset();//erase everything except for workList.first()
     inline int count() { return workList.size(); }
@@ -60,7 +62,7 @@ public:
     void newPencilWork(const QVector<QPoint> &pts, bool white);
     void newPencilWork(const QVector<QPoint> &pts, QColor colour);
     void newEraserWork(const QVector<QPoint> &pts, bool white);
-    void newWatershedWork(const QVector<QVector<QPoint> > &markerPts, bool cont = false);
+    void newWatershedWork(const Mat *input, bool cont = false);
     void newGradientWork(int k, bool cont = false);
     void newScharrWork();
     inline Mat *getLastMatrix() { return workList.last()->dst; }
@@ -73,7 +75,6 @@ public:
 public slots:
     void undo();
     void redo();
-    void newAutoWatershedWork();
 
 private:
     QList<WorkBase *> workList;

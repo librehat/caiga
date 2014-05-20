@@ -16,8 +16,7 @@ public:
     explicit WatershedMarkerDialog(QWidget *parent = 0);
     ~WatershedMarkerDialog();
     void setPenColour(const QColor &c);
-    inline void setOrignialImage(CAIGA::Image *img) { viewSpace.setImage(img); }//invoke this function before setOriginalMat, otherwise it may fail
-    void setOrignialMat(cv::Mat *src);
+    void setOriginalMat(cv::Mat *src);
 
 public slots:
     void updateMarkers();
@@ -26,18 +25,14 @@ public slots:
 
 signals:
     void reseted();
-    void autoMarked();
-    void previewTriggled(const QVector<QVector<QPoint> > &);
-    void accepted(const QVector<QVector<QPoint> > &);
+    void previewTriggered(const cv::Mat *);
+    void accepted();
 
 private:
-    cv::Mat *m_originalMat;
+    cv::Mat rawMat;
     QColor m_colour;
     Ui::WatershedMarkerDialog *ui;
-    QVector<QPoint> pts;
-    QVector<QVector<QPoint> > ptsVec;
-    QVector<QVector<QPoint> > ptsVecUndone;
-    CAIGA::WorkSpace viewSpace;
+    CAIGA::WorkSpace markSpace;
 
 private slots:
     void onAutoClicked();
@@ -45,10 +40,10 @@ private slots:
     void onResetButtonClicked();
     void onUndoButtonClicked();
     void onRedoButtonClicked();
-    inline void onPreviewButtonClicked() { emit previewTriggled(ptsVec); }
+    inline void onPreviewButtonClicked() { emit previewTriggered(markSpace.getLastMatrix()); }
     void onWorkStarted();
     void onWorkFinished();
-    inline void handleAccepted() { emit accepted(ptsVec); }
+    inline void handleAccepted() { emit accepted(); }
 };
 
 #endif // WATERSHEDMARKERDIALOG_H

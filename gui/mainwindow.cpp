@@ -439,13 +439,11 @@ void MainWindow::onWatershedButtonClicked()
     if (watershedDlg != NULL) {
         delete watershedDlg;
     }
-    watershedDlg = new WatershedMarkerDialog(this);
-    watershedDlg->setOrignialImage(&cgimg);
-    watershedDlg->setOrignialMat(preWorkSpace.getLastMatrix());
+    watershedDlg = new WatershedMarkerDialog(this);    
+    watershedDlg->setOriginalMat(preWorkSpace.getLastMatrix());
     watershedDlg->setPenColour(ui->ccDrawer->getPenColour());
     connect(watershedDlg, &WatershedMarkerDialog::reseted, this, &MainWindow::onPreProcessWorkFinished);
-    connect(watershedDlg, &WatershedMarkerDialog::autoMarked, &previewSpace, &CAIGA::WorkSpace::newAutoWatershedWork);
-    connect(watershedDlg, &WatershedMarkerDialog::previewTriggled, this, &MainWindow::onWatershedPreviewed);
+    connect(watershedDlg, &WatershedMarkerDialog::previewTriggered, this, &MainWindow::onWatershedPreviewed);
     connect(watershedDlg, &WatershedMarkerDialog::accepted, this, &MainWindow::onWatershedAccepted);
     connect(watershedDlg, &WatershedMarkerDialog::rejected, this, &MainWindow::onPreParametersRejected);
     connect(&previewSpace, &CAIGA::WorkSpace::workStarted, watershedDlg, &WatershedMarkerDialog::onPreviewStarted);
@@ -455,22 +453,16 @@ void MainWindow::onWatershedButtonClicked()
     watershedDlg->exec();
 }
 
-void MainWindow::onWatershedPreviewed(const QVector<QVector<QPoint> > &pvv)
+void MainWindow::onWatershedPreviewed(const cv::Mat *input)
 {
-    previewSpace.newWatershedWork(pvv);
+    previewSpace.newWatershedWork(input);
 }
 
-void MainWindow::onWatershedAccepted(const QVector<QVector<QPoint> > &pvv)
+void MainWindow::onWatershedAccepted()
 {
     disconnect(&previewSpace, &CAIGA::WorkSpace::workStarted, 0, 0);
     disconnect(&previewSpace, &CAIGA::WorkSpace::workFinished, 0, 0);
-
-    if (previewSpace.getMarkerMatrix() == NULL) {
-        preWorkSpace.newWatershedWork(pvv, true);
-    }
-    else {
-        preWorkSpace.append(previewSpace.takeLast());
-    }
+    preWorkSpace.append(previewSpace.takeLast());
 }
 
 void MainWindow::onPreParametersAccepted()

@@ -81,8 +81,8 @@ private slots:
     void onCannyButtonClicked();
     void onCannyParametersChanged(int, double, double, bool);
     void onWatershedButtonClicked();
-    void onWatershedPreviewed(const QVector<QVector<QPoint> > &);
-    void onWatershedAccepted(const QVector<QVector<QPoint> > &);
+    void onWatershedPreviewed(const Mat *input);
+    void onWatershedAccepted();
     void onPreParametersAccepted();
     void onPreParametersRejected();
     void onContoursButtonClicked();
