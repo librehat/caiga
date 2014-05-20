@@ -2,6 +2,7 @@
 #define WATERSHEDMARKERDIALOG_H
 
 #include <QDialog>
+#include <QMenu>
 #include "workspace.h"
 
 namespace Ui {
@@ -29,6 +30,7 @@ signals:
     void accepted();
 
 private:
+    QMenu *brushMenu;
     cv::Mat rawMat;
     QColor m_colour;
     Ui::WatershedMarkerDialog *ui;
@@ -44,6 +46,8 @@ private slots:
     void onWorkStarted();
     void onWorkFinished();
     inline void handleAccepted() { emit accepted(); }
+    void onBrushPencil();
+    void onBrushEraser();
 };
 
 #endif // WATERSHEDMARKERDIALOG_H

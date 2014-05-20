@@ -17,6 +17,7 @@ public:
     inline void setPenColour(const QColor &pc) { m_penColour = pc; }
     inline bool isWhite() { return m_penColour == QColor(255, 255, 255); }
     void setDrawMode(DRAW_MODE);
+    inline DRAW_MODE getDrawMode() const { return m_drawMode; }
 
 signals:
     void mousePressed(QPoint);

@@ -1,5 +1,5 @@
+#include <QTime>
 #include <QPrinter>
-#include <opencv2/core/core.hpp>
 #include "reporter.h"
 
 Reporter::Reporter(CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int s, QObject *parent) :
@@ -18,6 +18,8 @@ Reporter::Reporter(CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int s
     // register the plot document object (only needed once, no matter how many plots will be in the QTextDocument):
     QCPDocumentObject *iface = new QCPDocumentObject(this);
     textDoc.documentLayout()->registerHandler(QCPDocumentObject::PlotTextFormat, iface);
+    QTime t;
+    qsrand(t.currentTime().msec() + t.currentTime().second() * 1000);
 }
 
 void Reporter::setBarChart(QCustomPlot *plot)
@@ -91,11 +93,11 @@ void Reporter::setBarChart(QCustomPlot *plot)
         QCPBars *bars = new QCPBars(plot->xAxis, plot->yAxis);
         plot->addPlottable(bars);
 
-        int r = static_cast<int>(cv::theRNG().uniform(0, 255));
-        int g = static_cast<int>(cv::theRNG().uniform(0, 255));
-        int b = static_cast<int>(cv::theRNG().uniform(0, 255));
+        int r = qrand() % 255;
+        int g = qrand() % 255;
+        int b = qrand() % 255;
         bars->setPen(QColor(r, g, b));
-        bars->setBrush(QColor(r, g, b, i == 0 ? 80 : 50));
+        bars->setBrush(QColor(r, g, b, 80));
 
         bars->setName(m_analyser->getClassesList()->at(i));
         bars->setData(xticks, grainCounts[i]);

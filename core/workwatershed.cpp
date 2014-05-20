@@ -12,7 +12,16 @@ void WorkWatershed::Func()
     cv::Mat imgColourful;
     cv::cvtColor(*dst, imgColourful, CV_GRAY2BGR);
     cv::Mat temp = inputMarker->clone();
-    cv::findContours(temp, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+
+    //remove those contours whose are are smaller than 5 pixels, which causes fitEllipse failed.
+    std::vector<std::vector<cv::Point> > tempContours;
+    cv::findContours(temp, tempContours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+    for (int i = 0; i < static_cast<int>(tempContours.size()); ++i) {
+        if (cv::contourArea(tempContours[i]) > 5) {
+            contours.push_back(tempContours[i]);
+        }
+    }
+
     if (contours.empty()) {
         qWarning() << "Watershed Aborted. Cannot find contours.";
         return;
@@ -34,22 +43,20 @@ void WorkWatershed::Func()
     cv::watershed(imgColourful, *markerMatrix);
 
     display = new cv::Mat(markerMatrix->size(), CV_8UC3);
-    // paint the watershed image
-    for(int i = 0; i < markerMatrix->rows; ++i) {
-        for(int j = 0; j < markerMatrix->cols; ++j) {
-            int index = markerMatrix->at<int>(i, j);
-            if(index == -1) {//means edges
-                display->at<cv::Vec3b>(i, j) = cv::Vec3b(255, 255, 255);//white line
-                //dst->at<uchar>(i, j) = static_cast<uchar>(255);
-            }
-            else if( index <= 0 || index > compCount ) {//should not get here
-                display->at<cv::Vec3b>(i, j) = cv::Vec3b(0, 0, 0);
-                //dst->at<uchar>(i, j) = static_cast<uchar>(0);
-            }
-            else {//inside a region
-                display->at<cv::Vec3b>(i, j) = colourTab[index - 1];//defined with its idx
-                //dst->at<uchar>(i, j) = static_cast<uchar>(0);
-            }
+    /*
+     * paint the watershed image
+     * using STL-style iterator
+     */
+    cv::MatIterator_<cv::Vec3b> dit = display->begin<cv::Vec3b>();
+    for (cv::MatConstIterator_<int> it = markerMatrix->begin<int>(); it != markerMatrix->end<int>(); ++it, ++dit) {
+        if ((*it) == -1) {//means edges
+            (*dit) = cv::Vec3b(255, 255, 255);//white boundary
+        }
+        else if ((*it) <=0 || (*it) > compCount) {//should not get here
+            (*dit) = cv::Vec3b(0, 0, 0);
+        }
+        else {
+            (*dit) = colourTab[(*it) - 1];//defined with its idx
         }
     }
 }

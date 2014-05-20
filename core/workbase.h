@@ -13,7 +13,7 @@ namespace CAIGA {
 class WorkBase
 {
 public:
-    enum WorkTypes {Raw, AptBilateralFilter, Binaryzation, BoxFilter, Canny, Contours, Eraser, FloodFill, HistEqualise, InvertGrayscale, MedianBlur, Pencil, Watershed, AutoWatershed, Gradient, Scharr};
+    enum WorkTypes {Raw, AptBilateralFilter, Binaryzation, BoxFilter, Canny, Contours, Eraser, FloodFill, HistEqualise, InvertGrayscale, MedianBlur, Pencil, Watershed, Gradient, Scharr};
 
     WorkBase() : src(NULL) {
         workType = Raw;
@@ -54,7 +54,6 @@ public:
         sigmaY = base->sigmaY;
         b = base->b;
         pointVec = base->pointVec;
-        markers = base->markers;
         contours = base->contours;
         markerMatrix = base->markerMatrix;
     }
@@ -101,7 +100,6 @@ public:
     double sigmaY;//sigmaColor in adaptiveBilateralFilter; low_diff in ffill
     bool b;
     std::vector<cv::Point> pointVec;
-    std::vector<std::vector<cv::Point> > markers;
 
     //analysis is based on contours
     std::vector<std::vector<cv::Point> > contours;

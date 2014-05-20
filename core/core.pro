@@ -18,8 +18,7 @@ SOURCES  += image.cpp\
             workgradient.cpp \
             macro.cpp \
             ccspace.cpp \
-    workscharr.cpp \
-    workautowatershed.cpp
+    workscharr.cpp
 
 HEADERS  += image.h \
             core_lib.h \
@@ -41,7 +40,6 @@ HEADERS  += image.h \
             workgradient.h \
             macro.h \
             ccspace.h \
-    workscharr.h \
-    workautowatershed.h
+    workscharr.h
 
 DEFINES  += CORE

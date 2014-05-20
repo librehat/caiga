@@ -11,7 +11,6 @@
 #include "workeraser.h"
 #include "workinvertgrayscale.h"
 #include "workwatershed.h"
-#include "workautowatershed.h"
 #include "workgradient.h"
 #include "workscharr.h"
 using namespace CAIGA;
@@ -310,7 +309,7 @@ QImage WorkSpace::getLastDisplayImage()
 
     //only apply for these operations that lose lots of original image informations
     WorkBase::WorkTypes t = workList.last()->workType;
-    if (t == WorkBase::FloodFill || t == WorkBase::AutoWatershed || t == WorkBase::Watershed || t == WorkBase::Contours) {
+    if (t == WorkBase::FloodFill || t == WorkBase::Watershed || t == WorkBase::Contours) {
         cv::Mat colourImg;
         cv::cvtColor(*(workList.last()->src), colourImg, CV_GRAY2BGR);
         if (displayMat.type() != CV_8UC3) {
