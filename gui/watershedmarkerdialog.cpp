@@ -140,9 +140,7 @@ void WatershedMarkerDialog::updateMarkers()
 {
     cv::cvtColor(*markSpace.first()->src, rawMat, CV_GRAY2BGR);
     cv::Mat *mask = markSpace.getLastMatrix();//remember the markSpace contains only the drawing
-    cv::Mat colorMask;
-    cv::cvtColor(*mask, colorMask, CV_GRAY2BGR);
-    colorMask.copyTo(rawMat, *mask);
+    rawMat.setTo(Scalar(m_colour.blue(), m_colour.green(), m_colour.red()), *mask);//BGR in openCV
     ui->drawer->setImage(CAIGA::Image::convertMat2QImage(rawMat));//we cook our own display image
 }
 
