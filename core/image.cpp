@@ -78,7 +78,7 @@ void Image::setRawImage(Mat img)
     }
 }
 
-void Image::setRawImageFromCamera(QImage qimg)
+void Image::setRawImageFromCamera(const QImage &qimg)
 {
     rawImage = convertQImage2Mat(qimg, true);
     m_filename = QString("CAIGA_") + QDate::currentDate().toString(Qt::DefaultLocaleShortDate);

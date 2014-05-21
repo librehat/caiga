@@ -41,7 +41,7 @@ public:
     QPixmap getRawPixmap();
     QImage getRawImage();
     void setRawImage(Mat img);
-    void setRawImageFromCamera(QImage qimg);
+    void setRawImageFromCamera(const QImage &qimg);
     void setRawImageByFile(const QString &imgfile);
     Mat getCroppedMatrix();
     QImage getCroppedImage();

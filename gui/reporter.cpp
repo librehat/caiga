@@ -147,7 +147,7 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
     cursor.insertText("Figure 2. Segmented Image Result", figureInfoFormat());
     cursor.insertHtml("<br /><br />");
 
-    cursor.insertText(QString(QChar::ObjectReplacementCharacter), QCPDocumentObject::generatePlotFormat(m_plot, 600, 400));
+    cursor.insertText(QString(QChar::ObjectReplacementCharacter), QCPDocumentObject::generatePlotFormat(m_plot, 500, 600));
     cursor.insertHtml("<br />");
     cursor.insertText("Figure 3. Equivalent Radii Histogram", figureInfoFormat());
     cursor.insertHtml("<br /><br />");
