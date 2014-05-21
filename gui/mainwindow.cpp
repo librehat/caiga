@@ -386,17 +386,6 @@ void MainWindow::onFloodFillButtonClicked()
     parametersDlg->exec();
 }
 
-void MainWindow::onFloodFillParametersChanged(int, double h, double l, bool c8)
-{
-    previewSpace.setFloodFillWorkParameters(h, l, c8);
-}
-
-void MainWindow::onFloodFillMouseClicked(QPoint p)
-{
-    floodfillPts.append(p);
-    previewSpace.newFloodFillWork(floodfillPts);
-}
-
 void MainWindow::onFloodFillAccepted()
 {
     this->onPreParametersAccepted();
@@ -411,11 +400,6 @@ void MainWindow::onFloodFillRejected()
     floodfillPts.clear();
 }
 
-void MainWindow::onScharrButtonClicked()
-{
-    preWorkSpace.newScharrWork();
-}
-
 void MainWindow::onCannyButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
@@ -427,11 +411,6 @@ void MainWindow::onCannyButtonClicked()
     handleParametersDialogue(&MainWindow::onCannyParametersChanged);
 }
 
-void MainWindow::onCannyParametersChanged(int aSize, double high, double low, bool l2)
-{
-    previewSpace.newCannyWork(aSize, high, low, l2);
-}
-
 void MainWindow::onWatershedButtonClicked()
 {
     previewSpace.reset(preWorkSpace.getLastMatrix());
@@ -439,8 +418,13 @@ void MainWindow::onWatershedButtonClicked()
     if (watershedDlg != NULL) {
         delete watershedDlg;
     }
-    watershedDlg = new WatershedMarkerDialog(this);    
-    watershedDlg->setOriginalMat(preWorkSpace.getLastMatrix());
+    watershedDlg = new WatershedMarkerDialog(this);
+    if (preWorkSpace.last()->workType == WorkBase::Watershed) {
+        watershedDlg->setOriginalMat(preWorkSpace.last()->src, preWorkSpace.last()->dst);
+    }
+    else {
+        watershedDlg->setOriginalMat(preWorkSpace.getLastMatrix());
+    }
     watershedDlg->setPenColour(ui->ccDrawer->getPenColour());
     connect(watershedDlg, &WatershedMarkerDialog::reseted, this, &MainWindow::onPreProcessWorkFinished);
     connect(watershedDlg, &WatershedMarkerDialog::previewTriggered, this, &MainWindow::onWatershedPreviewed);
@@ -451,11 +435,6 @@ void MainWindow::onWatershedButtonClicked()
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
     watershedDlg->show();
     watershedDlg->exec();
-}
-
-void MainWindow::onWatershedPreviewed(const cv::Mat *input)
-{
-    previewSpace.newWatershedWork(input);
 }
 
 void MainWindow::onWatershedAccepted()
@@ -477,11 +456,6 @@ void MainWindow::onPreParametersRejected()
     disconnect(&previewSpace, &CAIGA::WorkSpace::workStarted, 0, 0);
     disconnect(&previewSpace, &CAIGA::WorkSpace::workFinished, 0, 0);
     this->onPreProcessWorkFinished();
-}
-
-void MainWindow::onContoursButtonClicked()
-{
-    preWorkSpace.newContoursWork();
 }
 
 void MainWindow::handleParametersDialogue(void (MainWindow::*paraChangedSlot)(int, double, double, bool))
@@ -628,7 +602,7 @@ void MainWindow::addDiskFileDialog()
     this->onReportAvailable(false);
 }
 
-void MainWindow::addCameraImageDialog()//TODO camera image should be involved with SQLite
+void MainWindow::addCameraImageDialog()
 {
     CameraDialog camDlg(this);
     connect(&camDlg, &CameraDialog::imageAccepted, this, &MainWindow::onCameraImageAccepted);
@@ -693,16 +667,6 @@ void MainWindow::onInformationExportTriggered()
         }
         reporter->exportAsFormat(filename, format);
     }
-}
-
-void MainWindow::aboutQtDialog()
-{
-    QMessageBox::aboutQt(this);
-}
-
-void MainWindow::aboutCAIGADialog()
-{
-    QMessageBox::about(this, "About CAIGA", aboutText);
 }
 
 void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, const QString &colour)

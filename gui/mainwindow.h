@@ -73,19 +73,19 @@ private slots:
     void onMedianBinaryzationButtonClicked();
     void onMedianBinaryzationParametersChanged(int, double, double, bool);
     void onFloodFillButtonClicked();
-    void onFloodFillParametersChanged(int, double, double, bool);
-    void onFloodFillMouseClicked(QPoint);
+    inline void onFloodFillParametersChanged(int, double h, double l, bool c8) { previewSpace.setFloodFillWorkParameters(h, l, c8); }
+    inline void onFloodFillMouseClicked(QPoint p) { floodfillPts.append(p); previewSpace.newFloodFillWork(floodfillPts); }
     void onFloodFillAccepted();
     void onFloodFillRejected();
-    void onScharrButtonClicked();
+    inline void onScharrButtonClicked() { preWorkSpace.newScharrWork(); }
     void onCannyButtonClicked();
-    void onCannyParametersChanged(int, double, double, bool);
+    inline void onCannyParametersChanged(int aSize, double high, double low, bool l2) { previewSpace.newCannyWork(aSize, high, low, l2); }
     void onWatershedButtonClicked();
-    void onWatershedPreviewed(const Mat *input);
+    inline void onWatershedPreviewed(const Mat *input) { previewSpace.newWatershedWork(input); }
     void onWatershedAccepted();
     void onPreParametersAccepted();
     void onPreParametersRejected();
-    void onContoursButtonClicked();
+    inline void onContoursButtonClicked() { preWorkSpace.newContoursWork(); }
     void onPreviewWorkFinished();
     void onPreProcessWorkFinished();
     void onPreProcessButtonBoxClicked(QAbstractButton *);
@@ -109,8 +109,8 @@ private slots:
     void onOptionsActionTriggered();
     void onQuickExportTriggered();
     void onInformationExportTriggered();
-    void aboutQtDialog();
-    void aboutCAIGADialog();
+    inline void aboutQtDialog() { QMessageBox::aboutQt(this); }
+    inline void aboutCAIGADialog() { QMessageBox::about(this, "About CAIGA", aboutText); }
     void onMessagesArrived(const QString &);
     void updateOptions(int, int, int, const QString &);
 
