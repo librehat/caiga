@@ -22,19 +22,22 @@ void CCSpace::cropImage()
         qWarning() << "Abort. Image pointer is NULL.";
         return;
     }
+    cv::Point tl, br;
+    cv::Rect enclosingRect;
     if(getIsCircle()) {
-        cv::Point tl(circleCentre.x() - circleRadius, circleCentre.y() - circleRadius);
-        cv::Point br(circleCentre.x() + circleRadius, circleCentre.y() + circleRadius);
-        cv::Rect enclosingRect(tl, br);
-        m_image->croppedImage = m_image->rawImage(enclosingRect).clone();
-        m_image->croppedCircularImage = Image::makeInCircle(m_image->croppedImage);
+        tl.x = circleCentre.x() - circleRadius;
+        tl.y = circleCentre.y() - circleRadius;
+        br.x = circleCentre.x() + circleRadius;
+        br.y = circleCentre.y() + circleRadius;
     }
     else {
-        cv::Point tl(qrect.topLeft().x(), qrect.topLeft().y());
-        cv::Point br(qrect.bottomRight().x(), qrect.bottomRight().y());
-        cv::Rect rect(tl, br);
-        m_image->croppedImage = m_image->rawImage(rect).clone();
+        tl.x = qrect.topLeft().x();
+        tl.y = qrect.topLeft().y();
+        br.x = qrect.bottomRight().x();
+        br.y = qrect.bottomRight().y();
     }
+    enclosingRect = cv::Rect(tl, br);
+    m_image->croppedImage = m_image->rawImage(enclosingRect).clone();
 }
 
 void CCSpace::reset()

@@ -36,28 +36,23 @@ public:
     Image(QImage img);
     Image(Mat matImg);
     Image(const QString &imgfile);
-    ~Image();
+    ~Image() {}
     Mat getRawMatrix();
     QPixmap getRawPixmap();
     QImage getRawImage();
     void setRawImage(Mat img);
-    void setRawImage(QImage qimg);
+    void setRawImageFromCamera(QImage qimg);
     void setRawImageByFile(const QString &imgfile);
     Mat getCroppedMatrix();
     QImage getCroppedImage();
     QPixmap getCroppedPixmap();
-    QImage getPreProcessedImage();
-    QPixmap getPreProcessedPixmap();
     QImage getProcessedImage();
     QPixmap getProcessedPixmap();
     void setProcessedImage(Mat img);
     inline bool isCircle() { return m_isCircle; }
     inline qreal getScaleValue() { return m_scale; }
     bool isCropped();
-    bool isPreProcessed();
-    bool hasEdges();
     bool isProcessed();
-    bool isAnalysed();
 
     inline QString getFileName() { return m_filename; }
 
@@ -73,16 +68,10 @@ private:
     bool m_isCircle;
     qreal m_scale;// pixel/um
 
-    QString m_filename;
+    QString m_filename;//if it's from camera, then it'll use a default name.
     Mat rawImage;//original image
-    Mat croppedImage;//preProcess later on take in this image. when isCircle, we use mask to make a circular image and store it in croppedCircularImage
-    Mat croppedCircularImage;//when isCircle, return this
-    Mat preprocessedImage;//pre-processed image. same thing here
-    Mat preprocessedCircularImage;//return this when isCircle
-    Mat edgesImage;//same thing here.
-    Mat edgesCircularImage;//return this when isCircle
-    Mat processedImage;//image ready to be analysed (shed colour already)
-    Mat processedCircularImage;
+    Mat croppedImage;//process later on take in this image.
+    Mat processedImage;//image ready to be analysed (segmented and painted already)
 };
 
 }

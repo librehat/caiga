@@ -6,7 +6,6 @@ using namespace CAIGA;
 Macro::Macro(QObject *parent) :
     QObject(parent)
 {
-    m_space = NULL;
     m_ccSpace = NULL;
 }
 
@@ -118,9 +117,4 @@ void Macro::saveCropAndCalibreAsMacroFile(const QString &f)
     arrayToBeWritten.append(QString::number(m_ccSpace->getScaleValue()));
     arrayToBeWritten.append('\n');
     macroFile.write(arrayToBeWritten);
-}
-
-void Macro::doWorkMacroFromFile(const QString &)
-{
-    //TODO
 }

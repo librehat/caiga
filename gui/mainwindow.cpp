@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "cameradialog.h"
 #include "optionsdialog.h"
 #include "qimageinteractivedrawer.h"
 #include "macro.h"
@@ -18,7 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QDir::setCurrent(settings.value("CurrentDir").toString());
 
-    //ParametersDialog settings
+    //initialise pointers
+    cameraDlg = NULL;
     parametersDlg = NULL;
     watershedDlg = NULL;
     analyser = NULL;
@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->ccDrawer->setSpace(&ccSpace);
     ui->rawViewer->setNoScale();
-    //preProcess tab button menu
+    //processTab button menu
     mouseBehaviourMenu = new QMenu(this);
     mouseBehaviourMenu->addAction("Normal Arrow", this, SLOT(onMouseNormalArrow()));
     mouseBehaviourMenu->addAction("White Pencil", this, SLOT(onMouseWhitePencil()));
@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->ccSaveMacroButton, &QPushButton::clicked, this, &MainWindow::onCCSaveMacroButtonClicked);
     connect(ui->ccButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onCCButtonBoxClicked);
 
-    //preProcessTab
+    //processTab
     connect(ui->invertGrayscaleButton, &QPushButton::clicked, this, &MainWindow::onInvertGrayscaleButtonClicked);
     connect(ui->histEqualiseButton, &QPushButton::clicked, this, &MainWindow::onHistEqualiseButtonClicked);
     connect(ui->gradientButton, &QPushButton::clicked, this, &MainWindow::onGradientButtonClicked);
@@ -74,7 +74,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->cannyButton, &QPushButton::clicked, this, &MainWindow::onCannyButtonClicked);
     connect(ui->watershedButton, &QPushButton::clicked, this, &MainWindow::onWatershedButtonClicked);
     connect(ui->contoursButton, &QPushButton::clicked, this, &MainWindow::onContoursButtonClicked);
-    connect(ui->preProcessButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onPreProcessButtonBoxClicked);
+    connect(ui->processButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onProcessButtonBoxClicked);
     connect(ui->actionUndo, &QAction::triggered, &preWorkSpace, &CAIGA::WorkSpace::undo);
     connect(ui->actionRedo, &QAction::triggered, &preWorkSpace, &CAIGA::WorkSpace::redo);
 
@@ -97,7 +97,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->imageTabs, &QTabWidget::currentChanged, this, &MainWindow::onCurrentTabChanged);
     connect(this, &MainWindow::messageArrived, this, &MainWindow::onMessagesArrived);
 
-    connect(&preWorkSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreProcessWorkFinished);
+    connect(&preWorkSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onProcessWorkFinished);
     connect(&preWorkSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
     connect(&previewSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
 
@@ -142,7 +142,7 @@ const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive 
         + "Unkown compiler"
 #endif
 
-        + "</p><p>Copyright &copy; 2014 <a href='http://www.librehat.com'>William Wong</a> (<a href='mailto:hzwhuang@gmail.com'>hzwhuang@gmail.com</a>) and other contributors.<br /><a href= 'http://smse.seu.edu.cn'>School of Materials Science and Engineering</a>, <a href='http://www.seu.edu.cn'>Southeast University</a>.</p><p>Licensed under <a href='http://en.wikipedia.org/wiki/MIT_License'>The MIT License</a>.<br /></p><p><strong>The software contains third-party libraries and artwork below.</strong><br /><a href='http://qcustomplot.com'>QCustomPlot</a> licensed under <a href='http://www.gnu.org/licenses/gpl.html'>GPL</a><br /><a href='http://opencv.org'>OpenCV</a> licensed under <a href='https://github.com/Itseez/opencv/blob/master/LICENSE'>3-clause BSD License</a><br /><a href='http://www.oxygen-icons.org'>Oxygen Icons</a> licensed under <a href='http://www.gnu.org/licenses/lgpl-3.0.txt'>LGPLv3 License</a><br /></p><div>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</div>";
+        + "</p><p>Copyright &copy; 2014 <a href='http://www.librehat.com'>William Wong</a> (<a href='mailto:hzwhuang@gmail.com'>hzwhuang@gmail.com</a>) and other contributors.<br /><a href= 'http://smse.seu.edu.cn'>School of Materials Science and Engineering</a>, <a href='http://www.seu.edu.cn'>Southeast University</a>.</p><p>Licensed under <a href='http://www.gnu.org/licenses/gpl-3.0.html'>GPLv3</a>.<br /></p><p><strong>The software contains third-party libraries and artwork below.</strong><br /><a href='http://qcustomplot.com'>QCustomPlot</a> licensed under <a href='http://www.gnu.org/licenses/gpl.html'>GPL</a><br /><a href='http://opencv.org'>OpenCV</a> licensed under <a href='https://github.com/Itseez/opencv/blob/master/LICENSE'>3-clause BSD License</a><br /><a href='http://www.oxygen-icons.org'>Oxygen Icons</a> licensed under <a href='http://www.gnu.org/licenses/lgpl-3.0.txt'>LGPLv3</a><br /></p><div>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</div>";
 
 void MainWindow::ccModeChanged(int i)
 {
@@ -203,49 +203,49 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
 void MainWindow::onMouseNormalArrow()
 {
     ui->mouseBehaviourButton->setText("Normal Arrow");
-    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::NONE);
-    disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
+    ui->processDrawer->setDrawMode(QImageInteractiveDrawer::NONE);
+    disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
 }
 
 void MainWindow::onMouseWhitePencil()
 {
-    disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
+    disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
     ui->mouseBehaviourButton->setText("White Pencil");
-    ui->preProcessDrawer->setWhite();
-    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::PENCIL);
-    connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onPencilDrawFinished);
+    ui->processDrawer->setWhite();
+    ui->processDrawer->setDrawMode(QImageInteractiveDrawer::PENCIL);
+    connect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onPencilDrawFinished);
 }
 
 void MainWindow::onMouseBlackPencil()
 {
-    disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
+    disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
     ui->mouseBehaviourButton->setText("Black Pencil");
-    ui->preProcessDrawer->setWhite(false);
-    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::PENCIL);
-    connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onPencilDrawFinished);
+    ui->processDrawer->setWhite(false);
+    ui->processDrawer->setDrawMode(QImageInteractiveDrawer::PENCIL);
+    connect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onPencilDrawFinished);
 }
 
 void MainWindow::onMouseWhiteEraser()
 {
-    disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
+    disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
     ui->mouseBehaviourButton->setText("White Eraser");
-    ui->preProcessDrawer->setWhite();
-    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::ERASER);
-    connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onEraserDrawFinished);
+    ui->processDrawer->setWhite();
+    ui->processDrawer->setDrawMode(QImageInteractiveDrawer::ERASER);
+    connect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onEraserDrawFinished);
 }
 
 void MainWindow::onMouseBlackEraser()
 {
-    disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
+    disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
     ui->mouseBehaviourButton->setText("Black Eraser");
-    ui->preProcessDrawer->setWhite(false);
-    ui->preProcessDrawer->setDrawMode(QImageInteractiveDrawer::ERASER);
-    connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onEraserDrawFinished);
+    ui->processDrawer->setWhite(false);
+    ui->processDrawer->setDrawMode(QImageInteractiveDrawer::ERASER);
+    connect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onEraserDrawFinished);
 }
 
 void MainWindow::onPreviewWorkFinished()
 {
-    ui->preProcessDrawer->setImage(previewSpace.getLastDisplayImage());
+    ui->processDrawer->setImage(previewSpace.getLastDisplayImage());
 }
 
 void MainWindow::onInvertGrayscaleButtonClicked()
@@ -356,12 +356,12 @@ void MainWindow::onMedianBinaryzationParametersChanged(int s, double c, double, 
 
 void MainWindow::onPencilDrawFinished(const QVector<QPoint> &pts)
 {
-    preWorkSpace.newPencilWork(pts, ui->preProcessDrawer->isWhite());
+    preWorkSpace.newPencilWork(pts, ui->processDrawer->isWhite());
 }
 
 void MainWindow::onEraserDrawFinished(const QVector<QPoint> &pts)
 {
-    preWorkSpace.newEraserWork(pts, ui->preProcessDrawer->isWhite());
+    preWorkSpace.newEraserWork(pts, ui->processDrawer->isWhite());
 }
 
 void MainWindow::onFloodFillButtonClicked()
@@ -380,7 +380,7 @@ void MainWindow::onFloodFillButtonClicked()
     connect(parametersDlg, &ParametersDialog::accepted, this, &MainWindow::onFloodFillAccepted);
     connect(parametersDlg, &ParametersDialog::rejected, this, &MainWindow::onFloodFillRejected);
     connect(parametersDlg, &ParametersDialog::resetButtonClicked, &previewSpace, static_cast<void (CAIGA::WorkSpace::*) (void)>(&CAIGA::WorkSpace::reset));
-    connect(ui->preProcessDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
+    connect(ui->processDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
     parametersDlg->setModal(false);
     parametersDlg->show();
     parametersDlg->exec();
@@ -388,15 +388,15 @@ void MainWindow::onFloodFillButtonClicked()
 
 void MainWindow::onFloodFillAccepted()
 {
-    this->onPreParametersAccepted();
-    disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
+    this->onParametersAccepted();
+    disconnect(ui->processDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
     floodfillPts.clear();
 }
 
 void MainWindow::onFloodFillRejected()
 {
-    this->onPreParametersRejected();
-    disconnect(ui->preProcessDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
+    this->onParametersRejected();
+    disconnect(ui->processDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
     floodfillPts.clear();
 }
 
@@ -426,10 +426,10 @@ void MainWindow::onWatershedButtonClicked()
         watershedDlg->setOriginalMat(preWorkSpace.getLastMatrix());
     }
     watershedDlg->setPenColour(ui->ccDrawer->getPenColour());
-    connect(watershedDlg, &WatershedMarkerDialog::reseted, this, &MainWindow::onPreProcessWorkFinished);
+    connect(watershedDlg, &WatershedMarkerDialog::reseted, this, &MainWindow::onProcessWorkFinished);
     connect(watershedDlg, &WatershedMarkerDialog::previewTriggered, this, &MainWindow::onWatershedPreviewed);
     connect(watershedDlg, &WatershedMarkerDialog::accepted, this, &MainWindow::onWatershedAccepted);
-    connect(watershedDlg, &WatershedMarkerDialog::rejected, this, &MainWindow::onPreParametersRejected);
+    connect(watershedDlg, &WatershedMarkerDialog::rejected, this, &MainWindow::onParametersRejected);
     connect(&previewSpace, &CAIGA::WorkSpace::workStarted, watershedDlg, &WatershedMarkerDialog::onPreviewStarted);
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, watershedDlg, &WatershedMarkerDialog::onPreviewFinished);
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
@@ -444,18 +444,18 @@ void MainWindow::onWatershedAccepted()
     preWorkSpace.append(previewSpace.takeLast());
 }
 
-void MainWindow::onPreParametersAccepted()
+void MainWindow::onParametersAccepted()
 {
     disconnect(&previewSpace, &CAIGA::WorkSpace::workStarted, 0, 0);
     disconnect(&previewSpace, &CAIGA::WorkSpace::workFinished, 0, 0);
     preWorkSpace.append(previewSpace.takeLast());
 }
 
-void MainWindow::onPreParametersRejected()
+void MainWindow::onParametersRejected()
 {
     disconnect(&previewSpace, &CAIGA::WorkSpace::workStarted, 0, 0);
     disconnect(&previewSpace, &CAIGA::WorkSpace::workFinished, 0, 0);
-    this->onPreProcessWorkFinished();
+    this->onProcessWorkFinished();
 }
 
 void MainWindow::handleParametersDialogue(void (MainWindow::*paraChangedSlot)(int, double, double, bool))
@@ -464,20 +464,20 @@ void MainWindow::handleParametersDialogue(void (MainWindow::*paraChangedSlot)(in
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, parametersDlg, &ParametersDialog::handleWorkFinished);
     connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
     connect(parametersDlg, &ParametersDialog::parametersChanged, this, paraChangedSlot);
-    connect(parametersDlg, &ParametersDialog::accepted, this, &MainWindow::onPreParametersAccepted);
-    connect(parametersDlg, &ParametersDialog::rejected, this, &MainWindow::onPreParametersRejected);
+    connect(parametersDlg, &ParametersDialog::accepted, this, &MainWindow::onParametersAccepted);
+    connect(parametersDlg, &ParametersDialog::rejected, this, &MainWindow::onParametersRejected);
     parametersDlg->show();
     parametersDlg->exec();
 }
 
-void MainWindow::onPreProcessWorkFinished()
+void MainWindow::onProcessWorkFinished()
 {
-    ui->preProcessDrawer->setImage(preWorkSpace.getLastDisplayImage());
+    ui->processDrawer->setImage(preWorkSpace.getLastDisplayImage());
 }
 
-void MainWindow::onPreProcessButtonBoxClicked(QAbstractButton *b)
+void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
 {
-    if (ui->preProcessButtonBox->standardButton(b) == QDialogButtonBox::Reset) {//reset
+    if (ui->processButtonBox->standardButton(b) == QDialogButtonBox::Reset) {//reset
         //TODO
         preWorkSpace.resetToImage(&cgimg);
     }
@@ -579,7 +579,7 @@ void MainWindow::onCurrentTabChanged(int i)
     case 1://crop and calibre
         ui->ccPixelViewer->setLivePreviewEnabled(true);
         break;
-    case 2://preprocess
+    case 2://process
         ui->actionRedo->setEnabled(true);
         ui->actionUndo->setEnabled(true);
         break;
@@ -604,15 +604,18 @@ void MainWindow::addDiskFileDialog()
 
 void MainWindow::addCameraImageDialog()
 {
-    CameraDialog camDlg(this);
-    connect(&camDlg, &CameraDialog::imageAccepted, this, &MainWindow::onCameraImageAccepted);
-    camDlg.show();
-    camDlg.exec();
+    if (cameraDlg != NULL) {
+        delete cameraDlg;
+    }
+    cameraDlg = new CameraDialog(this);
+    connect(cameraDlg, &CameraDialog::imageAccepted, this, &MainWindow::onCameraImageAccepted);
+    cameraDlg->show();
+    cameraDlg->exec();
 }
 
 void MainWindow::onCameraImageAccepted(const QImage &img)
 {
-    cgimg.setRawImage(img);
+    cgimg.setRawImageFromCamera(img);
     ui->rawViewer->setPixmap(cgimg.getRawPixmap());
     ui->ccDrawer->setImage(cgimg.getRawImage());
     ccSpace.setImage(&cgimg);
@@ -624,7 +627,7 @@ void MainWindow::onResetActionTriggered()
 {
     ui->ccDrawer->reset();
     ui->imageTabs->setCurrentIndex(0);
-    ui->preProcessDrawer->setImage(QImage());
+    ui->processDrawer->setImage(QImage());
     preWorkSpace.clear();
     previewSpace.clear();
 }

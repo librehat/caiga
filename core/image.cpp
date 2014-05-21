@@ -1,4 +1,5 @@
-#include <QFuture>
+#include <QDate>
+#include <QTime>
 #include "image.h"
 using namespace CAIGA;
 
@@ -12,7 +13,7 @@ Image::Image()
 Image::Image(QImage img)
 {
     Image();
-    setRawImage(img);
+    setRawImageFromCamera(img);
 }
 
 Image::Image(Mat matImg)
@@ -25,11 +26,6 @@ Image::Image(const QString &imgfile)
 {
     Image();
     setRawImageByFile(imgfile);
-}
-
-Image::~Image()
-{
-    //NOTHING
 }
 
 Mat Image::getRawMatrix()
@@ -49,31 +45,12 @@ QImage Image::getRawImage()
 
 QImage Image::getCroppedImage()
 {
-    if (isCircle()) {
-        return convertMat2QImage(croppedCircularImage);
-    }
-    else
-        return convertMat2QImage(croppedImage);
-}
-
-QImage Image::getPreProcessedImage()
-{
-    if (isCircle()) {
-        preprocessedCircularImage = makeInCircle(preprocessedImage);
-        return convertMat2QImage(preprocessedCircularImage);
-    }
-    else
-        return convertMat2QImage(preprocessedImage);
+    return convertMat2QImage(croppedImage);
 }
 
 QImage Image::getProcessedImage()
 {
-    if (isCircle()) {
-        processedCircularImage = makeInCircle(processedImage);
-        return convertMat2QImage(processedCircularImage);
-    }
-    else
-        return convertMat2QImage(processedImage);
+    return convertMat2QImage(processedImage);
 }
 
 QPixmap Image::getRawPixmap()
@@ -83,32 +60,12 @@ QPixmap Image::getRawPixmap()
 
 QPixmap Image::getCroppedPixmap()
 {
-    if (isCircle()) {
-        return convertMat2QPixmap(croppedCircularImage);
-    }
-    else {
-        return convertMat2QPixmap(croppedImage);
-    }
-}
-
-QPixmap Image::getPreProcessedPixmap()
-{
-    if (isCircle()) {
-        preprocessedCircularImage = makeInCircle(preprocessedImage);
-        return convertMat2QPixmap(preprocessedCircularImage);
-    }
-    else
-        return convertMat2QPixmap(preprocessedImage);
+    return convertMat2QPixmap(croppedImage);
 }
 
 QPixmap Image::getProcessedPixmap()
 {
-    if (isCircle()) {
-        processedCircularImage = makeInCircle(processedImage);
-        return convertMat2QPixmap(processedCircularImage);
-    }
-    else
-        return convertMat2QPixmap(processedImage);
+    return convertMat2QPixmap(processedImage);
 }
 
 void Image::setRawImage(Mat img)
@@ -121,9 +78,10 @@ void Image::setRawImage(Mat img)
     }
 }
 
-void Image::setRawImage(QImage qimg)
+void Image::setRawImageFromCamera(QImage qimg)
 {
     rawImage = convertQImage2Mat(qimg, true);
+    m_filename = QString("CAIGA_") + QDate::currentDate().toString(Qt::DefaultLocaleShortDate);
 }
 
 void Image::setRawImageByFile(const QString &imgfile)
@@ -140,16 +98,6 @@ void Image::setProcessedImage(Mat img)
 bool Image::isCropped()
 {
     return !croppedImage.empty();
-}
-
-bool Image::hasEdges()
-{
-    return !edgesImage.empty();
-}
-
-bool Image::isPreProcessed()
-{
-    return !preprocessedImage.empty();
 }
 
 bool Image::isProcessed()
@@ -224,9 +172,9 @@ Mat Image::convertQImage2Mat(const QImage &qimg, bool indexed)
         }
         return to.clone();
     case QImage::Format_RGB888:
-        to = Mat(swapped.height(), swapped.width(), CV_8UC3, const_cast<uchar *>(swapped.bits()), swapped.bytesPerLine()).clone();
+        to = Mat(swapped.height(), swapped.width(), CV_8UC3, const_cast<uchar *>(swapped.bits()), swapped.bytesPerLine());
         if (indexed) {
-            cvtColor(to, temp, CV_RGB2GRAY);//FIXME: not sure about this conversion
+            cvtColor(to, temp, CV_BGR2GRAY);
             temp.convertTo(to, CV_8UC1);
         }
         return to.clone();
