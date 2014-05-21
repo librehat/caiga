@@ -22,6 +22,7 @@ public:
 
 signals:
     void workStatusStrUpdated(const QString &);
+    void reportAvailable(bool);
 
 private:
     QCustomPlot *m_plot;

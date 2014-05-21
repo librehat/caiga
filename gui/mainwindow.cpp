@@ -577,12 +577,19 @@ void MainWindow::onSplitButtonClicked()
     ui->splitOKPushButton->setEnabled(false);
 }
 
+void MainWindow::onReportAvailable(bool a)
+{
+    ui->actionExportImg_As->setEnabled(a);
+    ui->actionQuick_Export->setEnabled(a);
+}
+
 void MainWindow::updateInformationReport(int split)
 {
     if (reporter != NULL) {
         delete reporter;
     }
     reporter = new Reporter(analyser, &preWorkSpace, split, this);
+    connect(reporter, &Reporter::reportAvailable, this, &MainWindow::onReportAvailable);
     connect(reporter, &Reporter::workStatusStrUpdated, this, &MainWindow::onMessagesArrived);
     reporter->setBarChart(ui->infoPlotter);
     reporter->setTextBrowser(ui->infoTextBrowser);
@@ -590,8 +597,6 @@ void MainWindow::updateInformationReport(int split)
 
 void MainWindow::onCurrentTabChanged(int i)
 {
-    ui->actionExportImg_As->setEnabled(false);
-    ui->actionQuick_Export->setEnabled(false);
     ui->ccPixelViewer->setLivePreviewEnabled(false);
     ui->actionRedo->setEnabled(false);
     ui->actionUndo->setEnabled(false);
@@ -603,10 +608,6 @@ void MainWindow::onCurrentTabChanged(int i)
     case 2://preprocess
         ui->actionRedo->setEnabled(true);
         ui->actionUndo->setEnabled(true);
-        break;
-    case 4:
-        ui->actionExportImg_As->setEnabled(true);
-        ui->actionQuick_Export->setEnabled(true);
         break;
     }
 }
@@ -624,12 +625,25 @@ void MainWindow::addDiskFileDialog()
     ui->ccDrawer->setImage(cgimg.getRawImage());
     ccSpace.setImage(&cgimg);
     ui->imageTabs->setCurrentIndex(0);
+    this->onReportAvailable(false);
 }
 
 void MainWindow::addCameraImageDialog()//TODO camera image should be involved with SQLite
 {
     CameraDialog camDlg(this);
+    connect(&camDlg, &CameraDialog::imageAccepted, this, &MainWindow::onCameraImageAccepted);
+    camDlg.show();
     camDlg.exec();
+}
+
+void MainWindow::onCameraImageAccepted(const QImage &img)
+{
+    cgimg.setRawImage(img);
+    ui->rawViewer->setPixmap(cgimg.getRawPixmap());
+    ui->ccDrawer->setImage(cgimg.getRawImage());
+    ccSpace.setImage(&cgimg);
+    ui->imageTabs->setCurrentIndex(0);
+    this->onReportAvailable(false);
 }
 
 void MainWindow::onResetActionTriggered()

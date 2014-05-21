@@ -26,14 +26,19 @@ public:
     explicit CameraDialog(QWidget *parent = 0);
     ~CameraDialog();
 
+signals:
+    void imageAccepted(const QImage &);
+
 private slots:
     void updateCameraDevice(int camId);
     void setCamera(const QByteArray &cameraDevice);
     void takePicture();
-    void displayCapturedImage(int, const QImage &img);
+    void onImageCaptured(int, const QImage &img);
 
     void displaycameraError();
     void displaycaptureError(int, QCameraImageCapture::Error, const QString &err);
+
+    inline void handleAccepted() { emit imageAccepted(capturedImage); }
 
 private:
     Ui::CameraDialog *ui;

@@ -98,11 +98,13 @@ private slots:
     //information
     void onSplitSpinBoxValueChanged(int);
     void onSplitButtonClicked();
+    void onReportAvailable(bool);
 
     //menu and toolbar
     void onCurrentTabChanged(int);
     void addDiskFileDialog();
     void addCameraImageDialog();
+    void onCameraImageAccepted(const QImage &);
     void onResetActionTriggered();
     void onOptionsActionTriggered();
     void onQuickExportTriggered();
@@ -127,6 +129,7 @@ private:
     QSettings settings;
     void readConfig();
     void setCurrentDirbyFile(QString &);
+
     CAIGA::Image cgimg;
     CAIGA::CCSpace ccSpace;
     CAIGA::WorkSpace preWorkSpace;

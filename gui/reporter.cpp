@@ -205,6 +205,7 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
 
     tb->setDocument(&textDoc);
     emit workStatusStrUpdated("Report Generated.");
+    emit reportAvailable(true);
 }
 
 QTextBlockFormat Reporter::alignCentreBlockFormat()

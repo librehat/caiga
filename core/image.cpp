@@ -113,7 +113,12 @@ QPixmap Image::getProcessedPixmap()
 
 void Image::setRawImage(Mat img)
 {
-    rawImage = img;
+    if (img.type() == CV_8UC3) {
+        cvtColor(img, rawImage, CV_BGR2GRAY);
+    }
+    else {
+        rawImage = img.clone();
+    }
 }
 
 void Image::setRawImage(QImage qimg)

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>674</width>
+    <width>672</width>
     <height>620</height>
    </rect>
   </property>
@@ -562,7 +562,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>674</width>
+     <width>672</width>
      <height>22</height>
     </rect>
    </property>
@@ -746,6 +746,9 @@
    </property>
   </action>
   <action name="actionExportImg_As">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="document-export">
      <normaloff/>
@@ -756,6 +759,9 @@
    </property>
   </action>
   <action name="actionQuick_Export">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset theme="application-pdf">
      <normaloff/>

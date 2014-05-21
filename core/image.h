@@ -71,7 +71,7 @@ public:
 
 private:
     bool m_isCircle;
-    qreal m_scale;
+    qreal m_scale;// pixel/um
 
     QString m_filename;
     Mat rawImage;//original image
