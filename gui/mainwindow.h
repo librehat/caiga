@@ -18,6 +18,7 @@
 #include "image.h"
 #include "ccspace.h"
 #include "workspace.h"
+#include "cameradialog.h"
 #include "parametersdialog.h"
 #include "watershedmarkerdialog.h"
 #include "analyser.h"
@@ -50,7 +51,7 @@ private slots:
     void onCCSaveMacroButtonClicked();
     void onCCButtonBoxClicked(QAbstractButton *);
 
-    //preProcess
+    //process
     void onMouseNormalArrow();
     void onMouseWhitePencil();
     void onMouseBlackPencil();
@@ -83,12 +84,12 @@ private slots:
     void onWatershedButtonClicked();
     inline void onWatershedPreviewed(const Mat *input) { previewSpace.newWatershedWork(input); }
     void onWatershedAccepted();
-    void onPreParametersAccepted();
-    void onPreParametersRejected();
+    void onParametersAccepted();
+    void onParametersRejected();
     inline void onContoursButtonClicked() { preWorkSpace.newContoursWork(); }
     void onPreviewWorkFinished();
-    void onPreProcessWorkFinished();
-    void onPreProcessButtonBoxClicked(QAbstractButton *);
+    void onProcessWorkFinished();
+    void onProcessButtonBoxClicked(QAbstractButton *);
 
     //analysis
     void onContourIndexFound(const QModelIndex &);
@@ -117,6 +118,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QMenu *mouseBehaviourMenu;
+    CameraDialog *cameraDlg;
     ParametersDialog *parametersDlg;
     WatershedMarkerDialog *watershedDlg;
     CAIGA::Analyser *analyser;

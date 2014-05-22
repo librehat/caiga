@@ -1,3 +1,0 @@
-Check TODO in each file.
-
-Design caigap structure (SQLite).

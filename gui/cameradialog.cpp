@@ -58,7 +58,9 @@ void CameraDialog::setCamera(const QByteArray &cameraDevice)
     connect(camera, static_cast<void (QCamera::*) (QCamera::Error)>(&QCamera::error), this, &CameraDialog::displaycameraError);
 
     imageCapture = new QCameraImageCapture(camera, this);
-    imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToFile);
+    //imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToFile);
+    imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
+    imageCapture->setBufferFormat(QVideoFrame::Format_RGB32);
     connect(imageCapture, &QCameraImageCapture::imageCaptured, this, &CameraDialog::onImageCaptured);
     connect(imageCapture, static_cast<void (QCameraImageCapture::*) (int, QCameraImageCapture::Error, const QString&)>(&QCameraImageCapture::error), this, &CameraDialog::displaycaptureError);
     camera->start();
@@ -74,6 +76,7 @@ void CameraDialog::takePicture()
 void CameraDialog::onImageCaptured(int, const QImage &img)
 {
     capturedImage = img;
+    capturedImage.detach();
     ui->viewLabel->setPixmap(QPixmap::fromImage(img).scaled(ui->viewLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
