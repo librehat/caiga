@@ -547,6 +547,7 @@ void MainWindow::onSplitSpinBoxValueChanged(int)
 
 void MainWindow::onSplitButtonClicked()
 {
+    ui->infoTextBrowser->clear();
     updateInformationReport(ui->splitSpinBox->value());
     ui->splitOKPushButton->setEnabled(false);
 }
@@ -559,6 +560,7 @@ void MainWindow::onReportAvailable(bool a)
 
 void MainWindow::updateInformationReport(int split)
 {
+    onReportAvailable(false);
     if (reporter != NULL) {
         delete reporter;
     }

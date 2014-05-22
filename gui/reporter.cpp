@@ -28,12 +28,8 @@ void Reporter::setBarChart(QCustomPlot *plot)
     plot->clearPlottables();
     QVector<double> xticks;
 
-    //find the biggest radius at first
-    QVector<qreal> radii = *m_analyser->getEquivalentRadii();
-    maxRadius = 0;
-    for (QVector<qreal>::iterator it = radii.begin(); it != radii.end(); ++it) {
-        maxRadius = std::max((*it), maxRadius);
-    }
+    //find the biggest diameter at first
+    maxRadius = m_analyser->getMaximumDiameter();
 
     QMap<int, QVector<double> > grainCounts;
     //initialise the QMap and its QVector values
@@ -46,18 +42,17 @@ void Reporter::setBarChart(QCustomPlot *plot)
     xticks.prepend(maxRadius);
     for (int slice = split - 1; slice >= 0; --slice) {
         int count = 0;
-        double sectionMin = maxRadius / split * slice;
+        qreal sectionMin = maxRadius / split * slice;
+        qreal sectionMax = maxRadius / split * (slice + 1);
         xticks.prepend(sectionMin);
 
         //search every radius
-        for (int idx = 0; idx < radii.size();) {
-            if (radii.at(idx) > sectionMin) {
-                radii.removeAt(idx);//remove it so it won't be used as duplicate next time
-                ++grainCounts[m_analyser->getClassIndice()->at(idx)][slice];//thankfully, Qt initialise the int and double as 0
-                ++count;
-            }
-            else {
-                ++idx;
+        for (int cid = 0; cid < m_analyser->classCount(); ++cid) {
+            for (QMap<int, CAIGA::Object>::iterator it = m_analyser->classObjMap[cid].rObjects().begin(); it != m_analyser->classObjMap[cid].rObjects().end(); ++it) {
+                if (it->diameter() > sectionMin && it->diameter() <= sectionMax) {
+                    ++grainCounts[cid][slice];//thankfully, Qt initialise the int and double as 0
+                    ++count;
+                }
             }
         }
         maxCountBySlice = std::max(count, maxCountBySlice);
@@ -75,7 +70,7 @@ void Reporter::setBarChart(QCustomPlot *plot)
     plot->xAxis->setSubTickLength(6);
     plot->xAxis->setSubTickCount(1);
     plot->xAxis->grid()->setVisible(false);
-    plot->xAxis->setLabel("Equivalent Radii (μm)");
+    plot->xAxis->setLabel("Diameter (μm)");
     plot->xAxis->setLabelFont(cambriaMath);
     plot->xAxis->setTickLabelFont(cambriaMath);
 
@@ -84,7 +79,7 @@ void Reporter::setBarChart(QCustomPlot *plot)
     plot->yAxis->setAutoSubTicks(false);
     plot->yAxis->setSubTickCount(0);
     plot->yAxis->setTickStep(static_cast<double>(maxCountBySlice > 20 ? 5 : 2));
-    plot->yAxis->setLabel("Grain Count");
+    plot->yAxis->setLabel("Count");
     plot->yAxis->setLabelFont(cambriaMath);
     plot->yAxis->setTickLabelFont(cambriaMath);
 
@@ -149,7 +144,7 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
 
     cursor.insertText(QString(QChar::ObjectReplacementCharacter), QCPDocumentObject::generatePlotFormat(m_plot, 600, 400));
     cursor.insertHtml("<br />");
-    cursor.insertText("Figure 3. Equivalent Radii Histogram", figureInfoFormat());
+    cursor.insertText("Figure 3. Diameter Histogram", figureInfoFormat());
     cursor.insertHtml("<br /><br />");
     cursor.movePosition(QTextCursor::End);
 
@@ -160,7 +155,7 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
     insertHeaderAndMoveNextCell(&cursor, "Area\nPercentage\n(%)");
     insertHeaderAndMoveNextCell(&cursor, "Area\n\n(μm^2)");
     insertHeaderAndMoveNextCell(&cursor, "Perimeter\n\n(μm)");
-    insertHeaderAndMoveNextCell(&cursor, "Equivalent\nRadius\n(μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Diameter\n\n(μm)");
     insertHeaderAndMoveNextCell(&cursor, "Flattening");
     insertHeaderAndMoveNextCell(&cursor, "Intercept\n\n(μm)");
     insertHeaderAndMoveNextCell(&cursor, "Grain Size\nLevel\n(G)");
@@ -170,7 +165,7 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgPercentOfClass(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgAreaOfClass(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgPerimeterOfClass(i));
-        insertTextAndMoveNextCell(&cursor, m_analyser->getAvgRadiusOfClass(i));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getAvgDiameterOfClass(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgFlatteningOfClass(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgInterLengthOfClass(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getSizeLevelOfClass(i));
@@ -187,20 +182,20 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
     insertHeaderAndMoveNextCell(&cursor, "Class");
     insertHeaderAndMoveNextCell(&cursor, "Area\n(μm^2)");
     insertHeaderAndMoveNextCell(&cursor, "Perimeter\n(μm)");
-    insertHeaderAndMoveNextCell(&cursor, "Equivalent Radius\n(μm)");
+    insertHeaderAndMoveNextCell(&cursor, "Diameter\n(μm)");
     insertHeaderAndMoveNextCell(&cursor, "Flattening");
     for (int i = 0; i < m_analyser->count(); ++i) {
         insertTextAndMoveNextCell(&cursor, QString::number(i + 1));
         insertTextAndMoveNextCell(&cursor, m_analyser->getClassNameAt(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getAreaAt(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getPerimeterAt(i));
-        insertTextAndMoveNextCell(&cursor, m_analyser->getRadiusAt(i));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getDiameterAt(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getFlatteningAt(i));
     }
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock(alignCentreBlockFormat(), romanFormat());
     cursor.insertHtml("<br />");
-    cursor.insertText("Table 2. Details of each grain", figureInfoFormat());
+    cursor.insertText("Table 2. Details of each object", figureInfoFormat());
     cursor.insertHtml("<br />");
 
     tb->setDocument(&textDoc);

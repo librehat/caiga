@@ -5,7 +5,7 @@
 #include <QDebug>
 using namespace CAIGA;
 
-const QStringList Analyser::headerLabels = QStringList() << "ID" << "Class" << "Area" << "Perimeter" << "Radius" << "Flattening";
+const QStringList Analyser::headerLabels = QStringList() << "ID" << "Class" << "Area" << "Perimeter" << "Diameter" << "Flattening";
 
 Analyser::Analyser(QObject *parent) :
     QObject(parent)
@@ -22,24 +22,22 @@ void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
 {
     m_contours = contours;
     contoursModel->clear();
-    areaVector.clear();
-    perimeterVector.clear();
-    equivalentRadiusVector.clear();
-    classIdxVector.clear();
-    flatteningVector.clear();
+    classObjMap.clear();
     contoursModel->setHorizontalHeaderLabels(headerLabels);
     //calculate data
+    updateBoundaryMap();
+    ClassObject base;
     int size = static_cast<int>(m_contours.size());
     for (int id = 0; id < size; ++id) {
         QList<QStandardItem *> items;
         qreal area = calculateContourAreaByPixels(id);
-        areaVector.push_back(area);
         qreal perimeter = calculatePerimeter(id);
-        perimeterVector.push_back(perimeter);
-        qreal radius = qSqrt((area / M_PI));//M_PI, which is accurate pi, is defined in <cmath>
-        equivalentRadiusVector.push_back(radius);
+        qreal diameter = qSqrt((area / M_PI));//M_PI, which is accurate pi, is defined in <cmath>
         qreal flatng = calculateFlattening(id);
-        flatteningVector.push_back(flatng);
+        bool boundary = determineIsBoundary(id);
+
+        Object obj(boundary, area, perimeter, diameter, flatng);
+        base.insert(id, obj);
 
         /*
          * insert number instead of QString by using setData()
@@ -51,15 +49,15 @@ void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
         areaItem->setData(QVariant(area), Qt::DisplayRole);
         QStandardItem *periItem = new QStandardItem();
         periItem->setData(QVariant(perimeter), Qt::DisplayRole);
-        QStandardItem *radiusItem = new QStandardItem();
-        radiusItem->setData(QVariant(radius), Qt::DisplayRole);
+        QStandardItem *diameterItem = new QStandardItem();
+        diameterItem->setData(QVariant(diameter), Qt::DisplayRole);
         QStandardItem *flatngItem = new QStandardItem();
         flatngItem->setData(QVariant(flatng), Qt::DisplayRole);
 
-        items << idItem << new QStandardItem(m_classes[0]) << areaItem << periItem << radiusItem << flatngItem;
-        classIdxVector.push_back(0);
+        items << idItem << new QStandardItem(m_classes[0]) << areaItem << periItem << diameterItem << flatngItem;
         contoursModel->appendRow(items);
     }
+    classObjMap[0] = base;
     calculateClassValues();
 }
 
@@ -116,10 +114,10 @@ void Analyser::findContourHasPoint(const QPoint &pt)
 void Analyser::onModelIndexChanged(const QModelIndex &mIdx)
 {
     currentSelectedIdx = mIdx.row();
-    if (classIdxVector.at(currentSelectedIdx) != previousClassIdx) {
-        emit currentClassChanged(classIdxVector.at(currentSelectedIdx));
+    if (classIndexOfObject(currentSelectedIdx) != previousClassIdx) {
+        emit currentClassChanged(classIndexOfObject(currentSelectedIdx));
     }
-    previousClassIdx = classIdxVector.at(currentSelectedIdx);
+    previousClassIdx = classIndexOfObject(currentSelectedIdx);
 }
 
 void Analyser::onClassChanged(const QModelIndex &mIndex, const QString classText)
@@ -127,14 +125,16 @@ void Analyser::onClassChanged(const QModelIndex &mIndex, const QString classText
     int idx = mIndex.row();
     int classIdx = m_classes.indexOf(classText);
     if (classIdx >= 0) {
-        classIdxVector.replace(idx, classIdx);
+        int oldCIdx = classIndexOfObject(idx);
+        classObjMap[classIdx].insert(idx, classObjMap[oldCIdx].takeAt(idx));
         calculateClassValues();
     }
     else {
         m_classes << classText;
         classIdx = m_classes.indexOf(classText);
         if (classIdx >= 0) {
-            classIdxVector.replace(idx, classIdx);
+            int oldCIdx = classIndexOfObject(idx);
+            classObjMap[classIdx].insert(idx, classObjMap[oldCIdx].takeAt(idx));
             calculateClassValues();
         }
         else {
@@ -144,13 +144,50 @@ void Analyser::onClassChanged(const QModelIndex &mIndex, const QString classText
     onModelIndexChanged(mIndex);
 }
 
-QString Analyser::getClassValues(int classIdx) const
+QString Analyser::getClassValues(int classIdx)
 {
     if (classIdx < 0 || classIdx >= m_classes.size()) {
         return QString("Error. Class index is out of classes's range.");
     }
-    QString info = QString("Count: %1<br />Percentage: %2%<br />Average Area: %3 μm<sup>2</sup><br />Average Perimeter: %4 μm<br />Average Radius: %5 μm<br />Average Flattening: %6<br />Average Intercept: %7 μm<br />Grain Size Level: %8").arg(classNumber.at(classIdx)).arg(grainAreaPercentageVector.at(classIdx) * 100).arg(grainAverageAreaVector.at(classIdx)).arg(grainAveragePerimeterVector.at(classIdx)).arg(grainAverageEquivalentRadiusVector.at(classIdx)).arg(grainAverageFlatteningVector.at(classIdx)).arg(grainAverageInterceptVector.at(classIdx)).arg(grainSizeLevelVector.at(classIdx));
+    QString info = QString("Count: %1<br />Percentage: %2%<br />Average Area: %3 μm<sup>2</sup><br />Average Perimeter: %4 μm<br />Average Diameter: %5 μm<br />Average Flattening: %6<br />Average Intercept: %7 μm<br />Grain Size Level: %8").arg(classObjMap[classIdx].count()).arg(classObjMap[classIdx].percentage() * 100).arg(classObjMap[classIdx].averageArea()).arg(classObjMap[classIdx].averagePerimeter()).arg(classObjMap[classIdx].averageDiameter()).arg(classObjMap[classIdx].averageFlattening()).arg(classObjMap[classIdx].averageIntercept()).arg(classObjMap[classIdx].sizeLevel());
     return info;
+}
+
+int Analyser::count()
+{
+    int c = 0;
+    for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
+        c += it->count();
+    }
+    return c;
+}
+
+qreal Analyser::getMaximumDiameter()
+{
+    qreal d = 0;
+    for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
+        for (QMap<int, Object>::const_iterator oit = it->rObjects().begin(); oit != it->rObjects().end(); ++oit) {
+            d = std::max(oit->diameter(), d);
+        }
+    }
+    return d;
+}
+
+int Analyser::classIndexOfObject(int idx)
+{
+    for (int i = 0; i < classObjMap.size(); ++i) {
+        if (classObjMap[i].contains(idx)) {
+            return i;
+        }
+    }
+    qWarning() << "Cannot find the class index of the object " << idx;
+    return 0;//should not get here
+}
+
+Object Analyser::getObjectAt(int idx)
+{
+    int ci = classIndexOfObject(idx);
+    return classObjMap[ci].ObjectAt(idx);
 }
 
 qreal Analyser::calculatePerimeter(int idx)
@@ -195,6 +232,47 @@ qreal Analyser::calculateFlattening(int idx)
     return flattening;
 }
 
+bool Analyser::determineIsBoundary(int idx)
+{
+    return boundaryMap.contains(idx);
+}
+
+void Analyser::updateBoundaryMap()
+{
+    boundaryMap.clear();
+    int size = static_cast<int>(m_contours.size());
+    int i = 0, j = 0;
+    for (; j < m_markerMatrix->cols; ++j) {
+        int index = m_markerMatrix->at<int>(i, j) - 1;
+        if (index >= 0 && index < size) {
+            boundaryMap[index] = true;
+        }
+    }
+    i = m_markerMatrix->rows - 1;
+    j = 0;
+    for (; j < m_markerMatrix->cols; ++j) {
+        int index = m_markerMatrix->at<int>(i, j) - 1;
+        if (index >= 0 && index < size) {
+            boundaryMap[index] = true;
+        }
+    }
+    i = 0;//j = cols - 1 at this moment
+    for (; i < m_markerMatrix->rows; ++i) {
+        int index = m_markerMatrix->at<int>(i, j) - 1;
+        if (index >= 0 && index < size) {
+            boundaryMap[index] = true;
+        }
+    }
+    i = 0;
+    j = 0;
+    for (; i < m_markerMatrix->rows; ++i) {
+        int index = m_markerMatrix->at<int>(i, j) - 1;
+        if (index >= 0 && index < size) {
+            boundaryMap[index] = true;
+        }
+    }
+}
+
 int Analyser::getBoundaryJointNeighbours(int row, int col)
 {
     //8 neighbours
@@ -214,47 +292,16 @@ int Analyser::getBoundaryJointNeighbours(int row, int col)
 
 void Analyser::calculateClassValues()
 {
-    //initialise the vector
-    classNumber.clear();
-    grainAreaPercentageVector.clear();
-    grainAverageAreaVector.clear();
-    grainAveragePerimeterVector.clear();
-    grainAverageEquivalentRadiusVector.clear();
-    grainAverageInterceptVector.clear();
-    grainAverageFlatteningVector.clear();
-    grainSizeLevelVector.clear();
-
-    classNumber.fill(0, m_classes.size());
-    grainAreaPercentageVector.fill(0, m_classes.size());
-    grainAverageAreaVector.fill(0, m_classes.size());
-    grainAveragePerimeterVector.fill(0, m_classes.size());
-    grainAverageEquivalentRadiusVector.fill(0, m_classes.size());
-    grainAverageInterceptVector.fill(0, m_classes.size());
-    grainSizeLevelVector.fill(0, m_classes.size());
-    grainAverageFlatteningVector.fill(0, m_classes.size());
-
     qreal totalArea = 0;
-    //sum up area and perimeter first
-    for (int idx = 0; idx < classIdxVector.size(); ++idx) {//global contour index
-        int classIdx = classIdxVector.at(idx);
-        classNumber[classIdx] += 1;
-        grainAverageAreaVector[classIdx] += areaVector.at(idx);
-        totalArea += areaVector.at(idx);
-        grainAveragePerimeterVector[classIdx] += perimeterVector.at(idx);
-        grainAverageEquivalentRadiusVector[classIdx] += equivalentRadiusVector.at(idx);
-        grainAverageFlatteningVector[classIdx] += flatteningVector.at(idx);
-    }
-
     //calculate the percentage and average value at last
-    for (int ci = 0; ci < classNumber.size(); ++ci) {//class Index
-        grainAreaPercentageVector[ci] = grainAverageAreaVector.at(ci) / totalArea;
-        grainAverageAreaVector[ci] /= classNumber.at(ci);
-        grainAveragePerimeterVector[ci] /= classNumber.at(ci);
-        grainAverageEquivalentRadiusVector[ci] /= classNumber.at(ci);
-        grainAverageFlatteningVector[ci] /= classNumber.at(ci);
+    for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
+        totalArea += it->totalArea();
+    }
+    for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
+        it->setPercentage(it->totalArea() / totalArea);
     }
 
-    //calculate the grain size using intercept method, which is noted as a standard way in GB/T 6394-2002
+    //calculate intercepts
     int perWidth = m_markerMatrix->cols / 6; //need 5 slices vertically. this is the gap. so does the below
     int perHeight = m_markerMatrix->rows / 6;//need 5 slices horizontally.
     int bottom = m_markerMatrix->rows - 2;//margin 2 pos
@@ -312,13 +359,11 @@ void Analyser::calculateClassValues()
     averageInterceptsLength = ((horizontalLineLength / totalInterceptsHorizontal) + (verticalLineLength / totalInterceptsVertical)) / 2.0;
 
     /*
-     * calculate the averageInterceptLength and grain size level by class.
+     * calculate the averageInterceptLength by class.
      * la = l * Va. divide averageInterceptsLength by volume percentage (using area percentage here)
      */
-    for (int ci = 0; ci < classNumber.size(); ++ci) {
-        grainAverageInterceptVector[ci] = averageInterceptsLength * grainAreaPercentageVector.at(ci);
-        //intercepts length need to be converted to minimeter (divided by 1000)
-        grainSizeLevelVector[ci] = (-6.643856 * log10(grainAverageInterceptVector.at(ci) / 1000)) - 3.288 ;
+    for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
+        it->setAverageIntercept(averageInterceptsLength * it->percentage());
     }
 }
 
