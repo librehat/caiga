@@ -46,7 +46,6 @@ void Reporter::setBarChart(QCustomPlot *plot)
         qreal sectionMax = maxRadius / split * (slice + 1);
         xticks.prepend(sectionMin);
 
-        //search every radius
         for (int cid = 0; cid < m_analyser->classCount(); ++cid) {
             for (QMap<int, CAIGA::Object>::iterator it = m_analyser->classObjMap[cid].rObjects().begin(); it != m_analyser->classObjMap[cid].rObjects().end(); ++it) {
                 if (it->diameter() > sectionMin && it->diameter() <= sectionMax) {
