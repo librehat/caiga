@@ -8,10 +8,11 @@
 #define CLASSOBJECT_H
 
 #include "object.h"
+#include "core_lib.h"
 
 namespace CAIGA
 {
-class ClassObject
+class CORE_LIB ClassObject
 {
 public:
     ClassObject();
