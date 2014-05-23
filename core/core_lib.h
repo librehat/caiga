@@ -1,6 +1,6 @@
 /*
- * Every header files should include this header.
- * And defines classes with CORE_LIB
+ * classes that will be invoked outside core should include this header.
+ * and defines classes with CORE_LIB macro.
  */
 
 #ifndef CORE_LIB_H
