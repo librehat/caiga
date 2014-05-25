@@ -7,23 +7,22 @@ using namespace CAIGA;
 
 const QStringList Analyser::headerLabels = QStringList() << "ID" << "Class" << "Area" << "Perimeter" << "Diameter" << "Flattening";
 
-Analyser::Analyser(QObject *parent) :
+Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Point> > &contours, QObject *parent) :
     QObject(parent)
 {
     addClass(QString("Base"));
     contoursModel = new QStandardItemModel(0, 4, this);
-    m_markerMatrix = NULL;
-    scaleValue = 0;
+    contoursModel->setHorizontalHeaderLabels(headerLabels);
+    m_markerMatrix = markers;
+    scaleValue = scale;
+    m_contours = contours;
     currentSelectedIdx = 0;
     previousClassIdx = -1;
+    calculateByContours();
 }
 
-void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
+void Analyser::calculateByContours()
 {
-    m_contours = contours;
-    contoursModel->clear();
-    classObjMap.clear();
-    contoursModel->setHorizontalHeaderLabels(headerLabels);
     //calculate data
     updateBoundaryMap();
     ClassObject base;
@@ -61,15 +60,6 @@ void Analyser::setContours(const std::vector<std::vector<cv::Point> > &contours)
     calculateClassValues();
 }
 
-void Analyser::setMarkers(cv::Mat * const markersMatrix)
-{
-    if (markersMatrix == NULL) {
-        qWarning() << "Error. markersMatrix pointer is NULL!";
-        return;
-    }
-    m_markerMatrix = markersMatrix;
-}
-
 QStandardItemModel *Analyser::getDataModel()
 {
     return contoursModel;
@@ -88,26 +78,9 @@ void Analyser::deleteClass(int classIndex)
 void Analyser::findContourHasPoint(const QPoint &pt)
 {
     int size = static_cast<int>(m_contours.size());
-    if (m_markerMatrix == NULL) {
-        cv::Point cvPt(pt.x(), pt.y());
-        int idx = 0;
-        bool found = false;
-        for (; idx < size; ++idx) {
-            double dist = cv::pointPolygonTest(m_contours[idx], cvPt, false);
-            if (dist > 0) {
-                found = true;
-                break;
-            }
-        }
-        if (found) {
-            emit foundContourIndex(contoursModel->index(idx, 0));
-        }
-    }
-    else {
-        int indexVal = m_markerMatrix->at<int>(pt.y(), pt.x());//(row, col) == (y, x)
-        if(indexVal > 0 && indexVal <= size) {
-            emit foundContourIndex(contoursModel->index(indexVal - 1, 0));
-        }
+    int indexVal = m_markerMatrix->at<int>(pt.y(), pt.x());//(row, col) == (y, x)
+    if(indexVal > 0 && indexVal <= size) {
+        emit foundContourIndex(contoursModel->index(indexVal - 1, 0));
     }
 }
 
@@ -241,14 +214,14 @@ void Analyser::updateBoundaryMap()
 {
     boundaryMap.clear();
     int size = static_cast<int>(m_contours.size());
-    int i = 0, j = 0;
+    int i = 1, j = 0;//margin 1 because the image boundary is boundary, too. :)
     for (; j < m_markerMatrix->cols; ++j) {
         int index = m_markerMatrix->at<int>(i, j) - 1;
         if (index >= 0 && index < size) {
             boundaryMap[index] = true;
         }
     }
-    i = m_markerMatrix->rows - 1;
+    i = m_markerMatrix->rows - 2;//same margin here
     j = 0;
     for (; j < m_markerMatrix->cols; ++j) {
         int index = m_markerMatrix->at<int>(i, j) - 1;
@@ -256,7 +229,8 @@ void Analyser::updateBoundaryMap()
             boundaryMap[index] = true;
         }
     }
-    i = 0;//j = cols - 1 at this moment
+    i = 0;
+    j = m_markerMatrix->cols - 2;//same margin here
     for (; i < m_markerMatrix->rows; ++i) {
         int index = m_markerMatrix->at<int>(i, j) - 1;
         if (index >= 0 && index < size) {
@@ -264,7 +238,7 @@ void Analyser::updateBoundaryMap()
         }
     }
     i = 0;
-    j = 0;
+    j = 1;//same margin here
     for (; i < m_markerMatrix->rows; ++i) {
         int index = m_markerMatrix->at<int>(i, j) - 1;
         if (index >= 0 && index < size) {

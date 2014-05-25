@@ -17,15 +17,12 @@ class CORE_LIB Analyser : public QObject
 {
     Q_OBJECT
 public:
-    explicit Analyser(QObject *parent = 0);
+    explicit Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector <cv::Point> > &contours, QObject *parent = 0);
     ~Analyser() {}
-    void setContours(const std::vector<std::vector <cv::Point> > &contours);
-    void setMarkers(cv::Mat * const markersMatrix);//setMarkers if the result is obtained by watershed, if markersMatrix is set, then contours won't be used when querying the contour id
     QStandardItemModel *getDataModel();
     QStringList* getClassesList() { return &m_classes; }
     void addClass(const QString &);
     void deleteClass(int classIndex);
-    inline void setScaleValue(qreal s) { scaleValue = s; }
     QString getClassValues(int classIdx);
     int count();
     inline int classCount() const { return m_classes.size(); }
@@ -63,6 +60,8 @@ public slots:
     void onClassChanged(const QModelIndex &mIndex, const QString classText);
 
 private:
+    void calculateByContours();
+
     qreal scaleValue;//pixel / um
     int currentSelectedIdx;
     int previousClassIdx;

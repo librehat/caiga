@@ -498,16 +498,13 @@ void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
         ui->analysisInteracter->setImage(preWorkSpace.getLastDisplayImage());
         ui->imageTabs->setCurrentIndex(3);
 
+        onMessagesArrived("Analysing... Please Wait......");
         //setup analyser and retrive information
         if (analyser != NULL) {
             analyser->disconnect();
             analyser->deleteLater();
         }
-        analyser = new CAIGA::Analyser(this);
-        onMessagesArrived("Analysing... Please Wait......");
-        analyser->setScaleValue(cgimg.getScaleValue());
-        analyser->setMarkers(preWorkSpace.getMarkerMatrix());
-        analyser->setContours(preWorkSpace.getContours());
+        analyser = new CAIGA::Analyser(cgimg.getScaleValue(), preWorkSpace.getMarkerMatrix(), preWorkSpace.getContours(), this);
 
         if (analysisDelegate != NULL) {
             analysisDelegate->disconnect();
