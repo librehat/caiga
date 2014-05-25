@@ -113,7 +113,6 @@ void Reporter::setBarChart(QCustomPlot *plot)
 void Reporter::setTextBrowser(QTextBrowser *tb)
 {
     emit workStatusStrUpdated("Generating report... Please wait......");
-    m_textBrowser = tb;
     QTextCursor cursor(&textDoc);
     cursor.setBlockFormat(alignCentreBlockFormat());
     cursor.insertBlock(alignCentreBlockFormat(), boldRomanFormat());

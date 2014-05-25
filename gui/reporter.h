@@ -26,7 +26,6 @@ signals:
 
 private:
     QCustomPlot *m_plot;
-    QTextBrowser *m_textBrowser;
     CAIGA::Analyser *m_analyser;
     CAIGA::WorkSpace *m_workSpace;
     QTextDocument textDoc;

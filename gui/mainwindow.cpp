@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     parametersDlg = NULL;
     watershedDlg = NULL;
     analyser = NULL;
+    analysisDelegate = NULL;
     reporter = NULL;
 
     ui->ccDrawer->setSpace(&ccSpace);
@@ -34,10 +35,6 @@ MainWindow::MainWindow(QWidget *parent) :
     mouseBehaviourMenu->addAction("White Eraser", this, SLOT(onMouseWhiteEraser()));
     mouseBehaviourMenu->addAction("Black Eraser", this, SLOT(onMouseBlackEraser()));
     ui->mouseBehaviourButton->setMenu(mouseBehaviourMenu);
-
-    //analysis
-    analysisDelegate = new AnalysisItemDelegate(ui->analysisTableView);
-    ui->analysisTableView->setItemDelegate(analysisDelegate);
 
     //information
     ui->infoPlotter->setFont(QFont("Cambria Math"));
@@ -263,7 +260,8 @@ void MainWindow::onGradientButtonClicked()
     previewSpace.reset(preWorkSpace.getLastMatrix());
     previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
-        delete parametersDlg;
+        parametersDlg->disconnect();
+        parametersDlg->deleteLater();
     }
     parametersDlg = new ParametersDialog(CAIGA::WorkBase::Gradient, this);
     handleParametersDialogue(&MainWindow::onGradientParamatersChanged);
@@ -279,7 +277,8 @@ void MainWindow::onBoxFilterButtonClicked()
     previewSpace.reset(preWorkSpace.getLastMatrix());
     previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
-        delete parametersDlg;
+        parametersDlg->disconnect();
+        parametersDlg->deleteLater();
     }
     parametersDlg = new ParametersDialog(CAIGA::WorkBase::BoxFilter, this);
     handleParametersDialogue(&MainWindow::onBoxFilterParametersChanged);
@@ -295,7 +294,8 @@ void MainWindow::onAdaptiveBilateralFilterButtonClicked()
     previewSpace.reset(preWorkSpace.getLastMatrix());
     previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
-        delete parametersDlg;
+        parametersDlg->disconnect();
+        parametersDlg->deleteLater();
     }
     parametersDlg = new ParametersDialog(CAIGA::WorkBase::AptBilateralFilter, this);
     handleParametersDialogue(&MainWindow::onAdaptiveBilateralFilterParametersChanged);
@@ -311,7 +311,8 @@ void MainWindow::onMedianBlurButtonClicked()
     previewSpace.reset(preWorkSpace.getLastMatrix());
     previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
-        delete parametersDlg;
+        parametersDlg->disconnect();
+        parametersDlg->deleteLater();
     }
     parametersDlg = new ParametersDialog(CAIGA::WorkBase::MedianBlur, this);
     handleParametersDialogue(&MainWindow::onMedianBlurParametersChanged);
@@ -327,7 +328,8 @@ void MainWindow::onGaussianBinaryzationButtonClicked()
     previewSpace.reset(preWorkSpace.getLastMatrix());
     previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
-        delete parametersDlg;
+        parametersDlg->disconnect();
+        parametersDlg->deleteLater();
     }
     parametersDlg = new ParametersDialog(CAIGA::WorkBase::Binaryzation, this);
     handleParametersDialogue(&MainWindow::onGaussianBinaryzationParametersChanged);
@@ -343,7 +345,8 @@ void MainWindow::onMedianBinaryzationButtonClicked()
     previewSpace.reset(preWorkSpace.getLastMatrix());
     previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
-        delete parametersDlg;
+        parametersDlg->disconnect();
+        parametersDlg->deleteLater();
     }
     parametersDlg = new ParametersDialog(CAIGA::WorkBase::Binaryzation, this);
     handleParametersDialogue(&MainWindow::onMedianBinaryzationParametersChanged);
@@ -369,7 +372,8 @@ void MainWindow::onFloodFillButtonClicked()
     previewSpace.reset(preWorkSpace.getLastMatrix());
     previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
-        delete parametersDlg;
+        parametersDlg->disconnect();
+        parametersDlg->deleteLater();
     }
     parametersDlg = new ParametersDialog(CAIGA::WorkBase::FloodFill, this);
 
@@ -405,7 +409,8 @@ void MainWindow::onCannyButtonClicked()
     previewSpace.reset(preWorkSpace.getLastMatrix());
     previewSpace.setImage(&cgimg);
     if (parametersDlg != NULL) {
-        delete parametersDlg;
+        parametersDlg->disconnect();
+        parametersDlg->deleteLater();
     }
     parametersDlg = new ParametersDialog(CAIGA::WorkBase::Canny, this);
     handleParametersDialogue(&MainWindow::onCannyParametersChanged);
@@ -416,7 +421,8 @@ void MainWindow::onWatershedButtonClicked()
     previewSpace.reset(preWorkSpace.getLastMatrix());
     previewSpace.setImage(&cgimg);
     if (watershedDlg != NULL) {
-        delete watershedDlg;
+        watershedDlg->disconnect();
+        watershedDlg->deleteLater();
     }
     watershedDlg = new WatershedMarkerDialog(this);
     if (preWorkSpace.last()->workType == WorkBase::Watershed) {
@@ -494,14 +500,23 @@ void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
 
         //setup analyser and retrive information
         if (analyser != NULL) {
-            delete analyser;
+            analyser->disconnect();
+            analyser->deleteLater();
         }
         analyser = new CAIGA::Analyser(this);
         onMessagesArrived("Analysing... Please Wait......");
         analyser->setScaleValue(cgimg.getScaleValue());
         analyser->setMarkers(preWorkSpace.getMarkerMatrix());
         analyser->setContours(preWorkSpace.getContours());
+
+        if (analysisDelegate != NULL) {
+            analysisDelegate->disconnect();
+            analysisDelegate->deleteLater();
+        }
+        analysisDelegate = new AnalysisItemDelegate(ui->analysisTableView);
+        ui->analysisTableView->setItemDelegate(analysisDelegate);
         analysisDelegate->setClassesList(analyser->getClassesList());
+
         ui->analysisTableView->setModel(analyser->getDataModel());
         ui->analysisTableView->resizeColumnsToContents();
         connect(analyser, &CAIGA::Analyser::foundContourIndex, this, &MainWindow::onContourIndexFound);
@@ -562,7 +577,8 @@ void MainWindow::updateInformationReport(int split)
 {
     onReportAvailable(false);
     if (reporter != NULL) {
-        delete reporter;
+        reporter->disconnect();
+        reporter->deleteLater();
     }
     reporter = new Reporter(analyser, &preWorkSpace, split, this);
     connect(reporter, &Reporter::reportAvailable, this, &MainWindow::onReportAvailable);
@@ -607,7 +623,8 @@ void MainWindow::addDiskFileDialog()
 void MainWindow::addCameraImageDialog()
 {
     if (cameraDlg != NULL) {
-        delete cameraDlg;
+        cameraDlg->disconnect();
+        cameraDlg->deleteLater();
     }
     cameraDlg = new CameraDialog(this);
     connect(cameraDlg, &CameraDialog::imageAccepted, this, &MainWindow::onCameraImageAccepted);
