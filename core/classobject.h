@@ -25,7 +25,7 @@ public:
     qreal averageFlattening();
     inline qreal averageDiameter() { return qSqrt(averageArea()); }
     inline qreal averageIntercept() const { return m_averageIntercept; }
-    qreal sizeLevel() const;
+    qreal sizeNumber() const;//grain size number G
     inline qreal percentage() const { return m_percentage; }
 
     inline void setAverageIntercept(qreal a) { m_averageIntercept = a; }

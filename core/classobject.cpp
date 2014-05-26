@@ -54,7 +54,7 @@ qreal ClassObject::averageFlattening()
     return avg;
 }
 
-qreal ClassObject::sizeLevel() const
+qreal ClassObject::sizeNumber() const
 {
     /*
      * calculate the grain size level using intercept method

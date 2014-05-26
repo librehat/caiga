@@ -42,7 +42,7 @@ public:
     inline QString getAvgDiameterOfClass(int i) { return QString::number(classObjMap[i].averageDiameter()); }
     inline QString getAvgInterLengthOfClass(int i) { return QString::number(classObjMap[i].averageIntercept()); }
     inline QString getAvgFlatteningOfClass(int i) { return QString::number(classObjMap[i].averageFlattening()); }
-    inline QString getSizeLevelOfClass(int i) { return QString::number(classObjMap[i].sizeLevel()); }
+    inline QString getSizeNumberOfClass(int i) { return QString::number(classObjMap[i].sizeNumber()); }
 
     QMap<int, ClassObject> classObjMap;
 
