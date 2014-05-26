@@ -77,6 +77,11 @@ void Analyser::deleteClass(int classIndex)
 
 void Analyser::findContourHasPoint(const QPoint &pt)
 {
+    //validate the point
+    if (pt.x() < 0 || pt.x() >= m_markerMatrix->cols || pt.y() < 0 || pt.y() >= m_markerMatrix->rows) {
+        return;
+    }
+
     int size = static_cast<int>(m_contours.size());
     int indexVal = m_markerMatrix->at<int>(pt.y(), pt.x());//(row, col) == (y, x)
     if(indexVal > 0 && indexVal <= size) {

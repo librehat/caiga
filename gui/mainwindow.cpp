@@ -619,14 +619,11 @@ void MainWindow::addDiskFileDialog()
 
 void MainWindow::addCameraImageDialog()
 {
-    if (cameraDlg != NULL) {
-        cameraDlg->disconnect();
-        cameraDlg->deleteLater();
-    }
     cameraDlg = new CameraDialog(this);
     connect(cameraDlg, &CameraDialog::imageAccepted, this, &MainWindow::onCameraImageAccepted);
     cameraDlg->show();
     cameraDlg->exec();
+    cameraDlg->deleteLater();
 }
 
 void MainWindow::onCameraImageAccepted(const QImage &img)
