@@ -86,7 +86,11 @@ void Image::setRawImageFromCamera(const QImage &qimg)
 
 void Image::setRawImageByFile(const QString &imgfile)
 {
-    rawImage = cv::imread(imgfile.toStdString(), CV_LOAD_IMAGE_GRAYSCALE);
+    /*
+     * to support non-ascii (such as Chinese) path
+     * use toLocal8Bit().data() instead of toStdString()
+     */
+    rawImage = cv::imread(imgfile.toLocal8Bit().data(), CV_LOAD_IMAGE_GRAYSCALE);
     m_filename = imgfile;
 }
 
