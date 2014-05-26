@@ -22,7 +22,7 @@ public:
     qreal totalArea();
     qreal averageArea();//defined in GB/T 6394-2002
     qreal averagePerimeter();//copycat the formula in GB/T 6394-2002
-    qreal averageFlattening();//copycat the formula in GB/T 6394-2002
+    qreal averageFlattening();
     inline qreal averageDiameter() { return qSqrt(averageArea()); }
     inline qreal averageIntercept() const { return m_averageIntercept; }
     qreal sizeLevel() const;

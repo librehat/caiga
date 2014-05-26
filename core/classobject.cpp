@@ -50,7 +50,7 @@ qreal ClassObject::averageFlattening()
     for (QMap<int, Object>::iterator it = objects.begin(); it != objects.end(); ++it) {
         total += it->flattening();
     }
-    avg = total / (static_cast<qreal>(count()) - static_cast<qreal>(boundaryCount())/2.0 - 1.0);
+    avg = total / static_cast<qreal>(count());
     return avg;
 }
 
