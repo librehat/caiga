@@ -67,7 +67,7 @@ private:
     int previousClassIdx;
     cv::Mat *m_markerMatrix;
     std::vector<std::vector <cv::Point> > m_contours;
-    QMap<int, bool> boundaryMap;//store all boundary objects' indice
+    QSet<int> boundarySet;//store all boundary objects' indice
 
     int classIndexOfObject(int idx);//get the class index of the idx-th object
     Object getObjectAt(int idx);
@@ -82,7 +82,7 @@ private:
     qreal calculateContourAreaByPixels(int idx);
     qreal calculateFlattening(int idx);
     bool determineIsBoundary(int idx);
-    void updateBoundaryMap();
+    void updateBoundarySet();
     int getBoundaryJointNeighbours(int row, int col);//leave at least 1 position from Mat edge
 
     /*

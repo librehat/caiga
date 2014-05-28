@@ -24,7 +24,7 @@ Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Po
 void Analyser::calculateByContours()
 {
     //calculate data
-    updateBoundaryMap();
+    updateBoundarySet();
     ClassObject base;
     int size = static_cast<int>(m_contours.size());
     for (int id = 0; id < size; ++id) {
@@ -127,7 +127,7 @@ QString Analyser::getClassValues(int classIdx)
     if (classIdx < 0 || classIdx >= m_classes.size()) {
         return QString("Error. Class index is out of classes's range.");
     }
-    QString info = QString("Count: %1<br />Percentage: %2%<br />Average Area: %3 μm<sup>2</sup><br />Average Perimeter: %4 μm<br />Average Diameter: %5 μm<br />Average Flattening: %6<br />Average Intercept: %7 μm<br />Grain Size Number: %8").arg(classObjMap[classIdx].count()).arg(classObjMap[classIdx].percentage() * 100).arg(classObjMap[classIdx].averageArea()).arg(classObjMap[classIdx].averagePerimeter()).arg(classObjMap[classIdx].averageDiameter()).arg(classObjMap[classIdx].averageFlattening()).arg(classObjMap[classIdx].averageIntercept()).arg(classObjMap[classIdx].sizeNumber());
+    QString info = QString("Count: %1<br />Percentage: %2%<br />Real Percentage: %3%<br />Average Area: %4 μm<sup>2</sup><br />Average Perimeter: %5 μm<br />Average Diameter: %6 μm<br />Average Flattening: %7<br />Average Intercept: %8 μm<br />Grain Size Number: %9").arg(classObjMap[classIdx].count()).arg(classObjMap[classIdx].percentage() * 100).arg(classObjMap[classIdx].realPercentage() * 100).arg(classObjMap[classIdx].averageArea()).arg(classObjMap[classIdx].averagePerimeter()).arg(classObjMap[classIdx].averageDiameter()).arg(classObjMap[classIdx].averageFlattening()).arg(classObjMap[classIdx].averageIntercept()).arg(classObjMap[classIdx].sizeNumber());
     return info;
 }
 
@@ -212,18 +212,18 @@ qreal Analyser::calculateFlattening(int idx)
 
 bool Analyser::determineIsBoundary(int idx)
 {
-    return boundaryMap.contains(idx);
+    return boundarySet.contains(idx);
 }
 
-void Analyser::updateBoundaryMap()
+void Analyser::updateBoundarySet()
 {
-    boundaryMap.clear();
+    boundarySet.clear();
     int size = static_cast<int>(m_contours.size());
     int i = 1, j = 0;//margin 1 because the image boundary is boundary, too. :)
     for (; j < m_markerMatrix->cols; ++j) {
         int index = m_markerMatrix->at<int>(i, j) - 1;
         if (index >= 0 && index < size) {
-            boundaryMap[index] = true;
+            boundarySet << index;
         }
     }
     i = m_markerMatrix->rows - 2;//same margin here
@@ -231,7 +231,7 @@ void Analyser::updateBoundaryMap()
     for (; j < m_markerMatrix->cols; ++j) {
         int index = m_markerMatrix->at<int>(i, j) - 1;
         if (index >= 0 && index < size) {
-            boundaryMap[index] = true;
+            boundarySet << index;
         }
     }
     i = 0;
@@ -239,7 +239,7 @@ void Analyser::updateBoundaryMap()
     for (; i < m_markerMatrix->rows; ++i) {
         int index = m_markerMatrix->at<int>(i, j) - 1;
         if (index >= 0 && index < size) {
-            boundaryMap[index] = true;
+            boundarySet << index;
         }
     }
     i = 0;
@@ -247,7 +247,7 @@ void Analyser::updateBoundaryMap()
     for (; i < m_markerMatrix->rows; ++i) {
         int index = m_markerMatrix->at<int>(i, j) - 1;
         if (index >= 0 && index < size) {
-            boundaryMap[index] = true;
+            boundarySet << index;
         }
     }
 }
@@ -272,12 +272,14 @@ int Analyser::getBoundaryJointNeighbours(int row, int col)
 void Analyser::calculateClassValues()
 {
     qreal totalArea = 0;
+    qreal imageArea = m_markerMatrix->cols * m_markerMatrix->rows / scaleValue / scaleValue;
     //calculate the percentage and average value at last
     for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
         totalArea += it->totalArea();
     }
     for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
         it->setPercentage(it->totalArea() / totalArea);
+        it->setRealPercentage(it->totalArea() / imageArea);
     }
 
     //calculate intercepts

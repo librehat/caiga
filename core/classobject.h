@@ -27,9 +27,11 @@ public:
     inline qreal averageIntercept() const { return m_averageIntercept; }
     qreal sizeNumber() const;//grain size number G
     inline qreal percentage() const { return m_percentage; }
+    inline qreal realPercentage() const { return m_realPercentage; }
 
     inline void setAverageIntercept(qreal a) { m_averageIntercept = a; }
     inline void setPercentage(qreal p) { m_percentage = p; }
+    inline void setRealPercentage(qreal p) { m_realPercentage = p; }
 
     inline bool contains(int key) { return objects.contains(key); }
     inline void insert(int key, Object obj) { objects[key] = obj; }
@@ -39,7 +41,8 @@ public:
 
 private:
     QMap<int, Object> objects;//key(id) is the index
-    qreal m_percentage;
+    qreal m_percentage;//divided by the sum of classes' area
+    qreal m_realPercentage;//divided by image size
     qreal m_averageIntercept;
 };
 }
