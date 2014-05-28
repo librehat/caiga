@@ -116,7 +116,7 @@ void Analyser::onClassChanged(const QModelIndex &mIndex, const QString classText
             calculateClassValues();
         }
         else {
-            qWarning() << "Critical Error. Change class failed. Please report a bug.";
+            qCritical() << "Critical Error. Change class failed. Please report a bug.";
         }
     }
     onModelIndexChanged(mIndex);
@@ -127,7 +127,7 @@ QString Analyser::getClassValues(int classIdx)
     if (classIdx < 0 || classIdx >= m_classes.size()) {
         return QString("Error. Class index is out of classes's range.");
     }
-    QString info = QString("Count: %1<br />Percentage: %2%<br />Real Percentage: %3%<br />Average Area: %4 μm<sup>2</sup><br />Average Perimeter: %5 μm<br />Average Diameter: %6 μm<br />Average Flattening: %7<br />Average Intercept: %8 μm<br />Grain Size Number: %9").arg(classObjMap[classIdx].count()).arg(classObjMap[classIdx].percentage() * 100).arg(classObjMap[classIdx].realPercentage() * 100).arg(classObjMap[classIdx].averageArea()).arg(classObjMap[classIdx].averagePerimeter()).arg(classObjMap[classIdx].averageDiameter()).arg(classObjMap[classIdx].averageFlattening()).arg(classObjMap[classIdx].averageIntercept()).arg(classObjMap[classIdx].sizeNumber());
+    QString info = QString("Count: %1<br />Percentage: %2%<br />Average Area: %3 μm<sup>2</sup><br />Average Perimeter: %4 μm<br />Average Diameter: %5 μm<br />Average Flattening: %6<br />Average Intercept: %7 μm<br />Grain Size Number: %8").arg(classObjMap[classIdx].count()).arg(classObjMap[classIdx].percentage() * 100).arg(classObjMap[classIdx].averageArea()).arg(classObjMap[classIdx].averagePerimeter()).arg(classObjMap[classIdx].averageDiameter()).arg(classObjMap[classIdx].averageFlattening()).arg(classObjMap[classIdx].averageIntercept()).arg(classObjMap[classIdx].sizeNumber());
     return info;
 }
 
@@ -271,15 +271,15 @@ int Analyser::getBoundaryJointNeighbours(int row, int col)
 
 void Analyser::calculateClassValues()
 {
-    qreal totalArea = 0;
+    //qreal totalArea = 0;
     qreal imageArea = m_markerMatrix->cols * m_markerMatrix->rows / scaleValue / scaleValue;
-    //calculate the percentage and average value at last
+    /*calculate the percentage and average value at last
     for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
         totalArea += it->totalArea();
-    }
+    }*/
     for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
-        it->setPercentage(it->totalArea() / totalArea);
-        it->setRealPercentage(it->totalArea() / imageArea);
+        //it->setPercentage(it->totalArea() / totalArea);
+        it->setPercentage(it->totalArea() / imageArea);
     }
 
     //calculate intercepts
@@ -301,7 +301,7 @@ void Analyser::calculateClassValues()
         for (int i = 2; i < bottom; ++i) {//margin 2 pos
             int idx = vertical.at<int>(i, 0) - 1;
             if (idx != previousIdx && idx == -2) {//boundary should be counted only once to avoid tangency
-                if (i == 2 || i == bottom - 1) {
+                if (i == 2 || i == 3 || i == 4 || i == bottom - 3 || i == bottom - 2 || i == bottom - 1) {//more rough
                     totalInterceptsVertical += 0.5;//count the end 0.5
                 }
                 else if (getBoundaryJointNeighbours(i, sliceH) > 2) {//the joint of (more than) three grains should count 1.5
@@ -319,7 +319,7 @@ void Analyser::calculateClassValues()
         for (int i = 2; i < right; ++i) {
             int idx = horizontal.at<int>(0, i) - 1;
             if (idx != previousIdx && idx == -2) {
-                if (i == 2 || i == right - 1) {
+                if (i == 2 || i == 3 || i == 4 || i == right - 3 || i == right - 2 || i == right - 1) {
                     totalInterceptsHorizontal += 0.5;
                 }
                 else if (getBoundaryJointNeighbours(sliceV, i) > 2) {
