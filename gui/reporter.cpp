@@ -147,7 +147,7 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
     cursor.movePosition(QTextCursor::End);
 
     //insert class information table
-    cursor.insertTable(m_analyser->classCount() + 1, 9, tableFormat);
+    cursor.insertTable(m_analyser->classCount() + 1, 10, tableFormat);
     insertHeaderAndMoveNextCell(&cursor, "Class");
     insertHeaderAndMoveNextCell(&cursor, "Count");
     insertHeaderAndMoveNextCell(&cursor, "Area\nPercentage\n(%)");
@@ -156,7 +156,8 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
     insertHeaderAndMoveNextCell(&cursor, "Diameter\n\n(μm)");
     insertHeaderAndMoveNextCell(&cursor, "Flattening");
     insertHeaderAndMoveNextCell(&cursor, "Intercept\n\n(μm)");
-    insertHeaderAndMoveNextCell(&cursor, "Grain Size\nNumber\n(G)");
+    insertHeaderAndMoveNextCell(&cursor, "Grain Size Number\n(Area Method)\n(G)");
+    insertHeaderAndMoveNextCell(&cursor, "Grain Size Number\n(Intercept Method)\n(G)");
     for (int i = 0; i < m_analyser->classCount(); ++i) {
         insertTextAndMoveNextCell(&cursor, m_analyser->getClassesList()->at(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getCountOfClass(i));
@@ -166,7 +167,8 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgDiameterOfClass(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgFlatteningOfClass(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgInterLengthOfClass(i));
-        insertTextAndMoveNextCell(&cursor, m_analyser->getSizeNumberOfClass(i));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getSizeNumberByAreaOfClass(i));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getSizeNumberByInterceptOfClass(i));
     }
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock(alignCentreBlockFormat(), romanFormat());

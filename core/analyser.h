@@ -17,7 +17,7 @@ class CORE_LIB Analyser : public QObject
 {
     Q_OBJECT
 public:
-    explicit Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector <cv::Point> > &contours, QObject *parent = 0);
+    explicit Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector <cv::Point> > contours, QObject *parent = 0);
     ~Analyser() {}
     QStandardItemModel *getDataModel();
     QStringList* getClassesList() { return &m_classes; }
@@ -42,7 +42,8 @@ public:
     inline QString getAvgDiameterOfClass(int i) { return QString::number(classObjMap[i].averageDiameter()); }
     inline QString getAvgInterLengthOfClass(int i) { return QString::number(classObjMap[i].averageIntercept()); }
     inline QString getAvgFlatteningOfClass(int i) { return QString::number(classObjMap[i].averageFlattening()); }
-    inline QString getSizeNumberOfClass(int i) { return QString::number(classObjMap[i].sizeNumber()); }
+    inline QString getSizeNumberByAreaOfClass(int i) { return QString::number(classObjMap[i].sizeNumberByArea()); }
+    inline QString getSizeNumberByInterceptOfClass(int i) { return QString::number(classObjMap[i].sizeNumberByIntercept()); }
 
     QMap<int, ClassObject> classObjMap;
 

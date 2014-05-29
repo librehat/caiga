@@ -1,13 +1,12 @@
 #include "analyser.h"
 #include <opencv2/imgproc/imgproc.hpp>
-#include <cmath>
 #include <qmath.h>
 #include <QDebug>
 using namespace CAIGA;
 
 const QStringList Analyser::headerLabels = QStringList() << "ID" << "Class" << "Area" << "Perimeter" << "Diameter" << "Flattening";
 
-Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Point> > &contours, QObject *parent) :
+Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Point> > contours, QObject *parent) :
     QObject(parent)
 {
     addClass(QString("Base"));
@@ -31,7 +30,7 @@ void Analyser::calculateByContours()
         QList<QStandardItem *> items;
         qreal area = calculateContourAreaByPixels(id);
         qreal perimeter = calculatePerimeter(id);
-        qreal diameter = qSqrt((area / M_PI));//M_PI, which is accurate pi, is defined in <cmath>
+        qreal diameter = qSqrt(area);
         qreal flatng = calculateFlattening(id);
         bool boundary = determineIsBoundary(id);
 
@@ -127,7 +126,7 @@ QString Analyser::getClassValues(int classIdx)
     if (classIdx < 0 || classIdx >= m_classes.size()) {
         return QString("Error. Class index is out of classes's range.");
     }
-    QString info = QString("Count: %1<br />Percentage: %2%<br />Average Area: %3 μm<sup>2</sup><br />Average Perimeter: %4 μm<br />Average Diameter: %5 μm<br />Average Flattening: %6<br />Average Intercept: %7 μm<br />Grain Size Number: %8").arg(classObjMap[classIdx].count()).arg(classObjMap[classIdx].percentage() * 100).arg(classObjMap[classIdx].averageArea()).arg(classObjMap[classIdx].averagePerimeter()).arg(classObjMap[classIdx].averageDiameter()).arg(classObjMap[classIdx].averageFlattening()).arg(classObjMap[classIdx].averageIntercept()).arg(classObjMap[classIdx].sizeNumber());
+    QString info = QString("Count: %1<br />Percentage: %2%<br />Average Area: %3 μm<sup>2</sup><br />Average Perimeter: %4 μm<br />Average Diameter: %5 μm<br />Average Flattening: %6<br />Average Intercept: %7 μm<br />Grain Size Number (Area Method): %8<br />Grain Size Number (Intercept Method): %9").arg(classObjMap[classIdx].count()).arg(classObjMap[classIdx].percentage() * 100).arg(classObjMap[classIdx].averageArea()).arg(classObjMap[classIdx].averagePerimeter()).arg(classObjMap[classIdx].averageDiameter()).arg(classObjMap[classIdx].averageFlattening()).arg(classObjMap[classIdx].averageIntercept()).arg(classObjMap[classIdx].sizeNumberByArea()).arg(classObjMap[classIdx].sizeNumberByIntercept());
     return info;
 }
 
@@ -283,8 +282,8 @@ void Analyser::calculateClassValues()
     }
 
     //calculate intercepts
-    int perWidth = m_markerMatrix->cols / 6; //need 5 slices vertically. this is the gap. so does the below
-    int perHeight = m_markerMatrix->rows / 6;//need 5 slices horizontally.
+    int perWidth = m_markerMatrix->cols / 7; //need 5 slices vertically. this is the gap. so does the below
+    int perHeight = m_markerMatrix->rows / 7;//need 5 slices horizontally.
     int bottom = m_markerMatrix->rows - 2;//margin 2 pos
     int right = m_markerMatrix->cols - 2;
     qreal totalInterceptsVertical = 0;

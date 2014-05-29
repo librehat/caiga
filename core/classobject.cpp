@@ -54,7 +54,7 @@ qreal ClassObject::averageFlattening()
     return avg;
 }
 
-qreal ClassObject::sizeNumber() const
+qreal ClassObject::sizeNumberByIntercept() const
 {
     /*
      * calculate the grain size level using intercept method
@@ -62,4 +62,10 @@ qreal ClassObject::sizeNumber() const
      * intercepts length need to be converted to minimeter (divided by 1000)
      */
     return (-6.643856 * log10(m_averageIntercept / 1000)) - 3.288;
+}
+
+qreal ClassObject::sizeNumberByArea()
+{
+    qreal area = totalArea() / 1000000;//convert to minimeter's square
+    return (3.321928 * log10((static_cast<qreal>(count()) - static_cast<qreal>(boundaryCount())/2.0 - 1.0) / area) - 2.954);
 }
