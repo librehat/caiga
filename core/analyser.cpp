@@ -19,6 +19,8 @@ Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Po
     previousClassIdx = -1;
     interceptsNumber = 5;
     calculateByContours();
+    calculatePercentage();
+    calculateIntercepts();
 }
 
 void Analyser::calculateByContours()
@@ -57,8 +59,6 @@ void Analyser::calculateByContours()
         contoursModel->appendRow(items);
     }
     classObjMap[0] = base;
-    calculatePercentage();
-    calculateIntercepts();
 }
 
 QStandardItemModel *Analyser::getDataModel()
@@ -158,6 +158,7 @@ void Analyser::onInterceptsNumberChanged(const int &num)
 {
     interceptsNumber = num;
     calculateIntercepts();
+    emit currentClassChanged(classIndexOfObject(currentSelectedIdx));
 }
 
 int Analyser::classIndexOfObject(int idx)
