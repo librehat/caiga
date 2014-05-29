@@ -17,7 +17,8 @@ class CORE_LIB ClassObject
 public:
     ClassObject();
 
-    int boundaryCount();
+    int insideCount();
+    int interceptedCount();
     inline int count() { return objects.size(); }
     qreal totalArea();
     qreal averageArea();//defined in ASTM E112-12

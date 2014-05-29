@@ -41,7 +41,7 @@ void Analyser::calculateByContours()
         qreal perimeter = calculatePerimeter(id);
         qreal diameter = qSqrt(area);
         qreal flatng = calculateFlattening(id);
-        bool boundary = determineIsBoundary(id);
+        Object::POSITION boundary = determineIsBoundary(id);
 
         Object obj(boundary, area, perimeter, diameter, flatng);
         base.insert(id, obj);
@@ -194,17 +194,8 @@ qreal Analyser::calculatePerimeter(int idx)
     return (cv::arcLength(m_contours[idx], true) / scaleValue);//get perimeter of closed contour
 }
 
-qreal Analyser::calculateContourAreaByGreenFormula(int idx)
-{
-    return (cv::contourArea(m_contours[idx], false) / scaleValue / scaleValue);
-}
-
 qreal Analyser::calculateContourAreaByPixels(int idx)
 {
-    if (m_markerMatrix == NULL) {
-        qWarning() << "Warning. marker matrix is NULL. Using green formula to calculate the area instead.";
-        return calculateContourAreaByGreenFormula(idx);
-    }
     qreal pixels = 0;
     //using STL itreator to get rid of tedious double-for-loop
     for (cv::MatConstIterator_<int> it = m_markerMatrix->begin<int>(); it != m_markerMatrix->end<int>(); ++it) {
@@ -230,45 +221,61 @@ qreal Analyser::calculateFlattening(int idx)
     return flattening;
 }
 
-bool Analyser::determineIsBoundary(int idx)
+Object::POSITION Analyser::determineIsBoundary(int idx)
 {
-    return boundarySet.contains(idx);
+    if (boundarySet.contains(idx)) {
+        return Object::INTERCEPTED;
+    }
+    else if (cornerSet.contains(idx)) {
+        return Object::CORNER;
+    }
+    else {
+        return Object::INSIDE;
+    }
 }
 
 void Analyser::updateBoundarySet()
 {
     boundarySet.clear();
+    cornerSet.clear();
     int size = static_cast<int>(m_contours.size());
-    int i = 1, j = 0;//margin 1 because the image boundary is boundary, too. :)
-    for (; j < m_markerMatrix->cols; ++j) {
+    int i = 1, j = 1;//margin 1 because the image boundary is boundary, too. :)
+    for (; j < m_markerMatrix->cols - 1; ++j) {
         int index = m_markerMatrix->at<int>(i, j) - 1;
         if (index >= 0 && index < size) {
             boundarySet << index;
         }
     }
     i = m_markerMatrix->rows - 2;//same margin here
-    j = 0;
-    for (; j < m_markerMatrix->cols; ++j) {
+    j = 1;
+    for (; j < m_markerMatrix->cols - 1; ++j) {
         int index = m_markerMatrix->at<int>(i, j) - 1;
         if (index >= 0 && index < size) {
             boundarySet << index;
         }
     }
-    i = 0;
+    i = 1;
     j = m_markerMatrix->cols - 2;//same margin here
-    for (; i < m_markerMatrix->rows; ++i) {
+    for (; i < m_markerMatrix->rows - 1; ++i) {
         int index = m_markerMatrix->at<int>(i, j) - 1;
         if (index >= 0 && index < size) {
             boundarySet << index;
         }
     }
-    i = 0;
+    i = 1;
     j = 1;//same margin here
-    for (; i < m_markerMatrix->rows; ++i) {
+    for (; i < m_markerMatrix->rows - 1; ++i) {
         int index = m_markerMatrix->at<int>(i, j) - 1;
         if (index >= 0 && index < size) {
             boundarySet << index;
         }
+    }
+    cornerSet << m_markerMatrix->at<int>(1, 1) - 1
+              << m_markerMatrix->at<int>(1, m_markerMatrix->cols - 2) - 1
+              << m_markerMatrix->at<int>(m_markerMatrix->rows - 2, 1) - 1
+              << m_markerMatrix->at<int>(m_markerMatrix->rows - 2, m_markerMatrix->cols - 2) - 1;
+    for (QSet<int>::iterator it = cornerSet.begin(); it != cornerSet.end(); ++it) {
+        boundarySet.remove(*it);
     }
 }
 
