@@ -2,6 +2,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <qmath.h>
 #include <QDebug>
+#include <QtConcurrent>
 using namespace CAIGA;
 
 const QStringList Analyser::headerLabels = QStringList() << "ID" << "Class" << "Area" << "Perimeter" << "Diameter" << "Flattening";
@@ -28,9 +29,14 @@ void Analyser::calculateByContours()
     //calculate data
     updateBoundarySet();
     ClassObject base;
-    int size = static_cast<int>(m_contours.size());
-    for (int id = 0; id < size; ++id) {
-        QList<QStandardItem *> items;
+
+    //implement multi-threading
+    QList<int> itemIndice;
+    for (int id = 0; id < static_cast<int>(m_contours.size()); ++id) {
+        itemIndice.append(id);
+    }
+    //lambda expression (part of C++11). please upgrade your compiler if compiler complains.
+    QtConcurrent::blockingMap(itemIndice, [&base, this] (const int &id) {
         qreal area = calculateContourAreaByPixels(id);
         qreal perimeter = calculatePerimeter(id);
         qreal diameter = qSqrt(area);
@@ -39,25 +45,30 @@ void Analyser::calculateByContours()
 
         Object obj(boundary, area, perimeter, diameter, flatng);
         base.insert(id, obj);
+    });
 
+    for (int id = 0; id < static_cast<int>(m_contours.size()); ++id) {
         /*
          * insert number instead of QString by using setData()
          * otherwise, the sort function would become odd.
          */
+        Object obj = base.ObjectAt(id);
+        QList<QStandardItem *> items;
         QStandardItem *idItem = new QStandardItem();
         idItem->setData(QVariant(id + 1), Qt::DisplayRole);
         QStandardItem *areaItem = new QStandardItem();
-        areaItem->setData(QVariant(area), Qt::DisplayRole);
+        areaItem->setData(QVariant(obj.area()), Qt::DisplayRole);
         QStandardItem *periItem = new QStandardItem();
-        periItem->setData(QVariant(perimeter), Qt::DisplayRole);
+        periItem->setData(QVariant(obj.perimeter()), Qt::DisplayRole);
         QStandardItem *diameterItem = new QStandardItem();
-        diameterItem->setData(QVariant(diameter), Qt::DisplayRole);
-        QStandardItem *flatngItem = new QStandardItem();
-        flatngItem->setData(QVariant(flatng), Qt::DisplayRole);
+        diameterItem->setData(QVariant(obj.diameter()), Qt::DisplayRole);
+        QStandardItem *flatteningItem = new QStandardItem();
+        flatteningItem->setData(QVariant(obj.flattening()), Qt::DisplayRole);
 
-        items << idItem << new QStandardItem(m_classes[0]) << areaItem << periItem << diameterItem << flatngItem;
+        items << idItem << new QStandardItem(m_classes[0]) << areaItem << periItem << diameterItem << flatteningItem;
         contoursModel->appendRow(items);
     }
+
     classObjMap[0] = base;
 }
 
