@@ -41,9 +41,9 @@ public:
     inline QString getAvgAreaOfClass(int i) { return QString::number(classObjMap[i].averageArea()); }
     inline QString getAvgPerimeterOfClass(int i) { return QString::number(classObjMap[i].averagePerimeter()); }
     inline QString getAvgDiameterOfClass(int i) { return QString::number(classObjMap[i].averageDiameter()); }
-    inline QString getAvgInterLengthOfClass(int i) { return QString::number(classObjMap[i].averageIntercept()); }
+    inline QString getAvgInterceptOfClass(int i) { return QString::number(classObjMap[i].averageIntercept()); }
     inline QString getAvgFlatteningOfClass(int i) { return QString::number(classObjMap[i].averageFlattening()); }
-    inline QString getSizeNumberByAreaOfClass(int i) { return QString::number(classObjMap[i].sizeNumberByArea()); }
+    inline QString getSizeNumberByPlanimetricOfClass(int i) { return QString::number(classObjMap[i].sizeNumberByPlanimetric()); }
     inline QString getSizeNumberByInterceptOfClass(int i) { return QString::number(classObjMap[i].sizeNumberByIntercept()); }
 
     QMap<int, ClassObject> classObjMap;
@@ -75,7 +75,7 @@ private:
     int classIndexOfObject(int idx);//get the class index of the idx-th object
     Object getObjectAt(int idx);
     QStringList m_classes;
-    qreal averageInterceptsLength;
+    qreal averageIntercept;
 
     QStandardItemModel *contoursModel;
     static const QStringList headerLabels;

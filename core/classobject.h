@@ -20,13 +20,13 @@ public:
     int boundaryCount();
     inline int count() { return objects.size(); }
     qreal totalArea();
-    qreal averageArea();//defined in GB/T 6394-2002
-    qreal averagePerimeter();//copycat the formula in GB/T 6394-2002
+    qreal averageArea();//defined in ASTM E112-12
+    qreal averagePerimeter();
     qreal averageFlattening();
     inline qreal averageDiameter() { return qSqrt(averageArea()); }
     inline qreal averageIntercept() const { return m_averageIntercept; }
     qreal sizeNumberByIntercept() const;//grain size number G
-    qreal sizeNumberByArea();
+    qreal sizeNumberByPlanimetric();//Planimetric procedure as defined in ASTM E112-12
     inline qreal percentage() const { return m_percentage; }
 
     inline void setAverageIntercept(qreal a) { m_averageIntercept = a; }

@@ -130,7 +130,7 @@ QString Analyser::getClassValues(int classIdx)
     if (classIdx < 0 || classIdx >= m_classes.size()) {
         return QString("Error. Class index is out of classes's range.");
     }
-    QString info = QString("Count: %1<br />Percentage: %2%<br />Average Area: %3 μm<sup>2</sup><br />Average Perimeter: %4 μm<br />Average Diameter: %5 μm<br />Average Flattening: %6<br />Average Intercept: %7 μm<br />Grain Size Number (Area Method): %8<br />Grain Size Number (Intercept Method): %9").arg(classObjMap[classIdx].count()).arg(classObjMap[classIdx].percentage() * 100).arg(classObjMap[classIdx].averageArea()).arg(classObjMap[classIdx].averagePerimeter()).arg(classObjMap[classIdx].averageDiameter()).arg(classObjMap[classIdx].averageFlattening()).arg(classObjMap[classIdx].averageIntercept()).arg(classObjMap[classIdx].sizeNumberByArea()).arg(classObjMap[classIdx].sizeNumberByIntercept());
+    QString info = QString("Count: %1<br />Percentage: %2%<br />Average Grain Area: %3 μm<sup>2</sup><br />Average Perimeter: %4 μm<br />Average Diameter: %5 μm<br />Average Flattening: %6<br />Mean Intercept: %7 μm<br />Grain Size Number (Planimetric Procedure): %8<br />Grain Size Number (Intercept Procedure): %9").arg(classObjMap[classIdx].count()).arg(classObjMap[classIdx].percentage() * 100).arg(classObjMap[classIdx].averageArea()).arg(classObjMap[classIdx].averagePerimeter()).arg(classObjMap[classIdx].averageDiameter()).arg(classObjMap[classIdx].averageFlattening()).arg(classObjMap[classIdx].averageIntercept()).arg(classObjMap[classIdx].sizeNumberByPlanimetric()).arg(classObjMap[classIdx].sizeNumberByIntercept());
     return info;
 }
 
@@ -198,7 +198,7 @@ qreal Analyser::calculateContourAreaByPixels(int idx)
     //using STL itreator to get rid of tedious double-for-loop
     for (cv::MatConstIterator_<int> it = m_markerMatrix->begin<int>(); it != m_markerMatrix->end<int>(); ++it) {
         if (((*it) - 1) == idx) {
-            ++pixels;//treat every pixel as 1*1 rectangle, then pixels equals to the area
+            ++pixels;//treat every pixel as 1 * 1 rectangle, then pixels equals to the area
         }
     }
     return (pixels / scaleValue / scaleValue);
@@ -294,64 +294,87 @@ void Analyser::calculateIntercepts()
     int perHeight = m_markerMatrix->rows / (interceptsNumber + 2);
     int bottom = m_markerMatrix->rows - 2;//margin 2 pos
     int right = m_markerMatrix->cols - 2;
-    qreal totalInterceptsVertical = 0;
-    qreal totalInterceptsHorizontal = 0;
+    qreal totalIntercepts = 0;
 
     for (int s = 1; s < (interceptsNumber + 1); ++s) {//at(row, col)
         int sliceV = perHeight * s;
         int sliceH = perWidth * s;
         cv::Mat vertical = m_markerMatrix->col(sliceH);//remember it's not x-y but row-col in cv::Mat
         cv::Mat horizontal = m_markerMatrix->row(sliceV);
+        qreal verticalInterception = 0;
+        qreal horizontalInterception = 0;
+
+        /*
+         * ASTM E112-12 13.3
+         * When counting intercepts, segments at the end of a test line
+         * which penetrate into a grain are scored as half intercepts.
+         */
 
         //calculate the intercepts on vertical line (column)
+        bool removeStartMargin = false;
+        int lastIntercept = 0;
+        qreal verticalLineLength = bottom - 4;
         int previousIdx = -99;//initialise it using a ridiculous number
-        for (int i = 2; i < bottom; ++i) {//margin 2 pos
+        for (int i = 2; i < bottom - 2; ++i) {//margin 2 pos
             int idx = vertical.at<int>(i, 0) - 1;
             if (idx != previousIdx && idx == -2) {//boundary should be counted only once to avoid tangency
-                if (i == 2 || i == 3 || i == 4 || i == bottom - 3 || i == bottom - 2 || i == bottom - 1) {//more rough
-                    totalInterceptsVertical += 0.5;//count the end 0.5
+                if (i == 2 || i == bottom - 3) {//end points
+                    verticalInterception += 0.5;//count the end 0.5
                 }
                 else if (getBoundaryJointNeighbours(i, sliceH) > 2) {//the joint of (more than) three grains should count 1.5
-                    totalInterceptsVertical += 1.5;
+                    verticalInterception += 1.5;
                 }
                 else {
-                    totalInterceptsVertical += 1;
+                    verticalInterception += 1;
                 }
+                if (!removeStartMargin) {
+                    verticalLineLength -= (i - 2);
+                    removeStartMargin = true;
+                }
+                lastIntercept = i;
             }
             previousIdx = idx;
         }
+        verticalLineLength -= (bottom - 2 - lastIntercept);
+        totalIntercepts += verticalLineLength / scaleValue / verticalInterception;
+
 
         //calculate the intercepts on horizontal line (row)
+        qreal horizontalLineLength = right - 4;
+        removeStartMargin = false;
         previousIdx = -99;
-        for (int i = 2; i < right; ++i) {
+        for (int i = 2; i < right - 2; ++i) {
             int idx = horizontal.at<int>(0, i) - 1;
             if (idx != previousIdx && idx == -2) {
-                if (i == 2 || i == 3 || i == 4 || i == right - 3 || i == right - 2 || i == right - 1) {
-                    totalInterceptsHorizontal += 0.5;
+                if (i == 2 || i == right - 3) {
+                    horizontalInterception += 0.5;
                 }
                 else if (getBoundaryJointNeighbours(sliceV, i) > 2) {
-                    totalInterceptsHorizontal += 1.5;
+                    horizontalInterception += 1.5;
                 }
                 else {
-                    totalInterceptsHorizontal += 1;
+                    horizontalInterception += 1;
                 }
+                if (!removeStartMargin) {
+                    horizontalLineLength -= (i - 2);
+                    removeStartMargin = true;
+                }
+                lastIntercept = i;
             }
             previousIdx = idx;
         }
+        horizontalLineLength -= (right - 2 - lastIntercept);
+        totalIntercepts += horizontalLineLength / scaleValue / horizontalInterception;
     }
-    totalInterceptsVertical /= static_cast<qreal>(interceptsNumber);//that makes them average intercepts now
-    totalInterceptsHorizontal /= static_cast<qreal>(interceptsNumber);
 
-    qreal horizontalLineLength = (right - 2) / scaleValue;//um
-    qreal verticalLineLength = (bottom - 2) / scaleValue;//um
-    averageInterceptsLength = ((horizontalLineLength / totalInterceptsHorizontal) + (verticalLineLength / totalInterceptsVertical)) / 2.0;
+    averageIntercept = totalIntercepts / (interceptsNumber * 2) ;
 
     /*
      * calculate the averageInterceptLength by class.
      * la = l * Va. divide averageInterceptsLength by volume percentage (using area percentage here)
      */
     for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
-        it->setAverageIntercept(averageInterceptsLength * it->percentage());
+        it->setAverageIntercept(averageIntercept * it->percentage());
     }
 }
 
