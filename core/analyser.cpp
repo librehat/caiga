@@ -224,10 +224,9 @@ qreal Analyser::calculateFlattening(int idx)
      */
     std::vector<cv::Point> pts = findValuePoints(idx + 1, *m_markerMatrix);
     cv::RotatedRect ellipse = cv::fitEllipse(pts);
-    float h = ellipse.size.height;
-    float w =ellipse.size.width;
-    qreal delta = qFabs(static_cast<qreal>(h - w));
-    qreal flattening = static_cast<qreal>(h > w ? delta / h : delta / w);//has to be divided by longer axis
+    qreal h = ellipse.size.height / 2;
+    qreal w = ellipse.size.width / 2;
+    qreal flattening = qFabs(h - w) / std::max(h, w);//has to be divided by longer axis
     return flattening;
 }
 
