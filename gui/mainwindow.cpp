@@ -77,6 +77,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Analysis
     connect(ui->analysisButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onAnalysisButtonBoxClicked);
+    connect(ui->interceptsNumberChangeButton, &QPushButton::clicked, this, &MainWindow::onInterceptsChangedClicked);
 
     //Information
     connect(ui->splitSpinBox, static_cast<void (QSpinBox::*) (int)>(&QSpinBox::valueChanged), this, &MainWindow::onSplitSpinBoxValueChanged);
@@ -539,6 +540,11 @@ void MainWindow::onContourIndexFound(const QModelIndex &i)
 void MainWindow::onCurrentClassChanged(int idx)
 {
     ui->analysisCurrentClassLabel->setText(analyser->getClassValues(idx));
+}
+
+void MainWindow::onInterceptsChangedClicked()
+{
+    analyser->onInterceptsNumberChanged(ui->interceptsNumberSpinBox->value());
 }
 
 void MainWindow::onAnalysisButtonBoxClicked(QAbstractButton *b)

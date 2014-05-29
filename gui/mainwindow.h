@@ -94,6 +94,7 @@ private slots:
     //analysis
     void onContourIndexFound(const QModelIndex &);
     void onCurrentClassChanged(int);
+    void onInterceptsChangedClicked();
     void onAnalysisButtonBoxClicked(QAbstractButton *);
 
     //information

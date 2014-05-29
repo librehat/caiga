@@ -27,6 +27,7 @@ public:
     int count();
     inline int classCount() const { return m_classes.size(); }
     qreal getMaximumDiameter();
+    void onInterceptsNumberChanged(const int &num);
 
     //below are functions that get the value at a specified index in type of QString
     inline QString getClassNameAt(int idx) { return m_classes.at(classIndexOfObject(idx)); }
@@ -63,6 +64,7 @@ public slots:
 private:
     void calculateByContours();
 
+    int interceptsNumber;
     qreal scaleValue;//pixel / um
     int currentSelectedIdx;
     int previousClassIdx;
@@ -90,7 +92,8 @@ private:
      * calculate all sorts of information class by class
      * these functions would clear the previous values
      */
-    void calculateClassValues();
+    void calculatePercentage();
+    void calculateIntercepts();
 };
 }
 

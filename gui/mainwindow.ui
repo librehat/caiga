@@ -104,7 +104,7 @@
          </widget>
         </item>
         <item row="7" column="1">
-         <spacer name="verticalSpacer">
+         <spacer name="ccVerticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -232,7 +232,7 @@
          </widget>
         </item>
         <item row="5" column="1">
-         <spacer name="verticalSpacer_2">
+         <spacer name="ccVerticalSpacer_2">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -418,7 +418,34 @@
         <property name="bottomMargin">
          <number>0</number>
         </property>
-        <item row="1" column="1" alignment="Qt::AlignTop">
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="interceptsNumberSpinBox">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="value">
+           <number>5</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0" rowspan="5">
+         <widget class="QImageInteractiveDrawer" name="analysisInteracter" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>10</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="interceptsNumberChangeButton">
+          <property name="text">
+           <string>Change Intercepts Number</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" colspan="2">
          <widget class="QTableView" name="analysisTableView">
           <property name="sizeAdjustPolicy">
            <enum>QAbstractScrollArea::AdjustToContents</enum>
@@ -440,8 +467,8 @@
           </attribute>
          </widget>
         </item>
-        <item row="3" column="1">
-         <spacer name="verticalSpacer_3">
+        <item row="3" column="1" colspan="2">
+         <spacer name="analysisVerticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -453,27 +480,17 @@
           </property>
          </spacer>
         </item>
-        <item row="0" column="0" rowspan="5">
-         <widget class="QImageInteractiveDrawer" name="analysisInteracter" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>10</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1" alignment="Qt::AlignBottom">
-         <widget class="QDialogButtonBox" name="analysisButtonBox">
-          <property name="standardButtons">
-           <set>QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1" alignment="Qt::AlignTop">
+        <item row="2" column="1" colspan="2">
          <widget class="QLabel" name="analysisCurrentClassLabel">
           <property name="text">
            <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1" colspan="2">
+         <widget class="QDialogButtonBox" name="analysisButtonBox">
+          <property name="standardButtons">
+           <set>QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
           </property>
          </widget>
         </item>

@@ -17,6 +17,7 @@ Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Po
     m_contours = contours;
     currentSelectedIdx = 0;
     previousClassIdx = -1;
+    interceptsNumber = 5;
     calculateByContours();
 }
 
@@ -56,7 +57,8 @@ void Analyser::calculateByContours()
         contoursModel->appendRow(items);
     }
     classObjMap[0] = base;
-    calculateClassValues();
+    calculatePercentage();
+    calculateIntercepts();
 }
 
 QStandardItemModel *Analyser::getDataModel()
@@ -104,7 +106,8 @@ void Analyser::onClassChanged(const QModelIndex &mIndex, const QString classText
     if (classIdx >= 0) {
         int oldCIdx = classIndexOfObject(idx);
         classObjMap[classIdx].insert(idx, classObjMap[oldCIdx].takeAt(idx));
-        calculateClassValues();
+        calculatePercentage();
+        calculateIntercepts();
     }
     else {
         m_classes << classText;
@@ -112,7 +115,8 @@ void Analyser::onClassChanged(const QModelIndex &mIndex, const QString classText
         if (classIdx >= 0) {
             int oldCIdx = classIndexOfObject(idx);
             classObjMap[classIdx].insert(idx, classObjMap[oldCIdx].takeAt(idx));
-            calculateClassValues();
+            calculatePercentage();
+            calculateIntercepts();
         }
         else {
             qCritical() << "Critical Error. Change class failed. Please report a bug.";
@@ -148,6 +152,12 @@ qreal Analyser::getMaximumDiameter()
         }
     }
     return d;
+}
+
+void Analyser::onInterceptsNumberChanged(const int &num)
+{
+    interceptsNumber = num;
+    calculateIntercepts();
 }
 
 int Analyser::classIndexOfObject(int idx)
@@ -268,28 +278,25 @@ int Analyser::getBoundaryJointNeighbours(int row, int col)
     return neighbours.size();
 }
 
-void Analyser::calculateClassValues()
+void Analyser::calculatePercentage()
 {
-    //qreal totalArea = 0;
     qreal imageArea = m_markerMatrix->cols * m_markerMatrix->rows / scaleValue / scaleValue;
-    /*calculate the percentage and average value at last
     for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
-        totalArea += it->totalArea();
-    }*/
-    for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
-        //it->setPercentage(it->totalArea() / totalArea);
         it->setPercentage(it->totalArea() / imageArea);
     }
+}
 
+void Analyser::calculateIntercepts()
+{
     //calculate intercepts
-    int perWidth = m_markerMatrix->cols / 7; //need 5 slices vertically. this is the gap. so does the below
-    int perHeight = m_markerMatrix->rows / 7;//need 5 slices horizontally.
+    int perWidth = m_markerMatrix->cols / (interceptsNumber + 2);
+    int perHeight = m_markerMatrix->rows / (interceptsNumber + 2);
     int bottom = m_markerMatrix->rows - 2;//margin 2 pos
     int right = m_markerMatrix->cols - 2;
     qreal totalInterceptsVertical = 0;
     qreal totalInterceptsHorizontal = 0;
 
-    for (int s = 1; s < 6; ++s) {//at(row, col)
+    for (int s = 1; s < (interceptsNumber + 1); ++s) {//at(row, col)
         int sliceV = perHeight * s;
         int sliceH = perWidth * s;
         cv::Mat vertical = m_markerMatrix->col(sliceH);//remember it's not x-y but row-col in cv::Mat
@@ -331,8 +338,8 @@ void Analyser::calculateClassValues()
             previousIdx = idx;
         }
     }
-    totalInterceptsVertical /= 5.0;//that makes them average intercepts now
-    totalInterceptsHorizontal /= 5.0;
+    totalInterceptsVertical /= static_cast<qreal>(interceptsNumber);//that makes them average intercepts now
+    totalInterceptsHorizontal /= static_cast<qreal>(interceptsNumber);
 
     qreal horizontalLineLength = (right - 2) / scaleValue;//um
     qreal verticalLineLength = (bottom - 2) / scaleValue;//um
