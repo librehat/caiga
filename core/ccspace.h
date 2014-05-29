@@ -13,20 +13,13 @@ class CORE_LIB CCSpace : public QObject
 public:
     explicit CCSpace(Image *img = NULL, QObject *parent = 0);
     void setImage(Image *img);
-    inline void setCircle(bool c) { *isCircle = c; }
-    inline void setCircleCentre(QPoint c) { circleCentre = c; }
-    inline void setCircleRadius(int r) { circleRadius = r; }
     inline void setRectangle(QRect r) { qrect = r; }
     inline void setScaleValue(qreal s) { *scaleValue = s; emit scaleValueChanged(*scaleValue); }
 
-    inline bool getIsCircle() { return *isCircle; }
     inline qreal getScaleValue() { return *scaleValue; }
 
     void cropImage();
     void reset();
-
-    QPoint circleCentre;
-    int circleRadius;
     QRect qrect;
 
 signals:
@@ -36,7 +29,6 @@ public slots:
 
 private:
     Image *m_image;
-    bool *isCircle;
     qreal *scaleValue;//pixel/μm
 
 };

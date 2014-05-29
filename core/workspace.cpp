@@ -318,10 +318,6 @@ QImage WorkSpace::getLastDisplayImage()
         displayMat = colourImg * 0.6 +  displayMat * 0.4;
     }
 
-    //circular?
-    if (m_image->isCircle()) {
-        displayMat = Image::makeInCircle(displayMat);
-    }
     return Image::convertMat2QImage(displayMat);
 }
 

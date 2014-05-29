@@ -183,7 +183,7 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
     if (ui->ccButtonBox->standardButton(b) == QDialogButtonBox::Reset) {
         ui->ccDrawer->reset();
         ui->scaleDoubleSpinBox->setValue(0);
-        ui->cropCircleRadio->setChecked(true);
+        ui->cropRectRadio->setChecked(true);
     }
     else {//save
         if (cgimg.getScaleValue() == 0) {

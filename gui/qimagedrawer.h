@@ -15,22 +15,7 @@ public:
     explicit QImageDrawer(QWidget *parent = 0);
     inline const QImage *image() const { return &m_image; }
     inline void setSpace(CCSpace *s) { ccSpace = s; connect(s, &CCSpace::scaleValueChanged, this, &QImageDrawer::calibreFinished); }
-    inline void setDrawMode(int m)//QButtonGroup id start with -2
-    {
-        m_drawMode = m;
-        switch (m) {
-        case -2://circle
-            ccSpace->setCircle(true);
-            break;
-        case -3://rect
-            ccSpace->setCircle(false);
-            break;
-        case -4://calibre
-        case -5://gauge
-            break;
-        }
-        update();
-    }
+    inline void setDrawMode(int m) { m_drawMode = m; update(); }
     inline void setPenColour(const QString &c)
     {
         QColor colour(c);
@@ -39,7 +24,6 @@ public:
         }
     }
     inline QColor getPenColour() { return m_penColour; }
-    inline bool isCircle() { return ccSpace->getIsCircle(); }
     inline void reset() { ccSpace->reset(); update(); }
 
 public slots:

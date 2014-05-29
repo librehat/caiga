@@ -19,15 +19,11 @@ void Macro::doCropAndCalibreMacroFromFile(const QString &f)
     /*
      * file content shoud be
      *
-     * c;100,100;50;5.90
-     *
-     * or
-     *
      * r;0,0;300,200;5.90
      *
-     * the first character means the crop opeartion, (c)ircle or (r)ectangle
-     * the second value is the circle centre or the top left point's coordinate
-     * the third one is the radius of circle, or the bottom right point coordinate
+     * the first character means the opeartion, (r)ectangle
+     * the second value is the top left point's coordinate
+     * the third one is the bottom right point coordinate
      * finally the last value has a type of qreal (aka double), which is the scale
      *
      * blank lines or those start with # will be ignored.
@@ -50,22 +46,7 @@ void Macro::doCropAndCalibreMacroFromFile(const QString &f)
             continue;
         }
         else {
-            if (lineList[0] == "c") {
-                m_ccSpace->setCircle(true);
-                QStringList centre = lineList[1].split(',');
-                if (centre.count() != 2) {
-                    continue;
-                }
-                else {
-                    m_ccSpace->setCircleCentre(QPoint(centre[0].toInt(), centre[1].toInt()));
-                }
-                m_ccSpace->setCircleRadius(lineList[2].toInt());
-                m_ccSpace->setScaleValue(lineList[3].toDouble());
-                m_ccSpace->cropImage();
-                ongoing = false;
-            }
-            else if (lineList[0] == "r") {
-                m_ccSpace->setCircle(false);
+            if (lineList[0] == "r") {
                 QStringList topleft = lineList[1].split(',');
                 QStringList bottomright = lineList[2].split(',');
                 if (topleft.count() != 2 || bottomright.count() != 2) {
@@ -101,19 +82,11 @@ void Macro::saveCropAndCalibreAsMacroFile(const QString &f)
     }
 
     QByteArray arrayToBeWritten;
-    if (m_ccSpace->getIsCircle()) {
-        arrayToBeWritten.append("c;");
-        QString center = QString::number(m_ccSpace->circleCentre.x()) + "," + QString::number(m_ccSpace->circleCentre.y()) + ";";
-        arrayToBeWritten.append(center);
-        arrayToBeWritten.append(QString::number(m_ccSpace->circleRadius) + QString(";"));
-    }
-    else {
-        arrayToBeWritten.append("r;");
-        QString topleft = QString::number(m_ccSpace->qrect.topLeft().x()) + "," + QString::number(m_ccSpace->qrect.topLeft().y()) + ";";
-        QString bottomright = QString::number(m_ccSpace->qrect.bottomRight().x()) + "," + QString::number(m_ccSpace->qrect.bottomRight().y()) + QString(";");
-        arrayToBeWritten.append(topleft);
-        arrayToBeWritten.append(bottomright);
-    }
+    arrayToBeWritten.append("r;");
+    QString topleft = QString::number(m_ccSpace->qrect.topLeft().x()) + "," + QString::number(m_ccSpace->qrect.topLeft().y()) + ";";
+    QString bottomright = QString::number(m_ccSpace->qrect.bottomRight().x()) + "," + QString::number(m_ccSpace->qrect.bottomRight().y()) + QString(";");
+    arrayToBeWritten.append(topleft);
+    arrayToBeWritten.append(bottomright);
     arrayToBeWritten.append(QString::number(m_ccSpace->getScaleValue()));
     arrayToBeWritten.append('\n');
     macroFile.write(arrayToBeWritten);

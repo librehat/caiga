@@ -49,7 +49,6 @@ public:
     QImage getProcessedImage();
     QPixmap getProcessedPixmap();
     void setProcessedImage(Mat img);
-    inline bool isCircle() { return m_isCircle; }
     inline qreal getScaleValue() { return m_scale; }
     bool isCropped();
     bool isProcessed();
@@ -65,7 +64,6 @@ public:
     friend class CCSpace;
 
 private:
-    bool m_isCircle;
     qreal m_scale;// pixel/um
 
     QString m_filename;//if it's from camera, then it'll use a default name.

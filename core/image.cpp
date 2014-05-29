@@ -6,7 +6,6 @@ using namespace CAIGA;
 Image::Image()
 {
     m_filename = QString("CAIGA_Image");
-    m_isCircle = true;
     m_scale = 0;
 }
 
