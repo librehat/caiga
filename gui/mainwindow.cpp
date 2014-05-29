@@ -586,8 +586,9 @@ void MainWindow::updateInformationReport(int split)
     reporter = new Reporter(analyser, &preWorkSpace, split, this);
     connect(reporter, &Reporter::reportAvailable, this, &MainWindow::onReportAvailable);
     connect(reporter, &Reporter::workStatusStrUpdated, this, &MainWindow::onMessagesArrived);
+    connect(reporter, &Reporter::reportGenerated, ui->infoTextBrowser, &QTextBrowser::setDocument);
     reporter->setBarChart(ui->infoPlotter);
-    reporter->setTextBrowser(ui->infoTextBrowser);
+    reporter->generateReport();
 }
 
 void MainWindow::onCurrentTabChanged(int i)

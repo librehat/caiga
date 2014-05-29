@@ -2,7 +2,6 @@
 #define REPORTER_H
 
 #include <QObject>
-#include <QTextBrowser>
 #include <QTextDocumentWriter>
 #include "workspace.h"
 #include "analyser.h"
@@ -16,12 +15,15 @@ public:
     explicit Reporter(CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int split, QObject *parent = 0);
     ~Reporter() {}
     void setBarChart(QCustomPlot *plot);
-    void setTextBrowser(QTextBrowser *tb);
+    void generateReport();
     void exportAsPDF(QString &filename);
     void exportAsFormat(QString &filename, const QByteArray &format);
 
+    void setTextBrowser();
+
 signals:
     void workStatusStrUpdated(const QString &);
+    void reportGenerated(QTextDocument *);
     void reportAvailable(bool);
 
 private:
@@ -29,6 +31,7 @@ private:
     CAIGA::Analyser *m_analyser;
     CAIGA::WorkSpace *m_workSpace;
     QTextDocument textDoc;
+    QTextCursor cursor;
     int split;
     qreal maxRadius;
 

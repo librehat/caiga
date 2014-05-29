@@ -1,5 +1,6 @@
 #include <QTime>
 #include <QPrinter>
+#include <QtConcurrent>
 #include "reporter.h"
 
 Reporter::Reporter(CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int s, QObject *parent) :
@@ -20,6 +21,8 @@ Reporter::Reporter(CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int s
     textDoc.documentLayout()->registerHandler(QCPDocumentObject::PlotTextFormat, iface);
     QTime t;
     qsrand(t.currentTime().msec() + t.currentTime().second() * 1000);
+
+    cursor = QTextCursor(&textDoc);
 }
 
 void Reporter::setBarChart(QCustomPlot *plot)
@@ -40,11 +43,15 @@ void Reporter::setBarChart(QCustomPlot *plot)
     int maxCountBySlice = 0;
     //count
     xticks.prepend(maxRadius);
-    for (int slice = split - 1; slice >= 0; --slice) {
+    QList<int> sList;
+    for (int i = 0; i < split; ++i) {
+        sList.append(i);
+        xticks.prepend(maxRadius / split * i);
+    }
+    QtConcurrent::blockingMap(sList, [&grainCounts, &maxCountBySlice, this] (const int &slice) {
         int count = 0;
         qreal sectionMin = maxRadius / split * slice;
         qreal sectionMax = maxRadius / split * (slice + 1);
-        xticks.prepend(sectionMin);
 
         for (int cid = 0; cid < m_analyser->classCount(); ++cid) {
             for (QMap<int, CAIGA::Object>::iterator it = m_analyser->classObjMap[cid].rObjects().begin(); it != m_analyser->classObjMap[cid].rObjects().end(); ++it) {
@@ -55,7 +62,7 @@ void Reporter::setBarChart(QCustomPlot *plot)
             }
         }
         maxCountBySlice = std::max(count, maxCountBySlice);
-    }
+    });
 
     //setup QCustomPlot x axis and y axis
     QFont cambriaMath("Cambria Math");
@@ -110,10 +117,9 @@ void Reporter::setBarChart(QCustomPlot *plot)
     plot->replot();
 }
 
-void Reporter::setTextBrowser(QTextBrowser *tb)
+void Reporter::generateReport()
 {
     emit workStatusStrUpdated("Generating report... Please wait......");
-    QTextCursor cursor(&textDoc);
     cursor.setBlockFormat(alignCentreBlockFormat());
     cursor.insertBlock(alignCentreBlockFormat(), boldRomanFormat());
     cursor.insertText("Computer-Aid Interactive Grain Analyser\nAnalysis Report");
@@ -197,8 +203,7 @@ void Reporter::setTextBrowser(QTextBrowser *tb)
     cursor.insertHtml("<br />");
     cursor.insertText("Table 2. Details of each object", figureInfoFormat());
     cursor.insertHtml("<br />");
-
-    tb->setDocument(&textDoc);
+    emit reportGenerated(&textDoc);
     emit workStatusStrUpdated("Report Generated.");
     emit reportAvailable(true);
 }
