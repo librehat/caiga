@@ -36,7 +36,7 @@ void Analyser::calculateByContours()
         itemIndice.append(id);
     }
     //lambda expression (part of C++11). please upgrade your compiler if compiler complains.
-    QtConcurrent::blockingMap(itemIndice, [&base, this] (const int &id) {
+    QtConcurrent::blockingMap(itemIndice, [&] (const int &id) {
         qreal area = calculateContourAreaByPixels(id);
         qreal perimeter = calculatePerimeter(id);
         qreal diameter = qSqrt(area);

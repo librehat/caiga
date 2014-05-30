@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>672</width>
+    <width>662</width>
     <height>620</height>
    </rect>
   </property>
@@ -52,16 +52,7 @@
         <string>Raw</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
@@ -81,16 +72,7 @@
         <string>Crop and Calibre</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item row="2" column="1" rowspan="3">
@@ -251,16 +233,7 @@
         <string>Process</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item row="0" column="2" alignment="Qt::AlignTop">
@@ -406,16 +379,7 @@
         <string>Analysis</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item row="0" column="1">
@@ -447,9 +411,6 @@
         </item>
         <item row="1" column="1" colspan="2">
          <widget class="QTableView" name="analysisTableView">
-          <property name="sizeAdjustPolicy">
-           <enum>QAbstractScrollArea::AdjustToContents</enum>
-          </property>
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectRows</enum>
           </property>
@@ -501,16 +462,7 @@
         <string>Information</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item row="0" column="4">
@@ -605,8 +557,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>672</width>
-     <height>19</height>
+     <width>662</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -626,6 +578,7 @@
     </property>
     <addaction name="actionQuickReportExport"/>
     <addaction name="actionExportReportAs"/>
+    <addaction name="actionSaveCurrentImageAs"/>
     <addaction name="separator"/>
     <addaction name="actionOptions"/>
    </widget>
@@ -675,6 +628,7 @@
    <addaction name="separator"/>
    <addaction name="actionQuickReportExport"/>
    <addaction name="actionExportReportAs"/>
+   <addaction name="actionSaveCurrentImageAs"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpenFile">
@@ -798,7 +752,10 @@
     </iconset>
    </property>
    <property name="text">
-    <string>Export Image Information As...</string>
+    <string>Export Image Information As</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Report as File</string>
    </property>
   </action>
   <action name="actionQuickReportExport">
@@ -814,7 +771,23 @@
     <string>Quick Export As PDF</string>
    </property>
    <property name="toolTip">
-    <string>Export information as PDF using the image's filename as its filename.</string>
+    <string>Export Report as PDF with the Image's Filename</string>
+   </property>
+  </action>
+  <action name="actionSaveCurrentImageAs">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="image-x-generic">
+     <normaloff/>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>Save Current Image As</string>
+   </property>
+   <property name="toolTip">
+    <string>Save Currently Viewing Image as File</string>
    </property>
   </action>
  </widget>

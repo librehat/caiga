@@ -88,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionOpenCamera, &QAction::triggered, this, &MainWindow::addCameraImageDialog);
     connect(ui->actionReset, &QAction::triggered, this, &MainWindow::onResetActionTriggered);
     connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::onOptionsActionTriggered);
+    connect(ui->actionSaveCurrentImageAs, &QAction::triggered, this, &MainWindow::onSaveCurrentImageTriggered);
     connect(ui->actionQuickReportExport, &QAction::triggered, this, &MainWindow::onQuickExportTriggered);
     connect(ui->actionExportReportAs, &QAction::triggered, this, &MainWindow::onInformationExportTriggered);
     connect(ui->actionAbout_Qt, &QAction::triggered, this, &MainWindow::aboutQtDialog);
@@ -596,14 +597,20 @@ void MainWindow::onCurrentTabChanged(int i)
     ui->ccPixelViewer->setLivePreviewEnabled(false);
     ui->actionRedo->setEnabled(false);
     ui->actionUndo->setEnabled(false);
+    ui->actionSaveCurrentImageAs->setEnabled(false);
 
     switch (i) {
     case 1://crop and calibre
         ui->ccPixelViewer->setLivePreviewEnabled(true);
+        ui->actionSaveCurrentImageAs->setEnabled(false);
         break;
     case 2://process
         ui->actionRedo->setEnabled(true);
         ui->actionUndo->setEnabled(true);
+        ui->actionSaveCurrentImageAs->setEnabled(true);
+        break;
+    case 3://analysis
+        ui->actionSaveCurrentImageAs->setEnabled(true);
         break;
     }
 }
@@ -689,6 +696,41 @@ void MainWindow::onInformationExportTriggered()
             format.append("HTML");
         }
         reporter->exportAsFormat(filename, format);
+    }
+}
+
+void MainWindow::onSaveCurrentImageTriggered()
+{
+    QString filter;
+    QString filename = QFileDialog::getSaveFileName(this,
+                       "Save Current Image As",
+                       QDir::currentPath(),
+                       "Joint Photographic Experts Group (*.jpg);;Portable Network Graphics (*.png)", &filter);
+    if (filename.isNull()) {
+        return;
+    }
+    setCurrentDirbyFile(filename);
+    QByteArray format;
+    if (filter.contains("jpg")) {
+        format.append("JPG");
+    }
+    else {
+        format.append("PNG");
+    }
+    bool ok = false;
+    switch (ui->imageTabs->currentIndex()) {
+    case 2://process
+    case 3://analysis
+        ok = preWorkSpace.getLastDisplayImage().save(filename, format.data());
+        break;
+    default:
+        onMessagesArrived("Invalid operation.");
+    }
+    if (ok) {
+        onMessagesArrived("Current image saved successfully.");
+    }
+    else {
+        onMessagesArrived("Saving current image failed.");
     }
 }
 

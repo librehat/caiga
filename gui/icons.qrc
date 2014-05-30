@@ -45,6 +45,9 @@
         <file alias="48x48/camera-photo.png">icons/Oxygen/48x48/camera-photo.png</file>
         <file alias="22x22/camera-photo.png">icons/Oxygen/22x22/camera-photo.png</file>
         <file alias="32x32/camera-photo.png">icons/Oxygen/32x32/camera-photo.png</file>
+        <file alias="22x22/image-x-generic.png">icons/Oxygen/22x22/image-x-generic.png</file>
+        <file alias="32x32/image-x-generic.png">icons/Oxygen/32x32/image-x-generic.png</file>
+        <file alias="48x48/image-x-generic.png">icons/Oxygen/48x48/image-x-generic.png</file>
         <file alias="index.theme">icons/Oxygen/index.theme</file>
     </qresource>
 </RCC>

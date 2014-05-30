@@ -6,6 +6,8 @@ UI_DIR      = uics
 MOC_DIR     = mocs
 OBJECTS_DIR = objs
 
+QMAKE_CXXFLAGS += -std=c++11
+
 win32: {
     #Change lines below according to your setup environment
     INCLUDEPATH += C:/openCV/build/include

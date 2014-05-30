@@ -111,6 +111,7 @@ private slots:
     void onOptionsActionTriggered();
     void onQuickExportTriggered();
     void onInformationExportTriggered();
+    void onSaveCurrentImageTriggered();
     inline void aboutQtDialog() { QMessageBox::aboutQt(this); }
     inline void aboutCAIGADialog() { QMessageBox::about(this, "About CAIGA", aboutText); }
     void onMessagesArrived(const QString &);
