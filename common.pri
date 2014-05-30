@@ -6,7 +6,10 @@ UI_DIR      = uics
 MOC_DIR     = mocs
 OBJECTS_DIR = objs
 
-QMAKE_CXXFLAGS += -std=c++11
+#Suggested compiler:
+# GCC >= 4.8
+# MSVC >= 2012
+CONFIG += c++11
 
 win32: {
     #Change lines below according to your setup environment
