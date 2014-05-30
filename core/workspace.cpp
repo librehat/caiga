@@ -189,9 +189,10 @@ void WorkSpace::newAdaptiveBilateralFilterWork(int size, double space, double co
     this->newGenericWork(w);
 }
 
-void WorkSpace::newMedianBlurWork(int kSize)
+void WorkSpace::newMedianBlurWork(int kSize, bool cont)
 {
-    WorkBase *w = new WorkMedianBlur(workList.last()->dst, kSize);
+    cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;
+    WorkBase *w = new WorkMedianBlur(s, kSize);
     this->newGenericWork(w);
 }
 

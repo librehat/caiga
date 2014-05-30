@@ -48,7 +48,7 @@ public:
      */
     void newBoxFilterWork(int size, bool cont = false);
     void newAdaptiveBilateralFilterWork(int size, double space, double colour, bool cont = false);
-    void newMedianBlurWork(int kSize);
+    void newMedianBlurWork(int kSize, bool cont = false);
     void newBinaryzationWork(int method, int type, int size, double constant, bool cont = false);
     void newCannyWork(int aSize, double high, double low, bool l2, bool cont = false);
     inline void setFloodFillWorkParameters(double high, double low, bool con8)

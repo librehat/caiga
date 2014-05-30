@@ -83,7 +83,6 @@ void ParametersDialog::setMode(CAIGA::WorkBase::WorkTypes mode)
         break;
     case CAIGA::WorkBase::Canny:
         this->setkSizeText("Aperture Size");
-        ui->kSizeSlider->setValue(2);
         ui->kSizeSlider->setMinimum(2);
         ui->kSizeSlider->setMaximum(4);
         ui->sigmaSpaceLabel->setText("High Threshold");
@@ -108,6 +107,7 @@ void ParametersDialog::setMode(CAIGA::WorkBase::WorkTypes mode)
         break;
     default://adaptiveBilateralFilter
         this->setkSizeText("Kernel Size");
+        ui->kSizeSlider->setValue(6);
         ui->checkBox->setVisible(false);
         break;
     }
