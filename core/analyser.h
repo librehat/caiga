@@ -37,6 +37,7 @@ public:
     inline QString getFlatteningAt(int idx) { return QString::number(getObjectAt(idx).flattening()); }
     //below are based on class index
     inline QString getCountOfClass(int i) { return QString::number(classObjMap[i].count()); }
+    inline QString getTotalAreaOfClass(int i) { return QString::number(classObjMap[i].totalArea()); }
     inline QString getAvgPercentOfClass(int i) { return QString::number(classObjMap[i].percentage() * 100); }
     inline QString getAvgAreaOfClass(int i) { return QString::number(classObjMap[i].averageArea()); }
     inline QString getAvgPerimeterOfClass(int i) { return QString::number(classObjMap[i].averagePerimeter()); }

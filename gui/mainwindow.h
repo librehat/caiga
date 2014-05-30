@@ -78,7 +78,6 @@ private slots:
     inline void onFloodFillMouseClicked(QPoint p) { floodfillPts.append(p); previewSpace.newFloodFillWork(floodfillPts); }
     void onFloodFillAccepted();
     void onFloodFillRejected();
-    inline void onScharrButtonClicked() { preWorkSpace.newScharrWork(); }
     void onCannyButtonClicked();
     inline void onCannyParametersChanged(int aSize, double high, double low, bool l2) { previewSpace.newCannyWork(aSize, high, low, l2); }
     void onWatershedButtonClicked();

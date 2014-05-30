@@ -67,7 +67,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->gaussianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onGaussianBinaryzationButtonClicked);
     connect(ui->medianBinaryzationButton, &QPushButton::clicked, this, &MainWindow::onMedianBinaryzationButtonClicked);
     connect(ui->floodFillButton, &QPushButton::clicked, this, &MainWindow::onFloodFillButtonClicked);
-    connect(ui->scharrButton, &QPushButton::clicked, this, &MainWindow::onScharrButtonClicked);
     connect(ui->cannyButton, &QPushButton::clicked, this, &MainWindow::onCannyButtonClicked);
     connect(ui->watershedButton, &QPushButton::clicked, this, &MainWindow::onWatershedButtonClicked);
     connect(ui->contoursButton, &QPushButton::clicked, this, &MainWindow::onContoursButtonClicked);

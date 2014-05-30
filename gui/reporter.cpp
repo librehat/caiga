@@ -153,11 +153,12 @@ void Reporter::generateReport()
     cursor.movePosition(QTextCursor::End);
 
     //insert class information table
-    cursor.insertTable(m_analyser->classCount() + 1, 10, tableFormat);
+    cursor.insertTable(m_analyser->classCount() + 1, 11, tableFormat);
     insertHeaderAndMoveNextCell(&cursor, "Class");
     insertHeaderAndMoveNextCell(&cursor, "Count");
+    insertHeaderAndMoveNextCell(&cursor, "Total Area\n\n(μm^2)");
     insertHeaderAndMoveNextCell(&cursor, "Area\nPercentage\n(%)");
-    insertHeaderAndMoveNextCell(&cursor, "Area\n\n(μm^2)");
+    insertHeaderAndMoveNextCell(&cursor, "Average Area\n\n(μm^2)");
     insertHeaderAndMoveNextCell(&cursor, "Perimeter\n\n(μm)");
     insertHeaderAndMoveNextCell(&cursor, "Diameter\n\n(μm)");
     insertHeaderAndMoveNextCell(&cursor, "Flattening");
@@ -167,6 +168,7 @@ void Reporter::generateReport()
     for (int i = 0; i < m_analyser->classCount(); ++i) {
         insertTextAndMoveNextCell(&cursor, m_analyser->getClassesList()->at(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getCountOfClass(i));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getTotalAreaOfClass(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgPercentOfClass(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgAreaOfClass(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getAvgPerimeterOfClass(i));

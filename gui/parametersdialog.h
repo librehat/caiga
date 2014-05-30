@@ -38,6 +38,10 @@ private:
 private slots:
     void onValuesChanged();
     void onSliderValueChanged(int);
+
+protected:
+    void closeEvent(QCloseEvent *e);
+    void keyPressEvent(QKeyEvent *e);
 };
 
 #endif // PARAMETERSDIALOG_H

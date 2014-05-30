@@ -64,7 +64,6 @@ public:
     void newEraserWork(const QVector<QPoint> &pts, bool white);
     void newWatershedWork(const Mat *input, bool cont = false);
     void newGradientWork(int k, bool cont = false);
-    void newScharrWork();
     inline Mat *getLastMatrix() { return workList.last()->dst; }
     inline QImage getLastDstImage() { return Image::convertMat2QImage(*workList.last()->dst); }
     QImage getLastDisplayImage();

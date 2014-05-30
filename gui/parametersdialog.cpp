@@ -1,3 +1,5 @@
+#include <QCloseEvent>
+#include <QKeyEvent>
 #include "parametersdialog.h"
 #include "ui_parametersdialog.h"
 
@@ -7,7 +9,7 @@ ParametersDialog::ParametersDialog(CAIGA::WorkBase::WorkTypes mode, QWidget *par
 {
     ui->setupUi(this);
 
-    this->setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
+    this->setWindowFlags(Qt::Tool);
     connect(ui->kSizeSlider, &QSlider::valueChanged, this, &ParametersDialog::onSliderValueChanged);
     connect(ui->kSizeSlider, &QSlider::valueChanged, this, &ParametersDialog::onValuesChanged);
     connect(ui->sigmaColour, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &ParametersDialog::onValuesChanged);
@@ -121,4 +123,24 @@ void ParametersDialog::handleWorkStarted()
 void ParametersDialog::handleWorkFinished()
 {
     ui->buttonBox->setEnabled(true);
+}
+
+void ParametersDialog::closeEvent(QCloseEvent *e)
+{
+    if (!ui->buttonBox->isEnabled()) {
+        e->ignore();
+    }
+    else {
+        QDialog::closeEvent(e);
+    }
+}
+
+void ParametersDialog::keyPressEvent(QKeyEvent *e)
+{
+    if (e->key() == Qt::Key_Escape) {
+        this->close();
+    }
+    else {
+        QDialog::keyPressEvent(e);
+    }
 }

@@ -52,7 +52,16 @@
         <string>Raw</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item>
@@ -72,7 +81,16 @@
         <string>Crop and Calibre</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item row="2" column="1" rowspan="3">
@@ -233,7 +251,16 @@
         <string>Process</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item row="0" column="2" alignment="Qt::AlignTop">
@@ -284,13 +311,6 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="gradientButton">
-             <property name="text">
-              <string>Morphological Gradient</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="gaussianBinaryzationButton">
              <property name="text">
               <string>Gaussian Binaryzation</string>
@@ -305,9 +325,9 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="scharrButton">
+            <widget class="QPushButton" name="gradientButton">
              <property name="text">
-              <string>Scharr</string>
+              <string>Morphological Gradient</string>
              </property>
             </widget>
            </item>
@@ -379,7 +399,16 @@
         <string>Analysis</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item row="0" column="1">
@@ -462,7 +491,16 @@
         <string>Information</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
-        <property name="margin">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
          <number>0</number>
         </property>
         <item row="0" column="4">
@@ -558,7 +596,7 @@
      <x>0</x>
      <y>0</y>
      <width>662</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
