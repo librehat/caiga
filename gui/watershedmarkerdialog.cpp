@@ -1,21 +1,11 @@
 #include "watershedmarkerdialog.h"
 #include "ui_watershedmarkerdialog.h"
 
-#ifdef _WIN32
-#include <QtWinExtras>
-#endif
-
 WatershedMarkerDialog::WatershedMarkerDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::WatershedMarkerDialog)
 {
     ui->setupUi(this);
-
-#ifdef _WIN32
-    QtWin::enableBlurBehindWindow(this);
-    QtWin::extendFrameIntoClientArea(this, -1, -1, -1, -1);
-    this->setAttribute(Qt::WA_TranslucentBackground);
-#endif
 
     this->setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
     brushMenu = new QMenu(this);

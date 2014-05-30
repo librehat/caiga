@@ -2,21 +2,11 @@
 #include "ui_optionsdialog.h"
 #include <QColorDialog>
 
-#ifdef _WIN32
-#include <QtWinExtras>
-#endif
-
 OptionsDialog::OptionsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::OptionsDialog)
 {
     ui->setupUi(this);
-
-#ifdef _WIN32
-    QtWin::enableBlurBehindWindow(this);
-    QtWin::extendFrameIntoClientArea(this, -1, -1, -1, -1);
-    this->setAttribute(Qt::WA_TranslucentBackground);
-#endif
 
     this->readConfigFile();
     confChanged = false;
