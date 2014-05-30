@@ -152,6 +152,13 @@ void Reporter::generateReport()
     cursor.insertHtml("<br /><br />");
     cursor.movePosition(QTextCursor::End);
 
+    //insert some general information
+    cursor.insertBlock(alignCentreBlockFormat(), romanFormat());
+    cursor.insertText("Scale: " + m_analyser->getScale() + " pixel/μm");
+    cursor.insertText("\nMeasurement Area: " + m_analyser->getImageArea() + " μm^2");
+    cursor.insertHtml("<br /><br />");
+    cursor.movePosition(QTextCursor::End);
+
     //insert class information table
     cursor.insertTable(m_analyser->classCount() + 1, 11, tableFormat);
     insertHeaderAndMoveNextCell(&cursor, "Class");

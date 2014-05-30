@@ -29,6 +29,8 @@ public:
     qreal getMaximumDiameter();
     void onInterceptsNumberChanged(const int &num);
 
+    inline QString getScale() { return QString::number(scaleValue); }
+    inline QString getImageArea() { return QString::number(m_markerMatrix->cols * m_markerMatrix->rows / scaleValue / scaleValue); }
     //below are functions that get the value at a specified index in type of QString
     inline QString getClassNameAt(int idx) { return m_classes.at(classIndexOfObject(idx)); }
     inline QString getAreaAt(int idx) { return QString::number(getObjectAt(idx).area()); }
