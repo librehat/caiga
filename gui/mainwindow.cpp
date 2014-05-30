@@ -720,8 +720,10 @@ void MainWindow::onSaveCurrentImageTriggered()
     bool ok = false;
     switch (ui->imageTabs->currentIndex()) {
     case 2://process
+        ok = ui->processDrawer->image()->save(filename, format.data());
+        break;
     case 3://analysis
-        ok = preWorkSpace.getLastDisplayImage().save(filename, format.data());
+        ok = ui->analysisInteracter->image()->save(filename, format.data());
         break;
     default:
         onMessagesArrived("Invalid operation.");
