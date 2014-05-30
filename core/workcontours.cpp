@@ -9,7 +9,8 @@ void WorkContours::Func()
      * thus, we don't need hierarchy neither.
      */
     std::vector<std::vector<cv::Point> > allContours;
-    cv::findContours(*dst, allContours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+    cv::Mat temp = dst->clone();
+    cv::findContours(temp, allContours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 
     //remove those tiny contours since they usually are artefacts.
     for (int i = 0; i < static_cast<int>(allContours.size()); ++i) {
