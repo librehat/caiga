@@ -624,8 +624,8 @@
     <property name="title">
      <string>Tools</string>
     </property>
-    <addaction name="actionQuick_Export"/>
-    <addaction name="actionExportImg_As"/>
+    <addaction name="actionQuickReportExport"/>
+    <addaction name="actionExportReportAs"/>
     <addaction name="separator"/>
     <addaction name="actionOptions"/>
    </widget>
@@ -673,8 +673,8 @@
    <addaction name="actionOpenFile"/>
    <addaction name="actionOpenCamera"/>
    <addaction name="separator"/>
-   <addaction name="actionQuick_Export"/>
-   <addaction name="actionExportImg_As"/>
+   <addaction name="actionQuickReportExport"/>
+   <addaction name="actionExportReportAs"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpenFile">
@@ -788,7 +788,7 @@
     <string>About Qt</string>
    </property>
   </action>
-  <action name="actionExportImg_As">
+  <action name="actionExportReportAs">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -801,7 +801,7 @@
     <string>Export Image Information As...</string>
    </property>
   </action>
-  <action name="actionQuick_Export">
+  <action name="actionQuickReportExport">
    <property name="enabled">
     <bool>false</bool>
    </property>

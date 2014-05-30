@@ -88,8 +88,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionOpenCamera, &QAction::triggered, this, &MainWindow::addCameraImageDialog);
     connect(ui->actionReset, &QAction::triggered, this, &MainWindow::onResetActionTriggered);
     connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::onOptionsActionTriggered);
-    connect(ui->actionQuick_Export, &QAction::triggered, this, &MainWindow::onQuickExportTriggered);
-    connect(ui->actionExportImg_As, &QAction::triggered, this, &MainWindow::onInformationExportTriggered);
+    connect(ui->actionQuickReportExport, &QAction::triggered, this, &MainWindow::onQuickExportTriggered);
+    connect(ui->actionExportReportAs, &QAction::triggered, this, &MainWindow::onInformationExportTriggered);
     connect(ui->actionAbout_Qt, &QAction::triggered, this, &MainWindow::aboutQtDialog);
     connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
     connect(ui->imageTabs, &QTabWidget::currentChanged, this, &MainWindow::onCurrentTabChanged);
@@ -572,8 +572,8 @@ void MainWindow::onSplitButtonClicked()
 
 void MainWindow::onReportAvailable(bool a)
 {
-    ui->actionExportImg_As->setEnabled(a);
-    ui->actionQuick_Export->setEnabled(a);
+    ui->actionExportReportAs->setEnabled(a);
+    ui->actionQuickReportExport->setEnabled(a);
 }
 
 void MainWindow::updateInformationReport(int split)
