@@ -156,15 +156,15 @@ void Reporter::generateReport()
     cursor.insertTable(m_analyser->classCount() + 1, 11, tableFormat);
     insertHeaderAndMoveNextCell(&cursor, "Class");
     insertHeaderAndMoveNextCell(&cursor, "Count");
-    insertHeaderAndMoveNextCell(&cursor, "Total Area\n\n(μm^2)");
+    insertHeaderAndMoveNextCell(&cursor, "Total\nArea\n(μm^2)");
     insertHeaderAndMoveNextCell(&cursor, "Area\nPercentage\n(%)");
-    insertHeaderAndMoveNextCell(&cursor, "Average Area\n\n(μm^2)");
+    insertHeaderAndMoveNextCell(&cursor, "Average\nArea\n(μm^2)");
     insertHeaderAndMoveNextCell(&cursor, "Perimeter\n\n(μm)");
     insertHeaderAndMoveNextCell(&cursor, "Diameter\n\n(μm)");
     insertHeaderAndMoveNextCell(&cursor, "Flattening");
     insertHeaderAndMoveNextCell(&cursor, "Intercept\n\n(μm)");
-    insertHeaderAndMoveNextCell(&cursor, "Grain Size Number\n(Planimetric Procedure)\n(G)");
-    insertHeaderAndMoveNextCell(&cursor, "Grain Size Number\n(Intercept Procedure)\n(G)");
+    insertHeaderAndMoveNextCell(&cursor, "G\n\n(Planimetric)");
+    insertHeaderAndMoveNextCell(&cursor, "G\n\n(Intercept)");
     for (int i = 0; i < m_analyser->classCount(); ++i) {
         insertTextAndMoveNextCell(&cursor, m_analyser->getClassesList()->at(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getCountOfClass(i));
@@ -242,10 +242,10 @@ QTextCharFormat Reporter::cambriaMathFormat()
     return mf;
 }
 
-QTextCharFormat Reporter::cambriaMathBoldFormat()
+QTextCharFormat Reporter::arialBoldFormat()
 {
     QTextCharFormat cf;
-    cf.setFontFamily("Cambria Math");
+    cf.setFontFamily("Arial");
     cf.setFontPointSize(10);
     cf.setFontWeight(QFont::Bold);
     return cf;
@@ -265,7 +265,7 @@ QTextCharFormat Reporter::figureInfoFormat()
     QTextCharFormat ff;
     ff.setFontFamily("Times New Roman");
     ff.setFontItalic(true);
-    ff.setFontPointSize(9);
+    ff.setFontPointSize(10);
     ff.setFontWeight(QFont::DemiBold);
     return ff;
 }
