@@ -325,10 +325,11 @@ void Analyser::calculateIntercepts()
          * ASTM E112-12 13.3
          * When counting intercepts, segments at the end of a test line
          * which penetrate into a grain are scored as half intercepts.
+         * which means the intercepts should be recorded as double length of segments
          */
 
         //calculate the intercepts on vertical line (column)
-        bool removeStartMargin = false;
+        bool firstInterception = true;
         int lastIntercept = 0;
         qreal verticalLineLength = bottom - 4;
         int previousIdx = -99;//initialise it using a ridiculous number
@@ -344,21 +345,21 @@ void Analyser::calculateIntercepts()
                 else {
                     verticalInterception += 1;
                 }
-                if (!removeStartMargin) {
-                    verticalLineLength -= (i - 2);
-                    removeStartMargin = true;
+                if (firstInterception) {
+                    verticalLineLength += (i - 2);
+                    firstInterception = false;
                 }
                 lastIntercept = i;
             }
             previousIdx = idx;
         }
-        verticalLineLength -= (bottom - 2 - lastIntercept);
+        verticalLineLength += (bottom - 3 - lastIntercept);
         totalIntercepts += verticalLineLength / scaleValue / verticalInterception;
 
 
         //calculate the intercepts on horizontal line (row)
         qreal horizontalLineLength = right - 4;
-        removeStartMargin = false;
+        firstInterception = true;
         previousIdx = -99;
         for (int i = 2; i < right - 2; ++i) {
             int idx = horizontal.at<int>(0, i) - 1;
@@ -372,15 +373,15 @@ void Analyser::calculateIntercepts()
                 else {
                     horizontalInterception += 1;
                 }
-                if (!removeStartMargin) {
-                    horizontalLineLength -= (i - 2);
-                    removeStartMargin = true;
+                if (firstInterception) {
+                    horizontalLineLength += (i - 2);
+                    firstInterception = false;
                 }
                 lastIntercept = i;
             }
             previousIdx = idx;
         }
-        horizontalLineLength -= (right - 2 - lastIntercept);
+        horizontalLineLength += (right - 3 - lastIntercept);
         totalIntercepts += horizontalLineLength / scaleValue / horizontalInterception;
     }
 
