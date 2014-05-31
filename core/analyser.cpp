@@ -240,12 +240,12 @@ void Analyser::updateBoundarySet()
     right << topRight << bottomRight;
     boundaryArray << top << left << bottom << right;
 
-    QtConcurrent::blockingMap(boundaryArray.begin(), boundaryArray.end(), [this] (QVector<cv::Point> line) {
-        cv::LineIterator it(*m_markerMatrix, line[0], line[1]);
+    for(QVector<QVector<cv::Point> >::iterator line = boundaryArray.begin(); line != boundaryArray.end(); ++line) {
+        cv::LineIterator it(*m_markerMatrix, (*line)[0], (*line)[1]);
         for (int i = 0; i < it.count; ++i, ++it) {
             boundarySet << m_markerMatrix->at<int>(it.pos()) - 1;
         }
-    });
+    }
 
     cornerSet << m_markerMatrix->at<int>(topLeft) - 1
               << m_markerMatrix->at<int>(topRight) - 1
