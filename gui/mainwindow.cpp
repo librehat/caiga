@@ -18,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QDir::setCurrent(settings.value("CurrentDir").toString());
 
     //initialise pointers
+    processSpace = NULL;
+    previewSpace = NULL;
     cameraDlg = NULL;
     parametersDlg = NULL;
     watershedDlg = NULL;
@@ -71,12 +73,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->watershedButton, &QPushButton::clicked, this, &MainWindow::onWatershedButtonClicked);
     connect(ui->contoursButton, &QPushButton::clicked, this, &MainWindow::onContoursButtonClicked);
     connect(ui->processButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onProcessButtonBoxClicked);
-    connect(ui->actionUndo, &QAction::triggered, &preWorkSpace, &CAIGA::WorkSpace::undo);
-    connect(ui->actionRedo, &QAction::triggered, &preWorkSpace, &CAIGA::WorkSpace::redo);
 
     //Analysis
     connect(ui->analysisButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onAnalysisButtonBoxClicked);
-    connect(ui->interceptsNumberChangeButton, &QPushButton::clicked, this, &MainWindow::onInterceptsChangedClicked);
 
     //Information
     connect(ui->splitSpinBox, static_cast<void (QSpinBox::*) (int)>(&QSpinBox::valueChanged), this, &MainWindow::onSplitSpinBoxValueChanged);
@@ -94,10 +93,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
     connect(ui->imageTabs, &QTabWidget::currentChanged, this, &MainWindow::onCurrentTabChanged);
     connect(this, &MainWindow::messageArrived, this, &MainWindow::onMessagesArrived);
-
-    connect(&preWorkSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onProcessWorkFinished);
-    connect(&preWorkSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
-    connect(&previewSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
 
     connect(this, &MainWindow::configReadFinished, this, &MainWindow::updateOptions);
 
@@ -187,14 +182,32 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
         ui->cropRectRadio->setChecked(true);
     }
     else {//save
-        if (cgimg.getScaleValue() == 0) {
+        if (cgimg.getScaleValue() <= 0) {
             onMessagesArrived("You must calibre image scale before move to next step.");
             return;
         }
         ccSpace.cropImage();
-        preWorkSpace.resetToImage(&cgimg);
+
+        if (processSpace != NULL) {
+            processSpace->disconnect();
+            processSpace->deleteLater();
+        }
+        processSpace = new CAIGA::WorkSpace(cgimg.croppedMatrix(), this);
+        connect(processSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onProcessWorkFinished);
+        connect(processSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
+        connect(ui->actionUndo, &QAction::triggered, processSpace, &CAIGA::WorkSpace::undo);
+        connect(ui->actionRedo, &QAction::triggered, processSpace, &CAIGA::WorkSpace::redo);
+
+        if (previewSpace != NULL) {
+            previewSpace->disconnect();
+            previewSpace->deleteLater();
+        }
+        previewSpace = new CAIGA::WorkSpace(NULL, this);
+        connect(previewSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
+
         ui->imageTabs->setCurrentIndex(2);
-        onMessagesArrived("Pre-Process the image, then segment it.");
+        onMessagesArrived("Process and segment the image.");
+        onProcessWorkFinished();//update the image
     }
 }
 
@@ -243,23 +256,22 @@ void MainWindow::onMouseBlackEraser()
 
 void MainWindow::onPreviewWorkFinished()
 {
-    ui->processDrawer->setImage(previewSpace.getLastDisplayImage());
+    ui->processDrawer->setImage(previewSpace->getLastDisplayImage());
 }
 
 void MainWindow::onInvertGrayscaleButtonClicked()
 {
-    preWorkSpace.newInvertGrayscaleWork();
+    processSpace->newInvertGrayscaleWork();
 }
 
 void MainWindow::onHistEqualiseButtonClicked()
 {
-    preWorkSpace.newHistogramEqualiseWork();
+    processSpace->newHistogramEqualiseWork();
 }
 
 void MainWindow::onGradientButtonClicked()
 {
-    previewSpace.reset(preWorkSpace.getLastMatrix());
-    previewSpace.setImage(&cgimg);
+    previewSpace->reset(processSpace->getLastMatrix());
     if (parametersDlg != NULL) {
         parametersDlg->disconnect();
         parametersDlg->deleteLater();
@@ -270,13 +282,12 @@ void MainWindow::onGradientButtonClicked()
 
 void MainWindow::onGradientParamatersChanged(int kSize, double, double, bool)
 {
-    previewSpace.newGradientWork(kSize);
+    previewSpace->newGradientWork(kSize);
 }
 
 void MainWindow::onBoxFilterButtonClicked()
 {
-    previewSpace.reset(preWorkSpace.getLastMatrix());
-    previewSpace.setImage(&cgimg);
+    previewSpace->reset(processSpace->getLastMatrix());
     if (parametersDlg != NULL) {
         parametersDlg->disconnect();
         parametersDlg->deleteLater();
@@ -287,13 +298,12 @@ void MainWindow::onBoxFilterButtonClicked()
 
 void MainWindow::onBoxFilterParametersChanged(int kSize, double, double, bool)
 {
-    previewSpace.newBoxFilterWork(kSize);
+    previewSpace->newBoxFilterWork(kSize);
 }
 
 void MainWindow::onAdaptiveBilateralFilterButtonClicked()
 {
-    previewSpace.reset(preWorkSpace.getLastMatrix());
-    previewSpace.setImage(&cgimg);
+    previewSpace->reset(processSpace->getLastMatrix());
     if (parametersDlg != NULL) {
         parametersDlg->disconnect();
         parametersDlg->deleteLater();
@@ -304,13 +314,12 @@ void MainWindow::onAdaptiveBilateralFilterButtonClicked()
 
 void MainWindow::onAdaptiveBilateralFilterParametersChanged(int k, double s, double c, bool)
 {
-    previewSpace.newAdaptiveBilateralFilterWork(k, s, c);
+    previewSpace->newAdaptiveBilateralFilterWork(k, s, c);
 }
 
 void MainWindow::onMedianBlurButtonClicked()
 {
-    previewSpace.reset(preWorkSpace.getLastMatrix());
-    previewSpace.setImage(&cgimg);
+    previewSpace->reset(processSpace->getLastMatrix());
     if (parametersDlg != NULL) {
         parametersDlg->disconnect();
         parametersDlg->deleteLater();
@@ -321,13 +330,12 @@ void MainWindow::onMedianBlurButtonClicked()
 
 void MainWindow::onMedianBlurParametersChanged(int k, double, double, bool)
 {
-    previewSpace.newMedianBlurWork(k);
+    previewSpace->newMedianBlurWork(k);
 }
 
 void MainWindow::onGaussianBinaryzationButtonClicked()
 {
-    previewSpace.reset(preWorkSpace.getLastMatrix());
-    previewSpace.setImage(&cgimg);
+    previewSpace->reset(processSpace->getLastMatrix());
     if (parametersDlg != NULL) {
         parametersDlg->disconnect();
         parametersDlg->deleteLater();
@@ -338,13 +346,12 @@ void MainWindow::onGaussianBinaryzationButtonClicked()
 
 void MainWindow::onGaussianBinaryzationParametersChanged(int s, double c, double, bool inv)
 {
-    previewSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_GAUSSIAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
+    previewSpace->newBinaryzationWork(CV_ADAPTIVE_THRESH_GAUSSIAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
 }
 
 void MainWindow::onMedianBinaryzationButtonClicked()
 {
-    previewSpace.reset(preWorkSpace.getLastMatrix());
-    previewSpace.setImage(&cgimg);
+    previewSpace->reset(processSpace->getLastMatrix());
     if (parametersDlg != NULL) {
         parametersDlg->disconnect();
         parametersDlg->deleteLater();
@@ -355,36 +362,35 @@ void MainWindow::onMedianBinaryzationButtonClicked()
 
 void MainWindow::onMedianBinaryzationParametersChanged(int s, double c, double, bool inv)
 {
-    previewSpace.newBinaryzationWork(CV_ADAPTIVE_THRESH_MEAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
+    previewSpace->newBinaryzationWork(CV_ADAPTIVE_THRESH_MEAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
 }
 
 void MainWindow::onPencilDrawFinished(const QVector<QPoint> &pts)
 {
-    preWorkSpace.newPencilWork(pts, ui->processDrawer->isWhite());
+    processSpace->newPencilWork(pts, ui->processDrawer->isWhite());
 }
 
 void MainWindow::onEraserDrawFinished(const QVector<QPoint> &pts)
 {
-    preWorkSpace.newEraserWork(pts, ui->processDrawer->isWhite());
+    processSpace->newEraserWork(pts, ui->processDrawer->isWhite());
 }
 
 void MainWindow::onFloodFillButtonClicked()
 {
-    previewSpace.reset(preWorkSpace.getLastMatrix());
-    previewSpace.setImage(&cgimg);
+    previewSpace->reset(processSpace->getLastMatrix());
     if (parametersDlg != NULL) {
         parametersDlg->disconnect();
         parametersDlg->deleteLater();
     }
     parametersDlg = new ParametersDialog(CAIGA::WorkBase::FloodFill, this);
 
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
+    connect(previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
     connect(parametersDlg, &ParametersDialog::parametersChanged, this, &MainWindow::onFloodFillParametersChanged);
-    connect(parametersDlg, &ParametersDialog::undoButtonClicked, &previewSpace, &CAIGA::WorkSpace::undo);
-    connect(parametersDlg, &ParametersDialog::redoButtonClicked, &previewSpace, &CAIGA::WorkSpace::redo);
+    connect(parametersDlg, &ParametersDialog::undoButtonClicked, previewSpace, &CAIGA::WorkSpace::undo);
+    connect(parametersDlg, &ParametersDialog::redoButtonClicked, previewSpace, &CAIGA::WorkSpace::redo);
     connect(parametersDlg, &ParametersDialog::accepted, this, &MainWindow::onFloodFillAccepted);
     connect(parametersDlg, &ParametersDialog::rejected, this, &MainWindow::onFloodFillRejected);
-    connect(parametersDlg, &ParametersDialog::resetButtonClicked, &previewSpace, static_cast<void (CAIGA::WorkSpace::*) (void)>(&CAIGA::WorkSpace::reset));
+    connect(parametersDlg, &ParametersDialog::resetButtonClicked, previewSpace, static_cast<void (CAIGA::WorkSpace::*) (void)>(&CAIGA::WorkSpace::reset));
     connect(ui->processDrawer, &QImageInteractiveDrawer::mousePressed, this, &MainWindow::onFloodFillMouseClicked);
     parametersDlg->setModal(false);
     parametersDlg->show();
@@ -407,8 +413,7 @@ void MainWindow::onFloodFillRejected()
 
 void MainWindow::onCannyButtonClicked()
 {
-    previewSpace.reset(preWorkSpace.getLastMatrix());
-    previewSpace.setImage(&cgimg);
+    previewSpace->reset(processSpace->getLastMatrix());
     if (parametersDlg != NULL) {
         parametersDlg->disconnect();
         parametersDlg->deleteLater();
@@ -419,52 +424,51 @@ void MainWindow::onCannyButtonClicked()
 
 void MainWindow::onWatershedButtonClicked()
 {
-    previewSpace.reset(preWorkSpace.getLastMatrix());
-    previewSpace.setImage(&cgimg);
+    previewSpace->reset(processSpace->getLastMatrix());
     if (watershedDlg != NULL) {
         watershedDlg->disconnect();
         watershedDlg->deleteLater();
     }
     watershedDlg = new WatershedMarkerDialog(this);
     watershedDlg->setPenColour(ui->ccDrawer->getPenColour());
-    watershedDlg->setOriginalMat(preWorkSpace.getLastMatrix(), preWorkSpace.last()->inputMarker);
+    watershedDlg->setOriginalMat(processSpace->getLastMatrix(), processSpace->last()->inputMarker);
     connect(watershedDlg, &WatershedMarkerDialog::reseted, this, &MainWindow::onProcessWorkFinished);
     connect(watershedDlg, &WatershedMarkerDialog::previewTriggered, this, &MainWindow::onWatershedPreviewed);
     connect(watershedDlg, &WatershedMarkerDialog::accepted, this, &MainWindow::onWatershedAccepted);
     connect(watershedDlg, &WatershedMarkerDialog::rejected, this, &MainWindow::onParametersRejected);
-    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, watershedDlg, &WatershedMarkerDialog::onPreviewStarted);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, watershedDlg, &WatershedMarkerDialog::onPreviewFinished);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
+    connect(previewSpace, &CAIGA::WorkSpace::workStarted, watershedDlg, &WatershedMarkerDialog::onPreviewStarted);
+    connect(previewSpace, &CAIGA::WorkSpace::workFinished, watershedDlg, &WatershedMarkerDialog::onPreviewFinished);
+    connect(previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
     watershedDlg->show();
     watershedDlg->exec();
 }
 
 void MainWindow::onWatershedAccepted()
 {
-    disconnect(&previewSpace, &CAIGA::WorkSpace::workStarted, 0, 0);
-    disconnect(&previewSpace, &CAIGA::WorkSpace::workFinished, 0, 0);
-    preWorkSpace.append(previewSpace.takeLast());
+    disconnect(previewSpace, &CAIGA::WorkSpace::workStarted, 0, 0);
+    disconnect(previewSpace, &CAIGA::WorkSpace::workFinished, 0, 0);
+    processSpace->append(previewSpace->takeLast());
 }
 
 void MainWindow::onParametersAccepted()
 {
-    disconnect(&previewSpace, &CAIGA::WorkSpace::workStarted, 0, 0);
-    disconnect(&previewSpace, &CAIGA::WorkSpace::workFinished, 0, 0);
-    preWorkSpace.append(previewSpace.takeLast());
+    disconnect(previewSpace, &CAIGA::WorkSpace::workStarted, 0, 0);
+    disconnect(previewSpace, &CAIGA::WorkSpace::workFinished, 0, 0);
+    processSpace->append(previewSpace->takeLast());
 }
 
 void MainWindow::onParametersRejected()
 {
-    disconnect(&previewSpace, &CAIGA::WorkSpace::workStarted, 0, 0);
-    disconnect(&previewSpace, &CAIGA::WorkSpace::workFinished, 0, 0);
+    disconnect(previewSpace, &CAIGA::WorkSpace::workStarted, 0, 0);
+    disconnect(previewSpace, &CAIGA::WorkSpace::workFinished, 0, 0);
     this->onProcessWorkFinished();
 }
 
 void MainWindow::handleParametersDialogue(void (MainWindow::*paraChangedSlot)(int, double, double, bool))
 {
-    connect(&previewSpace, &CAIGA::WorkSpace::workStarted, parametersDlg, &ParametersDialog::handleWorkStarted);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, parametersDlg, &ParametersDialog::handleWorkFinished);
-    connect(&previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
+    connect(previewSpace, &CAIGA::WorkSpace::workStarted, parametersDlg, &ParametersDialog::handleWorkStarted);
+    connect(previewSpace, &CAIGA::WorkSpace::workFinished, parametersDlg, &ParametersDialog::handleWorkFinished);
+    connect(previewSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onPreviewWorkFinished);
     connect(parametersDlg, &ParametersDialog::parametersChanged, this, paraChangedSlot);
     connect(parametersDlg, &ParametersDialog::accepted, this, &MainWindow::onParametersAccepted);
     connect(parametersDlg, &ParametersDialog::rejected, this, &MainWindow::onParametersRejected);
@@ -474,24 +478,24 @@ void MainWindow::handleParametersDialogue(void (MainWindow::*paraChangedSlot)(in
 
 void MainWindow::onProcessWorkFinished()
 {
-    ui->processDrawer->setImage(preWorkSpace.getLastDisplayImage());
+    ui->processDrawer->setImage(processSpace->getLastDisplayImage());
 }
 
 void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
 {
     if (ui->processButtonBox->standardButton(b) == QDialogButtonBox::Reset) {//reset
         //TODO
-        preWorkSpace.resetToImage(&cgimg);
+        processSpace->reset(cgimg.croppedMatrix());
     }
     else {//save
         //check if it's eligible
-        if (preWorkSpace.getMarkerMatrix() == NULL) {
+        if (processSpace->getMarkerMatrix() == NULL) {
             onMessagesArrived("Error. Processing is not finished yet!");
             return;
         }
 
-        preWorkSpace.simplified();
-        ui->analysisInteracter->setImage(preWorkSpace.getLastDisplayImage());
+        processSpace->simplified();
+        ui->analysisInteracter->setImage(processSpace->getLastDisplayImage());
         ui->imageTabs->setCurrentIndex(3);
 
         onMessagesArrived("Analysing... Please Wait......");
@@ -500,7 +504,7 @@ void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
             analyser->disconnect();
             analyser->deleteLater();
         }
-        analyser = new CAIGA::Analyser(cgimg.getScaleValue(), preWorkSpace.getMarkerMatrix(), preWorkSpace.getContours(), this);
+        analyser = new CAIGA::Analyser(cgimg.getScaleValue(), processSpace->getMarkerMatrix(), processSpace->getContours(), this);
 
         if (analysisDelegate != NULL) {
             analysisDelegate->disconnect();
@@ -519,7 +523,7 @@ void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
         connect(analysisDelegate, &AnalysisItemDelegate::classChanged, analyser, &CAIGA::Analyser::onClassChanged);
         onMessagesArrived("Analysed.");
     }
-    previewSpace.clear();
+    previewSpace->clear();
 }
 
 void MainWindow::onContourIndexFound(const QModelIndex &i)
@@ -535,11 +539,6 @@ void MainWindow::onContourIndexFound(const QModelIndex &i)
 void MainWindow::onCurrentClassChanged(int idx)
 {
     ui->analysisCurrentClassLabel->setText(analyser->getClassValues(idx));
-}
-
-void MainWindow::onInterceptsChangedClicked()
-{
-    analyser->onInterceptsNumberChanged(ui->interceptsNumberSpinBox->value());
 }
 
 void MainWindow::onAnalysisButtonBoxClicked(QAbstractButton *b)
@@ -578,7 +577,7 @@ void MainWindow::updateInformationReport(int split)
         reporter->disconnect();
         reporter->deleteLater();
     }
-    reporter = new Reporter(analyser, &preWorkSpace, split, this);
+    reporter = new Reporter(analyser, processSpace, split, cgimg.getRawImage(), this);
     connect(reporter, &Reporter::reportAvailable, this, &MainWindow::onReportAvailable);
     connect(reporter, &Reporter::workStatusStrUpdated, this, &MainWindow::onMessagesArrived);
     connect(reporter, &Reporter::reportGenerated, ui->infoTextBrowser, &QTextBrowser::setDocument);
@@ -621,8 +620,8 @@ void MainWindow::addDiskFileDialog()
     ui->rawViewer->setPixmap(cgimg.getRawPixmap());
     ui->ccDrawer->setImage(cgimg.getRawImage());
     ccSpace.setImage(&cgimg);
+    onReportAvailable(false);
     ui->imageTabs->setCurrentIndex(0);
-    this->onReportAvailable(false);
 }
 
 void MainWindow::addCameraImageDialog()
@@ -640,8 +639,8 @@ void MainWindow::onCameraImageAccepted(const QImage &img)
     ui->rawViewer->setPixmap(cgimg.getRawPixmap());
     ui->ccDrawer->setImage(cgimg.getRawImage());
     ccSpace.setImage(&cgimg);
+    onReportAvailable(false);
     ui->imageTabs->setCurrentIndex(0);
-    this->onReportAvailable(false);
 }
 
 void MainWindow::onResetActionTriggered()
@@ -649,8 +648,8 @@ void MainWindow::onResetActionTriggered()
     ui->ccDrawer->reset();
     ui->imageTabs->setCurrentIndex(0);
     ui->processDrawer->setImage(QImage());
-    preWorkSpace.clear();
-    previewSpace.clear();
+    processSpace->clear();
+    previewSpace->clear();
 }
 
 void MainWindow::onOptionsActionTriggered()

@@ -31,7 +31,7 @@ public:
         inputMarker = NULL;
     }
 
-    WorkBase(const cv::Mat *s, cv::Mat *d) : src(s) {
+    WorkBase(const cv::Mat *s, const cv::Mat *d) : src(s) {
         workType = Raw;
         dst = new cv::Mat(d->clone());
         display = dst;

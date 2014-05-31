@@ -41,7 +41,7 @@ void WatershedMarkerDialog::setOriginalMat(const Mat *const src, const Mat *prev
 {
     //use an empty zeros Mat as following works' src
     //while following works' dst will be a mask containing seeds drawed by user or machine
-    cv::Mat marks = previousMarks == NULL ? cv::Mat::zeros(src->rows, src->cols, CV_8UC1) : *previousMarks;
+    Mat marks = previousMarks == NULL ? Mat(src->rows, src->cols, CV_8UC1, Scalar(0)) : *previousMarks;
     CAIGA::WorkBase rawBase(src, &marks);
     markSpace.reset(&rawBase);
     QSize s(src->cols, src->rows);

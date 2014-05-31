@@ -22,7 +22,7 @@ signals:
     void workStatusStringUpdated(const QString &);
 
 public:
-    explicit WorkSpace(QObject *parent = 0);
+    explicit WorkSpace(cv::Mat *src = NULL, QObject *parent = 0);
     ~WorkSpace();
     void append(WorkBase *);//this will emit workFinished
     void append(QList<WorkBase *>);//this will also emit workFinished. WARN: this function will manipulate the QList directly, use it with caution!
@@ -33,10 +33,8 @@ public:
     inline WorkBase *takeLast() { return workList.takeLast(); }
     QList<WorkBase *> takeAll();
     void simplified();
-    void clear();
-    inline void setImage(Image *cgimg) { m_image = cgimg; }
-    void resetToImage(Image *cgimg);//reset and use the cropped image from cgimg
-    void reset(WorkBase *base);//workSpace won't control the input pointer. instead, it will clone a new one.
+    void clear();//erase everything including the first
+    void reset(WorkBase *base);//workSpace won't use the pointer directly. instead, it will clone a new WorkBase.
     void reset(cv::Mat *s);
     void reset();//erase everything except for workList.first()
     inline int count() { return workList.size(); }
@@ -67,7 +65,6 @@ public:
     inline Mat *getLastMatrix() { return workList.last()->dst; }
     inline QImage getLastDstImage() { return Image::convertMat2QImage(*workList.last()->dst); }
     QImage getLastDisplayImage();
-    inline QImage getRawImage() { return m_image->getRawImage(); }
     std::vector<std::vector<cv::Point> > getContours();
     cv::Mat *getMarkerMatrix();
 
@@ -89,7 +86,6 @@ private:
         watcher.setFuture(future);
     }
     cv::Mat displayMat;//used to display on screen
-    CAIGA::Image *m_image;
 
 private slots:
     void onLowLevelWorkStarted();

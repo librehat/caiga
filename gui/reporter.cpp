@@ -3,12 +3,13 @@
 #include <QtConcurrent>
 #include "reporter.h"
 
-Reporter::Reporter(CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int s, QObject *parent) :
+Reporter::Reporter(CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int s, const QImage &raw, QObject *parent) :
     QObject(parent)
 {
     m_analyser = analyser;
     m_workSpace = workSpace;
     split = s;
+    rawImage = raw;
 
     tableFormat.setBorderStyle(QTextFrameFormat::BorderStyle_Solid);
     tableFormat.setBorder(1);
@@ -136,7 +137,7 @@ void Reporter::generateReport()
 
     //insert the original image
     cursor.insertBlock(alignCentreBlockFormat(), romanFormat());
-    cursor.insertImage(m_workSpace->getRawImage());
+    cursor.insertImage(rawImage);
     cursor.insertHtml("<br />");
     cursor.insertText("Figure 1. Orignial Image", figureInfoFormat());
     cursor.insertHtml("<br /><br />");

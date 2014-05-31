@@ -74,18 +74,18 @@ private slots:
     void onMedianBinaryzationButtonClicked();
     void onMedianBinaryzationParametersChanged(int, double, double, bool);
     void onFloodFillButtonClicked();
-    inline void onFloodFillParametersChanged(int, double h, double l, bool c8) { previewSpace.setFloodFillWorkParameters(h, l, c8); }
-    inline void onFloodFillMouseClicked(QPoint p) { floodfillPts.append(p); previewSpace.newFloodFillWork(floodfillPts); }
+    inline void onFloodFillParametersChanged(int, double h, double l, bool c8) { previewSpace->setFloodFillWorkParameters(h, l, c8); }
+    inline void onFloodFillMouseClicked(QPoint p) { floodfillPts.append(p); previewSpace->newFloodFillWork(floodfillPts); }
     void onFloodFillAccepted();
     void onFloodFillRejected();
     void onCannyButtonClicked();
-    inline void onCannyParametersChanged(int aSize, double high, double low, bool l2) { previewSpace.newCannyWork(aSize, high, low, l2); }
+    inline void onCannyParametersChanged(int aSize, double high, double low, bool l2) { previewSpace->newCannyWork(aSize, high, low, l2); }
     void onWatershedButtonClicked();
-    inline void onWatershedPreviewed(const Mat *input) { previewSpace.newWatershedWork(input); }
+    inline void onWatershedPreviewed(const Mat *input) { previewSpace->newWatershedWork(input); }
     void onWatershedAccepted();
     void onParametersAccepted();
     void onParametersRejected();
-    inline void onContoursButtonClicked() { preWorkSpace.newContoursWork(); }
+    inline void onContoursButtonClicked() { processSpace->newContoursWork(); }
     void onPreviewWorkFinished();
     void onProcessWorkFinished();
     void onProcessButtonBoxClicked(QAbstractButton *);
@@ -93,7 +93,6 @@ private slots:
     //analysis
     void onContourIndexFound(const QModelIndex &);
     void onCurrentClassChanged(int);
-    void onInterceptsChangedClicked();
     void onAnalysisButtonBoxClicked(QAbstractButton *);
 
     //information
@@ -135,8 +134,8 @@ private:
 
     CAIGA::Image cgimg;
     CAIGA::CCSpace ccSpace;
-    CAIGA::WorkSpace preWorkSpace;
-    CAIGA::WorkSpace previewSpace;
+    CAIGA::WorkSpace *processSpace;
+    CAIGA::WorkSpace *previewSpace;
     QVector<QPoint> floodfillPts;
 
     //Text in About Dialog

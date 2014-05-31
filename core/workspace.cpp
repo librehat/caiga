@@ -14,13 +14,15 @@
 #include "workgradient.h"
 using namespace CAIGA;
 
-WorkSpace::WorkSpace(QObject *parent) :
+WorkSpace::WorkSpace(Mat *src, QObject *parent) :
     QObject(parent)
 {
-    m_image = NULL;
     connect(&watcher, &QFutureWatcher<void>::started, this, &WorkSpace::onLowLevelWorkStarted);
     connect(&watcher, &QFutureWatcher<void>::finished, this, &WorkSpace::onLowLevelWorkFinished);
-    workList.append(new WorkBase);
+    if (src != NULL) {
+        WorkBase *w = new WorkBase(src);
+        workList.append(w);
+    }
 }
 
 WorkSpace::~WorkSpace()
@@ -116,15 +118,6 @@ void WorkSpace::clearUndoneList()
         }
         undoneList.clear();
     }
-}
-
-void WorkSpace::resetToImage(Image *cgimg)
-{
-    this->clear();
-    m_image = cgimg;
-    WorkBase *w = new WorkBase(&cgimg->croppedImage);
-    workList.append(w);
-    emit workFinished();
 }
 
 void WorkSpace::reset(WorkBase *base)

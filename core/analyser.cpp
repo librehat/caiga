@@ -1,6 +1,7 @@
 #include "analyser.h"
 #include <opencv2/imgproc/imgproc.hpp>
 #include <qmath.h>
+#include <functional>
 #include <QDebug>
 #include <QtConcurrent>
 using namespace CAIGA;
@@ -18,7 +19,6 @@ Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Po
     m_contours = contours;
     currentSelectedIdx = 0;
     previousClassIdx = -1;
-    interceptsNumber = 5;
     calculateByContours();
     calculatePercentage();
     calculateIntercepts();
@@ -165,13 +165,6 @@ qreal Analyser::getMaximumDiameter()
     return d;
 }
 
-void Analyser::onInterceptsNumberChanged(const int &num)
-{
-    interceptsNumber = num;
-    calculateIntercepts();
-    emit currentClassChanged(classIndexOfObject(currentSelectedIdx));
-}
-
 int Analyser::classIndexOfObject(int idx)
 {
     for (int i = 0; i < classObjMap.size(); ++i) {
@@ -238,59 +231,43 @@ void Analyser::updateBoundarySet()
 {
     boundarySet.clear();
     cornerSet.clear();
-    int size = static_cast<int>(m_contours.size());
-    int i = 1, j = 1;//margin 1 because the image boundary is boundary, too. :)
-    for (; j < m_markerMatrix->cols - 1; ++j) {
-        int index = m_markerMatrix->at<int>(i, j) - 1;
-        if (index >= 0 && index < size) {
-            boundarySet << index;
+   cv::Point topLeft(1, 1), topRight (m_markerMatrix->cols - 2, 1), bottomLeft(1, m_markerMatrix->rows - 2), bottomRight(m_markerMatrix->cols - 2, m_markerMatrix->rows - 2);
+    QVector<QVector<cv::Point> > boundaryArray;
+    QVector<cv::Point> top, left, bottom, right;
+    top << topLeft << topRight;
+    left << topLeft <<bottomLeft;
+    bottom << bottomLeft << bottomRight;
+    right << topRight << bottomRight;
+    boundaryArray << top << left << bottom << right;
+
+    QtConcurrent::blockingMap(boundaryArray.begin(), boundaryArray.end(), [this] (QVector<cv::Point> line) {
+        cv::LineIterator it(*m_markerMatrix, line[0], line[1]);
+        for (int i = 0; i < it.count; ++i, ++it) {
+            boundarySet << m_markerMatrix->at<int>(it.pos()) - 1;
         }
-    }
-    i = m_markerMatrix->rows - 2;//same margin here
-    j = 1;
-    for (; j < m_markerMatrix->cols - 1; ++j) {
-        int index = m_markerMatrix->at<int>(i, j) - 1;
-        if (index >= 0 && index < size) {
-            boundarySet << index;
-        }
-    }
-    i = 1;
-    j = m_markerMatrix->cols - 2;//same margin here
-    for (; i < m_markerMatrix->rows - 1; ++i) {
-        int index = m_markerMatrix->at<int>(i, j) - 1;
-        if (index >= 0 && index < size) {
-            boundarySet << index;
-        }
-    }
-    i = 1;
-    j = 1;//same margin here
-    for (; i < m_markerMatrix->rows - 1; ++i) {
-        int index = m_markerMatrix->at<int>(i, j) - 1;
-        if (index >= 0 && index < size) {
-            boundarySet << index;
-        }
-    }
-    cornerSet << m_markerMatrix->at<int>(1, 1) - 1
-              << m_markerMatrix->at<int>(1, m_markerMatrix->cols - 2) - 1
-              << m_markerMatrix->at<int>(m_markerMatrix->rows - 2, 1) - 1
-              << m_markerMatrix->at<int>(m_markerMatrix->rows - 2, m_markerMatrix->cols - 2) - 1;
+    });
+
+    cornerSet << m_markerMatrix->at<int>(topLeft) - 1
+              << m_markerMatrix->at<int>(topRight) - 1
+              << m_markerMatrix->at<int>(bottomLeft) - 1
+              << m_markerMatrix->at<int>(bottomRight) - 1;
     for (QSet<int>::iterator it = cornerSet.begin(); it != cornerSet.end(); ++it) {
         boundarySet.remove(*it);
     }
 }
 
-int Analyser::getBoundaryJointNeighbours(int row, int col)
+int Analyser::getBoundaryJointNeighbours(const cv::Point &pos)
 {
     //8 neighbours
     QSet<int> neighbours;//because QSet doesn't allow duplicates, the size of neighbours is exactly the grain neighbours number
-    neighbours << m_markerMatrix->at<int>(row, col - 1);//west
-    neighbours << m_markerMatrix->at<int>(row, col + 1);//east
-    neighbours << m_markerMatrix->at<int>(row - 1, col);//north
-    neighbours << m_markerMatrix->at<int>(row + 1, col);//south
-    neighbours << m_markerMatrix->at<int>(row - 1, col + 1);//northeast
-    neighbours << m_markerMatrix->at<int>(row - 1, col - 1);//northwest
-    neighbours << m_markerMatrix->at<int>(row + 1, col - 1);//southwest
-    neighbours << m_markerMatrix->at<int>(row + 1, col + 1);//southeast
+    neighbours << m_markerMatrix->at<int>(pos - cv::Point(1, 0));//west
+    neighbours << m_markerMatrix->at<int>(pos + cv::Point(1, 0));//east
+    neighbours << m_markerMatrix->at<int>(pos - cv::Point(0, 1));//north
+    neighbours << m_markerMatrix->at<int>(pos + cv::Point(0, 1));//south
+    neighbours << m_markerMatrix->at<int>(pos + cv::Point(1, -1));//northeast
+    neighbours << m_markerMatrix->at<int>(pos - cv::Point(1, 1));//northwest
+    neighbours << m_markerMatrix->at<int>(pos - cv::Point(1, -1));//southwest
+    neighbours << m_markerMatrix->at<int>(pos + cv::Point(1, 1));//southeast
     neighbours.remove(-1);//-1 means boundary which doesn't count
 
     return neighbours.size();
@@ -306,86 +283,47 @@ void Analyser::calculatePercentage()
 
 void Analyser::calculateIntercepts()
 {
-    //calculate intercepts
-    int perWidth = m_markerMatrix->cols / (interceptsNumber + 2);
-    int perHeight = m_markerMatrix->rows / (interceptsNumber + 2);
-    int bottom = m_markerMatrix->rows - 2;//margin 2 pos
-    int right = m_markerMatrix->cols - 2;
-    qreal totalIntercepts = 0;
+    qreal totalInterception = 0, totalTestLineLength = 0;
+    cv::Point topLeft(1, 1), topRight (m_markerMatrix->cols - 2, 1), bottomLeft(1, m_markerMatrix->rows - 2), bottomRight(m_markerMatrix->cols - 2, m_markerMatrix->rows - 2);
 
-    for (int s = 1; s < (interceptsNumber + 1); ++s) {//at(row, col)
-        int sliceV = perHeight * s;
-        int sliceH = perWidth * s;
-        cv::Mat vertical = m_markerMatrix->col(sliceH);//remember it's not x-y but row-col in cv::Mat
-        cv::Mat horizontal = m_markerMatrix->row(sliceV);
-        qreal verticalInterception = 0;
-        qreal horizontalInterception = 0;
+    QVector<QVector<cv::Point> > testLineArray;
+    //left, bottom, slash (/), anti-slash(\)
+    QVector<cv::Point> testLineL, testLineB, testLineS, testLineA;
+    //ASTM E112-13 13.4 noted that test lines shall not radiate from common points
+    testLineL << topLeft + cv::Point(0, 1) << bottomLeft - cv::Point(0, 1);
+    testLineB << bottomLeft + cv::Point(1, 0) << bottomRight - cv::Point(1, 0);
+    //ASTM E112-13 13.4 suggests four or more test lines of **different** direction for equiaxed structures
+    //testLineT << topLeft + cv::Point(1, 0) << topRight - cv::Point (1, 0);
+    //testLineR << topRight + cv::Point (0, 1) << bottomRight - cv::Point(0, 1);
+    testLineS << topRight + cv::Point(-1, 1) << bottomLeft - cv::Point(-1, 1);
+    testLineA << topLeft + cv::Point(1, 1) << bottomRight - cv::Point(1, 1);
 
-        /*
-         * ASTM E112-12 13.3
-         * When counting intercepts, segments at the end of a test line
-         * which penetrate into a grain are scored as half intercepts.
-         * which means the intercepts should be recorded as double length of segments
-         */
+    testLineArray << testLineL << testLineB << testLineS << testLineA;
 
-        //calculate the intercepts on vertical line (column)
-        bool firstInterception = true;
-        int lastIntercept = 0;
-        qreal verticalLineLength = bottom - 4;
-        int previousIdx = -99;//initialise it using a ridiculous number
-        for (int i = 2; i < bottom - 2; ++i) {//margin 2 pos
-            int idx = vertical.at<int>(i, 0) - 1;
-            if (idx != previousIdx && idx == -2) {//boundary should be counted only once to avoid tangency
-                if (i == 2 || i == bottom - 3) {//end points
-                    verticalInterception += 0.5;//count the end 0.5
+    //implement multi-threading
+    QtConcurrent::blockingMap(testLineArray.begin(), testLineArray.end(), [&] (QVector<cv::Point> line) {
+        cv::LineIterator it(*m_markerMatrix, line[0], line[1]);
+        int previousIndex = -9;
+        for (int i = 0; i < it.count; ++i, ++it) {
+            int index = m_markerMatrix->at<int>(it.pos());
+            if (index == -1 && index != previousIndex) {//boundary
+                if (i == 0 || i == it.count - 1) {
+                    totalInterception += 0.5;
                 }
-                else if (getBoundaryJointNeighbours(i, sliceH) > 2) {//the joint of (more than) three grains should count 1.5
-                    verticalInterception += 1.5;
+                else if (getBoundaryJointNeighbours(it.pos()) > 2) {
+                    totalInterception += 1.5;
                 }
                 else {
-                    verticalInterception += 1;
+                    totalInterception += 1;
                 }
-                if (firstInterception) {
-                    verticalLineLength += (i - 2);
-                    firstInterception = false;
-                }
-                lastIntercept = i;
             }
-            previousIdx = idx;
+            previousIndex = index;
         }
-        verticalLineLength += (bottom - 3 - lastIntercept);
-        totalIntercepts += verticalLineLength / scaleValue / verticalInterception;
+        //add this line's length
+        totalTestLineLength += distanceBetweenPoints(line[0], line[1]);
+    });
 
-
-        //calculate the intercepts on horizontal line (row)
-        qreal horizontalLineLength = right - 4;
-        firstInterception = true;
-        previousIdx = -99;
-        for (int i = 2; i < right - 2; ++i) {
-            int idx = horizontal.at<int>(0, i) - 1;
-            if (idx != previousIdx && idx == -2) {
-                if (i == 2 || i == right - 3) {
-                    horizontalInterception += 0.5;
-                }
-                else if (getBoundaryJointNeighbours(sliceV, i) > 2) {
-                    horizontalInterception += 1.5;
-                }
-                else {
-                    horizontalInterception += 1;
-                }
-                if (firstInterception) {
-                    horizontalLineLength += (i - 2);
-                    firstInterception = false;
-                }
-                lastIntercept = i;
-            }
-            previousIdx = idx;
-        }
-        horizontalLineLength += (right - 3 - lastIntercept);
-        totalIntercepts += horizontalLineLength / scaleValue / horizontalInterception;
-    }
-
-    averageIntercept = totalIntercepts / (interceptsNumber * 2) ;
+    averageIntercept = totalTestLineLength / totalInterception / scaleValue;
 
     /*
      * calculate the averageInterceptLength by class.
@@ -408,4 +346,10 @@ std::vector<cv::Point> Analyser::findValuePoints(int key, const cv::Mat &m)
         ++pos;
     }
     return pts;
+}
+
+qreal Analyser::distanceBetweenPoints(const cv::Point &pt1, const cv::Point &pt2)
+{
+    cv::Point d = pt2 - pt1;
+    return qSqrt(static_cast<qreal>(d.x * d.x) + static_cast<qreal>(d.y * d.y));
 }

@@ -12,7 +12,7 @@ class Reporter : public QObject
 {
     Q_OBJECT
 public:
-    explicit Reporter(CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int split, QObject *parent = 0);
+    explicit Reporter(CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int s, const QImage &raw, QObject *parent = 0);
     ~Reporter() {}
     void setBarChart(QCustomPlot *plot);
     void generateReport();
@@ -32,6 +32,7 @@ private:
     CAIGA::WorkSpace *m_workSpace;
     QTextDocument textDoc;
     QTextCursor cursor;
+    QImage rawImage;
     int split;
     qreal maxRadius;
 

@@ -27,7 +27,6 @@ public:
     int count();
     inline int classCount() const { return m_classes.size(); }
     qreal getMaximumDiameter();
-    void onInterceptsNumberChanged(const int &num);
 
     inline QString getScale() { return QString::number(scaleValue); }
     inline QString getImageArea() { return QString::number(m_markerMatrix->cols * m_markerMatrix->rows / scaleValue / scaleValue); }
@@ -54,6 +53,7 @@ public:
     //this static member function "find" the locations whose value equals to the given key
     //the Mat must have value which is of integer type
     static std::vector<cv::Point> findValuePoints(int key, const cv::Mat &m);
+    static qreal distanceBetweenPoints(const cv::Point &pt1, const cv::Point &pt2);
 
 signals:
     void foundContourIndex(const QModelIndex &);
@@ -67,7 +67,6 @@ public slots:
 private:
     void calculateByContours();
 
-    int interceptsNumber;
     qreal scaleValue;//pixel / um
     int currentSelectedIdx;
     int previousClassIdx;
@@ -89,7 +88,7 @@ private:
     qreal calculateFlattening(int idx);
     Object::POSITION determineIsBoundary(int idx);
     void updateBoundarySet();
-    int getBoundaryJointNeighbours(int row, int col);//leave at least 1 position from Mat edge
+    int getBoundaryJointNeighbours(const cv::Point &pos);//leave at least 1 position from Mat edge
 
     /*
      * calculate all sorts of information class by class
