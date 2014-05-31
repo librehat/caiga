@@ -21,13 +21,13 @@ public:
     int interceptedCount();
     inline int count() { return objects.size(); }
     qreal totalArea();
-    qreal averageArea();//defined in ASTM E112-12
+    qreal averageArea();//defined in ASTM E112-13
     qreal averagePerimeter();
     qreal averageFlattening();
     inline qreal averageDiameter() { return qSqrt(averageArea()); }
     inline qreal averageIntercept() const { return m_averageIntercept; }
-    qreal sizeNumberByIntercept() const;//grain size number G
-    qreal sizeNumberByPlanimetric();//Planimetric procedure as defined in ASTM E112-12
+    qreal sizeNumberByIntercept() const;//Heyn Lineal Intercept Procedure as defined in ASTM E112-13
+    qreal sizeNumberByPlanimetric();//Planimetric procedure as defined in ASTM E112-13
     inline qreal percentage() const { return m_percentage; }
 
     inline void setAverageIntercept(qreal a) { m_averageIntercept = a; }

@@ -40,7 +40,7 @@ qreal ClassObject::totalArea()
 
 qreal ClassObject::averageArea()
 {
-    qreal avg = totalArea() / (insideCount() + 0.5 * interceptedCount() + 1.0);//ASTM E112-12 Eq.5
+    qreal avg = totalArea() / (insideCount() + 0.5 * interceptedCount() + 1.0);//ASTM E112-13 Eq.5
     return avg;
 }
 
@@ -68,7 +68,7 @@ qreal ClassObject::sizeNumberByIntercept() const
 {
     /*
      * calculate the grain size level using intercept procedure
-     * defined in GB/T 6394-2002 and ASTM E112-12
+     * defined in GB/T 6394-2002 and ASTM E112-13
      * intercepts length need to be converted to minimeter (divided by 1000)
      */
     return (-6.643856 * log10(m_averageIntercept / 1000)) - 3.288;
@@ -78,6 +78,6 @@ qreal ClassObject::sizeNumberByPlanimetric()
 {
     //the planimetric procedure shall be the referee procedure in all cases (ASTM E112-13 4.3)
     qreal area = totalArea() / 1000000;//convert to minimeter's square
-    //ASTM E112-12 Table 6
+    //ASTM E112-13 Table 6
     return 3.321928 * log10((insideCount() + 0.5 * interceptedCount() + 1.0) / area) - 2.954;
 }
