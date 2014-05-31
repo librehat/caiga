@@ -17,7 +17,7 @@ public:
     explicit WatershedMarkerDialog(QWidget *parent = 0);
     ~WatershedMarkerDialog();
     void setPenColour(const QColor &c);
-    void setOriginalMat(const Mat *const src, cv::Mat *previousMarks = NULL);
+    void setOriginalMat(const Mat *const src, const Mat *previousMarks = NULL);
 
 public slots:
     void updateMarkers();

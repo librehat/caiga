@@ -37,7 +37,7 @@ void WatershedMarkerDialog::setPenColour(const QColor &c)
     ui->drawer->setPenColour(m_colour);
 }
 
-void WatershedMarkerDialog::setOriginalMat(const Mat *const src, Mat *previousMarks)
+void WatershedMarkerDialog::setOriginalMat(const Mat *const src, const Mat *previousMarks)
 {
     //use an empty zeros Mat as following works' src
     //while following works' dst will be a mask containing seeds drawed by user or machine

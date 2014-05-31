@@ -426,13 +426,8 @@ void MainWindow::onWatershedButtonClicked()
         watershedDlg->deleteLater();
     }
     watershedDlg = new WatershedMarkerDialog(this);
-    if (preWorkSpace.last()->workType == WorkBase::Watershed) {
-        watershedDlg->setOriginalMat(preWorkSpace.last()->src, preWorkSpace.last()->dst);
-    }
-    else {
-        watershedDlg->setOriginalMat(preWorkSpace.getLastMatrix());
-    }
     watershedDlg->setPenColour(ui->ccDrawer->getPenColour());
+    watershedDlg->setOriginalMat(preWorkSpace.getLastMatrix(), preWorkSpace.last()->inputMarker);
     connect(watershedDlg, &WatershedMarkerDialog::reseted, this, &MainWindow::onProcessWorkFinished);
     connect(watershedDlg, &WatershedMarkerDialog::previewTriggered, this, &MainWindow::onWatershedPreviewed);
     connect(watershedDlg, &WatershedMarkerDialog::accepted, this, &MainWindow::onWatershedAccepted);
