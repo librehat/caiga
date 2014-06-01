@@ -9,9 +9,9 @@ using namespace CAIGA;
 Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Point> > contours, QObject *parent) :
     QObject(parent)
 {
-    headerLabels = QStringList() << tr("Index") << tr("Class") << tr("Area") << tr("Perimeter") << tr("Diameter") << tr("Flattening");
+    headerLabels = QStringList() << tr("Index") << tr("Position") << tr("Class") << tr("Area") << tr("Perimeter") << tr("Diameter") << tr("Flattening");
     addClass(tr("Base"));
-    contoursModel = new QStandardItemModel(0, 4, this);
+    contoursModel = new QStandardItemModel(0, 7, this);
     m_markerMatrix = markers;
     scaleValue = scale;
     m_contours = contours;
@@ -71,6 +71,18 @@ void Analyser::calculateByContours()
         QList<QStandardItem *> items;
         QStandardItem *idItem = new QStandardItem();
         idItem->setData(QVariant(id + 1), Qt::DisplayRole);
+        QStandardItem *posItem = new QStandardItem();
+        switch(obj.boundary()) {
+        case Object::INTERCEPTED:
+            posItem->setData(QVariant(tr("Border")), Qt::DisplayRole);
+            break;
+        case Object::CORNER:
+            posItem->setData(QVariant(tr("Corner")), Qt::DisplayRole);
+            break;
+        default:
+            posItem->setData(QVariant(tr("Inside")), Qt::DisplayRole);
+            break;
+        }
         QStandardItem *areaItem = new QStandardItem();
         areaItem->setData(QVariant(obj.area()), Qt::DisplayRole);
         QStandardItem *periItem = new QStandardItem();
@@ -80,7 +92,7 @@ void Analyser::calculateByContours()
         QStandardItem *flatteningItem = new QStandardItem();
         flatteningItem->setData(QVariant(obj.flattening()), Qt::DisplayRole);
 
-        items << idItem << new QStandardItem(m_classes[0]) << areaItem << periItem << diameterItem << flatteningItem;
+        items << idItem << posItem << new QStandardItem(m_classes[0]) << areaItem << periItem << diameterItem << flatteningItem;
         contoursModel->appendRow(items);
     }
 

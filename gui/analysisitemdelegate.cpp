@@ -10,8 +10,8 @@ AnalysisItemDelegate::AnalysisItemDelegate(QObject *parent) :
 
 QWidget *AnalysisItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    //do not allow edition except in column 2 (Class), starting from 0
-    if(index.column() != 1) {
+    //do not allow edition except in column 3 (Class), starting from 0
+    if(index.column() != 2) {
         return QAbstractItemDelegate::createEditor(parent, option, index);
     }
 
