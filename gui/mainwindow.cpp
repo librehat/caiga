@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mouseBehaviourButton->setMenu(mouseBehaviourMenu);
 
     //information
-    ui->infoPlotter->setFont(QFont("Cambria Math"));
+    ui->infoPlotter->setFont(QFont("Arial"));
 
     /*
      * Setup icons (only those can't be done with Designer)
@@ -105,7 +105,7 @@ MainWindow::~MainWindow()
     // Qt delete children objects automatically once the parent is deleted
 }
 
-const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version 2014.0 Beta on "
+const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version 2014.0 Beta for "
 
 #if defined(_WIN32)//_WIN32 is defined for both 32-bit and 64-bit environment
         + "Windows"
@@ -122,7 +122,7 @@ const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive 
 #else
         + "Unknown platform"
 #endif
-        + "</p><p>Built on " + __DATE__ + " at " + __TIME__ + " using "
+        + "</p><p>Built on " + __DATE__ + " at " + __TIME__ + " by "
 #if defined(__GNUC__)
         + "GNU Compiler Collection " + QString::number(__GNUC__) + "." + QString::number(__GNUC_MINOR__) + + "." + QString::number(__GNUC_PATCHLEVEL__)
 #elif defined(_MSC_VER)

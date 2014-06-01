@@ -66,7 +66,7 @@ void Reporter::setBarChart(QCustomPlot *plot)
     });
 
     //setup QCustomPlot x axis and y axis
-    QFont cambriaMath("Cambria Math");
+    QFont labelFont("Arial");
     plot->xAxis->setRange(-maxRadius / split, maxRadius + 2);
     plot->xAxis->setTickLabelType(QCPAxis::ltNumber);
     plot->xAxis->setNumberPrecision(4);
@@ -78,8 +78,8 @@ void Reporter::setBarChart(QCustomPlot *plot)
     plot->xAxis->setSubTickCount(1);
     plot->xAxis->grid()->setVisible(false);
     plot->xAxis->setLabel("Diameter (μm)");
-    plot->xAxis->setLabelFont(cambriaMath);
-    plot->xAxis->setTickLabelFont(cambriaMath);
+    plot->xAxis->setLabelFont(labelFont);
+    plot->xAxis->setTickLabelFont(labelFont);
 
     plot->yAxis->setRange(0, static_cast<double>(maxCountBySlice + 1));
     plot->yAxis->setTickLabelType(QCPAxis::ltNumber);
@@ -87,8 +87,8 @@ void Reporter::setBarChart(QCustomPlot *plot)
     plot->yAxis->setSubTickCount(0);
     plot->yAxis->setTickStep(static_cast<double>(maxCountBySlice > 20 ? 5 : 2));
     plot->yAxis->setLabel("Count");
-    plot->yAxis->setLabelFont(cambriaMath);
-    plot->yAxis->setTickLabelFont(cambriaMath);
+    plot->yAxis->setLabelFont(labelFont);
+    plot->yAxis->setTickLabelFont(labelFont);
 
     //setup data
     for (int i = 0; i < m_analyser->classCount(); ++i) {
@@ -114,6 +114,7 @@ void Reporter::setBarChart(QCustomPlot *plot)
     }
 
     plot->legend->setVisible(true);
+    plot->legend->setFont(labelFont);
     plot->setInteraction(QCP::iSelectPlottables);
     plot->replot();
 }
