@@ -81,6 +81,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->splitOKPushButton,  &QPushButton::clicked, this, &MainWindow::onSplitButtonClicked);
 
     //MainWindow
+    connect(ui->actionUndo, &QAction::triggered, this, &MainWindow::onUndoTriggered);
+    connect(ui->actionRedo, &QAction::triggered, this, &MainWindow::onRedoTriggered);
     connect(ui->actionOpenFile, &QAction::triggered, this, &MainWindow::addDiskFileDialog);
     connect(ui->actionOpenCamera, &QAction::triggered, this, &MainWindow::addCameraImageDialog);
     connect(ui->actionReset, &QAction::triggered, this, &MainWindow::onResetActionTriggered);
@@ -196,8 +198,6 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
         processSpace = new CAIGA::WorkSpace(cgimg.croppedMatrix(), this);
         connect(processSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onProcessWorkFinished);
         connect(processSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
-        connect(ui->actionUndo, &QAction::triggered, processSpace, &CAIGA::WorkSpace::undo);
-        connect(ui->actionRedo, &QAction::triggered, processSpace, &CAIGA::WorkSpace::redo);
 
         if (previewSpace != NULL) {
             previewSpace->disconnect();
@@ -609,6 +609,24 @@ void MainWindow::onCurrentTabChanged(int i)
         ui->actionSaveCurrentImageAs->setEnabled(true);
         break;
     }
+}
+
+void MainWindow::onUndoTriggered()
+{
+    processSpace->undo();
+    if (processSpace->count() < 2) {
+        ui->actionUndo->setEnabled(false);
+    }
+    ui->actionRedo->setEnabled(true);
+}
+
+void MainWindow::onRedoTriggered()
+{
+    processSpace->redo();
+    if (processSpace->countUndone() < 1) {
+        ui->actionRedo->setEnabled(false);
+    }
+    ui->actionUndo->setEnabled(true);
 }
 
 void MainWindow::addDiskFileDialog()

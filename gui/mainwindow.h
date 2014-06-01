@@ -102,6 +102,8 @@ private slots:
 
     //menu and toolbar
     void onCurrentTabChanged(int);
+    void onUndoTriggered();
+    void onRedoTriggered();
     void addDiskFileDialog();
     void addCameraImageDialog();
     void onCameraImageAccepted(const QImage &);
