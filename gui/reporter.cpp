@@ -121,6 +121,7 @@ void Reporter::setBarChart(QCustomPlot *plot)
 
 void Reporter::generateReport()
 {
+    //TODO use the model in analysis tab instead of generating new data.
     emit workStatusStrUpdated(tr("Generating report... Please wait......"));
     cursor.setBlockFormat(alignCentreBlockFormat());
     cursor.insertBlock(alignCentreBlockFormat(), boldRomanFormat());

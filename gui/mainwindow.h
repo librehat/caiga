@@ -125,6 +125,7 @@ private:
     AnalysisItemDelegate *analysisDelegate;
     Reporter *reporter;
 
+    void setupCropCalibreSpace();
     void handleParametersDialogue(void (MainWindow::*) (int, double, double, bool));
     void updateInformationReport(int);
 
@@ -133,7 +134,7 @@ private:
     void setCurrentDirbyFile(QString &);
 
     CAIGA::Image cgimg;
-    CAIGA::CCSpace ccSpace;
+    CAIGA::CCSpace *cropCalibreSpace;
     CAIGA::WorkSpace *processSpace;
     CAIGA::WorkSpace *previewSpace;
     QVector<QPoint> floodfillPts;

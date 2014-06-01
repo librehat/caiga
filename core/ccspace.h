@@ -11,8 +11,7 @@ class CORE_LIB CCSpace : public QObject
 {
     Q_OBJECT
 public:
-    explicit CCSpace(Image *img = NULL, QObject *parent = 0);
-    void setImage(Image *img);
+    explicit CCSpace(Image *img, QObject *parent = 0);
     inline void setRectangle(QRect r) { qrect = r; }
     inline void setScaleValue(qreal s) { *scaleValue = s; emit scaleValueChanged(*scaleValue); }
 

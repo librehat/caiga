@@ -1,7 +1,6 @@
 #include "analyser.h"
 #include <opencv2/imgproc/imgproc.hpp>
 #include <qmath.h>
-#include <functional>
 #include <QDebug>
 #include <QtConcurrent>
 using namespace CAIGA;

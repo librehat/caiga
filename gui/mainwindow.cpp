@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QDir::setCurrent(settings.value("CurrentDir").toString());
 
     //initialise pointers
+    cropCalibreSpace = NULL;
     processSpace = NULL;
     previewSpace = NULL;
     cameraDlg = NULL;
@@ -27,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent) :
     analysisDelegate = NULL;
     reporter = NULL;
 
-    ui->ccDrawer->setSpace(&ccSpace);
     ui->rawViewer->setNoScale();
     //processTab button menu
     mouseBehaviourMenu = new QMenu(this);
@@ -53,7 +53,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //crop and calibre tab
     connect(ui->buttonGroup, static_cast<void (QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &MainWindow::ccModeChanged);//Operation Mode
     connect(ui->ccDrawer, &QImageDrawer::calibreFinished, ui->scaleDoubleSpinBox, &QDoubleSpinBox::setValue);
-    connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), &ccSpace, &CAIGA::CCSpace::setScaleValue);
     connect(ui->ccDrawer, &QImageDrawer::gaugeLineResult, this, &MainWindow::onGaugeLineFinished);
     connect(ui->ccLoadMacroButton, &QPushButton::clicked, this, &MainWindow::onCCLoadMacroButtonClicked);
     connect(ui->ccSaveMacroButton, &QPushButton::clicked, this, &MainWindow::onCCSaveMacroButtonClicked);
@@ -157,7 +156,7 @@ void MainWindow::onCCLoadMacroButtonClicked()
     }
     setCurrentDirbyFile(macroFile);
     CAIGA::Macro macro(this);
-    macro.setCCSpace(&ccSpace);
+    macro.setCCSpace(cropCalibreSpace);
     macro.doCropAndCalibreMacroFromFile(macroFile);
     macro.deleteLater();
     ui->ccDrawer->update();
@@ -171,7 +170,7 @@ void MainWindow::onCCSaveMacroButtonClicked()
     }
     setCurrentDirbyFile(macroFile);
     CAIGA::Macro macro(this);
-    macro.setCCSpace(&ccSpace);
+    macro.setCCSpace(cropCalibreSpace);
     macro.saveCropAndCalibreAsMacroFile(macroFile);
     macro.deleteLater();
 }
@@ -188,7 +187,7 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
             onMessagesArrived(tr("You must calibre image scale before move to next step."));
             return;
         }
-        ccSpace.cropImage();
+        cropCalibreSpace->cropImage();
 
         if (processSpace != NULL) {
             processSpace->disconnect();
@@ -621,9 +620,9 @@ void MainWindow::addDiskFileDialog()
     }
     setCurrentDirbyFile(filename);
     cgimg.setRawImageByFile(filename);
+    setupCropCalibreSpace();
     ui->rawViewer->setPixmap(cgimg.getRawPixmap());
     ui->ccDrawer->setImage(cgimg.getRawImage());
-    ccSpace.setImage(&cgimg);
     onReportAvailable(false);
     ui->imageTabs->setEnabled(true);
     ui->processTab->setEnabled(false);
@@ -644,9 +643,9 @@ void MainWindow::addCameraImageDialog()
 void MainWindow::onCameraImageAccepted(const QImage &img)
 {
     cgimg.setRawImageFromCamera(img);
+    setupCropCalibreSpace();
     ui->rawViewer->setPixmap(cgimg.getRawPixmap());
     ui->ccDrawer->setImage(cgimg.getRawImage());
-    ccSpace.setImage(&cgimg);
     onReportAvailable(false);
     ui->imageTabs->setEnabled(true);
     ui->processTab->setEnabled(false);
@@ -807,6 +806,17 @@ void MainWindow::setCurrentDirbyFile(QString &f)
     if (trimIndex != -1) {
         QDir::setCurrent(f.left(trimIndex));
     }
+}
+
+void MainWindow::setupCropCalibreSpace()
+{
+    if (cropCalibreSpace != NULL) {
+        cropCalibreSpace->disconnect();
+        cropCalibreSpace->deleteLater();
+    }
+    cropCalibreSpace = new CAIGA::CCSpace(&cgimg, this);
+    connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), cropCalibreSpace, &CAIGA::CCSpace::setScaleValue);
+    ui->ccDrawer->setSpace(cropCalibreSpace);
 }
 
 void MainWindow::onMessagesArrived(const QString &str)

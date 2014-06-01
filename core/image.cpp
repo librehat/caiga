@@ -1,5 +1,4 @@
 #include <QDate>
-#include <QTime>
 #include "image.h"
 using namespace CAIGA;
 
@@ -9,13 +8,13 @@ Image::Image()
     m_scale = 0;
 }
 
-Image::Image(QImage img)
+Image::Image(const QImage &img)
 {
     Image();
     setRawImageFromCamera(img);
 }
 
-Image::Image(Mat matImg)
+Image::Image(const Mat &matImg)
 {
     Image();
     setRawImage(matImg);
@@ -47,11 +46,6 @@ QImage Image::getCroppedImage()
     return convertMat2QImage(croppedImage);
 }
 
-QImage Image::getProcessedImage()
-{
-    return convertMat2QImage(processedImage);
-}
-
 QPixmap Image::getRawPixmap()
 {
     return convertMat2QPixmap(rawImage);
@@ -60,11 +54,6 @@ QPixmap Image::getRawPixmap()
 QPixmap Image::getCroppedPixmap()
 {
     return convertMat2QPixmap(croppedImage);
-}
-
-QPixmap Image::getProcessedPixmap()
-{
-    return convertMat2QPixmap(processedImage);
 }
 
 void Image::setRawImage(Mat img)
@@ -93,21 +82,7 @@ void Image::setRawImageByFile(const QString &imgfile)
     m_filename = imgfile;
 }
 
-void Image::setProcessedImage(Mat img)
-{
-    processedImage = img;
-}
-
-bool Image::isCropped()
-{
-    return !croppedImage.empty();
-}
-
-bool Image::isProcessed()
-{
-    return !processedImage.empty();
-}
-
+/*
 Mat Image::makeInCircle(const Mat &rect)
 {
     if (rect.empty()) {
@@ -123,6 +98,7 @@ Mat Image::makeInCircle(const Mat &rect)
     cv::bitwise_and(rect, rect, out, circle);//bitwise_and is the C++ version of "cvAnd"
     return out.clone();
 }
+*/
 
 //cv::Mat and QImage conversion code is based on http://asmaloney.com/2013/11/code/converting-between-cvmat-and-qimage-or-qpixmap/
 QImage Image::convertMat2QImage(const cv::Mat &src)
