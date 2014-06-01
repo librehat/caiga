@@ -93,10 +93,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
     connect(ui->imageTabs, &QTabWidget::currentChanged, this, &MainWindow::onCurrentTabChanged);
     connect(this, &MainWindow::messageArrived, this, &MainWindow::onMessagesArrived);
-
     connect(this, &MainWindow::configReadFinished, this, &MainWindow::updateOptions);
 
     readConfig();
+
+    //disable tabs because user shouldn't click buttons in other tabs if there is no active image
+    ui->imageTabs->setEnabled(false);
 }
 
 MainWindow::~MainWindow()
@@ -205,6 +207,7 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
         previewSpace = new CAIGA::WorkSpace(NULL, this);
         connect(previewSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
 
+        ui->processTab->setEnabled(true);
         ui->imageTabs->setCurrentIndex(2);
         onMessagesArrived(tr("Process and segment the image."));
         onProcessWorkFinished();//update the image
@@ -493,6 +496,7 @@ void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
             return;
         }
 
+        ui->analysisTab->setEnabled(true);
         ui->analysisInteracter->setImage(processSpace->getLastDisplayImage());
         ui->imageTabs->setCurrentIndex(3);
 
@@ -546,6 +550,7 @@ void MainWindow::onAnalysisButtonBoxClicked(QAbstractButton *b)
         ui->analysisTableView->resizeColumnsToContents();
     }
     else {//save
+        ui->infoTab->setEnabled(true);
         onSplitButtonClicked();
         ui->imageTabs->setCurrentIndex(4);
     }
@@ -620,6 +625,10 @@ void MainWindow::addDiskFileDialog()
     ui->ccDrawer->setImage(cgimg.getRawImage());
     ccSpace.setImage(&cgimg);
     onReportAvailable(false);
+    ui->imageTabs->setEnabled(true);
+    ui->processTab->setEnabled(false);
+    ui->analysisTab->setEnabled(false);
+    ui->infoTab->setEnabled(false);
     ui->imageTabs->setCurrentIndex(0);
 }
 
@@ -639,6 +648,10 @@ void MainWindow::onCameraImageAccepted(const QImage &img)
     ui->ccDrawer->setImage(cgimg.getRawImage());
     ccSpace.setImage(&cgimg);
     onReportAvailable(false);
+    ui->imageTabs->setEnabled(true);
+    ui->processTab->setEnabled(false);
+    ui->analysisTab->setEnabled(false);
+    ui->infoTab->setEnabled(false);
     ui->imageTabs->setCurrentIndex(0);
 }
 
@@ -647,8 +660,12 @@ void MainWindow::onResetActionTriggered()
     ui->ccDrawer->reset();
     ui->imageTabs->setCurrentIndex(0);
     ui->processDrawer->setImage(QImage());
-    processSpace->clear();
-    previewSpace->clear();
+    if (processSpace != NULL) {
+        processSpace->clear();
+    }
+    if (previewSpace != NULL) {
+        previewSpace->clear();
+    }
 }
 
 void MainWindow::onOptionsActionTriggered()
