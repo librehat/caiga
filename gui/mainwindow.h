@@ -128,6 +128,7 @@ private:
     Reporter *reporter;
 
     void onNewImageOpened();
+    void updateRedoUndoStatus();
     void handleParametersDialogue(void (MainWindow::*) (int, double, double, bool));
     void updateReportTextBrowser(int);
 

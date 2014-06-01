@@ -481,6 +481,7 @@ void MainWindow::handleParametersDialogue(void (MainWindow::*paraChangedSlot)(in
 void MainWindow::onProcessWorkFinished()
 {
     ui->processDrawer->setImage(processSpace->getLastDisplayImage());
+    updateRedoUndoStatus();
 }
 
 void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
@@ -601,8 +602,7 @@ void MainWindow::onCurrentTabChanged(int i)
         ui->actionSaveCurrentImageAs->setEnabled(false);
         break;
     case 2://process
-        ui->actionRedo->setEnabled(true);
-        ui->actionUndo->setEnabled(true);
+        updateRedoUndoStatus();
         break;
     case 4://report
         ui->actionSaveCurrentImageAs->setEnabled(false);
@@ -613,19 +613,13 @@ void MainWindow::onCurrentTabChanged(int i)
 void MainWindow::onUndoTriggered()
 {
     processSpace->undo();
-    if (processSpace->count() < 2) {
-        ui->actionUndo->setEnabled(false);
-    }
-    ui->actionRedo->setEnabled(true);
+    updateRedoUndoStatus();
 }
 
 void MainWindow::onRedoTriggered()
 {
     processSpace->redo();
-    if (processSpace->countUndone() < 1) {
-        ui->actionRedo->setEnabled(false);
-    }
-    ui->actionUndo->setEnabled(true);
+    updateRedoUndoStatus();
 }
 
 void MainWindow::addDiskFileDialog()
@@ -833,6 +827,14 @@ void MainWindow::onNewImageOpened()
     ui->reportTab->setEnabled(false);
     ui->imageTabs->setCurrentIndex(0);
     ui->actionSaveCurrentImageAs->setEnabled(true);
+}
+
+void MainWindow::updateRedoUndoStatus()
+{
+    if (ui->processTab->isEnabled()) {//prevent from crashes when processTab isn't ready (i.e. user click the processTab before clicking save in crop and calibre)
+        ui->actionRedo->setEnabled(processSpace->countUndone() > 0);
+        ui->actionUndo->setEnabled(processSpace->count() > 1);
+    }
 }
 
 void MainWindow::onMessagesArrived(const QString &str)
