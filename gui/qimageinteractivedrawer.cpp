@@ -17,7 +17,6 @@ void QImageInteractiveDrawer::paintEvent(QPaintEvent *event)
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
 
     if (m_image.isNull())
@@ -31,7 +30,7 @@ void QImageInteractiveDrawer::paintEvent(QPaintEvent *event)
     painter.drawImage(topleft, m_image);
 
     //draw points
-    QPen pen(m_penColour, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen pen(m_penColour, 3, Qt::SolidLine, Qt::RoundCap, Qt::BevelJoin);
     switch (m_drawMode) {
     case NONE:
         return;
@@ -68,8 +67,19 @@ void QImageInteractiveDrawer::mousePressEvent(QMouseEvent *m)
         return;
     }
     QPoint margin((this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2);
-    m_pressed.setX((m->pos().x() - margin.x()));
-    m_pressed.setY((m->pos().y() - margin.y()));
+    m_pressed = m->pos() - margin;
+    if (m_pressed.x() < 0) {
+        m_pressed.setX(0);
+    }
+    else if (m_pressed.x() > m_image.width() - 1) {
+        m_pressed.setX(m_image.width() - 1);
+    }
+    if (m_pressed.y() < 0) {
+        m_pressed.setY(0);
+    }
+    else if (m_pressed.y() > m_image.height() - 1) {
+        m_pressed.setY(m_image.height() - 1);
+    }
     m_movePoints.append(m_pressed);
     emit mousePressed(m_pressed);
 }
@@ -81,10 +91,21 @@ void QImageInteractiveDrawer::mouseMoveEvent(QMouseEvent *m)
         return;
     }
     QPoint margin((this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2);
-    m_released.setX((m->pos().x() - margin.x()));
-    m_released.setY((m->pos().y() - margin.y()));
+    m_released = m->pos() - margin;
+    if (m_released.x() < 0) {
+        m_released.setX(0);
+    }
+    else if (m_released.x() > m_image.width() - 1) {
+        m_released.setX(m_image.width() - 1);
+    }
+    if (m_released.y() < 0) {
+        m_released.setY(0);
+    }
+    else if (m_released.y() > m_image.height() - 1) {
+        m_released.setY(m_image.height() - 1);
+    }
     m_movePoints.append(m_released);
-    m_poly << m_released;
+    m_poly << m_released + margin;
     emit mouseMoved(m_released);
     this->update();
 }

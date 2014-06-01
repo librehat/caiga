@@ -66,22 +66,20 @@ void QImageDrawer::mousePressEvent(QMouseEvent *m)
     }
 
     QPoint margin((this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2);
-    QPoint margin_r = margin + QPoint(m_image.width(), m_image.height());
 
-    m_mousePressed.setX(m->pos().x() - margin.x());
-    m_mousePressed.setY(m->pos().y() - margin.y());
+    m_mousePressed = m->pos() - margin;
 
-    if (m->pos().x() < margin.x()) {
+    if (m_mousePressed.x() < 0) {
         m_mousePressed.setX(0);
     }
-    if (m->pos().y() < margin.y()) {
+    else if (m_mousePressed.x() > m_image.width() - 1) {
+        m_mousePressed.setX(m_image.width() - 1);
+    }
+    if (m_mousePressed.y() < 0) {
         m_mousePressed.setY(0);
     }
-    if (m->pos().x() > margin_r.x()) {
-        m_mousePressed.setX(m_image.width());
-    }
-    if (m->pos().y() > margin_r.y()) {
-        m_mousePressed.setY(m_image.height());
+    else if (m_mousePressed.y() > m_image.height() - 1) {
+        m_mousePressed.setY(m_image.height() - 1);
     }
 
     if (m_drawMode == -5) {
@@ -97,28 +95,24 @@ void QImageDrawer::mouseMoveEvent(QMouseEvent *m)
     }
 
     QPoint margin((this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2);
-    QPoint margin_r = margin + QPoint(m_image.width(), m_image.height());
+    m_mouseReleased = m->pos() - margin;
 
-    m_mouseReleased.setX(m->pos().x() - margin.x());
-    m_mouseReleased.setY(m->pos().y() - margin.y());
-
-    if (m->pos().x() < margin.x()) {
+    if (m_mouseReleased.x() < 0) {
         m_mouseReleased.setX(0);
     }
-    if (m->pos().y() < margin.y()) {
+    else if (m_mouseReleased.x() > m_image.width() - 1) {
+        m_mouseReleased.setX(m_image.width() - 1);
+    }
+    if (m_mouseReleased.y() < 0) {
         m_mouseReleased.setY(0);
     }
-    if (m->pos().x() > margin_r.x()) {
-        m_mouseReleased.setX(m_image.width());
-    }
-    if (m->pos().y() > margin_r.y()) {
-        m_mouseReleased.setY(m_image.height());
-    }
-    if (m_drawMode == -4) {
-        m_gaugeLine.setP2(m_mouseReleased);
+    else if (m_mouseReleased.y() > m_image.height() - 1) {
+        m_mouseReleased.setY(m_image.height() - 1);
     }
 
-    if (m_drawMode == -2) {//rectangle
+    if (m_drawMode == -4) {
+        m_gaugeLine.setP2(m_mouseReleased);
+    }else if (m_drawMode == -2) {//rectangle
         ccSpace->qrect = QRect(m_mousePressed, m_mouseReleased);
     }
     else if (m_drawMode == -3) {//calibre
