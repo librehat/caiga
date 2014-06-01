@@ -121,7 +121,6 @@ void Reporter::setBarChart(QCustomPlot *plot)
 
 void Reporter::generateReport()
 {
-    //TODO use the model in analysis tab instead of generating new data.
     emit workStatusStrUpdated(tr("Generating report... Please wait......"));
     cursor.setBlockFormat(alignCentreBlockFormat());
     cursor.insertBlock(alignCentreBlockFormat(), boldRomanFormat());
@@ -196,20 +195,21 @@ void Reporter::generateReport()
     cursor.insertHtml("<br /><br />");
 
     //insert the detailed table
-    cursor.insertTable(m_analyser->count() + 1, 6, tableFormat);
+    cursor.insertTable(m_analyser->count() + 1, 7, tableFormat);
     insertHeaderAndMoveNextCell(&cursor, tr("Index"));
+    insertHeaderAndMoveNextCell(&cursor, tr("Position"));
     insertHeaderAndMoveNextCell(&cursor, tr("Class"));
     insertHeaderAndMoveNextCell(&cursor, tr("Area\n(μm^2)"));
     insertHeaderAndMoveNextCell(&cursor, tr("Perimeter\n(μm)"));
     insertHeaderAndMoveNextCell(&cursor, tr("Diameter\n(μm)"));
     insertHeaderAndMoveNextCell(&cursor, tr("Flattening"));
     for (int i = 0; i < m_analyser->count(); ++i) {
-        insertTextAndMoveNextCell(&cursor, QString::number(i + 1));
-        insertTextAndMoveNextCell(&cursor, m_analyser->getClassNameAt(i));
-        insertTextAndMoveNextCell(&cursor, m_analyser->getAreaAt(i));
-        insertTextAndMoveNextCell(&cursor, m_analyser->getPerimeterAt(i));
-        insertTextAndMoveNextCell(&cursor, m_analyser->getDiameterAt(i));
-        insertTextAndMoveNextCell(&cursor, m_analyser->getFlatteningAt(i));
+        insertTextAndMoveNextCell(&cursor, QString::number(m_analyser->getDataModel()->item(i, 0)->data(Qt::DisplayRole).toInt()));
+        insertTextAndMoveNextCell(&cursor, m_analyser->getDataModel()->item(i, 1)->data(Qt::DisplayRole).toString());
+        insertTextAndMoveNextCell(&cursor, m_analyser->getDataModel()->item(i, 2)->data(Qt::DisplayRole).toString());
+        for (int j = 3; j < 7; ++j) {
+            insertTextAndMoveNextCell(&cursor, QString::number(m_analyser->getDataModel()->item(i, j)->data(Qt::DisplayRole).toReal()));
+        }
     }
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock(alignCentreBlockFormat(), romanFormat());
