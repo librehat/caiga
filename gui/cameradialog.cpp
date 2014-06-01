@@ -58,7 +58,6 @@ void CameraDialog::setCamera(const QByteArray &cameraDevice)
     connect(camera, static_cast<void (QCamera::*) (QCamera::Error)>(&QCamera::error), this, &CameraDialog::displaycameraError);
 
     imageCapture = new QCameraImageCapture(camera, this);
-    //imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToFile);
     imageCapture->setCaptureDestination(QCameraImageCapture::CaptureToBuffer);
     imageCapture->setBufferFormat(QVideoFrame::Format_RGB32);
     connect(imageCapture, &QCameraImageCapture::imageCaptured, this, &CameraDialog::onImageCaptured);
@@ -69,7 +68,7 @@ void CameraDialog::setCamera(const QByteArray &cameraDevice)
 void CameraDialog::takePicture()
 {
     camera->searchAndLock();
-    imageCapture->capture(QDir::tempPath() + QString("/caiga_tmp.jpeg"));
+    imageCapture->capture(QDir::tempPath() + QString("/caiga_camera.jpeg"));
     camera->unlock();
 }
 

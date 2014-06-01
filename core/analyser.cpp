@@ -6,12 +6,11 @@
 #include <QtConcurrent>
 using namespace CAIGA;
 
-const QStringList Analyser::headerLabels = QStringList() << "ID" << "Class" << "Area" << "Perimeter" << "Diameter" << "Flattening";
-
 Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Point> > contours, QObject *parent) :
     QObject(parent)
 {
-    addClass(QString("Base"));
+    headerLabels = QStringList() << tr("Index") << tr("Class") << tr("Area") << tr("Perimeter") << tr("Diameter") << tr("Flattening");
+    addClass(tr("Base"));
     contoursModel = new QStandardItemModel(0, 4, this);
     m_markerMatrix = markers;
     scaleValue = scale;
@@ -137,7 +136,7 @@ void Analyser::onClassChanged(const QModelIndex &mIndex, const QString classText
             calculateIntercepts();
         }
         else {
-            qCritical() << "Critical Error. Change class failed. Please report a bug.";
+            qCritical() << tr("Critical Error. Changing class failed. Please report a bug.");
         }
     }
     onModelIndexChanged(mIndex);
@@ -146,9 +145,18 @@ void Analyser::onClassChanged(const QModelIndex &mIndex, const QString classText
 QString Analyser::getClassValues(int classIdx)
 {
     if (classIdx < 0 || classIdx >= m_classes.size()) {
-        return QString("Error. Class index is out of classes's range.");
+        return tr("Error. Class index is out of classes's range.");
     }
-    QString info = QString("Count: %1<br />Total Area: %2μm<sup>2</sup><br />Percentage: %3%<br />Average Grain Area: %4 μm<sup>2</sup><br />Average Perimeter: %5 μm<br />Average Diameter: %6 μm<br />Average Flattening: %7<br />Mean Intercept: %8 μm<br />Grain Size Number (Planimetric Procedure): %9<br />Grain Size Number (Intercept Procedure): %10").arg(classObjMap[classIdx].count()).arg(classObjMap[classIdx].totalArea()).arg(classObjMap[classIdx].percentage() * 100).arg(classObjMap[classIdx].averageArea()).arg(classObjMap[classIdx].averagePerimeter()).arg(classObjMap[classIdx].averageDiameter()).arg(classObjMap[classIdx].averageFlattening()).arg(classObjMap[classIdx].averageIntercept()).arg(classObjMap[classIdx].sizeNumberByPlanimetric()).arg(classObjMap[classIdx].sizeNumberByIntercept());
+    QString info = tr("Count: ") + QString::number(classObjMap[classIdx].count())
+            + "<br />" + tr("Total Area: ") + QString::number(classObjMap[classIdx].totalArea()) + "μm<sup>2</sup>"
+            + "<br />" + tr("Percentage: ") + QString::number(classObjMap[classIdx].percentage()) + "%"
+            + "<br />" + tr("Average Grain Area: ") + QString::number(classObjMap[classIdx].averageArea()) + "μm<sup>2</sup>"
+            + "<br />" + tr("Average Perimeter: ") + QString::number(classObjMap[classIdx].averagePerimeter()) + "μm"
+            + "<br />" + tr("Average Diameter: ") + QString::number(classObjMap[classIdx].averageDiameter()) + "μm"
+            + "<br />" + tr("Average Flattening: ") + QString::number(classObjMap[classIdx].averageFlattening()) + "μm"
+            + "<br />" + tr("Mean Intercept: ") + QString::number(classObjMap[classIdx].averageIntercept()) + "μm"
+            + "<br />" + tr("Grain Size Number (Planimetric Procedure): ") + QString::number(classObjMap[classIdx].sizeNumberByPlanimetric())
+            + "<br />" + tr("Grain Size Number (Intercept Procedure): ") + QString::number(classObjMap[classIdx].sizeNumberByIntercept());
     return info;
 }
 

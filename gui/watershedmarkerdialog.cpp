@@ -9,8 +9,8 @@ WatershedMarkerDialog::WatershedMarkerDialog(QWidget *parent) :
 
     this->setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
     brushMenu = new QMenu(this);
-    brushMenu->addAction("Pencil", this, SLOT(onBrushPencil()));
-    brushMenu->addAction("Eraser", this, SLOT(onBrushEraser()));
+    brushMenu->addAction(tr("Marker"), this, SLOT(onBrushPencil()));
+    brushMenu->addAction(tr("Eraser"), this, SLOT(onBrushEraser()));
     ui->brushModeButton->setMenu(brushMenu);
     m_colour = QColor(255, 255, 255);
     ui->drawer->setDrawMode(QImageInteractiveDrawer::PENCIL);
@@ -168,14 +168,14 @@ void WatershedMarkerDialog::onWorkFinished()
 
 void WatershedMarkerDialog::onBrushPencil()
 {
-    ui->brushModeButton->setText("Pencil");
+    ui->brushModeButton->setText(tr("Marker"));
     ui->drawer->setDrawMode(QImageInteractiveDrawer::PENCIL);
     ui->drawer->setPenColour(m_colour);
 }
 
 void WatershedMarkerDialog::onBrushEraser()
 {
-    ui->brushModeButton->setText("Eraser");
+    ui->brushModeButton->setText(tr("Eraser"));
     ui->drawer->setDrawMode(QImageInteractiveDrawer::ERASER);
     ui->drawer->setPenColour(QColor(Qt::black));
 }

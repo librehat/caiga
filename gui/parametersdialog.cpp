@@ -67,7 +67,7 @@ void ParametersDialog::setMode(CAIGA::WorkBase::WorkTypes mode)
     case CAIGA::WorkBase::BoxFilter:
     case CAIGA::WorkBase::MedianBlur:
     case CAIGA::WorkBase::Gradient:
-        this->setkSizeText("Kernel Size");
+        this->setkSizeText(tr("Kernel Size"));
         ui->kSizeSlider->setMinimum(2);
         ui->sigmaColour->setVisible(false);
         ui->sigmaColourLabel->setVisible(false);
@@ -76,20 +76,20 @@ void ParametersDialog::setMode(CAIGA::WorkBase::WorkTypes mode)
         ui->checkBox->setVisible(false);
         break;
     case CAIGA::WorkBase::Binaryzation:
-        this->setkSizeText("Block Size");
+        this->setkSizeText(tr("Block Size"));
         ui->kSizeSlider->setMinimum(2);
         ui->sigmaSpace->setMinimum(-999);
-        ui->sigmaSpaceLabel->setText("Constant C");
+        ui->sigmaSpaceLabel->setText(tr("Constant C"));
         ui->sigmaColour->setVisible(false);
         ui->sigmaColourLabel->setVisible(false);
         break;
     case CAIGA::WorkBase::Canny:
-        this->setkSizeText("Aperture Size");
+        this->setkSizeText(tr("Aperture Size"));
         ui->kSizeSlider->setMinimum(2);
         ui->kSizeSlider->setMaximum(4);
-        ui->sigmaSpaceLabel->setText("High Threshold");
+        ui->sigmaSpaceLabel->setText(tr("High Threshold"));
         ui->sigmaSpace->setValue(400);
-        ui->sigmaColourLabel->setText("Low Threshold");
+        ui->sigmaColourLabel->setText(tr("Low Threshold"));
         ui->sigmaColour->setValue(150);
         ui->checkBox->setText("L2 Gradient");
         break;
@@ -98,17 +98,17 @@ void ParametersDialog::setMode(CAIGA::WorkBase::WorkTypes mode)
         ui->kSizeSlider->setVisible(false);
         ui->sigmaSpace->setMinimum(0);
         ui->sigmaSpace->setValue(20);
-        ui->sigmaSpaceLabel->setText("High Difference");
+        ui->sigmaSpaceLabel->setText(tr("High Difference"));
         ui->sigmaColour->setMinimum(0);
         ui->sigmaColour->setValue(20);
-        ui->sigmaColourLabel->setText("Low Difference");
-        ui->checkBox->setText("8 Connectivity Mode");
+        ui->sigmaColourLabel->setText(tr("Low Difference"));
+        ui->checkBox->setText(tr("8 Connectivity Mode"));
         ui->undoButton->setVisible(true);
         ui->redoButton->setVisible(true);
         ui->resetButton->setVisible(true);
         break;
     default://adaptiveBilateralFilter
-        this->setkSizeText("Kernel Size");
+        this->setkSizeText(tr("Kernel Size"));
         ui->kSizeSlider->setValue(6);
         ui->checkBox->setVisible(false);
         break;

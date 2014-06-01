@@ -39,12 +39,11 @@ private:
     static QTextBlockFormat alignCentreBlockFormat();
     static QTextBlockFormat alignJustifyBlockFormat();
     static QTextCharFormat boldRomanFormat();
-    static QTextCharFormat cambriaMathFormat();
     static QTextCharFormat arialBoldFormat();
     static QTextCharFormat romanFormat();
     static QTextCharFormat figureInfoFormat();
 
-    inline void insertTextAndMoveNextCell(QTextCursor *cursor, const QString &text) { cursor->insertText(text, cambriaMathFormat()); cursor->movePosition(QTextCursor::NextCell); }
+    inline void insertTextAndMoveNextCell(QTextCursor *cursor, const QString &text) { cursor->insertText(text, romanFormat()); cursor->movePosition(QTextCursor::NextCell); }
     inline void insertHeaderAndMoveNextCell(QTextCursor *cursor, const QString &text) { cursor->insertText(text, arialBoldFormat()); cursor->movePosition(QTextCursor::NextCell); }
     inline void insertHtmlAndMoveNextCell(QTextCursor *cursor, const QString &html) { cursor->insertHtml(html); cursor->movePosition(QTextCursor::NextCell); }
 

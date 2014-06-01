@@ -33,7 +33,7 @@ WorkSpace::~WorkSpace()
 void WorkSpace::undo()
 {
     if (workList.count() <= 1) {
-        emit workStatusStringUpdated("Abort. Nothing available to be undone.");
+        emit workStatusStringUpdated(tr("Abort. Nothing available to be undone."));
         return;
     }
     undoneList.append(workList.takeLast());
@@ -43,7 +43,7 @@ void WorkSpace::undo()
 void WorkSpace::redo()
 {
     if (undoneList.isEmpty()) {
-        emit workStatusStringUpdated("Abort. Nothing available to be redone.");
+        emit workStatusStringUpdated(tr("Abort. Nothing available to be redone."));
         return;
     }
     workList.append(undoneList.takeLast());
@@ -95,7 +95,7 @@ QList<WorkBase *> WorkSpace::takeAll()
 
 void WorkSpace::simplified()
 {
-    //when user click "save" button.
+    //TODO when user click "save" button.
     //use this function to remove WorkBase(s) from workList except for current one
 }
 
@@ -156,7 +156,7 @@ void WorkSpace::newInvertGrayscaleWork()
 void WorkSpace::newHistogramEqualiseWork()
 {
     if (workList.last()->dst->type() != CV_8UC1) {
-        emit workStatusStringUpdated("Abort. 8-bit single channel image needed.");
+        emit workStatusStringUpdated(tr("Abort. 8-bit single channel image needed."));
         return;
     }
     WorkBase *w = new WorkHistEqualise(workList.last()->dst);
@@ -174,7 +174,7 @@ void WorkSpace::newAdaptiveBilateralFilterWork(int size, double space, double co
 {
     cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;
     if (s->type() != CV_8UC1 && s->type() != CV_8UC3) {
-        emit workStatusStringUpdated("Abort. 8-bit single or 3-channel image needed.");
+        emit workStatusStringUpdated(tr("Abort. 8-bit single or 3-channel image needed."));
         return;
     }
     WorkBase *w = new WorkAptBilateralFilter(s, size, space, colour);
@@ -216,7 +216,7 @@ void WorkSpace::newFloodFillWork(QVector<QPoint> pts, bool cont)
 void WorkSpace::newContoursWork()
 {
     if (workList.last()->dst->type() != CV_8UC1) {
-        emit workStatusStringUpdated("Abort. 8-bit single channel image needed.");
+        emit workStatusStringUpdated(tr("Abort. 8-bit single channel image needed."));
         return;
     }
     WorkBase *w = new WorkContours(workList.last()->dst);
@@ -226,7 +226,7 @@ void WorkSpace::newContoursWork()
 void WorkSpace::newPencilWork(const QVector<QPoint> &pts, bool white)
 {
     if (pts.size() < 2) {
-        emit workStatusStringUpdated("Abort. Insufficient points.");
+        emit workStatusStringUpdated(tr("Abort. Insufficient points."));
         return;
     }
 
@@ -243,7 +243,7 @@ void WorkSpace::newPencilWork(const QVector<QPoint> &pts, bool white)
 void WorkSpace::newPencilWork(const QVector<QPoint> &pts, QColor colour)
 {
     if (pts.size() < 2) {
-        emit workStatusStringUpdated("Abort. Insufficient points.");
+        emit workStatusStringUpdated(tr("Abort. Insufficient points."));
         return;
     }
 
@@ -275,7 +275,7 @@ void WorkSpace::newWatershedWork(const cv::Mat *input, bool cont)
 {
     cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;
     if (s->type() != CV_8UC1) {
-        emit workStatusStringUpdated("Abort. 8-bit single channel image needed.");
+        emit workStatusStringUpdated(tr("Abort. 8-bit single channel image needed."));
         return;
     }
 
@@ -321,11 +321,11 @@ cv::Mat *WorkSpace::getMarkerMatrix()
 void WorkSpace::onLowLevelWorkStarted()
 {
     emit workStarted();
-    emit workStatusStringUpdated("Work has been started. Please wait......");
+    emit workStatusStringUpdated(tr("Work has been started. Please wait......"));
 }
 
 void WorkSpace::onLowLevelWorkFinished()
 {
     emit workFinished();
-    emit workStatusStringUpdated("Work Finished.");
+    emit workStatusStringUpdated(tr("Work Finished."));
 }

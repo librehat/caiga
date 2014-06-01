@@ -31,11 +31,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->rawViewer->setNoScale();
     //processTab button menu
     mouseBehaviourMenu = new QMenu(this);
-    mouseBehaviourMenu->addAction("Normal Arrow", this, SLOT(onMouseNormalArrow()));
-    mouseBehaviourMenu->addAction("White Pencil", this, SLOT(onMouseWhitePencil()));
-    mouseBehaviourMenu->addAction("Black Pencil", this, SLOT(onMouseBlackPencil()));
-    mouseBehaviourMenu->addAction("White Eraser", this, SLOT(onMouseWhiteEraser()));
-    mouseBehaviourMenu->addAction("Black Eraser", this, SLOT(onMouseBlackEraser()));
+    mouseBehaviourMenu->addAction(tr("Normal Arrow"), this, SLOT(onMouseNormalArrow()));
+    mouseBehaviourMenu->addAction(tr("White Pencil"), this, SLOT(onMouseWhitePencil()));
+    mouseBehaviourMenu->addAction(tr("Black Pencil"), this, SLOT(onMouseBlackPencil()));
+    mouseBehaviourMenu->addAction(tr("White Eraser"), this, SLOT(onMouseWhiteEraser()));
+    mouseBehaviourMenu->addAction(tr("Black Eraser"), this, SLOT(onMouseBlackEraser()));
     ui->mouseBehaviourButton->setMenu(mouseBehaviourMenu);
 
     //information
@@ -149,7 +149,7 @@ void MainWindow::onGaugeLineFinished(qreal r)
 
 void MainWindow::onCCLoadMacroButtonClicked()
 {
-    QString macroFile = QFileDialog::getOpenFileName(this, "Load Macro for Crop and Calibre", QDir::currentPath(), "Macro Text File (*.txt)");
+    QString macroFile = QFileDialog::getOpenFileName(this, tr("Load Macro for Crop and Calibre"), QDir::currentPath(), "Macro Text File (*.txt)");
     if (macroFile.isNull()) {
         return;
     }
@@ -163,7 +163,7 @@ void MainWindow::onCCLoadMacroButtonClicked()
 
 void MainWindow::onCCSaveMacroButtonClicked()
 {
-    QString macroFile = QFileDialog::getSaveFileName(this, "Save as Macro File for Crop and Calibre", QDir::currentPath(), "Macro Text File (*.txt)");
+    QString macroFile = QFileDialog::getSaveFileName(this, tr("Save as Macro File for Crop and Calibre"), QDir::currentPath(), "Macro Text File (*.txt)");
     if (macroFile.isNull()) {
         return;
     }
@@ -183,7 +183,7 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
     }
     else {//save
         if (cgimg.getScaleValue() <= 0) {
-            onMessagesArrived("You must calibre image scale before move to next step.");
+            onMessagesArrived(tr("You must calibre image scale before move to next step."));
             return;
         }
         ccSpace.cropImage();
@@ -206,14 +206,14 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
         connect(previewSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
 
         ui->imageTabs->setCurrentIndex(2);
-        onMessagesArrived("Process and segment the image.");
+        onMessagesArrived(tr("Process and segment the image."));
         onProcessWorkFinished();//update the image
     }
 }
 
 void MainWindow::onMouseNormalArrow()
 {
-    ui->mouseBehaviourButton->setText("Normal Arrow");
+    ui->mouseBehaviourButton->setText(tr("Normal Arrow"));
     ui->processDrawer->setDrawMode(QImageInteractiveDrawer::NONE);
     disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
 }
@@ -221,7 +221,7 @@ void MainWindow::onMouseNormalArrow()
 void MainWindow::onMouseWhitePencil()
 {
     disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
-    ui->mouseBehaviourButton->setText("White Pencil");
+    ui->mouseBehaviourButton->setText(tr("White Pencil"));
     ui->processDrawer->setWhite();
     ui->processDrawer->setDrawMode(QImageInteractiveDrawer::PENCIL);
     connect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onPencilDrawFinished);
@@ -230,7 +230,7 @@ void MainWindow::onMouseWhitePencil()
 void MainWindow::onMouseBlackPencil()
 {
     disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
-    ui->mouseBehaviourButton->setText("Black Pencil");
+    ui->mouseBehaviourButton->setText(tr("Black Pencil"));
     ui->processDrawer->setWhite(false);
     ui->processDrawer->setDrawMode(QImageInteractiveDrawer::PENCIL);
     connect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onPencilDrawFinished);
@@ -239,7 +239,7 @@ void MainWindow::onMouseBlackPencil()
 void MainWindow::onMouseWhiteEraser()
 {
     disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
-    ui->mouseBehaviourButton->setText("White Eraser");
+    ui->mouseBehaviourButton->setText(tr("White Eraser"));
     ui->processDrawer->setWhite();
     ui->processDrawer->setDrawMode(QImageInteractiveDrawer::ERASER);
     connect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onEraserDrawFinished);
@@ -248,7 +248,7 @@ void MainWindow::onMouseWhiteEraser()
 void MainWindow::onMouseBlackEraser()
 {
     disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
-    ui->mouseBehaviourButton->setText("Black Eraser");
+    ui->mouseBehaviourButton->setText(tr("Black Eraser"));
     ui->processDrawer->setWhite(false);
     ui->processDrawer->setDrawMode(QImageInteractiveDrawer::ERASER);
     connect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onEraserDrawFinished);
@@ -489,7 +489,7 @@ void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
     else {//save
         //check if it's eligible
         if (processSpace->getMarkerMatrix() == NULL) {
-            onMessagesArrived("Error. Processing is not finished yet!");
+            onMessagesArrived(tr("Error. Processing is not finished yet!"));
             return;
         }
 
@@ -497,7 +497,7 @@ void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
         ui->analysisInteracter->setImage(processSpace->getLastDisplayImage());
         ui->imageTabs->setCurrentIndex(3);
 
-        onMessagesArrived("Analysing... Please Wait......");
+        onMessagesArrived(tr("Analysing... Please Wait......"));
         //setup analyser and retrive information
         if (analyser != NULL) {
             analyser->disconnect();
@@ -520,7 +520,7 @@ void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
         connect(ui->analysisInteracter, &QImageInteractiveDrawer::mousePressed, analyser, &CAIGA::Analyser::findContourHasPoint);
         connect(ui->analysisTableView, &QTableView::activated, analyser, &CAIGA::Analyser::onModelIndexChanged);
         connect(analysisDelegate, &AnalysisItemDelegate::classChanged, analyser, &CAIGA::Analyser::onClassChanged);
-        onMessagesArrived("Analysed.");
+        onMessagesArrived(tr("Analysed."));
     }
     previewSpace->clear();
 }
@@ -610,7 +610,7 @@ void MainWindow::onCurrentTabChanged(int i)
 
 void MainWindow::addDiskFileDialog()
 {
-    QString filename = QFileDialog::getOpenFileName(this, "Add Image from Disk", QDir::currentPath(),
+    QString filename = QFileDialog::getOpenFileName(this, tr("Add Image from Disk"), QDir::currentPath(),
                        "Supported Images (*.png *.jpg *.jpeg *.tif *.tiff *.bmp)");
     if (filename.isNull()) {
         return;
@@ -670,7 +670,7 @@ void MainWindow::onInformationExportTriggered()
 {
     QString filter;
     QString filename = QFileDialog::getSaveFileName(this,
-                       "Export Image Information As",
+                       tr("Export Image Information As"),
                        QDir::currentPath(),
                        "Adobe Portable Document Format (*.pdf);;Open Document File (*.odf);;HyperText Markup Language (*.html)", &filter);
     if (filename.isNull()) {
@@ -696,7 +696,7 @@ void MainWindow::onSaveCurrentImageTriggered()
 {
     QString filter;
     QString filename = QFileDialog::getSaveFileName(this,
-                       "Save Current Image As",
+                       tr("Save Current Image As"),
                        QDir::currentPath(),
                        "Joint Photographic Experts Group (*.jpg);;Portable Network Graphics (*.png)", &filter);
     if (filename.isNull()) {
@@ -719,13 +719,13 @@ void MainWindow::onSaveCurrentImageTriggered()
         ok = ui->analysisInteracter->image()->save(filename, format.data());
         break;
     default:
-        onMessagesArrived("Invalid operation.");
+        onMessagesArrived(tr("Invalid operation."));
     }
     if (ok) {
-        onMessagesArrived("Current image saved successfully.");
+        onMessagesArrived(tr("Current image saved successfully."));
     }
     else {
-        onMessagesArrived("Saving current image failed.");
+        onMessagesArrived(tr("Saving current image failed."));
     }
 }
 

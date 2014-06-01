@@ -82,7 +82,7 @@ private:
     qreal averageIntercept;
 
     QStandardItemModel *contoursModel;
-    static const QStringList headerLabels;
+    QStringList headerLabels;
 
     qreal calculatePerimeter(int idx);
     qreal calculateContourAreaByPixels(int idx);

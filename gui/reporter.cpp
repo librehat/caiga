@@ -77,7 +77,7 @@ void Reporter::setBarChart(QCustomPlot *plot)
     plot->xAxis->setSubTickLength(6);
     plot->xAxis->setSubTickCount(1);
     plot->xAxis->grid()->setVisible(false);
-    plot->xAxis->setLabel("Diameter (μm)");
+    plot->xAxis->setLabel(tr("Diameter (μm)"));
     plot->xAxis->setLabelFont(labelFont);
     plot->xAxis->setTickLabelFont(labelFont);
 
@@ -86,7 +86,7 @@ void Reporter::setBarChart(QCustomPlot *plot)
     plot->yAxis->setAutoSubTicks(false);
     plot->yAxis->setSubTickCount(0);
     plot->yAxis->setTickStep(static_cast<double>(maxCountBySlice > 20 ? 5 : 2));
-    plot->yAxis->setLabel("Count");
+    plot->yAxis->setLabel(tr("Count"));
     plot->yAxis->setLabelFont(labelFont);
     plot->yAxis->setTickLabelFont(labelFont);
 
@@ -121,7 +121,7 @@ void Reporter::setBarChart(QCustomPlot *plot)
 
 void Reporter::generateReport()
 {
-    emit workStatusStrUpdated("Generating report... Please wait......");
+    emit workStatusStrUpdated(tr("Generating report... Please wait......"));
     cursor.setBlockFormat(alignCentreBlockFormat());
     cursor.insertBlock(alignCentreBlockFormat(), boldRomanFormat());
     cursor.insertText("Computer-Aid Interactive Grain Analyser\nAnalysis Report");
@@ -131,7 +131,7 @@ void Reporter::generateReport()
 
     //insert the Date
     cursor.insertBlock(alignJustifyBlockFormat(), romanFormat());
-    cursor.insertText("Report was generated on  ");
+    cursor.insertText(tr("Report was generated on  "));
     cursor.insertText(QDateTime::currentDateTime().toString(Qt::DefaultLocaleLongDate));
     cursor.insertHtml("<br /><br />");
     cursor.movePosition(QTextCursor::End);
@@ -140,40 +140,41 @@ void Reporter::generateReport()
     cursor.insertBlock(alignCentreBlockFormat(), romanFormat());
     cursor.insertImage(rawImage);
     cursor.insertHtml("<br />");
-    cursor.insertText("Figure 1. Orignial Image", figureInfoFormat());
+    cursor.insertText(tr("Figure 1. Orignial Image"), figureInfoFormat());
     cursor.insertHtml("<br /><br />");
     //insert the processed image
     cursor.insertImage(m_workSpace->getLastDisplayImage());
     cursor.insertHtml("<br />");
-    cursor.insertText("Figure 2. Segmented Image Result", figureInfoFormat());
+    cursor.insertText(tr("Figure 2. Segmented Image Result"), figureInfoFormat());
     cursor.insertHtml("<br /><br />");
 
     cursor.insertText(QString(QChar::ObjectReplacementCharacter), QCPDocumentObject::generatePlotFormat(m_plot, 500, 400));
     cursor.insertHtml("<br />");
-    cursor.insertText("Figure 3. Diameter Histogram", figureInfoFormat());
+    cursor.insertText(tr("Figure 3. Count-Diameter Histogram"), figureInfoFormat());
     cursor.insertHtml("<br /><br />");
     cursor.movePosition(QTextCursor::End);
 
     //insert some general information
     cursor.insertBlock(alignCentreBlockFormat(), romanFormat());
-    cursor.insertText("Scale: " + m_analyser->getScale() + " pixel/μm");
-    cursor.insertText("\nMeasurement Area: " + m_analyser->getImageArea() + " μm^2");
+    cursor.insertText(tr("Scale: ") + m_analyser->getScale() + tr(" pixel/μm"));
+    cursor.insertText("\n");
+    cursor.insertText(tr("Measurement Area: ") + m_analyser->getImageArea() + tr(" μm^2"));
     cursor.insertHtml("<br /><br />");
     cursor.movePosition(QTextCursor::End);
 
     //insert class information table
     cursor.insertTable(m_analyser->classCount() + 1, 11, tableFormat);
-    insertHeaderAndMoveNextCell(&cursor, "Class");
-    insertHeaderAndMoveNextCell(&cursor, "Count");
-    insertHeaderAndMoveNextCell(&cursor, "Total\nArea\n(μm^2)");
-    insertHeaderAndMoveNextCell(&cursor, "Area\nPercentage\n(%)");
-    insertHeaderAndMoveNextCell(&cursor, "Average\nArea\n(μm^2)");
-    insertHeaderAndMoveNextCell(&cursor, "Perimeter\n\n(μm)");
-    insertHeaderAndMoveNextCell(&cursor, "Diameter\n\n(μm)");
-    insertHeaderAndMoveNextCell(&cursor, "Flattening");
-    insertHeaderAndMoveNextCell(&cursor, "Intercept\n\n(μm)");
-    insertHeaderAndMoveNextCell(&cursor, "G\n\n(Planimetric)");
-    insertHeaderAndMoveNextCell(&cursor, "G\n\n(Intercept)");
+    insertHeaderAndMoveNextCell(&cursor, tr("Class"));
+    insertHeaderAndMoveNextCell(&cursor, tr("Count"));
+    insertHeaderAndMoveNextCell(&cursor, tr("Total\nArea\n(μm^2)"));
+    insertHeaderAndMoveNextCell(&cursor, tr("Area\nPercentage\n(%)"));
+    insertHeaderAndMoveNextCell(&cursor, tr("Average\nArea\n(μm^2)"));
+    insertHeaderAndMoveNextCell(&cursor, tr("Perimeter\n\n(μm)"));
+    insertHeaderAndMoveNextCell(&cursor, tr("Diameter\n\n(μm)"));
+    insertHeaderAndMoveNextCell(&cursor, tr("Flattening"));
+    insertHeaderAndMoveNextCell(&cursor, tr("Intercept\n\n(μm)"));
+    insertHeaderAndMoveNextCell(&cursor, tr("G\n\n(Planimetric)"));
+    insertHeaderAndMoveNextCell(&cursor, tr("G\n\n(Intercept)"));
     for (int i = 0; i < m_analyser->classCount(); ++i) {
         insertTextAndMoveNextCell(&cursor, m_analyser->getClassesList()->at(i));
         insertTextAndMoveNextCell(&cursor, m_analyser->getCountOfClass(i));
@@ -190,17 +191,17 @@ void Reporter::generateReport()
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock(alignCentreBlockFormat(), romanFormat());
     cursor.insertHtml("<br />");
-    cursor.insertText("Table 1. Analysis results (average values)", figureInfoFormat());
+    cursor.insertText(tr("Table 1. Analysis results (average values)"), figureInfoFormat());
     cursor.insertHtml("<br /><br />");
 
     //insert the detailed table
     cursor.insertTable(m_analyser->count() + 1, 6, tableFormat);
-    insertHeaderAndMoveNextCell(&cursor, "Index");
-    insertHeaderAndMoveNextCell(&cursor, "Class");
-    insertHeaderAndMoveNextCell(&cursor, "Area\n(μm^2)");
-    insertHeaderAndMoveNextCell(&cursor, "Perimeter\n(μm)");
-    insertHeaderAndMoveNextCell(&cursor, "Diameter\n(μm)");
-    insertHeaderAndMoveNextCell(&cursor, "Flattening");
+    insertHeaderAndMoveNextCell(&cursor, tr("Index"));
+    insertHeaderAndMoveNextCell(&cursor, tr("Class"));
+    insertHeaderAndMoveNextCell(&cursor, tr("Area\n(μm^2)"));
+    insertHeaderAndMoveNextCell(&cursor, tr("Perimeter\n(μm)"));
+    insertHeaderAndMoveNextCell(&cursor, tr("Diameter\n(μm)"));
+    insertHeaderAndMoveNextCell(&cursor, tr("Flattening"));
     for (int i = 0; i < m_analyser->count(); ++i) {
         insertTextAndMoveNextCell(&cursor, QString::number(i + 1));
         insertTextAndMoveNextCell(&cursor, m_analyser->getClassNameAt(i));
@@ -212,10 +213,10 @@ void Reporter::generateReport()
     cursor.movePosition(QTextCursor::End);
     cursor.insertBlock(alignCentreBlockFormat(), romanFormat());
     cursor.insertHtml("<br />");
-    cursor.insertText("Table 2. Details of each object", figureInfoFormat());
+    cursor.insertText(tr("Table 2. Details of each object"), figureInfoFormat());
     cursor.insertHtml("<br />");
     emit reportGenerated(&textDoc);
-    emit workStatusStrUpdated("Report Generated.");
+    emit workStatusStrUpdated(tr("Report Generated."));
     emit reportAvailable(true);
 }
 
@@ -240,15 +241,6 @@ QTextCharFormat Reporter::boldRomanFormat()
     hf.setFontPointSize(14);
     hf.setFontWeight(QFont::Bold);
     return hf;
-}
-
-QTextCharFormat Reporter::cambriaMathFormat()
-{
-    QTextCharFormat mf;
-    mf.setFontFamily("Cambria Math");
-    mf.setFontPointSize(10);
-    mf.setFontWeight(QFont::Normal);
-    return mf;
 }
 
 QTextCharFormat Reporter::arialBoldFormat()
@@ -297,7 +289,7 @@ void Reporter::exportAsPDF(QString &filename)
     printer.setFullPage(true);
     textDoc.setPageSize(QSizeF(printer.pageRect().size()));
     textDoc.print(&printer);
-    emit workStatusStrUpdated("PDF exported as " + filename);
+    emit workStatusStrUpdated(tr("PDF exported as ") + filename);
 }
 
 void Reporter::exportAsFormat(QString &filename, const QByteArray &format)
@@ -310,9 +302,9 @@ void Reporter::exportAsFormat(QString &filename, const QByteArray &format)
     QTextDocumentWriter writer(filename, format);
     bool ok = writer.write(&textDoc);
     if (ok) {
-        emit workStatusStrUpdated("Exported Successfully.");
+        emit workStatusStrUpdated(tr("Exported Successfully."));
     }
     else {
-        emit workStatusStrUpdated("Export Failed.");
+        emit workStatusStrUpdated(tr("Export Failed."));
     }
 }
