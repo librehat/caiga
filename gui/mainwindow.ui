@@ -585,7 +585,7 @@
      <x>0</x>
      <y>0</y>
      <width>662</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -667,6 +667,12 @@
    <property name="text">
     <string>Open Image from Disk</string>
    </property>
+   <property name="toolTip">
+    <string>Open Image from Disk (Ctrl+O)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionOpenCamera">
    <property name="icon">
@@ -678,7 +684,10 @@
     <string>Open Image from Camera</string>
    </property>
    <property name="toolTip">
-    <string>Open An Existing Project From Disk</string>
+    <string>Open Image from Camera (Ctrl+P)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="actionReset">
@@ -699,6 +708,9 @@
    </property>
    <property name="text">
     <string>Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionOptions">
@@ -725,6 +737,12 @@
    <property name="text">
     <string>Help</string>
    </property>
+   <property name="toolTip">
+    <string>Help (F1)</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
   </action>
   <action name="actionUndo">
    <property name="enabled">
@@ -739,7 +757,7 @@
     <string>Undo</string>
    </property>
    <property name="toolTip">
-    <string>Undo the Last Step</string>
+    <string>Undo (Ctrl+Z)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Z</string>
@@ -758,7 +776,7 @@
     <string>Redo</string>
    </property>
    <property name="toolTip">
-    <string>Redo the Last Undone Step</string>
+    <string>Redo (Ctrl+Y)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Y</string>
@@ -782,7 +800,10 @@
     <string>Export Image Information As</string>
    </property>
    <property name="toolTip">
-    <string>Export Report as File</string>
+    <string>Export Report as File (Ctrl+E)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="actionQuickReportExport">
@@ -798,7 +819,10 @@
     <string>Quick Export As PDF</string>
    </property>
    <property name="toolTip">
-    <string>Export Report as PDF with the Image's Filename</string>
+    <string>Export Report as PDF with the Image's Filename (Ctrl+Shift+E)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+E</string>
    </property>
   </action>
   <action name="actionSaveCurrentImageAs">
@@ -814,7 +838,10 @@
     <string>Save Current Image As</string>
    </property>
    <property name="toolTip">
-    <string>Save Currently Viewing Image as File</string>
+    <string>Save Currently Viewing Image as File (Ctrl+I)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
    </property>
   </action>
  </widget>
