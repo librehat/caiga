@@ -123,9 +123,19 @@ void Analyser::findContourHasPoint(const QPoint &pt)
     }
 
     int size = static_cast<int>(m_contours.size());
-    int indexVal = m_markerMatrix->at<int>(pt.y(), pt.x());//(row, col) == (y, x)
-    if(indexVal > 0 && indexVal <= size) {
-        emit foundContourIndex(contoursModel->index(indexVal - 1, 0));
+    int index = m_markerMatrix->at<int>(pt.y(), pt.x());//(row, col) == (y, x)
+    if(index > 0 && index <= size) {
+        /*
+         * search the index column because the index - 1 doesn't always equal to the row
+         * if user sort the model by information except for index,
+         * then the index - 1 != row in most cases.
+         */
+        for (int i = 0; i < contoursModel->rowCount(); ++i) {
+            if (index == contoursModel->item(i, 0)->data(Qt::DisplayRole).toInt()) {
+                emit foundContourIndex(contoursModel->index(i, 0));
+                break;
+            }
+        }
     }
 }
 
