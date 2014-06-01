@@ -50,6 +50,9 @@
      <property name="enabled">
       <bool>false</bool>
      </property>
+     <property name="toolTip">
+      <string>(Backspace)</string>
+     </property>
      <property name="text">
       <string>Undo</string>
      </property>
@@ -57,6 +60,9 @@
       <iconset theme="edit-undo">
        <normaloff/>
       </iconset>
+     </property>
+     <property name="shortcut">
+      <string>Backspace</string>
      </property>
     </widget>
    </item>
@@ -79,6 +85,9 @@
     <widget class="QPushButton" name="previewButton">
      <property name="enabled">
       <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string>(Space)</string>
      </property>
      <property name="text">
       <string>Preview</string>
@@ -118,7 +127,7 @@
    <item row="1" column="8" alignment="Qt::AlignRight|Qt::AlignTop">
     <widget class="QPushButton" name="brushModeButton">
      <property name="text">
-      <string>Pencil</string>
+      <string>Marker</string>
      </property>
     </widget>
    </item>

@@ -38,6 +38,7 @@ bool WorkSpace::undo()
     }
     undoneList.append(workList.takeLast());
     emit workFinished();
+    emit workStatusStringUpdated(tr("Work undone."));
     return true;
 }
 
@@ -49,6 +50,7 @@ bool WorkSpace::redo()
     }
     workList.append(undoneList.takeLast());
     emit workFinished();
+    emit workStatusStringUpdated(tr("Work redone."));
     return true;
 }
 
