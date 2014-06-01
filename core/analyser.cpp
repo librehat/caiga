@@ -43,10 +43,20 @@ void Analyser::calculateByContours()
     //lambda expression (part of C++11). please upgrade your compiler if compiler complains.
     QtConcurrent::blockingMap(itemIndice, [&] (const int &id) {
         qreal area = calculateContourAreaByPixels(id);
+        qreal diameter;
         qreal perimeter = calculatePerimeter(id);
-        qreal diameter = qSqrt(area);
         qreal flatng = calculateFlattening(id);
         Object::POSITION boundary = determineIsBoundary(id);
+        switch(boundary) {
+        case Object::INTERCEPTED:
+            diameter = qSqrt(area * 2);
+            break;
+        case Object::CORNER:
+            diameter = qSqrt(area * 4);
+            break;
+        default:
+            diameter = qSqrt(area);
+        }
 
         Object obj(boundary, area, perimeter, diameter, flatng);
         base.insert(id, obj);
