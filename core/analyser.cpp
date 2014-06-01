@@ -171,7 +171,7 @@ QString Analyser::getClassValues(int classIdx)
     }
     QString info = tr("Count: ") + QString::number(classObjMap[classIdx].count())
             + "<br />" + tr("Total Area: ") + QString::number(classObjMap[classIdx].totalArea()) + "μm<sup>2</sup>"
-            + "<br />" + tr("Percentage: ") + QString::number(classObjMap[classIdx].percentage()) + "%"
+            + "<br />" + tr("Percentage: ") + QString::number(classObjMap[classIdx].percentage() * 100) + "%"
             + "<br />" + tr("Average Grain Area: ") + QString::number(classObjMap[classIdx].averageArea()) + "μm<sup>2</sup>"
             + "<br />" + tr("Average Perimeter: ") + QString::number(classObjMap[classIdx].averagePerimeter()) + "μm"
             + "<br />" + tr("Average Diameter: ") + QString::number(classObjMap[classIdx].averageDiameter()) + "μm"
