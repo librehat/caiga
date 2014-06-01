@@ -17,33 +17,51 @@
    <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="4" column="5" alignment="Qt::AlignBottom">
-    <widget class="QPushButton" name="redoButton">
+   <item row="5" column="0" colspan="11" alignment="Qt::AlignRight|Qt::AlignBottom">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="10" alignment="Qt::AlignRight|Qt::AlignBottom">
+    <widget class="QPushButton" name="previewButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string>(Space)</string>
+     </property>
+     <property name="text">
+      <string>Preview</string>
+     </property>
+     <property name="icon">
+      <iconset theme="document-preview">
+       <normaloff/>
+      </iconset>
+     </property>
+     <property name="shortcut">
+      <string>Space</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QPushButton" name="resetButton">
      <property name="enabled">
       <bool>false</bool>
      </property>
      <property name="text">
-      <string>Redo</string>
+      <string>Reset</string>
      </property>
      <property name="icon">
-      <iconset theme="edit-redo">
+      <iconset theme="document-revert">
        <normaloff/>
       </iconset>
      </property>
     </widget>
-   </item>
-   <item row="4" column="6">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
    </item>
    <item row="4" column="2" colspan="3">
     <widget class="QPushButton" name="undoButton">
@@ -66,53 +84,35 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="QPushButton" name="resetButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>Reset</string>
-     </property>
-     <property name="icon">
-      <iconset theme="document-revert">
-       <normaloff/>
-      </iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="8" alignment="Qt::AlignRight|Qt::AlignBottom">
-    <widget class="QPushButton" name="previewButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="toolTip">
-      <string>(Space)</string>
-     </property>
-     <property name="text">
-      <string>Preview</string>
-     </property>
-     <property name="icon">
-      <iconset theme="document-preview">
-       <normaloff/>
-      </iconset>
-     </property>
-     <property name="shortcut">
-      <string>Space</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0" colspan="9" alignment="Qt::AlignRight|Qt::AlignBottom">
-    <widget class="QDialogButtonBox" name="buttonBox">
+   <item row="4" column="8">
+    <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="5" alignment="Qt::AlignBottom">
+    <widget class="QPushButton" name="redoButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Redo</string>
+     </property>
+     <property name="icon">
+      <iconset theme="edit-redo">
+       <normaloff/>
+      </iconset>
      </property>
     </widget>
    </item>
-   <item row="2" column="8" alignment="Qt::AlignRight|Qt::AlignTop">
+   <item row="4" column="6">
     <widget class="QPushButton" name="autoButton">
      <property name="text">
       <string>Auto</string>
@@ -124,27 +124,14 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="8" alignment="Qt::AlignRight|Qt::AlignTop">
+   <item row="4" column="7">
     <widget class="QPushButton" name="brushModeButton">
      <property name="text">
       <string>Marker</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="8">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="0" rowspan="4" colspan="8">
+   <item row="0" column="0" rowspan="4" colspan="11">
     <widget class="QImageInteractiveDrawer" name="drawer" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
