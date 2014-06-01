@@ -260,6 +260,11 @@ void WorkSpace::newPencilWork(const QVector<QPoint> &pts, QColor colour)
 
 void WorkSpace::newEraserWork(const QVector<QPoint> &pts, bool white)
 {
+    if (pts.size() < 2) {
+        emit workStatusStringUpdated(tr("Abort. Insufficient points."));
+        return;
+    }
+
     std::vector<cv::Point> cvPts;
     for (QVector<QPoint>::const_iterator it = pts.begin(); it != pts.end(); ++it) {
         cv::Point p(it->x(), it->y());
