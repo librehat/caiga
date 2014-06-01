@@ -7,7 +7,7 @@ WatershedMarkerDialog::WatershedMarkerDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint);
+    this->setWindowFlags(Qt::Tool);
     brushMenu = new QMenu(this);
     brushMenu->addAction(tr("Marker"), this, SLOT(onBrushPencil()));
     brushMenu->addAction(tr("Eraser"), this, SLOT(onBrushEraser()));
