@@ -105,7 +105,7 @@ MainWindow::~MainWindow()
     // Qt delete children objects automatically once the parent is deleted
 }
 
-const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version Alpha 1 on "
+const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive Grain Analyser</h3><p>Version 2014.0 Beta on "
 
 #if defined(_WIN32)//_WIN32 is defined for both 32-bit and 64-bit environment
         + "Windows"

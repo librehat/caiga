@@ -29,8 +29,6 @@ public slots:
 
 private:
     QImage m_image;
-    QImage m_scaledImage;
-    qreal m_scale;
     QPoint m_pressed;
     QVector<QPoint> m_movePoints;
     QPoint m_released;

@@ -24,17 +24,11 @@ void QImageInteractiveDrawer::paintEvent(QPaintEvent *event)
         return;
 
     QSize pixSize = m_image.size();
-    if (pixSize.height() > event->rect().size().height() || pixSize.width() > event->rect().size().width()) {
-        pixSize.scale(event->rect().size(), Qt::KeepAspectRatio);
-    }
-    m_scale = static_cast<qreal>(pixSize.width()) / static_cast<qreal>(m_image.width());//width / width is okay because the ratio was kept
-
     QPoint topleft;
     topleft.setX((this->width() - pixSize.width()) / 2);
     topleft.setY((this->height() - pixSize.height()) / 2);
 
-    m_scaledImage = m_image.scaled(pixSize, Qt::KeepAspectRatio, Qt::FastTransformation);
-    painter.drawImage(topleft, m_scaledImage);
+    painter.drawImage(topleft, m_image);
 
     //draw points
     QPen pen(m_penColour, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
@@ -73,9 +67,9 @@ void QImageInteractiveDrawer::mousePressEvent(QMouseEvent *m)
     if (m_image.isNull()) {
         return;
     }
-    QPoint margin((this->width() - m_scaledImage.width()) / 2, (this->height() - m_scaledImage.height()) / 2);
-    m_pressed.setX((m->pos().x() - margin.x()) / m_scale);
-    m_pressed.setY((m->pos().y() - margin.y()) / m_scale);
+    QPoint margin((this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2);
+    m_pressed.setX((m->pos().x() - margin.x()));
+    m_pressed.setY((m->pos().y() - margin.y()));
     m_movePoints.append(m_pressed);
     emit mousePressed(m_pressed);
 }
@@ -86,12 +80,11 @@ void QImageInteractiveDrawer::mouseMoveEvent(QMouseEvent *m)
     if (m_image.isNull()) {
         return;
     }
-    QPoint margin((this->width() - m_scaledImage.width()) / 2, (this->height() - m_scaledImage.height()) / 2);
-    m_released.setX((m->pos().x() - margin.x()) / m_scale);
-    m_released.setY((m->pos().y() - margin.y()) / m_scale);
+    QPoint margin((this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2);
+    m_released.setX((m->pos().x() - margin.x()));
+    m_released.setY((m->pos().y() - margin.y()));
     m_movePoints.append(m_released);
-    QPoint p(m_released.x() * m_scale + (this->width() - m_scaledImage.width()) / 2, m_released.y() * m_scale + (this->height() - m_scaledImage.height()) / 2);
-    m_poly << p;
+    m_poly << m_released;
     emit mouseMoved(m_released);
     this->update();
 }
