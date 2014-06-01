@@ -484,7 +484,6 @@ void MainWindow::onProcessWorkFinished()
 void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
 {
     if (ui->processButtonBox->standardButton(b) == QDialogButtonBox::Reset) {//reset
-        //TODO
         processSpace->reset(cgimg.croppedMatrix());
     }
     else {//save
@@ -544,7 +543,8 @@ void MainWindow::onCurrentClassChanged(int idx)
 void MainWindow::onAnalysisButtonBoxClicked(QAbstractButton *b)
 {
     if (ui->analysisButtonBox->standardButton(b) == QDialogButtonBox::Reset) {
-        //TODO
+        analyser->reset();
+        ui->analysisTableView->resizeColumnsToContents();
     }
     else {//save
         onSplitButtonClicked();

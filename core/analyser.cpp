@@ -13,10 +13,16 @@ Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Po
 {
     addClass(QString("Base"));
     contoursModel = new QStandardItemModel(0, 4, this);
-    contoursModel->setHorizontalHeaderLabels(headerLabels);
     m_markerMatrix = markers;
     scaleValue = scale;
     m_contours = contours;
+    reset();
+}
+
+void Analyser::reset()
+{
+    contoursModel->clear();
+    contoursModel->setHorizontalHeaderLabels(headerLabels);
     currentSelectedIdx = 0;
     previousClassIdx = -1;
     calculateByContours();
@@ -69,6 +75,7 @@ void Analyser::calculateByContours()
         contoursModel->appendRow(items);
     }
 
+    classObjMap.clear();
     classObjMap[0] = base;
 }
 
