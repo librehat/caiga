@@ -38,8 +38,8 @@ MainWindow::MainWindow(QWidget *parent) :
     mouseBehaviourMenu->addAction(tr("Black Eraser"), this, SLOT(onMouseBlackEraser()));
     ui->mouseBehaviourButton->setMenu(mouseBehaviourMenu);
 
-    //information
-    ui->infoPlotter->setFont(QFont("Arial"));
+    //report
+    ui->diameterBarPlotter->setFont(QFont("Arial"));
 
     /*
      * Setup icons (only those can't be done with Designer)
@@ -76,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //Analysis
     connect(ui->analysisButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onAnalysisButtonBoxClicked);
 
-    //Information
+    //Report
     connect(ui->splitSpinBox, static_cast<void (QSpinBox::*) (int)>(&QSpinBox::valueChanged), this, &MainWindow::onSplitSpinBoxValueChanged);
     connect(ui->splitOKPushButton,  &QPushButton::clicked, this, &MainWindow::onSplitButtonClicked);
 
@@ -89,7 +89,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::onOptionsActionTriggered);
     connect(ui->actionSaveCurrentImageAs, &QAction::triggered, this, &MainWindow::onSaveCurrentImageTriggered);
     connect(ui->actionQuickReportExport, &QAction::triggered, this, &MainWindow::onQuickExportTriggered);
-    connect(ui->actionExportReportAs, &QAction::triggered, this, &MainWindow::onInformationExportTriggered);
+    connect(ui->actionExportReportAs, &QAction::triggered, this, &MainWindow::onReportExportTriggered);
     connect(ui->actionAbout_Qt, &QAction::triggered, this, &MainWindow::aboutQtDialog);
     connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
     connect(ui->imageTabs, &QTabWidget::currentChanged, this, &MainWindow::onCurrentTabChanged);
@@ -500,7 +500,7 @@ void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
         ui->imageTabs->setCurrentIndex(3);
 
         onMessagesArrived(tr("Analysing... Please Wait......"));
-        //setup analyser and retrive information
+        //setup analyser and retrive report
         if (analyser != NULL) {
             analyser->disconnect();
             analyser->deleteLater();
@@ -549,7 +549,7 @@ void MainWindow::onAnalysisButtonBoxClicked(QAbstractButton *b)
         ui->analysisTableView->resizeColumnsToContents();
     }
     else {//save
-        ui->infoTab->setEnabled(true);
+        ui->reportTab->setEnabled(true);
         onSplitButtonClicked();
         ui->imageTabs->setCurrentIndex(4);
     }
@@ -562,8 +562,8 @@ void MainWindow::onSplitSpinBoxValueChanged(int)
 
 void MainWindow::onSplitButtonClicked()
 {
-    ui->infoTextBrowser->clear();
-    updateInformationReport(ui->splitSpinBox->value());
+    ui->reportTextBrowser->clear();
+    updateReportTextBrowser(ui->splitSpinBox->value());
     ui->splitOKPushButton->setEnabled(false);
 }
 
@@ -573,7 +573,7 @@ void MainWindow::onReportAvailable(bool a)
     ui->actionQuickReportExport->setEnabled(a);
 }
 
-void MainWindow::updateInformationReport(int split)
+void MainWindow::updateReportTextBrowser(int split)
 {
     onReportAvailable(false);
     if (reporter != NULL) {
@@ -583,8 +583,8 @@ void MainWindow::updateInformationReport(int split)
     reporter = new Reporter(analyser, processSpace, split, cgimg.getRawImage(), this);
     connect(reporter, &Reporter::reportAvailable, this, &MainWindow::onReportAvailable);
     connect(reporter, &Reporter::workStatusStrUpdated, this, &MainWindow::onMessagesArrived);
-    connect(reporter, &Reporter::reportGenerated, ui->infoTextBrowser, &QTextBrowser::setDocument);
-    reporter->setBarChart(ui->infoPlotter);
+    connect(reporter, &Reporter::reportGenerated, ui->reportTextBrowser, &QTextBrowser::setDocument);
+    reporter->setBarChart(ui->diameterBarPlotter);
     reporter->generateReport();
 }
 
@@ -593,7 +593,7 @@ void MainWindow::onCurrentTabChanged(int i)
     ui->ccPixelViewer->setLivePreviewEnabled(false);
     ui->actionRedo->setEnabled(false);
     ui->actionUndo->setEnabled(false);
-    ui->actionSaveCurrentImageAs->setEnabled(false);
+    ui->actionSaveCurrentImageAs->setEnabled(true);
 
     switch (i) {
     case 1://crop and calibre
@@ -603,10 +603,9 @@ void MainWindow::onCurrentTabChanged(int i)
     case 2://process
         ui->actionRedo->setEnabled(true);
         ui->actionUndo->setEnabled(true);
-        ui->actionSaveCurrentImageAs->setEnabled(true);
         break;
-    case 3://analysis
-        ui->actionSaveCurrentImageAs->setEnabled(true);
+    case 4://report
+        ui->actionSaveCurrentImageAs->setEnabled(false);
         break;
     }
 }
@@ -638,15 +637,7 @@ void MainWindow::addDiskFileDialog()
     }
     setCurrentDirbyFile(filename);
     cgimg.setRawImageByFile(filename);
-    setupCropCalibreSpace();
-    ui->rawViewer->setPixmap(cgimg.getRawPixmap());
-    ui->ccDrawer->setImage(cgimg.getRawImage());
-    onReportAvailable(false);
-    ui->imageTabs->setEnabled(true);
-    ui->processTab->setEnabled(false);
-    ui->analysisTab->setEnabled(false);
-    ui->infoTab->setEnabled(false);
-    ui->imageTabs->setCurrentIndex(0);
+    onNewImageOpened();
 }
 
 void MainWindow::addCameraImageDialog()
@@ -661,15 +652,7 @@ void MainWindow::addCameraImageDialog()
 void MainWindow::onCameraImageAccepted(const QImage &img)
 {
     cgimg.setRawImageFromCamera(img);
-    setupCropCalibreSpace();
-    ui->rawViewer->setPixmap(cgimg.getRawPixmap());
-    ui->ccDrawer->setImage(cgimg.getRawImage());
-    onReportAvailable(false);
-    ui->imageTabs->setEnabled(true);
-    ui->processTab->setEnabled(false);
-    ui->analysisTab->setEnabled(false);
-    ui->infoTab->setEnabled(false);
-    ui->imageTabs->setCurrentIndex(0);
+    onNewImageOpened();
 }
 
 void MainWindow::onResetActionTriggered()
@@ -699,11 +682,11 @@ void MainWindow::onQuickExportTriggered()
     reporter->exportAsPDF(pdfname);
 }
 
-void MainWindow::onInformationExportTriggered()
+void MainWindow::onReportExportTriggered()
 {
     QString filter;
     QString filename = QFileDialog::getSaveFileName(this,
-                       tr("Export Image Information As"),
+                       tr("Export Report As"),
                        QDir::currentPath(),
                        "Adobe Portable Document Format (*.pdf);;Open Document File (*.odf);;HyperText Markup Language (*.html)", &filter);
     if (filename.isNull()) {
@@ -716,10 +699,10 @@ void MainWindow::onInformationExportTriggered()
     else {
         QByteArray format;
         if (filter.contains("odf")) {
-            format.append("ODF");
+            format.append("odf");
         }
         else {
-            format.append("HTML");
+            format.append("html");
         }
         reporter->exportAsFormat(filename, format);
     }
@@ -745,6 +728,9 @@ void MainWindow::onSaveCurrentImageTriggered()
     }
     bool ok = false;
     switch (ui->imageTabs->currentIndex()) {
+    case 0://raw
+        ok = ui->rawViewer->pixmap()->save(filename, format.data());
+        break;
     case 2://process
         ok = ui->processDrawer->image()->save(filename, format.data());
         break;
@@ -826,8 +812,9 @@ void MainWindow::setCurrentDirbyFile(QString &f)
     }
 }
 
-void MainWindow::setupCropCalibreSpace()
+void MainWindow::onNewImageOpened()
 {
+    //setup cropCalibreSpace
     if (cropCalibreSpace != NULL) {
         cropCalibreSpace->disconnect();
         cropCalibreSpace->deleteLater();
@@ -835,6 +822,17 @@ void MainWindow::setupCropCalibreSpace()
     cropCalibreSpace = new CAIGA::CCSpace(&cgimg, this);
     connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), cropCalibreSpace, &CAIGA::CCSpace::setScaleValue);
     ui->ccDrawer->setSpace(cropCalibreSpace);
+
+    //setup tabs and some actions
+    ui->rawViewer->setPixmap(cgimg.getRawPixmap());
+    ui->ccDrawer->setImage(cgimg.getRawImage());
+    onReportAvailable(false);
+    ui->imageTabs->setEnabled(true);
+    ui->processTab->setEnabled(false);
+    ui->analysisTab->setEnabled(false);
+    ui->reportTab->setEnabled(false);
+    ui->imageTabs->setCurrentIndex(0);
+    ui->actionSaveCurrentImageAs->setEnabled(true);
 }
 
 void MainWindow::onMessagesArrived(const QString &str)

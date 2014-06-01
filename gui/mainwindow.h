@@ -95,7 +95,7 @@ private slots:
     void onCurrentClassChanged(int);
     void onAnalysisButtonBoxClicked(QAbstractButton *);
 
-    //information
+    //report
     void onSplitSpinBoxValueChanged(int);
     void onSplitButtonClicked();
     void onReportAvailable(bool);
@@ -110,7 +110,7 @@ private slots:
     void onResetActionTriggered();
     void onOptionsActionTriggered();
     void onQuickExportTriggered();
-    void onInformationExportTriggered();
+    void onReportExportTriggered();
     void onSaveCurrentImageTriggered();
     inline void aboutQtDialog() { QMessageBox::aboutQt(this); }
     inline void aboutCAIGADialog() { QMessageBox::about(this, "About CAIGA", aboutText); }
@@ -127,9 +127,9 @@ private:
     AnalysisItemDelegate *analysisDelegate;
     Reporter *reporter;
 
-    void setupCropCalibreSpace();
+    void onNewImageOpened();
     void handleParametersDialogue(void (MainWindow::*) (int, double, double, bool));
-    void updateInformationReport(int);
+    void updateReportTextBrowser(int);
 
     QSettings settings;
     void readConfig();
