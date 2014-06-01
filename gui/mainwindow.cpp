@@ -493,7 +493,6 @@ void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
             return;
         }
 
-        processSpace->simplified();
         ui->analysisInteracter->setImage(processSpace->getLastDisplayImage());
         ui->imageTabs->setCurrentIndex(3);
 

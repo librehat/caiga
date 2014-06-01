@@ -32,12 +32,12 @@ public:
     inline WorkBase *last() { return workList.last(); }
     inline WorkBase *takeLast() { return workList.takeLast(); }
     QList<WorkBase *> takeAll();
-    void simplified();
     void clear();//erase everything including the first
     void reset(WorkBase *base);//workSpace won't use the pointer directly. instead, it will clone a new WorkBase.
     void reset(cv::Mat *s);
     void reset();//erase everything except for workList.first()
     inline int count() { return workList.size(); }
+    inline int countUndone() { return undoneList.size(); }
     void newInvertGrayscaleWork();
     void newHistogramEqualiseWork();
     /*
@@ -69,8 +69,8 @@ public:
     cv::Mat *getMarkerMatrix();
 
 public slots:
-    void undo();
-    void redo();
+    bool undo();//move the last of workList to undoneList. return true if successful
+    bool redo();//move the last of undoneList to workList. return true if successful
 
 private:
     QList<WorkBase *> workList;

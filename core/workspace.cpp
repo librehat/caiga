@@ -30,24 +30,26 @@ WorkSpace::~WorkSpace()
     this->clear();
 }
 
-void WorkSpace::undo()
+bool WorkSpace::undo()
 {
     if (workList.count() <= 1) {
         emit workStatusStringUpdated(tr("Abort. Nothing available to be undone."));
-        return;
+        return false;
     }
     undoneList.append(workList.takeLast());
     emit workFinished();
+    return true;
 }
 
-void WorkSpace::redo()
+bool WorkSpace::redo()
 {
     if (undoneList.isEmpty()) {
         emit workStatusStringUpdated(tr("Abort. Nothing available to be redone."));
-        return;
+        return false;
     }
     workList.append(undoneList.takeLast());
     emit workFinished();
+    return true;
 }
 
 void WorkSpace::append(WorkBase *w)
@@ -91,12 +93,6 @@ QList<WorkBase *> WorkSpace::takeAll()
         ta.append(workList.takeFirst());
     }
     return ta;
-}
-
-void WorkSpace::simplified()
-{
-    //TODO when user click "save" button.
-    //use this function to remove WorkBase(s) from workList except for current one
 }
 
 void WorkSpace::clear()
