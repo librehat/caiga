@@ -744,7 +744,13 @@ void MainWindow::onSaveCurrentImageTriggered()
 
 void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, const QString &colour)
 {
-    Q_UNUSED(lang);//TODO: i18n, 0: <system>, 1: en, 2: zh_CN
+    switch(lang) {//i18n, 0: <system>, 1: en, 2: zh_CN
+    case 1:
+        break;
+    case 2:
+        break;
+    default://including 0
+    }
 
     switch(toolbarStyle) {
     case 0://<system>

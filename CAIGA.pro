@@ -14,7 +14,7 @@ include(common.pri)
     error("Use at least Qt 5.2.0.")
 }
 
-TRANSLATIONS  = i18n/caiga_zh_CN.ts
+TRANSLATIONS  = translations/caiga_zh_CN.ts
 
 TEMPLATE  = subdirs
 CONFIG   += ordered
