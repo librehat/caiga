@@ -708,17 +708,23 @@ void MainWindow::onSaveCurrentImageTriggered()
     QString filename = QFileDialog::getSaveFileName(this,
                        tr("Save Current Image As"),
                        QDir::currentPath(),
-                       "Joint Photographic Experts Group (*.jpg);;Portable Network Graphics (*.png)", &filter);
+                       "Portable Network Graphics (*.png);;Joint Photographic Experts Group (*.jpg *.jpeg);;Tagged Image File Format (*.tif *.tiff);;Bitmap Image File (*.bmp)", &filter);
     if (filename.isNull()) {
         return;
     }
     setCurrentDirbyFile(filename);
     QByteArray format;
-    if (filter.contains("jpg")) {
+    if (filter.contains("png")) {
+        format.append("PNG");
+    }
+    else if (filter.contains("jpg")) {
         format.append("JPG");
     }
+    else if (filter.contains("tif")) {
+        format.append("TIF");
+    }
     else {
-        format.append("PNG");
+        format.append("BMP");
     }
     bool ok = false;
     switch (ui->imageTabs->currentIndex()) {
