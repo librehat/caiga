@@ -3,8 +3,8 @@ using namespace CAIGA;
 
 WorkWatershed::WorkWatershed(const cv::Mat *src, const cv::Mat *marker) : WorkBase (src)
 {
+    inputMarker = new cv::Mat(marker->clone());
     workType = Watershed;
-    inputMarker = marker;
 }
 
 void WorkWatershed::Func()

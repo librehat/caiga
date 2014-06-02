@@ -42,8 +42,9 @@ public:
     WorkBase(WorkBase *base) : src(base->src) {
         workType = base->workType;
         dst = new cv::Mat(base->dst->clone());
-        display = dst;
-        inputMarker = base->inputMarker;
+        display = base->display == base->dst ? dst : new cv::Mat (base->display->clone());
+        markerMatrix = base->markerMatrix == NULL ? NULL : new cv::Mat(base->markerMatrix->clone());
+        inputMarker = base->inputMarker == NULL ? NULL : new cv::Mat(base->inputMarker->clone());
         oddSize = base->oddSize;
         size = base->size;
         cvSize = base->cvSize;
@@ -55,7 +56,6 @@ public:
         b = base->b;
         pointVec = base->pointVec;
         contours = base->contours;
-        markerMatrix = base->markerMatrix;
     }
 
     virtual ~WorkBase()
@@ -66,13 +66,16 @@ public:
         if (markerMatrix != NULL) {
             delete markerMatrix;
         }
+        if (inputMarker != NULL) {
+            delete inputMarker;
+        }
         delete dst;
     }
 
     virtual void Func() {}
 
     inline bool operator == (const WorkBase &w) const {
-        if (this->src != w.src || this->dst != w.dst || this->display != w.display || this->workType != w.workType) {
+        if (this->src != w.src || this->dst != w.dst || this->inputMarker != w.inputMarker || this->display != w.display || this->workType != w.workType) {
             return false;
         }
         else
@@ -82,7 +85,7 @@ public:
     WorkTypes workType;
     const cv::Mat *src;//share memory with other WorkBase(s)
     cv::Mat *dst;//to be next work's source Mat
-    const cv::Mat *inputMarker;//inputMarker is drawed manually and (or) automatically. it's used to watershed and you should not delete it externally during the process.
+    cv::Mat *inputMarker;//inputMarker is the "seeds" used in watershed
     /*
      * sometimes *display may be the same Mat as *dst
      * if it's not, commonly seen where there is a mask, handle it carefully.
