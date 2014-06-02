@@ -38,72 +38,15 @@
    <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="1" colspan="2">
-    <widget class="QComboBox" name="toolbarStyleBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="penColourEdit">
+     <property name="placeholderText">
+      <string>#RGB or colour name</string>
      </property>
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <item>
-      <property name="text">
-       <string>&lt;System&gt;</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Icon-only</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Text under icons</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Text beside icons</string>
-      </property>
-     </item>
     </widget>
    </item>
-   <item row="0" column="1" colspan="2">
-    <widget class="QComboBox" name="languageBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="toolTip">
-      <string>Application Restart Needed</string>
-     </property>
-     <property name="insertPolicy">
-      <enum>QComboBox::InsertAlphabetically</enum>
-     </property>
-     <item>
-      <property name="text">
-       <string>&lt;System&gt;</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>English</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Simplified Chinese</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="languageLabel">
+   <item row="1" column="0">
+    <widget class="QLabel" name="tabPositionLabel">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -111,11 +54,62 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Language</string>
+      <string>Tab Position</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1" colspan="2">
+   <item row="0" column="0">
+    <widget class="QLabel" name="toolbarStyleLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Toolbar Style</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="penColourLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Pen colour</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QToolButton" name="penColourToolButton">
+     <property name="icon">
+      <iconset theme="format-stroke-color">
+       <normaloff/>
+      </iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="2" alignment="Qt::AlignBottom">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="2">
     <widget class="QComboBox" name="tabPositionBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -148,75 +142,37 @@
      </item>
     </widget>
    </item>
-   <item row="4" column="1" colspan="2" alignment="Qt::AlignBottom">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QLineEdit" name="penColourEdit">
-     <property name="placeholderText">
-      <string>#RGB or colour name</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="tabPositionLabel">
+   <item row="0" column="1" colspan="2">
+    <widget class="QComboBox" name="toolbarStyleBox">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text">
-      <string>Tab Position</string>
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="toolbarStyleLabel">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Toolbar Style</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="penColourLabel">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string>Pen colour</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2">
-    <widget class="QToolButton" name="penColourToolButton">
-     <property name="icon">
-      <iconset theme="format-stroke-color">
-       <normaloff/>
-      </iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>16</width>
-       <height>16</height>
-      </size>
-     </property>
+     <item>
+      <property name="text">
+       <string>&lt;System&gt;</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Icon-only</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Text under icons</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Text beside icons</string>
+      </property>
+     </item>
     </widget>
    </item>
   </layout>

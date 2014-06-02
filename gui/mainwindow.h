@@ -39,7 +39,7 @@ public:
     ~MainWindow();
 
 signals:
-    void configReadFinished(int, int, int, const QString &);
+    void configReadFinished(int, int, const QString &);
     void binaryParametersChanged();
     void messageArrived(const QString &);//to display on statusbar
 
@@ -115,7 +115,7 @@ private slots:
     inline void aboutQtDialog() { QMessageBox::aboutQt(this); }
     inline void aboutCAIGADialog() { QMessageBox::about(this, "About CAIGA", aboutText); }
     void onMessagesArrived(const QString &);
-    void updateOptions(int, int, int, const QString &);
+    void updateOptions(int, int, const QString &);
 
 private:
     Ui::MainWindow *ui;

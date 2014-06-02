@@ -742,16 +742,8 @@ void MainWindow::onSaveCurrentImageTriggered()
     }
 }
 
-void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, const QString &colour)
+void MainWindow::updateOptions(int toolbarStyle, int tabPos, const QString &colour)
 {
-    switch(lang) {//i18n, 0: <system>, 1: en, 2: zh_CN
-    case 1:
-        break;
-    case 2:
-        break;
-    default://including 0
-    }
-
     switch(toolbarStyle) {
     case 0://<system>
         ui->mainToolBar->setToolButtonStyle(Qt::ToolButtonFollowStyle);
@@ -790,8 +782,7 @@ void MainWindow::updateOptions(int lang, int toolbarStyle, int tabPos, const QSt
 
 void MainWindow::readConfig()
 {
-    emit configReadFinished(settings.value("Language").toInt(),
-                            settings.value("Toolbar Style").toInt(),
+    emit configReadFinished(settings.value("Toolbar Style").toInt(),
                             settings.value("Tab Position", 1).toInt(),
                             settings.value("Pen Colour", "#F00").toString());
 }
