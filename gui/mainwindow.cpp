@@ -814,6 +814,15 @@ void MainWindow::onNewImageOpened()
     connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), cropCalibreSpace, &CAIGA::CCSpace::setScaleValue);
     ui->ccDrawer->setSpace(cropCalibreSpace);
 
+    //clean up process, analysis and report
+    ui->reportTextBrowser->clear();
+    ui->diameterBarPlotter->clearPlottables();
+    ui->diameterBarPlotter->replot(QCustomPlot::rpImmediate);
+    ui->analysisInteracter->setImage(QImage());
+    ui->analysisTableView->setModel(NULL);
+    ui->analysisCurrentClassLabel->clear();
+    ui->processDrawer->setImage(QImage());
+
     //setup tabs and some actions
     ui->rawViewer->setPixmap(cgimg.getRawPixmap());
     ui->ccDrawer->setImage(cgimg.getRawImage());
