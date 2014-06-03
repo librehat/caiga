@@ -38,6 +38,7 @@ protected:
     void mousePressEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
     void mouseMoveEvent(QMouseEvent *);
+    void wheelEvent(QWheelEvent *);
 
 private:
     QColor m_penColour;
@@ -50,6 +51,12 @@ private:
     QPointF m_mouseReleased;
     QLineF m_calibreLine;
     QLineF m_gaugeLine;
+
+    qreal m_zoom;
+    int m_zoomLevel;//pow(2, m_zoomLevel)
+
+private slots:
+    void onZoomChanged(bool in);//zoom in (larger)
 };
 
 #endif // QIMAGEDRAWER_H
