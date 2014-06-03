@@ -55,7 +55,7 @@ void Zoomer::adjustToNear(qreal scale)
     else {
         for (int i = 0; i < positiveZoomList.count(); ++i) {
             if (positiveZoomList.at(i) > scale) {
-                m_level = i;//considerint the index starting from 0. we don't need to minus 1 here.
+                m_level = i - 1;//the result is not good if we didn't minus 1
                 return;
             }
         }

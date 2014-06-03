@@ -55,17 +55,17 @@ public:
         m_d2 = low;
         m_bool = con8;
     } //this is not a generic work. it'll be finished by member function lastFloodFillWorkClicked.
-    void newFloodFillWork(QVector<QPoint> pts, bool cont = false);
+    void newFloodFillWork(QVector<QPointF> pts, bool cont = false);
     void newContoursWork();
-    void newPencilWork(const QVector<QPoint> &pts, bool white);
-    void newPencilWork(const QVector<QPoint> &pts, QColor colour);
-    void newEraserWork(const QVector<QPoint> &pts, bool white);
+    void newPencilWork(const QVector<QPointF> &pts, bool white);
+    void newPencilWork(const QVector<QPointF> &pts, QColor colour);
+    void newEraserWork(const QVector<QPointF> &pts, bool white);
     void newWatershedWork(const Mat *input, bool cont = false);
     void newGradientWork(int k, bool cont = false);
     inline Mat *getLastMatrix() { return workList.last()->dst; }
     inline QImage getLastDstImage() { return Image::convertMat2QImage(*workList.last()->dst); }
     QImage getLastDisplayImage();
-    std::vector<std::vector<cv::Point> > getContours();
+    std::vector<std::vector<cv::Point_<qreal> > > getContours();
     cv::Mat *getMarkerMatrix();
 
 public slots:

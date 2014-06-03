@@ -8,7 +8,7 @@ namespace CAIGA
 class WorkEraser : public WorkBase
 {
 public:
-    WorkEraser(const cv::Mat *src, std::vector<cv::Point> p, bool white)
+    WorkEraser(const cv::Mat *src, std::vector<cv::Point_<qreal> > p, bool white)
         : WorkBase(src)
     {
         workType = Eraser;

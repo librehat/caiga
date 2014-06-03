@@ -5,7 +5,7 @@
 #include <QtConcurrent>
 using namespace CAIGA;
 
-Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Point> > contours, QObject *parent) :
+Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Point_<qreal> > > contours, QObject *parent) :
     QObject(parent)
 {
     headerLabels = QStringList() << tr("Index") << tr("Position") << tr("Class") << tr("Area") << tr("Perimeter") << tr("Diameter") << tr("Flattening");
@@ -114,7 +114,7 @@ void Analyser::deleteClass(int classIndex)
     m_classes.removeAt(classIndex);
 }
 
-void Analyser::findContourHasPoint(const QPoint &pt)
+void Analyser::findContourHasPoint(const QPointF &pt)
 {
     //validate the point
     if (pt.x() < 0 || pt.x() >= m_markerMatrix->cols || pt.y() < 0 || pt.y() >= m_markerMatrix->rows) {
@@ -252,7 +252,7 @@ qreal Analyser::calculateFlattening(int idx)
      * use the ellipse's axes to finish calculation
      * Flattening: http://en.wikipedia.org/wiki/Flattening
      */
-    std::vector<cv::Point> pts = findValuePoints(idx + 1, *m_markerMatrix);
+    std::vector<cv::Point_<qreal> > pts = findValuePoints(idx + 1, *m_markerMatrix);
     cv::RotatedRect ellipse = cv::fitEllipse(pts);
     qreal h = ellipse.size.height / 2;
     qreal w = ellipse.size.width / 2;
@@ -277,16 +277,16 @@ void Analyser::updateBoundarySet()
 {
     boundarySet.clear();
     cornerSet.clear();
-   cv::Point topLeft(1, 1), topRight (m_markerMatrix->cols - 2, 1), bottomLeft(1, m_markerMatrix->rows - 2), bottomRight(m_markerMatrix->cols - 2, m_markerMatrix->rows - 2);
-    QVector<QVector<cv::Point> > boundaryArray;
-    QVector<cv::Point> top, left, bottom, right;
+   cv::Point_<qreal> topLeft(1, 1), topRight (m_markerMatrix->cols - 2, 1), bottomLeft(1, m_markerMatrix->rows - 2), bottomRight(m_markerMatrix->cols - 2, m_markerMatrix->rows - 2);
+    QVector<QVector<cv::Point_<qreal> > > boundaryArray;
+    QVector<cv::Point_<qreal> > top, left, bottom, right;
     top << topLeft << topRight;
     left << topLeft <<bottomLeft;
     bottom << bottomLeft << bottomRight;
     right << topRight << bottomRight;
     boundaryArray << top << left << bottom << right;
 
-    for(QVector<QVector<cv::Point> >::iterator line = boundaryArray.begin(); line != boundaryArray.end(); ++line) {
+    for(QVector<QVector<cv::Point_<qreal> > >::iterator line = boundaryArray.begin(); line != boundaryArray.end(); ++line) {
         cv::LineIterator it(*m_markerMatrix, (*line)[0], (*line)[1]);
         for (int i = 0; i < it.count; ++i, ++it) {
             boundarySet << m_markerMatrix->at<int>(it.pos()) - 1;
@@ -302,18 +302,18 @@ void Analyser::updateBoundarySet()
     }
 }
 
-int Analyser::getBoundaryJointNeighbours(const cv::Point &pos)
+int Analyser::getBoundaryJointNeighbours(const cv::Point_<qreal> &pos)
 {
     //8 neighbours
     QSet<int> neighbours;//because QSet doesn't allow duplicates, the size of neighbours is exactly the grain neighbours number
-    neighbours << m_markerMatrix->at<int>(pos - cv::Point(1, 0));//west
-    neighbours << m_markerMatrix->at<int>(pos + cv::Point(1, 0));//east
-    neighbours << m_markerMatrix->at<int>(pos - cv::Point(0, 1));//north
-    neighbours << m_markerMatrix->at<int>(pos + cv::Point(0, 1));//south
-    neighbours << m_markerMatrix->at<int>(pos + cv::Point(1, -1));//northeast
-    neighbours << m_markerMatrix->at<int>(pos - cv::Point(1, 1));//northwest
-    neighbours << m_markerMatrix->at<int>(pos - cv::Point(1, -1));//southwest
-    neighbours << m_markerMatrix->at<int>(pos + cv::Point(1, 1));//southeast
+    neighbours << m_markerMatrix->at<int>(pos - cv::Point_<qreal>(1, 0));//west
+    neighbours << m_markerMatrix->at<int>(pos + cv::Point_<qreal>(1, 0));//east
+    neighbours << m_markerMatrix->at<int>(pos - cv::Point_<qreal>(0, 1));//north
+    neighbours << m_markerMatrix->at<int>(pos + cv::Point_<qreal>(0, 1));//south
+    neighbours << m_markerMatrix->at<int>(pos + cv::Point_<qreal>(1, -1));//northeast
+    neighbours << m_markerMatrix->at<int>(pos - cv::Point_<qreal>(1, 1));//northwest
+    neighbours << m_markerMatrix->at<int>(pos - cv::Point_<qreal>(1, -1));//southwest
+    neighbours << m_markerMatrix->at<int>(pos + cv::Point_<qreal>(1, 1));//southeast
     neighbours.remove(-1);//-1 means boundary which doesn't count
 
     return neighbours.size();
@@ -330,24 +330,22 @@ void Analyser::calculatePercentage()
 void Analyser::calculateIntercepts()
 {
     qreal totalInterception = 0, totalTestLineLength = 0;
-    cv::Point topLeft(1, 1), topRight (m_markerMatrix->cols - 2, 1), bottomLeft(1, m_markerMatrix->rows - 2), bottomRight(m_markerMatrix->cols - 2, m_markerMatrix->rows - 2);
+    cv::Point_<qreal> topLeft(1, 1), topRight (m_markerMatrix->cols - 2, 1), bottomLeft(1, m_markerMatrix->rows - 2), bottomRight(m_markerMatrix->cols - 2, m_markerMatrix->rows - 2);
 
-    QVector<QVector<cv::Point> > testLineArray;
+    QVector<QVector<cv::Point_<qreal> > > testLineArray;
     //left, bottom, slash (/), anti-slash(\)
-    QVector<cv::Point> testLineL, testLineB, testLineS, testLineA;
+    QVector<cv::Point_<qreal> > testLineL, testLineB, testLineS, testLineA;
     //ASTM E112-13 13.4 noted that test lines shall not radiate from common points
-    testLineL << topLeft + cv::Point(0, 1) << bottomLeft - cv::Point(0, 1);
-    testLineB << bottomLeft + cv::Point(1, 0) << bottomRight - cv::Point(1, 0);
+    testLineL << topLeft + cv::Point_<qreal>(0, 1) << bottomLeft - cv::Point_<qreal>(0, 1);
+    testLineB << bottomLeft + cv::Point_<qreal>(1, 0) << bottomRight - cv::Point_<qreal>(1, 0);
     //ASTM E112-13 13.4 suggests four or more test lines of **different** direction for equiaxed structures
-    //testLineT << topLeft + cv::Point(1, 0) << topRight - cv::Point (1, 0);
-    //testLineR << topRight + cv::Point (0, 1) << bottomRight - cv::Point(0, 1);
-    testLineS << topRight + cv::Point(-1, 1) << bottomLeft - cv::Point(-1, 1);
-    testLineA << topLeft + cv::Point(1, 1) << bottomRight - cv::Point(1, 1);
+    testLineS << topRight + cv::Point_<qreal>(-1, 1) << bottomLeft - cv::Point_<qreal>(-1, 1);
+    testLineA << topLeft + cv::Point_<qreal>(1, 1) << bottomRight - cv::Point_<qreal>(1, 1);
 
     testLineArray << testLineL << testLineB << testLineS << testLineA;
 
     //implement multi-threading
-    QtConcurrent::blockingMap(testLineArray.begin(), testLineArray.end(), [&] (QVector<cv::Point> line) {
+    QtConcurrent::blockingMap(testLineArray.begin(), testLineArray.end(), [&] (QVector<cv::Point_<qreal> > line) {
         cv::LineIterator it(*m_markerMatrix, line[0], line[1]);
         int previousIndex = -9;
         for (int i = 0; i < it.count; ++i, ++it) {
@@ -380,13 +378,13 @@ void Analyser::calculateIntercepts()
     }
 }
 
-std::vector<cv::Point> Analyser::findValuePoints(int key, const cv::Mat &m)
+std::vector<cv::Point_<qreal> > Analyser::findValuePoints(int key, const cv::Mat &m)
 {
     int pos = 0;
-    std::vector<cv::Point> pts;
+    std::vector<cv::Point_<qreal> > pts;
     for (cv::MatConstIterator_<int> it = m.begin<int>(); it != m.end<int>(); ++it) {
         if ((*it) == key) {
-            cv::Point p(pos % m.cols, pos / m.rows);
+            cv::Point_<qreal> p(pos % m.cols, pos / m.rows);
             pts.push_back(p);
         }
         ++pos;
@@ -394,8 +392,8 @@ std::vector<cv::Point> Analyser::findValuePoints(int key, const cv::Mat &m)
     return pts;
 }
 
-qreal Analyser::distanceBetweenPoints(const cv::Point &pt1, const cv::Point &pt2)
+qreal Analyser::distanceBetweenPoints(const cv::Point_<qreal> &pt1, const cv::Point_<qreal> &pt2)
 {
-    cv::Point d = pt2 - pt1;
-    return qSqrt(static_cast<qreal>(d.x * d.x) + static_cast<qreal>(d.y * d.y));
+    cv::Point_<qreal> d = pt2 - pt1;
+    return qSqrt(d.x * d.x + d.y * d.y);
 }

@@ -38,7 +38,7 @@ private:
 
 private slots:
     void onAutoClicked();
-    void onMarkFinished(const QVector<QPoint> &);
+    void onMarkFinished(const QVector<QPointF> &);
     void onResetButtonClicked();
     void onUndoButtonClicked();
     void onRedoButtonClicked();

@@ -1,7 +1,7 @@
 #include "workfloodfill.h"
 using namespace CAIGA;
 
-WorkFloodFill::WorkFloodFill(const cv::Mat *src, double high, double low, bool con8, std::vector<cv::Point> pts) :
+WorkFloodFill::WorkFloodFill(const cv::Mat *src, double high, double low, bool con8, std::vector<cv::Point_<qreal> > pts) :
     WorkBase(src)
 {
     workType = FloodFill;
@@ -21,8 +21,8 @@ void WorkFloodFill::Func()
     dst = new cv::Mat(src->rows + 2, src->cols + 2, CV_8UC1);
     //using display as mask
     //using point vector to iterate
-    for (std::vector<cv::Point>::iterator it = pointVec.begin(); it != pointVec.end(); ++it) {
-        cv::Point seed(it->x, it->y);
+    for (std::vector<cv::Point_<qreal> >::iterator it = pointVec.begin(); it != pointVec.end(); ++it) {
+        cv::Point_<qreal> seed(it->x, it->y);
         uchar b = static_cast<uchar>(cv::theRNG().uniform(0, 255));
         uchar g = static_cast<uchar>(cv::theRNG().uniform(0, 255));
         uchar r = static_cast<uchar>(cv::theRNG().uniform(0, 255));

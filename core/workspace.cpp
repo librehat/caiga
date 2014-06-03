@@ -200,11 +200,11 @@ void WorkSpace::newCannyWork(int aSize, double high, double low, bool l2, bool c
     this->newGenericWork(w);
 }
 
-void WorkSpace::newFloodFillWork(QVector<QPoint> pts, bool cont)
+void WorkSpace::newFloodFillWork(QVector<QPointF> pts, bool cont)
 {
-    std::vector<cv::Point> stdPts;
-    for (QVector<QPoint>::iterator it = pts.begin(); it != pts.end(); ++it) {
-        stdPts.push_back(cv::Point(it->x(), it->y()));
+    std::vector<cv::Point_<qreal> > stdPts;
+    for (QVector<QPointF>::iterator it = pts.begin(); it != pts.end(); ++it) {
+        stdPts.push_back(cv::Point_<qreal>(it->x(), it->y()));
     }
     cv::Mat *s = cont ? workList.last()->dst : workList.first()->dst;
     WorkBase *w = new WorkFloodFill(s, m_d1, m_d2, m_bool, stdPts);
@@ -221,16 +221,16 @@ void WorkSpace::newContoursWork()
     this->newGenericWork(w);
 }
 
-void WorkSpace::newPencilWork(const QVector<QPoint> &pts, bool white)
+void WorkSpace::newPencilWork(const QVector<QPointF> &pts, bool white)
 {
     if (pts.size() < 2) {
         emit workStatusStringUpdated(tr("Abort. Insufficient points."));
         return;
     }
 
-    std::vector<cv::Point> cvPts;
-    for (QVector<QPoint>::const_iterator it = pts.begin(); it != pts.end(); ++it) {
-        cv::Point p(it->x(), it->y());
+    std::vector<cv::Point_<qreal> > cvPts;
+    for (QVector<QPointF>::const_iterator it = pts.begin(); it != pts.end(); ++it) {
+        cv::Point_<qreal> p(it->x(), it->y());
         cvPts.push_back(p);
     }
     int rgb = white ? 255 : 0;
@@ -238,16 +238,16 @@ void WorkSpace::newPencilWork(const QVector<QPoint> &pts, bool white)
     this->newGenericWork(w);
 }
 
-void WorkSpace::newPencilWork(const QVector<QPoint> &pts, QColor colour)
+void WorkSpace::newPencilWork(const QVector<QPointF> &pts, QColor colour)
 {
     if (pts.size() < 2) {
         emit workStatusStringUpdated(tr("Abort. Insufficient points."));
         return;
     }
 
-    std::vector<cv::Point> cvPts;
-    for (QVector<QPoint>::const_iterator it = pts.begin(); it != pts.end(); ++it) {
-        cv::Point p(it->x(), it->y());
+    std::vector<cv::Point_<qreal> > cvPts;
+    for (QVector<QPointF>::const_iterator it = pts.begin(); it != pts.end(); ++it) {
+        cv::Point_<qreal> p(it->x(), it->y());
         cvPts.push_back(p);
     }
 
@@ -258,16 +258,16 @@ void WorkSpace::newPencilWork(const QVector<QPoint> &pts, QColor colour)
     this->newGenericWork(w);
 }
 
-void WorkSpace::newEraserWork(const QVector<QPoint> &pts, bool white)
+void WorkSpace::newEraserWork(const QVector<QPointF> &pts, bool white)
 {
     if (pts.size() < 2) {
         emit workStatusStringUpdated(tr("Abort. Insufficient points."));
         return;
     }
 
-    std::vector<cv::Point> cvPts;
-    for (QVector<QPoint>::const_iterator it = pts.begin(); it != pts.end(); ++it) {
-        cv::Point p(it->x(), it->y());
+    std::vector<cv::Point_<qreal> > cvPts;
+    for (QVector<QPointF>::const_iterator it = pts.begin(); it != pts.end(); ++it) {
+        cv::Point_<qreal> p(it->x(), it->y());
         cvPts.push_back(p);
     }
     WorkBase *w = new WorkEraser(workList.last()->dst, cvPts, white);
@@ -311,7 +311,7 @@ QImage WorkSpace::getLastDisplayImage()
     return Image::convertMat2QImage(displayMat);
 }
 
-std::vector<std::vector<cv::Point> > WorkSpace::getContours()
+std::vector<std::vector<cv::Point_<qreal> > > WorkSpace::getContours()
 {
     return workList.last()->contours;
 }

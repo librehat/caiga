@@ -8,7 +8,7 @@ void WorkContours::Func()
      * anyway, we don't have objects inside an object.
      * thus, we don't need hierarchy neither.
      */
-    std::vector<std::vector<cv::Point> > allContours;
+    std::vector<std::vector<cv::Point_<qreal> > > allContours;
     cv::Mat temp = src->clone();
     cv::findContours(temp, allContours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 

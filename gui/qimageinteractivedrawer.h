@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QMouseEvent>
+#include "zoomer.h"
 
 class QImageInteractiveDrawer : public QWidget
 {
@@ -20,28 +21,35 @@ public:
     inline DRAW_MODE getDrawMode() const { return m_drawMode; }
 
 signals:
-    void mousePressed(QPoint);
-    void mouseMoved(QPoint);
-    void mouseReleased(const QVector<QPoint> &);
+    void mousePressed(QPointF);
+    void mouseMoved(QPointF);
+    void mouseReleased(const QVector<QPointF> &);
+    void zoomUpdated(qreal);
 
 public slots:
-    inline void setImage(const QImage &img) { m_image = img; update(); }
+    inline void setImage(const QImage &img) { m_image = img; firstTimeShow = true; update(); }
 
 private:
     QImage m_image;
-    QPoint m_pressed;
-    QVector<QPoint> m_movePoints;
-    QPoint m_released;
-    QPolygon m_poly;
+    QPointF m_pressed;
+    QVector<QPointF> m_movePoints;
+    QPointF m_released;
+    QPolygonF m_poly;
     bool m_white;
     QColor m_penColour;
     DRAW_MODE m_drawMode;
+    QTransform transformer;
+    Zoomer m_zoomer;
+    bool firstTimeShow;
+
+    void findGoodEnoughZoom();
 
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
     void mouseMoveEvent(QMouseEvent *);
     void mouseReleaseEvent(QMouseEvent *);
+    void wheelEvent(QWheelEvent *);
 };
 
 #endif // QIMAGEINTERACTIVEDRAWER_H

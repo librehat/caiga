@@ -102,10 +102,10 @@ public:
     double sigmaX;//sigmaSpace in adaptiveBilateralFilter; high_diff in ffill
     double sigmaY;//sigmaColor in adaptiveBilateralFilter; low_diff in ffill
     bool b;
-    std::vector<cv::Point> pointVec;
+    std::vector<cv::Point_<qreal> > pointVec;
 
     //analysis is based on contours
-    std::vector<std::vector<cv::Point> > contours;
+    std::vector<std::vector<cv::Point_<qreal> > > contours;
 };
 
 }

@@ -55,10 +55,10 @@ private slots:
     void onMouseNormalArrow();
     void onMouseWhitePencil();
     void onMouseBlackPencil();
-    void onPencilDrawFinished(const QVector<QPoint> &);
+    void onPencilDrawFinished(const QVector<QPointF> &);
     void onMouseWhiteEraser();
     void onMouseBlackEraser();
-    void onEraserDrawFinished(const QVector<QPoint> &);
+    void onEraserDrawFinished(const QVector<QPointF> &);
     void onInvertGrayscaleButtonClicked();
     void onHistEqualiseButtonClicked();
     void onGradientButtonClicked();
@@ -75,7 +75,7 @@ private slots:
     void onMedianBinaryzationParametersChanged(int, double, double, bool);
     void onFloodFillButtonClicked();
     inline void onFloodFillParametersChanged(int, double h, double l, bool c8) { previewSpace->setFloodFillWorkParameters(h, l, c8); }
-    inline void onFloodFillMouseClicked(QPoint p) { floodfillPts.append(p); previewSpace->newFloodFillWork(floodfillPts); }
+    inline void onFloodFillMouseClicked(QPointF p) { floodfillPts.append(p); previewSpace->newFloodFillWork(floodfillPts); }
     void onFloodFillAccepted();
     void onFloodFillRejected();
     void onCannyButtonClicked();
@@ -142,7 +142,7 @@ private:
     CAIGA::CCSpace *cropCalibreSpace;
     CAIGA::WorkSpace *processSpace;
     CAIGA::WorkSpace *previewSpace;
-    QVector<QPoint> floodfillPts;
+    QVector<QPointF> floodfillPts;
 
     //Text in About Dialog
     const static QString aboutText;

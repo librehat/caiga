@@ -7,6 +7,7 @@ QImageInteractiveDrawer::QImageInteractiveDrawer(QWidget *parent) :
     m_white = false;
     m_penColour = QColor(0, 0, 0);//black by default
     m_drawMode = QImageInteractiveDrawer::NONE;
+    firstTimeShow = true;
 }
 
 void QImageInteractiveDrawer::paintEvent(QPaintEvent *event)
@@ -17,17 +18,23 @@ void QImageInteractiveDrawer::paintEvent(QPaintEvent *event)
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
 
     if (m_image.isNull())
         return;
 
-    QSize pixSize = m_image.size();
-    QPoint topleft;
-    topleft.setX((this->width() - pixSize.width()) / 2);
-    topleft.setY((this->height() - pixSize.height()) / 2);
+    if (firstTimeShow) {
+        findGoodEnoughZoom();
+        firstTimeShow = false;
+    }
 
-    painter.drawImage(topleft, m_image);
+    qreal zoom = m_zoomer.getZoom();
+    QSizeF pixSize = m_image.size() * zoom;
+
+    transformer.setMatrix(zoom, 0, 0, 0, zoom, 0, (this->width() - pixSize.width()) / 2.0, (this->height() - pixSize.height()) / 2.0, 1.0);
+    painter.setWorldTransform(transformer);
+    painter.drawImage(0, 0, m_image);
 
     //draw points
     QPen pen(m_penColour, 3, Qt::SolidLine, Qt::RoundCap, Qt::BevelJoin);
@@ -66,8 +73,7 @@ void QImageInteractiveDrawer::mousePressEvent(QMouseEvent *m)
     if (m_image.isNull()) {
         return;
     }
-    QPoint margin((this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2);
-    m_pressed = m->pos() - margin;
+    m_pressed = transformer.inverted().map(m->localPos());
     if (m_pressed.x() < 0) {
         m_pressed.setX(0);
     }
@@ -90,8 +96,7 @@ void QImageInteractiveDrawer::mouseMoveEvent(QMouseEvent *m)
     if (m_image.isNull()) {
         return;
     }
-    QPoint margin((this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2);
-    m_released = m->pos() - margin;
+    m_released = transformer.inverted().map(m->localPos());
     if (m_released.x() < 0) {
         m_released.setX(0);
     }
@@ -105,7 +110,7 @@ void QImageInteractiveDrawer::mouseMoveEvent(QMouseEvent *m)
         m_released.setY(m_image.height() - 1);
     }
     m_movePoints.append(m_released);
-    m_poly << m_released + margin;
+    m_poly << m_released;
     emit mouseMoved(m_released);
     this->update();
 }
@@ -120,4 +125,24 @@ void QImageInteractiveDrawer::mouseReleaseEvent(QMouseEvent *m)
     m_movePoints.clear();
     m_poly.clear();
     this->update();
+}
+
+void QImageInteractiveDrawer::wheelEvent(QWheelEvent *we)
+{
+    QWidget::wheelEvent(we);
+    if(we->angleDelta().y() > 0) {
+        m_zoomer.zoomIn();
+    }
+    else {
+        m_zoomer.zoomOut();
+    }
+    emit zoomUpdated(m_zoomer.getZoom());
+    update();
+}
+
+void QImageInteractiveDrawer::findGoodEnoughZoom()
+{
+    qreal minScale = qMin(static_cast<qreal>(this->width()) / static_cast<qreal>(m_image.width()), static_cast<qreal>(this->height()) / static_cast<qreal>(m_image.height()));
+    m_zoomer.adjustToNear(minScale);
+    emit zoomUpdated(m_zoomer.getZoom());
 }

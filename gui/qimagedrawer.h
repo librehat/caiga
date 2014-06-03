@@ -58,9 +58,6 @@ private:
     Zoomer m_zoomer;
 
     void findGoodEnoughZoom();
-
-private slots:
-    void onZoomChanged(bool in);//zoom in (larger)
 };
 
 #endif // QIMAGEDRAWER_H

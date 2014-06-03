@@ -374,12 +374,12 @@ void MainWindow::onMedianBinaryzationParametersChanged(int s, double c, double, 
     previewSpace->newBinaryzationWork(CV_ADAPTIVE_THRESH_MEAN_C, inv ? CV_THRESH_BINARY_INV : CV_THRESH_BINARY, s, c);
 }
 
-void MainWindow::onPencilDrawFinished(const QVector<QPoint> &pts)
+void MainWindow::onPencilDrawFinished(const QVector<QPointF> &pts)
 {
     processSpace->newPencilWork(pts, ui->processDrawer->isWhite());
 }
 
-void MainWindow::onEraserDrawFinished(const QVector<QPoint> &pts)
+void MainWindow::onEraserDrawFinished(const QVector<QPointF> &pts)
 {
     processSpace->newEraserWork(pts, ui->processDrawer->isWhite());
 }

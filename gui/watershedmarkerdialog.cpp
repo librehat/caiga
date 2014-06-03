@@ -84,7 +84,7 @@ void WatershedMarkerDialog::onAutoClicked()
     ui->resetButton->setEnabled(true);
 }
 
-void WatershedMarkerDialog::onMarkFinished(const QVector<QPoint> &pv)
+void WatershedMarkerDialog::onMarkFinished(const QVector<QPointF> &pv)
 {
     if (ui->drawer->getDrawMode() == QImageInteractiveDrawer::PENCIL) {
         markSpace.newPencilWork(pv, true);

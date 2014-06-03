@@ -17,7 +17,7 @@ class CORE_LIB Analyser : public QObject
 {
     Q_OBJECT
 public:
-    explicit Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector <cv::Point> > contours, QObject *parent = 0);
+    explicit Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector <cv::Point_<qreal> > > contours, QObject *parent = 0);
     ~Analyser() {}
     void reset();
     QStandardItemModel *getDataModel();
@@ -53,15 +53,15 @@ public:
 
     //this static member function "find" the locations whose value equals to the given key
     //the Mat must have value which is of integer type
-    static std::vector<cv::Point> findValuePoints(int key, const cv::Mat &m);
-    static qreal distanceBetweenPoints(const cv::Point &pt1, const cv::Point &pt2);
+    static std::vector<cv::Point_<qreal> > findValuePoints(int key, const cv::Mat &m);
+    static qreal distanceBetweenPoints(const cv::Point_<qreal> &pt1, const cv::Point_<qreal> &pt2);
 
 signals:
     void foundContourIndex(const QModelIndex &);
     void currentClassChanged(int classIdx);
 
 public slots:
-    void findContourHasPoint(const QPoint &pt);
+    void findContourHasPoint(const QPointF &pt);
     void onModelIndexChanged(const QModelIndex &mIdx);
     void onClassChanged(const QModelIndex &mIndex, const QString classText);
 
@@ -72,7 +72,7 @@ private:
     int currentSelectedIdx;
     int previousClassIdx;
     cv::Mat *m_markerMatrix;
-    std::vector<std::vector <cv::Point> > m_contours;
+    std::vector<std::vector <cv::Point_<qreal> > > m_contours;
     QSet<int> boundarySet;//store all boundary objects' indice
     QSet<int> cornerSet;//store all corner objects' indice
 
@@ -89,7 +89,7 @@ private:
     qreal calculateFlattening(int idx);
     Object::POSITION determineIsBoundary(int idx);
     void updateBoundarySet();
-    int getBoundaryJointNeighbours(const cv::Point &pos);//leave at least 1 position from Mat edge
+    int getBoundaryJointNeighbours(const cv::Point_<qreal> &pos);//leave at least 1 position from Mat edge
 
     /*
      * calculate all sorts of information class by class
