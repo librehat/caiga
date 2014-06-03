@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     analysisDelegate = NULL;
     reporter = NULL;
 
-    ui->rawViewer->setNoScale();
+    //ui->rawViewer->setNoScale();
     //processTab button menu
     mouseBehaviourMenu = new QMenu(this);
     mouseBehaviourMenu->addAction(tr("Normal Arrow"), this, SLOT(onMouseNormalArrow()));
@@ -817,7 +817,7 @@ void MainWindow::onNewImageOpened()
         cropCalibreSpace->deleteLater();
     }
     cropCalibreSpace = new CAIGA::CCSpace(&cgimg, this);
-    connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), cropCalibreSpace, &CAIGA::CCSpace::setScaleValue);
+    connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), cropCalibreSpace, static_cast<void (CAIGA::CCSpace::*) (qreal)>(&CAIGA::CCSpace::setScaleValue));
     ui->ccDrawer->setSpace(cropCalibreSpace);
 
     //clean up process, analysis and report

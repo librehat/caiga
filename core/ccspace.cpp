@@ -10,17 +10,17 @@ CCSpace::CCSpace(Image *img, QObject *parent) :
     reset();
 }
 
+void CCSpace::setScaleValue(qreal bar, qreal realLength)
+{
+     *scaleValue = bar / realLength;
+    emit scaleValueChanged(*scaleValue);
+}
+
 void CCSpace::cropImage()
 {
-    cv::Point tl, br;
-    bool ok;
-    QTransform iTrans = transformer.inverted(&ok);
-    if (!ok) {
-        qCritical() << "Criticical. Coordinate transforming failed.";
-        return;
-    }
-    QPointF qtl = iTrans.map(qrect.topLeft());
-    QPointF qbr = iTrans.map(qrect.bottomRight());
+    cv::Point_<qreal> tl, br;
+    QPointF qtl = qrect.topLeft();
+    QPointF qbr = qrect.bottomRight();
     tl.x = qtl.x();
     tl.y = qtl.y();
     br.x = qbr.x();

@@ -14,23 +14,28 @@ class CORE_LIB CCSpace : public QObject
 public:
     explicit CCSpace(Image *img, QObject *parent = 0);
     inline void setRectangle(QRectF r) { qrect = r; }
-    inline void setScaleValue(qreal s) { *scaleValue = s; emit scaleValueChanged(*scaleValue); }
+    void setScaleValue(qreal bar, qreal realLength);
 
     inline qreal getScaleValue() { return *scaleValue; }
+    inline QTransform getInvertedTransform() const { return invertedTransformer; }
+    inline QTransform getTransform() const { return transformer; }
+    inline void setTransform(const QTransform &t) { transformer = t; invertedTransformer = t.inverted(); }
 
     void cropImage();
     void reset();
     QRectF qrect;//using float coordinates
-    QTransform transformer;
 
 signals:
     void scaleValueChanged(qreal);
 
 public slots:
+    inline void setScaleValue(qreal r) { *scaleValue = r; emit scaleValueChanged(r); }
 
 private:
     Image *m_image;
     qreal *scaleValue;//pixel/μm
+    QTransform transformer;
+    QTransform invertedTransformer;
 
 };
 }

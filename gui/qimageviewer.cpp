@@ -21,18 +21,12 @@ void QImageViewer::paintEvent(QPaintEvent *event)
     if (m_pixmap.isNull())
         return;
 
-    painter.setRenderHint(QPainter::SmoothPixmapTransform);
-    QPoint topleft;
-    if (m_noScale) {
-        topleft.setX((this->width() - m_pixmap.width()) / 2);
-        topleft.setY((this->height() - m_pixmap.height()) / 2);
-        painter.drawPixmap(topleft, m_pixmap);
-    }
-    else {
-        QSize pixSize = m_pixmap.size();
+    painter.setRenderHint(QPainter::Antialiasing);
+    QSizeF pixSize = m_pixmap.size();
+    if (!m_noScale) {
         pixSize.scale(event->rect().size(), Qt::KeepAspectRatio);
-        topleft.setX((this->width() - pixSize.width()) / 2);
-        topleft.setY((this->height() - pixSize.height()) / 2);
-        painter.drawPixmap(topleft, m_pixmap.scaled(pixSize, Qt::KeepAspectRatio, Qt::FastTransformation));
+        painter.scale(pixSize.width() / m_pixmap.width(), pixSize.height() / m_pixmap.height());
     }
+    painter.translate((this->width() - pixSize.width()) / 2, (this->height() - pixSize.height()) / 2);
+    painter.drawPixmap(0, 0, m_pixmap);
 }

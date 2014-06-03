@@ -20,12 +20,11 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
+    QSizeF pixSize = m_image.size().scaled(event->rect().width(), event->rect().height(), Qt::KeepAspectRatio);
 
-    //using QTransformer to ease the work
-    ccSpace->transformer.setMatrix(1.0, 0, 0, 0, 1.0, 0, (this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2, 1.0);
-    painter.setTransform(ccSpace->transformer);
+    ccSpace->setTransform(QTransform(pixSize.width() / static_cast<qreal>(m_image.width()), 0, 0, 0, pixSize.height() / static_cast<qreal>(m_image.height()), 0, (this->width() - pixSize.width()) / 2.0, (this->height() - pixSize.height()) / 2.0, 1.0));
+    painter.setWorldTransform(ccSpace->getTransform());
     painter.drawImage(0, 0, m_image);
-    painter.setTransform(QTransform());
 
     //Draw
     QPen pen(m_penColour, 2, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
@@ -56,9 +55,10 @@ void QImageDrawer::mousePressEvent(QMouseEvent *m)
         return;
     }
 
-    m_mousePressed = m->localPos();
-    QPointF tl = ccSpace->transformer.map(QPointF(0, 0));
-    QPointF br = ccSpace->transformer.map(QPointF(m_image.width() - 1, m_image.height() - 1));
+    m_mousePressed = ccSpace->getInvertedTransform().map(m->localPos());
+
+    QPointF tl(0, 0);
+    QPointF br(m_image.width() - 1, m_image.height() - 1);
 
     if (m_mousePressed.x() < tl.x()) {
         m_mousePressed.setX(tl.x());
@@ -74,7 +74,7 @@ void QImageDrawer::mousePressEvent(QMouseEvent *m)
         m_mousePressed.setY(br.y());
     }
 
-    if (m_drawMode == -5) {
+    if (m_drawMode == -4) {
         m_gaugeLine.setP1(m_mousePressed);
     }
 }
@@ -86,9 +86,9 @@ void QImageDrawer::mouseMoveEvent(QMouseEvent *m)
         return;
     }
 
-    m_mouseReleased = m->localPos();
-    QPointF tl = ccSpace->transformer.map(QPointF(0, 0));
-    QPointF br = ccSpace->transformer.map(QPointF(m_image.width() - 1, m_image.height() - 1));
+    m_mouseReleased = ccSpace->getInvertedTransform().map(m->localPos());
+    QPointF tl(0, 0);
+    QPointF br(m_image.width() - 1, m_image.height() - 1);
 
     if (m_mouseReleased.x() < tl.x()) {
         m_mouseReleased.setX(tl.x());
@@ -131,8 +131,7 @@ void QImageDrawer::mouseReleaseEvent(QMouseEvent *m)
         bool ok;
         qreal r = static_cast<qreal>(QInputDialog::getDouble(this, tr("Input the real size"), tr("Unit: μm"), 0, 0, 9999, 4, &ok));
         if (ok) {
-            qreal scale = qMax(qFabs(m_calibreLine.dx()), qFabs(m_calibreLine.dy())) / r;
-            ccSpace->setScaleValue(scale);
+            ccSpace->setScaleValue(qMax(qFabs(m_calibreLine.dx()), qFabs(m_calibreLine.dy())), r);
         }
     }
     else if (m_drawMode == -4) {//gauge
