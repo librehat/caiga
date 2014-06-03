@@ -161,6 +161,7 @@ void QImageDrawer::findGoodEnoughZoom()
 {
     qreal minScale = qMin(static_cast<qreal>(this->width()) / static_cast<qreal>(m_image.width()), static_cast<qreal>(this->height()) / static_cast<qreal>(m_image.height()));
     m_zoomer.adjustToNear(minScale);
+    emit zoomUpdated(m_zoomer.getZoom());
 }
 
 void QImageDrawer::onZoomChanged(bool in)
@@ -171,5 +172,6 @@ void QImageDrawer::onZoomChanged(bool in)
     else {
         m_zoomer.zoomOut();
     }
+    emit zoomUpdated(m_zoomer.getZoom());
     update();
 }

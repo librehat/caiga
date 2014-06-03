@@ -115,11 +115,13 @@ private slots:
     inline void aboutQtDialog() { QMessageBox::aboutQt(this); }
     inline void aboutCAIGADialog() { QMessageBox::about(this, "About CAIGA", aboutText); }
     void onMessagesArrived(const QString &);
+    void onZoomUpdated(qreal);
     void updateOptions(int, int, const QString &);
 
 private:
     Ui::MainWindow *ui;
     QMenu *mouseBehaviourMenu;
+    QLabel *zoomLabel;
     CameraDialog *cameraDlg;
     ParametersDialog *parametersDlg;
     WatershedMarkerDialog *watershedDlg;

@@ -33,6 +33,7 @@ public slots:
 signals:
     void calibreFinished(qreal);
     void gaugeLineResult(qreal);
+    void zoomUpdated(qreal);
 
 protected:
     void paintEvent(QPaintEvent *);

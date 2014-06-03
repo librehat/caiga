@@ -41,6 +41,10 @@ MainWindow::MainWindow(QWidget *parent) :
     //report
     ui->diameterBarPlotter->setFont(QFont("Arial"));
 
+    //add zoom information label to statusBar
+    zoomLabel = new QLabel(ui->statusBar);
+    ui->statusBar->addPermanentWidget(zoomLabel);
+
     /*
      * Setup icons (only those can't be done with Designer)
      */
@@ -95,6 +99,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->imageTabs, &QTabWidget::currentChanged, this, &MainWindow::onCurrentTabChanged);
     connect(this, &MainWindow::messageArrived, this, &MainWindow::onMessagesArrived);
     connect(this, &MainWindow::configReadFinished, this, &MainWindow::updateOptions);
+
+    //Zoom
+    connect(ui->ccDrawer, &QImageDrawer::zoomUpdated, this, &MainWindow::onZoomUpdated);
 
     readConfig();
 
@@ -852,4 +859,9 @@ void MainWindow::updateRedoUndoStatus()
 void MainWindow::onMessagesArrived(const QString &str)
 {
     ui->statusBar->showMessage(str);
+}
+
+void MainWindow::onZoomUpdated(qreal z)
+{
+    zoomLabel->setText(QString::number(qFloor(z * 100)) + "%");
 }
