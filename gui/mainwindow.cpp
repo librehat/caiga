@@ -102,6 +102,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Zoom
     connect(ui->ccDrawer, &QImageDrawer::zoomUpdated, this, &MainWindow::onZoomUpdated);
+    connect(ui->processDrawer, &QImageInteractiveDrawer::zoomUpdated, this, &MainWindow::onZoomUpdated);
+    connect(ui->analysisInteracter, &QImageInteractiveDrawer::zoomUpdated, this, &MainWindow::onZoomUpdated);
 
     readConfig();
 
@@ -216,7 +218,8 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
         ui->processTab->setEnabled(true);
         ui->imageTabs->setCurrentIndex(2);
         onMessagesArrived(tr("Process and segment the image."));
-        onProcessWorkFinished();//update the image
+        ui->processDrawer->setImage(processSpace->getLastDisplayImage(), true);
+        updateRedoUndoStatus();
     }
 }
 
@@ -499,7 +502,7 @@ void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
     else {//save
         //check if it's eligible
         if (processSpace->getMarkerMatrix() == NULL) {
-            onMessagesArrived(tr("Error. Processing is not finished yet!"));
+            onMessagesArrived(tr("Error. Processing is not finished yet! You must segment the image before analysis."));
             return;
         }
 
@@ -838,7 +841,7 @@ void MainWindow::onNewImageOpened()
 
     //setup tabs and some actions
     ui->rawViewer->setPixmap(cgimg.getRawPixmap());
-    ui->ccDrawer->setImage(cgimg.getRawImage());
+    ui->ccDrawer->setImage(cgimg.getRawImage(), true);
     onReportAvailable(false);
     ui->imageTabs->setEnabled(true);
     ui->processTab->setEnabled(false);

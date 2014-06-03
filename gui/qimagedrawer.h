@@ -28,7 +28,7 @@ public:
     inline void reset() { ccSpace->reset(); update(); }
 
 public slots:
-    inline void setImage(QImage img) { m_image = img; firstTimeShow = true; update(); }
+    inline void setImage(QImage img, bool needRefreshZoom = false) { m_image = img; firstTimeShow = needRefreshZoom; update(); }
 
 signals:
     void calibreFinished(qreal);
@@ -58,6 +58,7 @@ private:
     Zoomer m_zoomer;
 
     void findGoodEnoughZoom();
+    void handleSizeChanged(qreal zoom);
 };
 
 #endif // QIMAGEDRAWER_H

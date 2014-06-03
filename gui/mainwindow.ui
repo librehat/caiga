@@ -88,17 +88,37 @@
         <property name="bottomMargin">
          <number>0</number>
         </property>
-        <item row="2" column="1" rowspan="3">
-         <widget class="LivePixelViewer" name="ccPixelViewer" native="true">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>80</height>
-           </size>
+        <item row="7" column="1" alignment="Qt::AlignBottom">
+         <widget class="QDialogButtonBox" name="ccButtonBox">
+          <property name="standardButtons">
+           <set>QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
           </property>
          </widget>
         </item>
-        <item row="7" column="1">
+        <item row="5" column="1" alignment="Qt::AlignBottom">
+         <widget class="QLabel" name="gaugeResultLabel">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <spacer name="ccVerticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="6" column="1">
          <spacer name="ccVerticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -111,48 +131,15 @@
           </property>
          </spacer>
         </item>
-        <item row="8" column="1" alignment="Qt::AlignBottom">
-         <widget class="QDialogButtonBox" name="ccButtonBox">
-          <property name="standardButtons">
-           <set>QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" rowspan="9">
-         <widget class="QImageDrawer" name="ccDrawer" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>10</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="cursor">
-           <cursorShape>CrossCursor</cursorShape>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1" alignment="Qt::AlignBottom">
-         <widget class="QLabel" name="gaugeResultLabel">
-          <property name="text">
-           <string/>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <spacer name="ccVerticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
+        <item row="2" column="1" rowspan="2">
+         <widget class="LivePixelViewer" name="ccPixelViewer" native="true">
+          <property name="minimumSize">
            <size>
-            <width>20</width>
-            <height>40</height>
+            <width>0</width>
+            <height>80</height>
            </size>
           </property>
-         </spacer>
+         </widget>
         </item>
         <item row="0" column="1" rowspan="2">
          <widget class="QGroupBox" name="ccModeGroupBox">
@@ -243,6 +230,65 @@
             </widget>
            </item>
           </layout>
+         </widget>
+        </item>
+        <item row="0" column="0" rowspan="7">
+         <widget class="QScrollArea" name="ccScrollArea">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>10</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="ccScrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>471</width>
+             <height>462</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QImageDrawer" name="ccDrawer" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>10</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="cursor">
+               <cursorShape>CrossCursor</cursorShape>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
          </widget>
         </item>
        </layout>

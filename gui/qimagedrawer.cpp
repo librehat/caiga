@@ -21,7 +21,7 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
         return;
 
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHint(QPainter::Antialiasing, false);
     if (firstTimeShow) {
         findGoodEnoughZoom();
         firstTimeShow = false;
@@ -161,7 +161,7 @@ void QImageDrawer::wheelEvent(QWheelEvent *we)
     else {
         m_zoomer.zoomOut();
     }
-    emit zoomUpdated(m_zoomer.getZoom());
+    handleSizeChanged(m_zoomer.getZoom());
     update();
 }
 
@@ -169,5 +169,11 @@ void QImageDrawer::findGoodEnoughZoom()
 {
     qreal minScale = qMin(static_cast<qreal>(this->width()) / static_cast<qreal>(m_image.width()), static_cast<qreal>(this->height()) / static_cast<qreal>(m_image.height()));
     m_zoomer.adjustToNear(minScale);
-    emit zoomUpdated(m_zoomer.getZoom());
+    handleSizeChanged(m_zoomer.getZoom());
+}
+
+void QImageDrawer::handleSizeChanged(qreal zoom)
+{
+    emit zoomUpdated(zoom);
+    setMinimumSize(m_image.size() * zoom);
 }
