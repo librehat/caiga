@@ -14,7 +14,8 @@ void WorkWatershed::Func()
     cv::Mat temp = inputMarker->clone();
 
     //remove those contours whose are are smaller than 5 pixels, which causes fitEllipse failed.
-    std::vector<std::vector<cv::Point_<qreal> > > tempContours;
+    std::vector<std::vector<cv::Point> > tempContours;
+    //findContours doesn't take in array of float-point array
     cv::findContours(temp, tempContours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
     for (int i = 0; i < static_cast<int>(tempContours.size()); ++i) {
         if (cv::contourArea(tempContours[i]) > 5) {

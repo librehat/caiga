@@ -105,7 +105,7 @@ public:
     std::vector<cv::Point_<qreal> > pointVec;
 
     //analysis is based on contours
-    std::vector<std::vector<cv::Point_<qreal> > > contours;
+    std::vector<std::vector<cv::Point> > contours;//contous cannot use float points
 };
 
 }

@@ -17,7 +17,7 @@ class CORE_LIB Analyser : public QObject
 {
     Q_OBJECT
 public:
-    explicit Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector <cv::Point_<qreal> > > contours, QObject *parent = 0);
+    explicit Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector <cv::Point> > contours, QObject *parent = 0);
     ~Analyser() {}
     void reset();
     QStandardItemModel *getDataModel();
@@ -53,7 +53,7 @@ public:
 
     //this static member function "find" the locations whose value equals to the given key
     //the Mat must have value which is of integer type
-    static std::vector<cv::Point_<qreal> > findValuePoints(int key, const cv::Mat &m);
+    static std::vector<cv::Point> findValuePoints(int key, const cv::Mat &m);
     static qreal distanceBetweenPoints(const cv::Point_<qreal> &pt1, const cv::Point_<qreal> &pt2);
 
 signals:
@@ -72,7 +72,7 @@ private:
     int currentSelectedIdx;
     int previousClassIdx;
     cv::Mat *m_markerMatrix;
-    std::vector<std::vector <cv::Point_<qreal> > > m_contours;
+    std::vector<std::vector <cv::Point> > m_contours;
     QSet<int> boundarySet;//store all boundary objects' indice
     QSet<int> cornerSet;//store all corner objects' indice
 

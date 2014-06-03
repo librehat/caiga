@@ -5,7 +5,7 @@
 #include <QtConcurrent>
 using namespace CAIGA;
 
-Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Point_<qreal> > > contours, QObject *parent) :
+Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Point> > contours, QObject *parent) :
     QObject(parent)
 {
     headerLabels = QStringList() << tr("Index") << tr("Position") << tr("Class") << tr("Area") << tr("Perimeter") << tr("Diameter") << tr("Flattening");
@@ -252,7 +252,7 @@ qreal Analyser::calculateFlattening(int idx)
      * use the ellipse's axes to finish calculation
      * Flattening: http://en.wikipedia.org/wiki/Flattening
      */
-    std::vector<cv::Point_<qreal> > pts = findValuePoints(idx + 1, *m_markerMatrix);
+    std::vector<cv::Point> pts = findValuePoints(idx + 1, *m_markerMatrix);
     cv::RotatedRect ellipse = cv::fitEllipse(pts);
     qreal h = ellipse.size.height / 2;
     qreal w = ellipse.size.width / 2;
@@ -378,13 +378,13 @@ void Analyser::calculateIntercepts()
     }
 }
 
-std::vector<cv::Point_<qreal> > Analyser::findValuePoints(int key, const cv::Mat &m)
+std::vector<cv::Point> Analyser::findValuePoints(int key, const cv::Mat &m)
 {
     int pos = 0;
-    std::vector<cv::Point_<qreal> > pts;
+    std::vector<cv::Point> pts;
     for (cv::MatConstIterator_<int> it = m.begin<int>(); it != m.end<int>(); ++it) {
         if ((*it) == key) {
-            cv::Point_<qreal> p(pos % m.cols, pos / m.rows);
+            cv::Point p(pos % m.cols, pos / m.rows);
             pts.push_back(p);
         }
         ++pos;

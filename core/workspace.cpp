@@ -311,7 +311,7 @@ QImage WorkSpace::getLastDisplayImage()
     return Image::convertMat2QImage(displayMat);
 }
 
-std::vector<std::vector<cv::Point_<qreal> > > WorkSpace::getContours()
+std::vector<std::vector<cv::Point> > WorkSpace::getContours()
 {
     return workList.last()->contours;
 }
