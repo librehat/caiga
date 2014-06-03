@@ -7,9 +7,10 @@ class Zoomer
 {
 public:
     Zoomer();
-    void zoomIn();
-    void zoomOut();
+    bool zoomIn();
+    bool zoomOut();
     qreal getZoom();
+    void adjustToNear(qreal scale);
 
 private:
     int m_level;

@@ -9,17 +9,25 @@ Zoomer::Zoomer()
     m_level = 0;
 }
 
-void Zoomer::zoomIn()
+bool Zoomer::zoomIn()
 {
     if (m_level < positiveZoomList.count() - 1) {
         ++m_level;
+        return true;
+    }
+    else {
+        return false;
     }
 }
 
-void Zoomer::zoomOut()
+bool Zoomer::zoomOut()
 {
     if (abs(m_level) < negativeZoomList.count() || m_level >= 0) {
         --m_level;
+        return true;
+    }
+    else {
+        return false;
     }
 }
 
@@ -31,5 +39,25 @@ qreal Zoomer::getZoom()
     }
     else {
         return positiveZoomList.at(m_level);
+    }
+}
+
+void Zoomer::adjustToNear(qreal scale)
+{
+    if (scale < 1.0) {
+        for (int i = 0; i < negativeZoomList.count(); ++i) {
+            if (negativeZoomList.at(i) < scale) {
+                m_level = -(i + 1);//minus 1 (so the abs(m_level) plus 1)
+                return;
+            }
+        }
+    }
+    else {
+        for (int i = 0; i < positiveZoomList.count(); ++i) {
+            if (positiveZoomList.at(i) > scale) {
+                m_level = i;//considerint the index starting from 0. we don't need to minus 1 here.
+                return;
+            }
+        }
     }
 }

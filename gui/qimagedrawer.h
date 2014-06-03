@@ -28,7 +28,7 @@ public:
     inline void reset() { ccSpace->reset(); update(); }
 
 public slots:
-    inline void setImage(QImage img) { m_image = img; findGoodEnoughZoom(); update(); }
+    inline void setImage(QImage img) { m_image = img; firstTimeShow = true; update(); }
 
 signals:
     void calibreFinished(qreal);
@@ -53,6 +53,7 @@ private:
     QLineF m_calibreLine;
     QLineF m_gaugeLine;
 
+    bool firstTimeShow;
     Zoomer m_zoomer;
 
     void findGoodEnoughZoom();
