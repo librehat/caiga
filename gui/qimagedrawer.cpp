@@ -20,10 +20,12 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    QPoint topleft;
-    topleft.setX((this->width() - m_image.width()) / 2);
-    topleft.setY((this->height() - m_image.height()) / 2);
-    painter.drawImage(topleft, m_image);
+
+    //using QTransformer to ease the work
+    ccSpace->transformer.setMatrix(1.0, 0, 0, 0, 1.0, 0, (this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2, 1.0);
+    painter.setTransform(ccSpace->transformer);
+    painter.drawImage(0, 0, m_image);
+    painter.setTransform(QTransform());
 
     //Draw
     QPen pen(m_penColour, 2, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin);
@@ -35,27 +37,16 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
     }
 
     if (m_drawMode == -3) {
-        QPoint p1(m_calibreLine.p1().x() + (this->width() - m_image.width()) / 2,
-                  m_calibreLine.p1().y() + (this->height() - m_image.height()) / 2);
-        QPoint p2(m_calibreLine.p2().x() + (this->width() - m_image.width()) / 2,
-                  m_calibreLine.p2().y() + (this->height() - m_image.height()) / 2);
-        painter.drawLine(p1, p2);
+        painter.drawLine(m_calibreLine);
         return;
     }
     else if (m_drawMode == -4)
     {
-        QPoint p1(m_gaugeLine.p1().x() + (this->width() - m_image.width()) / 2,
-                  m_gaugeLine.p1().y() + (this->height() - m_image.height()) / 2);
-        QPoint p2(m_gaugeLine.p2().x() + (this->width() - m_image.width()) / 2,
-                  m_gaugeLine.p2().y() + (this->height() - m_image.height()) / 2);
-        painter.drawLine(p1, p2);
+        painter.drawLine(m_gaugeLine);
         return;
     }
 
-    int tlx = ccSpace->qrect.topLeft().x() + (this->width() - m_image.width()) / 2;
-    int tly = ccSpace->qrect.topLeft().y() + (this->height() - m_image.height()) / 2;
-    QRect pRect(tlx, tly, ccSpace->qrect.width(), ccSpace->qrect.height());
-    painter.drawRect(pRect);
+    painter.drawRect(ccSpace->qrect);
 }
 
 void QImageDrawer::mousePressEvent(QMouseEvent *m)
@@ -65,21 +56,22 @@ void QImageDrawer::mousePressEvent(QMouseEvent *m)
         return;
     }
 
-    QPoint margin((this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2);
+    m_mousePressed = m->localPos();
+    QPointF tl = ccSpace->transformer.map(QPointF(0, 0));
+    QPointF br = ccSpace->transformer.map(QPointF(m_image.width() - 1, m_image.height() - 1));
 
-    m_mousePressed = m->pos() - margin;
+    if (m_mousePressed.x() < tl.x()) {
+        m_mousePressed.setX(tl.x());
+    }
+    else if (m_mousePressed.x() > br.x()) {
+        m_mousePressed.setX(br.x());
+    }
 
-    if (m_mousePressed.x() < 0) {
-        m_mousePressed.setX(0);
+    if (m_mousePressed.y() < tl.y()) {
+        m_mousePressed.setY(tl.y());
     }
-    else if (m_mousePressed.x() > m_image.width() - 1) {
-        m_mousePressed.setX(m_image.width() - 1);
-    }
-    if (m_mousePressed.y() < 0) {
-        m_mousePressed.setY(0);
-    }
-    else if (m_mousePressed.y() > m_image.height() - 1) {
-        m_mousePressed.setY(m_image.height() - 1);
+    else if (m_mousePressed.y() > br.y()) {
+        m_mousePressed.setY(br.y());
     }
 
     if (m_drawMode == -5) {
@@ -94,34 +86,35 @@ void QImageDrawer::mouseMoveEvent(QMouseEvent *m)
         return;
     }
 
-    QPoint margin((this->width() - m_image.width()) / 2, (this->height() - m_image.height()) / 2);
-    m_mouseReleased = m->pos() - margin;
+    m_mouseReleased = m->localPos();
+    QPointF tl = ccSpace->transformer.map(QPointF(0, 0));
+    QPointF br = ccSpace->transformer.map(QPointF(m_image.width() - 1, m_image.height() - 1));
 
-    if (m_mouseReleased.x() < 0) {
-        m_mouseReleased.setX(0);
+    if (m_mouseReleased.x() < tl.x()) {
+        m_mouseReleased.setX(tl.x());
     }
-    else if (m_mouseReleased.x() > m_image.width() - 1) {
-        m_mouseReleased.setX(m_image.width() - 1);
+    else if (m_mouseReleased.x() > br.x()) {
+        m_mouseReleased.setX(br.x());
     }
-    if (m_mouseReleased.y() < 0) {
-        m_mouseReleased.setY(0);
+    if (m_mouseReleased.y() < tl.y()) {
+        m_mouseReleased.setY(tl.y());
     }
-    else if (m_mouseReleased.y() > m_image.height() - 1) {
-        m_mouseReleased.setY(m_image.height() - 1);
+    else if (m_mouseReleased.y() > br.y()) {
+        m_mouseReleased.setY(br.y());
     }
 
     if (m_drawMode == -4) {
         m_gaugeLine.setP2(m_mouseReleased);
     }else if (m_drawMode == -2) {//rectangle
-        ccSpace->qrect = QRect(m_mousePressed, m_mouseReleased);
+        ccSpace->setRectangle(QRectF(m_mousePressed, m_mouseReleased));
     }
     else if (m_drawMode == -3) {//calibre
-        m_calibreLine = QLine(m_mousePressed, m_mouseReleased);
-        if (std::abs(m_calibreLine.dx()) > std::abs(m_calibreLine.dy())) {
-            m_calibreLine.setP2(QPoint(m_mouseReleased.x(), m_mousePressed.y()));
+        m_calibreLine = QLineF(m_mousePressed, m_mouseReleased);
+        if (qFabs(m_calibreLine.dx()) > qFabs(m_calibreLine.dy())) {
+            m_calibreLine.setP2(QPointF(m_mouseReleased.x(), m_mousePressed.y()));
         }
         else {
-            m_calibreLine.setP2(QPoint(m_mousePressed.x(), m_mouseReleased.y()));
+            m_calibreLine.setP2(QPointF(m_mousePressed.x(), m_mouseReleased.y()));
         }
     }
 
@@ -138,7 +131,7 @@ void QImageDrawer::mouseReleaseEvent(QMouseEvent *m)
         bool ok;
         qreal r = static_cast<qreal>(QInputDialog::getDouble(this, tr("Input the real size"), tr("Unit: μm"), 0, 0, 9999, 4, &ok));
         if (ok) {
-            qreal scale = std::max(std::abs(m_calibreLine.dx()), std::abs(m_calibreLine.dy())) / r;
+            qreal scale = qMax(qFabs(m_calibreLine.dx()), qFabs(m_calibreLine.dy())) / r;
             ccSpace->setScaleValue(scale);
         }
     }

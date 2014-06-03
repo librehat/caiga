@@ -46,10 +46,10 @@ private:
     CCSpace *ccSpace;
 
     int m_drawMode;
-    QPoint m_mousePressed;
-    QPoint m_mouseReleased;
-    QLine m_calibreLine;
-    QLine m_gaugeLine;
+    QPointF m_mousePressed;
+    QPointF m_mouseReleased;
+    QLineF m_calibreLine;
+    QLineF m_gaugeLine;
 };
 
 #endif // QIMAGEDRAWER_H
