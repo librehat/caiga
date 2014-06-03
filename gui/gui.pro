@@ -25,7 +25,8 @@ SOURCES  += main.cpp \
             analysisitemdelegate.cpp \
             reporter.cpp \
             3rdparty/qcustomplot.cpp \
-            3rdparty/qcpdocumentobject.cpp
+            3rdparty/qcpdocumentobject.cpp \
+            zoomer.cpp
            
 HEADERS  += cameradialog.h \
             mainwindow.h \
@@ -39,13 +40,8 @@ HEADERS  += cameradialog.h \
             analysisitemdelegate.h \
             reporter.h \
             3rdparty/qcustomplot.h \
-            3rdparty/qcpdocumentobject.h
-
-#static: {
-#    QTPLUGIN += qico
-#    DEFINES += STATIC
-#    message("Static build.")
-#}
+            3rdparty/qcpdocumentobject.h \
+            zoomer.h
 
 RESOURCES+= caiga.qrc
 windows: {

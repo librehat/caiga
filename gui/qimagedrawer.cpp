@@ -1,8 +1,8 @@
-#include "qimagedrawer.h"
 #include <QWheelEvent>
 #include <QDebug>
 #include <qmath.h>
 #include <QInputDialog>
+#include "qimagedrawer.h"
 
 QImageDrawer::QImageDrawer(QWidget *parent) :
     QWidget(parent)
@@ -10,8 +10,6 @@ QImageDrawer::QImageDrawer(QWidget *parent) :
     m_penColour = QColor(255, 0, 0);//Red
     m_drawMode = -2;
     m_mousePressed = QPoint(0, 0);
-    m_zoom = 1.0;
-    m_zoomLevel = 0;
 }
 
 void QImageDrawer::paintEvent(QPaintEvent *event)
@@ -23,12 +21,14 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    //QSizeF pixSize = m_image.size().scaled(event->rect().size(), Qt::KeepAspectRatio);
-    QSizeF pixSize = m_image.size();
-    pixSize *= m_zoom;
-
-    //ccSpace->setTransform(QTransform(pixSize.width() / static_cast<qreal>(m_image.width()), 0, 0, 0, pixSize.height() / static_cast<qreal>(m_image.height()), 0, (this->width() - pixSize.width()) / 2.0, (this->height() - pixSize.height()) / 2.0, 1.0));
-    ccSpace->setTransform(QTransform(m_zoom, 0, 0, 0, m_zoom, 0, (this->width() - pixSize.width()) / 2.0, (this->height() - pixSize.height()) / 2.0, 1.0));
+    QSizeF pixSize = m_image.size() * m_zoomer.getZoom();
+    /*
+     * use QTransform instead of window-viewport conversion
+     * beacause we can't retrieve a transform with scale from QPainter after setWindow and setViewport
+     * don't know why would that happen. maybe that's a Qt bug?
+     * anyway, just stick to QTransform for now.
+     */
+    ccSpace->setTransform(QTransform(m_zoomer.getZoom(), 0, 0, 0, m_zoomer.getZoom(), 0, (this->width() - pixSize.width()) / 2.0, (this->height() - pixSize.height()) / 2.0, 1.0));
     painter.setWorldTransform(ccSpace->getTransform());
     painter.drawImage(0, 0, m_image);
 
@@ -151,14 +151,18 @@ void QImageDrawer::wheelEvent(QWheelEvent *we)
     onZoomChanged(we->angleDelta().y() > 0);
 }
 
+void QImageDrawer::findGoodEnoughZoom()
+{
+    //Find a zoom which is good enough for the image to fully display on screen
+}
+
 void QImageDrawer::onZoomChanged(bool in)
 {
     if (in) {
-        ++m_zoomLevel;
+        m_zoomer.zoomIn();
     }
     else {
-        --m_zoomLevel;
+        m_zoomer.zoomOut();
     }
-    m_zoom = qPow(2, m_zoomLevel);
     update();
 }

@@ -6,6 +6,7 @@
 #include <QPaintEvent>
 #include <QMouseEvent>
 #include "ccspace.h"
+#include "zoomer.h"
 using namespace CAIGA;
 
 class QImageDrawer : public QWidget
@@ -27,7 +28,7 @@ public:
     inline void reset() { ccSpace->reset(); update(); }
 
 public slots:
-    inline void setImage(QImage img) { m_image = img; setMinimumSize(m_image.size()); update(); }
+    inline void setImage(QImage img) { m_image = img; findGoodEnoughZoom(); update(); }
 
 signals:
     void calibreFinished(qreal);
@@ -52,8 +53,9 @@ private:
     QLineF m_calibreLine;
     QLineF m_gaugeLine;
 
-    qreal m_zoom;
-    int m_zoomLevel;//pow(2, m_zoomLevel)
+    Zoomer m_zoomer;
+
+    void findGoodEnoughZoom();
 
 private slots:
     void onZoomChanged(bool in);//zoom in (larger)
