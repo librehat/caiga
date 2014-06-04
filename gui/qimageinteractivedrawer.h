@@ -43,6 +43,7 @@ private:
     bool firstTimeShow;
 
     void findGoodEnoughZoom();
+    void handleSizeChanged(qreal zoom);
 
 protected:
     void paintEvent(QPaintEvent *);

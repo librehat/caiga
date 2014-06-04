@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>444</width>
-    <height>197</height>
+    <width>510</width>
+    <height>399</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="5" column="0" colspan="11" alignment="Qt::AlignRight|Qt::AlignBottom">
+   <item row="2" column="0" colspan="9" alignment="Qt::AlignRight|Qt::AlignBottom">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -27,7 +27,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="10" alignment="Qt::AlignRight|Qt::AlignBottom">
+   <item row="1" column="8" alignment="Qt::AlignRight|Qt::AlignBottom">
     <widget class="QPushButton" name="previewButton">
      <property name="enabled">
       <bool>false</bool>
@@ -48,7 +48,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="1" column="0" colspan="2">
     <widget class="QPushButton" name="resetButton">
      <property name="enabled">
       <bool>false</bool>
@@ -63,7 +63,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="2" colspan="3">
+   <item row="1" column="2" colspan="2">
     <widget class="QPushButton" name="undoButton">
      <property name="enabled">
       <bool>false</bool>
@@ -84,7 +84,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="8">
+   <item row="1" column="7">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -97,7 +97,7 @@
      </property>
     </spacer>
    </item>
-   <item row="4" column="5" alignment="Qt::AlignBottom">
+   <item row="1" column="4" alignment="Qt::AlignBottom">
     <widget class="QPushButton" name="redoButton">
      <property name="enabled">
       <bool>false</bool>
@@ -112,7 +112,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="6">
+   <item row="1" column="5">
     <widget class="QPushButton" name="autoButton">
      <property name="text">
       <string>Auto</string>
@@ -124,21 +124,60 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="7">
+   <item row="1" column="6">
     <widget class="QPushButton" name="brushModeButton">
      <property name="text">
       <string>Marker</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="0" rowspan="4" colspan="11">
-    <widget class="QImageInteractiveDrawer" name="drawer" native="true">
+   <item row="0" column="0" colspan="9">
+    <widget class="QScrollArea" name="scrollArea">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
+       <horstretch>10</horstretch>
+       <verstretch>10</verstretch>
       </sizepolicy>
      </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>492</width>
+        <height>322</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="scrollAreaHorizontalLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QImageInteractiveDrawer" name="drawer" native="true"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
