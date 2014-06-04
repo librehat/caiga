@@ -43,6 +43,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //add zoom information label to statusBar
     zoomLabel = new QLabel(ui->statusBar);
+    zoomLabel->setFrameShape(QFrame::StyledPanel);
+    zoomLabel->setFrameShadow(QFrame::Sunken);
     ui->statusBar->addPermanentWidget(zoomLabel);
 
     /*

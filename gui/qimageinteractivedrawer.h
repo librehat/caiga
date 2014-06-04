@@ -27,7 +27,7 @@ signals:
     void zoomUpdated(qreal);
 
 public slots:
-    inline void setImage(const QImage &img, bool needRefreshZoom = false) { m_image = img; firstTimeShow = needRefreshZoom; update(); }
+    inline void setImage(const QImage &img, bool needRefreshZoom = false) { m_image = img; firstTimeShow = needRefreshZoom || firstTimeShow; update(); }
 
 private:
     QImage m_image;

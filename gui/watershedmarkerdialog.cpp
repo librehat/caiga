@@ -7,7 +7,7 @@ WatershedMarkerDialog::WatershedMarkerDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->setWindowFlags(Qt::Tool);
+    this->setWindowFlags(this->windowFlags() | Qt::WindowMaximizeButtonHint);
     brushMenu = new QMenu(this);
     brushMenu->addAction(tr("Marker"), this, SLOT(onBrushPencil()));
     brushMenu->addAction(tr("Eraser"), this, SLOT(onBrushEraser()));
@@ -15,6 +15,9 @@ WatershedMarkerDialog::WatershedMarkerDialog(QWidget *parent) :
     m_colour = QColor(255, 255, 255);
     ui->drawer->setDrawMode(QImageInteractiveDrawer::PENCIL);
 
+    connect(ui->drawer, &QImageInteractiveDrawer::zoomUpdated, [&] (qreal z) {
+        ui->zoomLabel->setText(QString::number(qFloor(z * 100)) + "%");
+    });
     connect(ui->previewButton, &QPushButton::clicked, this, &WatershedMarkerDialog::onPreviewButtonClicked);
     connect(ui->undoButton, &QPushButton::clicked, this, &WatershedMarkerDialog::onUndoButtonClicked);
     connect(ui->redoButton, &QPushButton::clicked, this, &WatershedMarkerDialog::onRedoButtonClicked);
@@ -44,9 +47,6 @@ void WatershedMarkerDialog::setOriginalMat(const Mat *const src, const Mat *prev
     Mat marks = previousMarks == NULL ? Mat(src->rows, src->cols, CV_8UC1, Scalar(0)) : *previousMarks;
     CAIGA::WorkBase rawBase(src, &marks);
     markSpace.reset(&rawBase);
-    QSize s(src->cols, src->rows);
-    ui->drawer->setMinimumSize(s);
-    ui->drawer->setMaximumSize(s);
 }
 
 void WatershedMarkerDialog::onAutoClicked()

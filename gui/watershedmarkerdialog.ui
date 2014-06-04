@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>510</width>
+    <width>632</width>
     <height>399</height>
    </rect>
   </property>
@@ -17,121 +17,14 @@
    <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0" colspan="9" alignment="Qt::AlignRight|Qt::AlignBottom">
-    <widget class="QDialogButtonBox" name="buttonBox">
+   <item row="1" column="0" colspan="11">
+    <widget class="Line" name="line">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
     </widget>
    </item>
-   <item row="1" column="8" alignment="Qt::AlignRight|Qt::AlignBottom">
-    <widget class="QPushButton" name="previewButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="toolTip">
-      <string>(Space)</string>
-     </property>
-     <property name="text">
-      <string>Preview</string>
-     </property>
-     <property name="icon">
-      <iconset theme="document-preview">
-       <normaloff/>
-      </iconset>
-     </property>
-     <property name="shortcut">
-      <string>Space</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="2">
-    <widget class="QPushButton" name="resetButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>Reset</string>
-     </property>
-     <property name="icon">
-      <iconset theme="document-revert">
-       <normaloff/>
-      </iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2" colspan="2">
-    <widget class="QPushButton" name="undoButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="toolTip">
-      <string>(Backspace)</string>
-     </property>
-     <property name="text">
-      <string>Undo</string>
-     </property>
-     <property name="icon">
-      <iconset theme="edit-undo">
-       <normaloff/>
-      </iconset>
-     </property>
-     <property name="shortcut">
-      <string>Backspace</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="7">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="1" column="4" alignment="Qt::AlignBottom">
-    <widget class="QPushButton" name="redoButton">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>Redo</string>
-     </property>
-     <property name="icon">
-      <iconset theme="edit-redo">
-       <normaloff/>
-      </iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="5">
-    <widget class="QPushButton" name="autoButton">
-     <property name="text">
-      <string>Auto</string>
-     </property>
-     <property name="icon">
-      <iconset theme="roll">
-       <normaloff/>
-      </iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="6">
-    <widget class="QPushButton" name="brushModeButton">
-     <property name="text">
-      <string>Marker</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="9">
+   <item row="0" column="0" colspan="11">
     <widget class="QScrollArea" name="scrollArea">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -153,8 +46,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>492</width>
-        <height>322</height>
+        <width>614</width>
+        <height>313</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="scrollAreaHorizontalLayout">
@@ -179,6 +72,133 @@
       </layout>
      </widget>
     </widget>
+   </item>
+   <item row="2" column="10" alignment="Qt::AlignRight">
+    <widget class="QPushButton" name="previewButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string>(Space)</string>
+     </property>
+     <property name="text">
+      <string>Preview</string>
+     </property>
+     <property name="icon">
+      <iconset theme="document-preview">
+       <normaloff/>
+      </iconset>
+     </property>
+     <property name="shortcut">
+      <string>Space</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" alignment="Qt::AlignLeft|Qt::AlignBottom">
+    <widget class="QLabel" name="zoomLabel">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="10" alignment="Qt::AlignRight|Qt::AlignBottom">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" alignment="Qt::AlignLeft">
+    <widget class="QPushButton" name="resetButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Reset</string>
+     </property>
+     <property name="icon">
+      <iconset theme="document-revert">
+       <normaloff/>
+      </iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" alignment="Qt::AlignLeft">
+    <widget class="QPushButton" name="undoButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string>(Backspace)</string>
+     </property>
+     <property name="text">
+      <string>Undo</string>
+     </property>
+     <property name="icon">
+      <iconset theme="edit-undo">
+       <normaloff/>
+      </iconset>
+     </property>
+     <property name="shortcut">
+      <string>Backspace</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" alignment="Qt::AlignLeft">
+    <widget class="QPushButton" name="redoButton">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Redo</string>
+     </property>
+     <property name="icon">
+      <iconset theme="edit-redo">
+       <normaloff/>
+      </iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3" alignment="Qt::AlignLeft">
+    <widget class="QPushButton" name="autoButton">
+     <property name="text">
+      <string>Auto</string>
+     </property>
+     <property name="icon">
+      <iconset theme="roll">
+       <normaloff/>
+      </iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="4" alignment="Qt::AlignLeft">
+    <widget class="QPushButton" name="brushModeButton">
+     <property name="text">
+      <string>Marker</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="5" colspan="5">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
