@@ -22,7 +22,7 @@ signals:
     void workStatusStringUpdated(const QString &);
 
 public:
-    explicit WorkSpace(cv::Mat *src = NULL, QObject *parent = 0);
+    explicit WorkSpace(cv::Mat *src = NULL, bool restrictList = true, bool keepFirst = false, QObject *parent = 0);
     ~WorkSpace();
     void append(WorkBase *);//this will emit workFinished
     void append(QList<WorkBase *>);//this will also emit workFinished. WARN: this function will manipulate the QList directly, use it with caution!
@@ -77,13 +77,19 @@ private:
     QList<WorkBase *> undoneList;
     QFuture<void> future;
     QFutureWatcher<void> watcher;
+    bool m_isRestrict;
+    bool m_restrictKeepFirst;//whether to keep the first WorkBase* in list when restrict the workList
     void clearUndoneList();
+    void restrictWorkList();
     inline void newGenericWork(WorkBase *work)
     {
         workList.append(work);
         this->clearUndoneList();
         future = QtConcurrent::run(work, &WorkBase::Func);
         watcher.setFuture(future);
+        if (workList.count() > 10) {
+            restrictWorkList();
+        }
     }
     cv::Mat displayMat;//used to display on screen
 

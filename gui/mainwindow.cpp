@@ -206,7 +206,7 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
             processSpace->disconnect();
             processSpace->deleteLater();
         }
-        processSpace = new CAIGA::WorkSpace(cgimg.croppedMatrix(), this);
+        processSpace = new CAIGA::WorkSpace(cgimg.croppedMatrix(), true, false, this);
         connect(processSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onProcessWorkFinished);
         connect(processSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
 
@@ -214,7 +214,7 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
             previewSpace->disconnect();
             previewSpace->deleteLater();
         }
-        previewSpace = new CAIGA::WorkSpace(NULL, this);
+        previewSpace = new CAIGA::WorkSpace(NULL, true, true, this);
         connect(previewSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
 
         ui->processTab->setEnabled(true);

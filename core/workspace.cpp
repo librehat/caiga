@@ -14,7 +14,7 @@
 #include "workgradient.h"
 using namespace CAIGA;
 
-WorkSpace::WorkSpace(Mat *src, QObject *parent) :
+WorkSpace::WorkSpace(Mat *src, bool restrictList, bool keepFirst, QObject *parent) :
     QObject(parent)
 {
     connect(&watcher, &QFutureWatcher<void>::started, this, &WorkSpace::onLowLevelWorkStarted);
@@ -23,6 +23,8 @@ WorkSpace::WorkSpace(Mat *src, QObject *parent) :
         WorkBase *w = new WorkBase(src);
         workList.append(w);
     }
+    m_isRestrict = restrictList;//if restricted, then don't store more than 10 works in the list because it consumes too much RAM!!!
+    m_restrictKeepFirst = keepFirst;
 }
 
 WorkSpace::~WorkSpace()
@@ -116,6 +118,18 @@ void WorkSpace::clearUndoneList()
         }
         undoneList.clear();
     }
+}
+
+void WorkSpace::restrictWorkList()
+{
+    WorkBase *toRelease;
+    if (m_restrictKeepFirst) {
+        toRelease = workList.takeAt(1);
+    }
+    else {
+        toRelease = workList.takeFirst();
+    }
+    delete toRelease;
 }
 
 void WorkSpace::reset(WorkBase *base)

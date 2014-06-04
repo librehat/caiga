@@ -34,7 +34,7 @@ private:
     cv::Mat rawMat;
     QColor m_colour;
     Ui::WatershedMarkerDialog *ui;
-    CAIGA::WorkSpace markSpace;
+    CAIGA::WorkSpace *markSpace;
 
 private slots:
     void onAutoClicked();
@@ -42,7 +42,7 @@ private slots:
     void onResetButtonClicked();
     void onUndoButtonClicked();
     void onRedoButtonClicked();
-    inline void onPreviewButtonClicked() { emit previewTriggered(markSpace.getLastMatrix()); }
+    inline void onPreviewButtonClicked() { emit previewTriggered(markSpace->getLastMatrix()); }
     void onWorkStarted();
     void onWorkFinished();
     inline void handleAccepted() { emit accepted(); }
