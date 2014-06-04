@@ -29,9 +29,11 @@ public:
     qreal sizeNumberByIntercept() const;//Heyn Lineal Intercept Procedure as defined in ASTM E112-13
     qreal sizeNumberByPlanimetric();//Planimetric procedure as defined in ASTM E112-13
     inline qreal percentage() const { return m_percentage; }
+    inline qreal relativePercentage() const { return m_relativePercentage; }
 
     inline void setAverageIntercept(qreal a) { m_averageIntercept = a; }
     inline void setPercentage(qreal p) { m_percentage = p; }
+    inline void setRelativePercentage(qreal p) { m_relativePercentage = p; }
 
     inline bool contains(int key) { return objects.contains(key); }
     inline void insert(int key, Object obj) { objects[key] = obj; }
@@ -42,6 +44,7 @@ public:
 private:
     QMap<int, Object> objects;//key(id) is the index
     qreal m_percentage;
+    qreal m_relativePercentage;// this totalArea / all classes' totalArea
     qreal m_averageIntercept;
 };
 }

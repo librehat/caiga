@@ -3,7 +3,8 @@ using namespace CAIGA;
 
 ClassObject::ClassObject()
 {
-    m_percentage = 0;
+    m_percentage = 1;
+    m_relativePercentage = 1;
     m_averageIntercept = 0;
 }
 

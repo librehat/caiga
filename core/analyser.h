@@ -90,13 +90,15 @@ private:
     Object::POSITION determineIsBoundary(int idx);
     void updateBoundarySet();
     int getBoundaryJointNeighbours(const cv::Point_<qreal> &pos);//leave at least 1 position from Mat edge
+    inline int getBoundaryJointNeighbours(const cv::Point &pos) { return getBoundaryJointNeighbours(cv::Point_<qreal> (pos.x, pos.y)); }//overload function of float-point one
 
     /*
      * calculate all sorts of information class by class
      * these functions would clear the previous values
      */
     void calculatePercentage();
-    void calculateIntercepts();
+    void calculateInterceptsByLine();
+    void calculateIntercepts();//by triple circles
 };
 }
 

@@ -322,13 +322,20 @@ int Analyser::getBoundaryJointNeighbours(const cv::Point_<qreal> &pos)
 void Analyser::calculatePercentage()
 {
     qreal imageArea = m_markerMatrix->cols * m_markerMatrix->rows / scaleValue / scaleValue;
+    qreal classesArea = 0;
     for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
+        classesArea += it->totalArea();
         it->setPercentage(it->totalArea() / imageArea);
+    }
+    for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
+        it->setRelativePercentage(it->totalArea() / classesArea);
     }
 }
 
-void Analyser::calculateIntercepts()
+void Analyser::calculateInterceptsByLine()
 {
+    //this implemention is not accurate and deprecated now.
+    //if you need intercept procedure, please use calculateIntercepts() which use testing circles
     qreal totalInterception = 0, totalTestLineLength = 0;
     cv::Point_<qreal> topLeft(1, 1), topRight (m_markerMatrix->cols - 2, 1), bottomLeft(1, m_markerMatrix->rows - 2), bottomRight(m_markerMatrix->cols - 2, m_markerMatrix->rows - 2);
 
@@ -374,7 +381,65 @@ void Analyser::calculateIntercepts()
      * la = l * Va. divide averageInterceptsLength by volume percentage (using area percentage here)
      */
     for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
-        it->setAverageIntercept(averageIntercept * it->percentage());
+        it->setAverageIntercept(averageIntercept * it->relativePercentage());
+    }
+}
+
+void Analyser::calculateIntercepts()
+{
+    qreal totalTestLineLength = 0;
+    qreal totalInterception = 0;
+    QVector<std::vector<cv::Point> > testPts;
+    cv::Point centre(m_markerMatrix->cols / 2, m_markerMatrix->rows / 2);
+    //margin 2 pixels to avoid image boundary
+    int outer_radius = qMin(centre.x - 2, centre.y - 2);
+    QVector<int> radii;
+    radii << outer_radius << outer_radius * 2 / 3 << outer_radius * 1 / 3;
+    for (QVector<int>::const_iterator it = radii.begin(); it != radii.end(); ++it) {
+        cv::Mat circles = cv::Mat::zeros(m_markerMatrix->size(), CV_8UC1);
+        cv::circle(circles, centre, *it, cv::Scalar(255), 1, 4);
+        std::vector<cv::Point> pts;
+        cv::findNonZero(circles, pts);//it doesn't take in float points
+        testPts.append(pts);
+        totalTestLineLength += 2 * M_PI * (*it);
+    }
+
+    /*
+    QtConcurrent::blockingMap(testPts.begin(), testPts.end(), [&] (const cv::Point &pt) {
+        int index = m_markerMatrix->at<int>(pt);
+        if (index == -1) {//grain boundary
+            if (getBoundaryJointNeighbours(pt) > 2) {
+                totalInterception += 2;
+            }
+            else {
+                totalInterception += 1;
+            }
+        }
+    });*/
+    for (auto it = testPts.begin(); it != testPts.end(); ++it) {
+        int previous = -9;
+        for (auto pit = it->begin(); pit != it->end(); ++pit) {
+            int index = m_markerMatrix->at<int>(*pit);
+            if (index == -1 && index != previous) {//grain boundary
+                if (getBoundaryJointNeighbours(*pit) > 2) {
+                    totalInterception += 2;
+                }
+                else {
+                    totalInterception += 1;
+                }
+            }
+            previous = index;
+        }
+    }
+
+    averageIntercept = totalTestLineLength / totalInterception / scaleValue;
+
+    /*
+     * calculate the averageInterceptLength by class.
+     * la = l * Va. divide averageInterceptsLength by volume percentage (using area percentage here)
+     */
+    for (QMap<int, ClassObject>::iterator it = classObjMap.begin(); it != classObjMap.end(); ++it) {
+        it->setAverageIntercept(averageIntercept * it->relativePercentage());
     }
 }
 
