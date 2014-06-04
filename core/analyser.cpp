@@ -387,6 +387,9 @@ void Analyser::calculateInterceptsByLine()
 
 void Analyser::calculateIntercepts()
 {
+    /*
+     * TODO needs to be improved
+     */
     qreal totalTestLineLength = 0;
     qreal totalInterception = 0;
     QVector<std::vector<cv::Point> > testPts;
@@ -394,7 +397,7 @@ void Analyser::calculateIntercepts()
     //margin 2 pixels to avoid image boundary
     int outer_radius = qMin(centre.x - 2, centre.y - 2);
     QVector<int> radii;
-    radii << outer_radius << outer_radius * 2 / 3 << outer_radius * 1 / 3;
+    radii << outer_radius << outer_radius * 3 / 5 << outer_radius * 1 / 5;
     for (QVector<int>::const_iterator it = radii.begin(); it != radii.end(); ++it) {
         cv::Mat circles = cv::Mat::zeros(m_markerMatrix->size(), CV_8UC1);
         cv::circle(circles, centre, *it, cv::Scalar(255), 1, 4);
@@ -404,21 +407,10 @@ void Analyser::calculateIntercepts()
         totalTestLineLength += 2 * M_PI * (*it);
     }
 
-    /*
-    QtConcurrent::blockingMap(testPts.begin(), testPts.end(), [&] (const cv::Point &pt) {
-        int index = m_markerMatrix->at<int>(pt);
-        if (index == -1) {//grain boundary
-            if (getBoundaryJointNeighbours(pt) > 2) {
-                totalInterception += 2;
-            }
-            else {
-                totalInterception += 1;
-            }
-        }
-    });*/
-    for (auto it = testPts.begin(); it != testPts.end(); ++it) {
+
+    QtConcurrent::blockingMap(testPts.begin(), testPts.end(), [&](const std::vector<cv::Point> &pts) {
         int previous = -9;
-        for (auto pit = it->begin(); pit != it->end(); ++pit) {
+        for (std::vector<cv::Point>::const_iterator pit = pts.begin(); pit != pts.end(); ++pit) {
             int index = m_markerMatrix->at<int>(*pit);
             if (index == -1 && index != previous) {//grain boundary
                 if (getBoundaryJointNeighbours(*pit) > 2) {
@@ -430,7 +422,7 @@ void Analyser::calculateIntercepts()
             }
             previous = index;
         }
-    }
+    });
 
     averageIntercept = totalTestLineLength / totalInterception / scaleValue;
 

@@ -18,7 +18,7 @@ void QImageInteractiveDrawer::paintEvent(QPaintEvent *event)
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHint(QPainter::Antialiasing, false);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
 
     if (m_image.isNull())
