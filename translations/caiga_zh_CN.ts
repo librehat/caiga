@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="zh_CN">
+<TS version="2.1" language="zh_CN">
 <context>
     <name>CAIGA::Analyser</name>
     <message>
@@ -187,406 +187,410 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/mainwindow.ui" line="25"/>
+        <location filename="../gui/mainwindow.ui" line="20"/>
         <source>Computer-Aid Interactive Grain Analyser</source>
         <translation>计算机辅助的交互式晶粒分析器</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="52"/>
+        <location filename="../gui/mainwindow.ui" line="47"/>
         <source>Raw</source>
         <translation>原始</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="72"/>
+        <location filename="../gui/mainwindow.ui" line="76"/>
         <source>Crop and Calibre</source>
         <translation>裁切和标定</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="124"/>
+        <location filename="../gui/mainwindow.ui" line="153"/>
         <source>Operation Mode</source>
         <translation>操作模式</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="130"/>
+        <location filename="../gui/mainwindow.ui" line="159"/>
         <source>Crop Rectangle</source>
         <translation>裁切矩形</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="143"/>
+        <location filename="../gui/mainwindow.ui" line="172"/>
         <source>Calibre</source>
         <translation>标定</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="153"/>
+        <location filename="../gui/mainwindow.ui" line="182"/>
         <source>Gauge a Line</source>
         <translation>测量线段</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="169"/>
+        <location filename="../gui/mainwindow.ui" line="198"/>
         <source>Scale</source>
         <translation>比例</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="176"/>
+        <location filename="../gui/mainwindow.ui" line="205"/>
         <source>Input calibration if already known.</source>
         <translation>如果已知，请输入校准比例。</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="179"/>
+        <location filename="../gui/mainwindow.ui" line="208"/>
         <source> pixel:μm</source>
         <translation>像素：微米</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="192"/>
+        <location filename="../gui/mainwindow.ui" line="221"/>
         <source>Load Macro</source>
         <translation>载入宏</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="199"/>
+        <location filename="../gui/mainwindow.ui" line="228"/>
         <source>Save As Macro</source>
         <translation>保存宏</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="233"/>
+        <location filename="../gui/mainwindow.ui" line="298"/>
         <source>Process</source>
         <translation>处理</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="248"/>
-        <location filename="../gui/mainwindow.ui" line="565"/>
+        <location filename="../gui/mainwindow.ui" line="391"/>
+        <location filename="../gui/mainwindow.ui" line="749"/>
         <source>Tools</source>
         <translation>工具</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="254"/>
+        <location filename="../gui/mainwindow.ui" line="397"/>
         <location filename="../gui/mainwindow.cpp" line="34"/>
-        <location filename="../gui/mainwindow.cpp" line="218"/>
+        <location filename="../gui/mainwindow.cpp" line="230"/>
         <source>Normal Arrow</source>
         <translation>普通箭头</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="261"/>
+        <location filename="../gui/mainwindow.ui" line="404"/>
         <source>Adaptive Bilateral Filter</source>
         <translation>自适应双边滤波</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="268"/>
+        <location filename="../gui/mainwindow.ui" line="411"/>
         <source>Box Filter</source>
         <translation>箱式滤波</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="275"/>
+        <location filename="../gui/mainwindow.ui" line="418"/>
         <source>Median Blur</source>
         <translation>中值模糊</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="282"/>
+        <location filename="../gui/mainwindow.ui" line="425"/>
         <source>Histogram Equalisation</source>
         <translation>直方图均衡化</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="289"/>
+        <location filename="../gui/mainwindow.ui" line="432"/>
         <source>Gaussian Binaryzation</source>
         <translation>高斯二值化</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="296"/>
+        <location filename="../gui/mainwindow.ui" line="439"/>
         <source>Median Binaryzation</source>
         <translation>中值二值化</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="303"/>
+        <location filename="../gui/mainwindow.ui" line="446"/>
         <source>Morphological Gradient</source>
         <translation>形态学梯度</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="310"/>
+        <location filename="../gui/mainwindow.ui" line="453"/>
         <source>Canny Edges</source>
         <translation>Canny边缘算子</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="317"/>
+        <location filename="../gui/mainwindow.ui" line="460"/>
         <source>Invert Grayscale</source>
         <translation>灰度倒置</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="324"/>
+        <location filename="../gui/mainwindow.ui" line="467"/>
         <source>Flood Fill</source>
         <translation>淹水填充</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="331"/>
+        <location filename="../gui/mainwindow.ui" line="474"/>
         <source>Find and Draw Contours</source>
         <translation>寻找并填充轮廓</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="338"/>
+        <location filename="../gui/mainwindow.ui" line="481"/>
         <source>Watershed</source>
         <translation>分水岭变换</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="372"/>
+        <location filename="../gui/mainwindow.ui" line="492"/>
         <source>Analysis</source>
         <translation>分析</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="450"/>
+        <location filename="../gui/mainwindow.ui" line="625"/>
         <source>Report</source>
         <translation>报告</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="465"/>
+        <location filename="../gui/mainwindow.ui" line="649"/>
         <source>Split</source>
         <translation>份数</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="510"/>
+        <location filename="../gui/mainwindow.ui" line="694"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="554"/>
+        <location filename="../gui/mainwindow.ui" line="738"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="575"/>
-        <location filename="../gui/mainwindow.ui" line="699"/>
+        <location filename="../gui/mainwindow.ui" line="759"/>
+        <location filename="../gui/mainwindow.ui" line="883"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="588"/>
+        <location filename="../gui/mainwindow.ui" line="772"/>
         <source>Toolbar</source>
         <translation>工具栏</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="629"/>
+        <location filename="../gui/mainwindow.ui" line="813"/>
         <source>Open Image from Disk</source>
         <translation>从磁盘打开图像</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="632"/>
+        <location filename="../gui/mainwindow.ui" line="816"/>
         <source>Open Image from Disk (Ctrl+O)</source>
         <translation>从磁盘打开图像 (Ctrl+O)</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="635"/>
+        <location filename="../gui/mainwindow.ui" line="819"/>
         <source>Ctrl+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="645"/>
+        <location filename="../gui/mainwindow.ui" line="829"/>
         <source>Open Image from Camera</source>
         <translation>从摄像头打开图像</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="648"/>
+        <location filename="../gui/mainwindow.ui" line="832"/>
         <source>Open Image from Camera (Ctrl+P)</source>
         <translation>从摄像头打开图像 (Ctrl+P)</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="651"/>
+        <location filename="../gui/mainwindow.ui" line="835"/>
         <source>Ctrl+P</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="661"/>
+        <location filename="../gui/mainwindow.ui" line="845"/>
         <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="671"/>
+        <location filename="../gui/mainwindow.ui" line="855"/>
         <source>Quit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="674"/>
+        <location filename="../gui/mainwindow.ui" line="858"/>
         <source>Ctrl+Q</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="679"/>
+        <location filename="../gui/mainwindow.ui" line="863"/>
         <source>Options</source>
         <translation>选项</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="689"/>
+        <location filename="../gui/mainwindow.ui" line="873"/>
         <source>About CAIGA</source>
         <translation>关于 CAIGA</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="702"/>
+        <location filename="../gui/mainwindow.ui" line="886"/>
         <source>Help (F1)</source>
         <translation>帮助 (F1)</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="705"/>
+        <location filename="../gui/mainwindow.ui" line="889"/>
         <source>F1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="718"/>
+        <location filename="../gui/mainwindow.ui" line="902"/>
         <source>Undo</source>
         <translation>撤销</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="721"/>
+        <location filename="../gui/mainwindow.ui" line="905"/>
         <source>Undo (Ctrl+Z)</source>
         <translation>撤销 (Ctrl+Z)</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="724"/>
+        <location filename="../gui/mainwindow.ui" line="908"/>
         <source>Ctrl+Z</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="737"/>
+        <location filename="../gui/mainwindow.ui" line="921"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="740"/>
+        <location filename="../gui/mainwindow.ui" line="924"/>
         <source>Redo (Ctrl+Y)</source>
         <translation>重做 (Ctrl+Y)</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="743"/>
+        <location filename="../gui/mainwindow.ui" line="927"/>
         <source>Ctrl+Y</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="748"/>
+        <location filename="../gui/mainwindow.ui" line="932"/>
         <source>About Qt</source>
         <translation>关于 Qt</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="761"/>
+        <location filename="../gui/mainwindow.ui" line="945"/>
         <source>Export Report as</source>
         <translation>导出报告为</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="764"/>
+        <location filename="../gui/mainwindow.ui" line="948"/>
         <source>Export Report as File (Ctrl+E)</source>
         <translation>导出报告为文件 (Ctrl+E)</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="767"/>
+        <location filename="../gui/mainwindow.ui" line="951"/>
         <source>Ctrl+E</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="780"/>
+        <location filename="../gui/mainwindow.ui" line="964"/>
         <source>Quick Export as PDF</source>
         <translation>快速导出为PDF</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="783"/>
+        <location filename="../gui/mainwindow.ui" line="967"/>
         <source>Export Report as PDF with the Image&apos;s Filename (Ctrl+Shift+E)</source>
         <translation>导出报告为图像文件同名的PDF文件 (Ctrl+Shift+E)</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="786"/>
+        <location filename="../gui/mainwindow.ui" line="970"/>
         <source>Ctrl+Shift+E</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="799"/>
-        <location filename="../gui/mainwindow.cpp" line="709"/>
+        <location filename="../gui/mainwindow.ui" line="983"/>
+        <location filename="../gui/mainwindow.cpp" line="721"/>
         <source>Save Current Image As</source>
         <translation>保存当前图像为</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="802"/>
+        <location filename="../gui/mainwindow.ui" line="986"/>
         <source>Save Currently Viewing Image as File (Ctrl+I)</source>
         <translation>保存当前所见的图像为文件 (Ctrl+I)</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.ui" line="805"/>
+        <location filename="../gui/mainwindow.ui" line="989"/>
         <source>Ctrl+I</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="35"/>
-        <location filename="../gui/mainwindow.cpp" line="226"/>
+        <location filename="../gui/mainwindow.cpp" line="238"/>
         <source>White Pencil</source>
         <translation>白铅笔</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="36"/>
-        <location filename="../gui/mainwindow.cpp" line="235"/>
+        <location filename="../gui/mainwindow.cpp" line="247"/>
         <source>Black Pencil</source>
         <translation>黑铅笔</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="37"/>
-        <location filename="../gui/mainwindow.cpp" line="244"/>
+        <location filename="../gui/mainwindow.cpp" line="256"/>
         <source>White Eraser</source>
         <translation>白橡皮</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="38"/>
-        <location filename="../gui/mainwindow.cpp" line="253"/>
+        <location filename="../gui/mainwindow.cpp" line="265"/>
         <source>Black Eraser</source>
         <translation>黑橡皮</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="155"/>
+        <location filename="../gui/mainwindow.cpp" line="166"/>
         <source>Load Macro for Crop and Calibre</source>
         <translation>载入裁切和标定的宏</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="169"/>
+        <location filename="../gui/mainwindow.cpp" line="180"/>
         <source>Save as Macro File for Crop and Calibre</source>
         <translation>保存裁切和标定的宏为文件</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="189"/>
+        <location filename="../gui/mainwindow.cpp" line="200"/>
         <source>You must calibre image scale before move to next step.</source>
         <translation>在进入下一步前，你必须先标定图像的比例。</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="211"/>
+        <location filename="../gui/mainwindow.cpp" line="222"/>
         <source>Process and segment the image.</source>
         <translation>处理并分割图像。</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="495"/>
-        <source>Error. Processing is not finished yet!</source>
-        <translation>错误。处理尚未完成！</translation>
+        <location filename="../gui/mainwindow.cpp" line="507"/>
+        <source>Error. Processing is not finished yet! You must segment the image before analysis.</source>
+        <translation>错误。处理尚未完成！在分析前你必须先分割图像。</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="503"/>
+        <source>Error. Processing is not finished yet!</source>
+        <translation type="vanished">错误。处理尚未完成！</translation>
+    </message>
+    <message>
+        <location filename="../gui/mainwindow.cpp" line="515"/>
         <source>Analysing... Please Wait......</source>
         <translation>分析中…… 请稍候……</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="526"/>
+        <location filename="../gui/mainwindow.cpp" line="538"/>
         <source>Analysed.</source>
         <translation>分析完毕。</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="627"/>
+        <location filename="../gui/mainwindow.cpp" line="639"/>
         <source>Add Image from Disk</source>
         <translation>从磁盘添加图像</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="683"/>
+        <location filename="../gui/mainwindow.cpp" line="695"/>
         <source>Export Report As</source>
         <translation>导出报告为</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="735"/>
+        <location filename="../gui/mainwindow.cpp" line="753"/>
         <source>Invalid operation.</source>
         <translation>无效的操作。</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="738"/>
+        <location filename="../gui/mainwindow.cpp" line="756"/>
         <source>Current image saved successfully.</source>
         <translation>当前图像保存成功。</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="741"/>
+        <location filename="../gui/mainwindow.cpp" line="759"/>
         <source>Saving current image failed.</source>
         <translation>保存当前图像失败。</translation>
     </message>
@@ -599,83 +603,78 @@
         <translation>选项</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="54"/>
-        <location filename="../gui/optionsdialog.ui" line="90"/>
+        <location filename="../gui/optionsdialog.ui" line="158"/>
         <source>&lt;System&gt;</source>
         <translation>&lt;系统&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="59"/>
+        <location filename="../gui/optionsdialog.ui" line="163"/>
         <source>Icon-only</source>
         <translation>仅图标</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="64"/>
+        <location filename="../gui/optionsdialog.ui" line="168"/>
         <source>Text under icons</source>
         <translation>文字在图标下方</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="69"/>
+        <location filename="../gui/optionsdialog.ui" line="173"/>
         <source>Text beside icons</source>
         <translation>文字在图标侧方</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="83"/>
         <source>Application Restart Needed</source>
-        <translation>需要重新启动应用程序</translation>
+        <translation type="vanished">需要重新启动应用程序</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="95"/>
         <source>English</source>
-        <translation>英语</translation>
+        <translation type="vanished">英语</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="100"/>
         <source>Simplified Chinese</source>
-        <translation>简体中文</translation>
+        <translation type="vanished">简体中文</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="114"/>
         <source>Language</source>
-        <translation>语言</translation>
+        <translation type="vanished">语言</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="131"/>
+        <location filename="../gui/optionsdialog.ui" line="125"/>
         <source>Top</source>
         <translation>顶部</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="136"/>
+        <location filename="../gui/optionsdialog.ui" line="130"/>
         <source>Bottom</source>
         <translation>底部</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="141"/>
+        <location filename="../gui/optionsdialog.ui" line="135"/>
         <source>Left</source>
         <translation>左侧</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="146"/>
+        <location filename="../gui/optionsdialog.ui" line="140"/>
         <source>Right</source>
         <translation>右侧</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="164"/>
+        <location filename="../gui/optionsdialog.ui" line="44"/>
         <source>#RGB or colour name</source>
         <translation>#RGB或者英文颜色名</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="177"/>
+        <location filename="../gui/optionsdialog.ui" line="57"/>
         <source>Tab Position</source>
         <translation>选项卡位置</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="190"/>
+        <location filename="../gui/optionsdialog.ui" line="70"/>
         <source>Toolbar Style</source>
         <translation>工具栏风格</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="203"/>
+        <location filename="../gui/optionsdialog.ui" line="83"/>
         <source>Pen colour</source>
         <translation>笔的颜色</translation>
     </message>
@@ -768,12 +767,12 @@
 <context>
     <name>QImageDrawer</name>
     <message>
-        <location filename="../gui/qimagedrawer.cpp" line="139"/>
+        <location filename="../gui/qimagedrawer.cpp" line="144"/>
         <source>Input the real size</source>
         <translation>输入实际尺寸</translation>
     </message>
     <message>
-        <location filename="../gui/qimagedrawer.cpp" line="139"/>
+        <location filename="../gui/qimagedrawer.cpp" line="144"/>
         <source>Unit: μm</source>
         <translation>单位：微米</translation>
     </message>
@@ -990,52 +989,52 @@ Area
         <translation>分水岭标记</translation>
     </message>
     <message>
-        <location filename="../gui/watershedmarkerdialog.ui" line="36"/>
+        <location filename="../gui/watershedmarkerdialog.ui" line="82"/>
         <source>(Space)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/watershedmarkerdialog.ui" line="39"/>
+        <location filename="../gui/watershedmarkerdialog.ui" line="85"/>
         <source>Preview</source>
         <translation>预览</translation>
     </message>
     <message>
-        <location filename="../gui/watershedmarkerdialog.ui" line="47"/>
+        <location filename="../gui/watershedmarkerdialog.ui" line="93"/>
         <source>Space</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/watershedmarkerdialog.ui" line="57"/>
+        <location filename="../gui/watershedmarkerdialog.ui" line="126"/>
         <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <location filename="../gui/watershedmarkerdialog.ui" line="72"/>
+        <location filename="../gui/watershedmarkerdialog.ui" line="141"/>
         <source>(Backspace)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/watershedmarkerdialog.ui" line="75"/>
+        <location filename="../gui/watershedmarkerdialog.ui" line="144"/>
         <source>Undo</source>
         <translation>撤销</translation>
     </message>
     <message>
-        <location filename="../gui/watershedmarkerdialog.ui" line="83"/>
+        <location filename="../gui/watershedmarkerdialog.ui" line="152"/>
         <source>Backspace</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/watershedmarkerdialog.ui" line="106"/>
+        <location filename="../gui/watershedmarkerdialog.ui" line="162"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../gui/watershedmarkerdialog.ui" line="118"/>
+        <location filename="../gui/watershedmarkerdialog.ui" line="174"/>
         <source>Auto</source>
         <translation>自动</translation>
     </message>
     <message>
-        <location filename="../gui/watershedmarkerdialog.ui" line="130"/>
+        <location filename="../gui/watershedmarkerdialog.ui" line="186"/>
         <location filename="../gui/watershedmarkerdialog.cpp" line="12"/>
         <location filename="../gui/watershedmarkerdialog.cpp" line="165"/>
         <source>Marker</source>
