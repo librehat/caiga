@@ -390,27 +390,27 @@ void Analyser::calculateIntercepts()
     /*
      * TODO needs to be improved
      */
-    qreal totalTestLineLength = 0;
-    qreal totalInterception = 0;
-    QVector<std::vector<cv::Point> > testPts;
-    cv::Point centre(m_markerMatrix->cols / 2, m_markerMatrix->rows / 2);
+    qreal totalTestLineLength = 0, totalInterception = 0;
+    QVector<std::vector<cv::Point_<qreal> > > testPts;
+    cv::Point_<qreal> centre(m_markerMatrix->cols / 2.0, m_markerMatrix->rows / 2.0);
     //margin 2 pixels to avoid image boundary
-    int outer_radius = qMin(centre.x - 2, centre.y - 2);
-    QVector<int> radii;
+    qreal outer_radius = qMin(centre.x - 2, centre.y - 2);
+    QVector<qreal> radii;
     radii << outer_radius << outer_radius * 3 / 5 << outer_radius * 1 / 5;
-    for (QVector<int>::const_iterator it = radii.begin(); it != radii.end(); ++it) {
-        cv::Mat circles = cv::Mat::zeros(m_markerMatrix->size(), CV_8UC1);
-        cv::circle(circles, centre, *it, cv::Scalar(255), 1, 4);
-        std::vector<cv::Point> pts;
-        cv::findNonZero(circles, pts);//it doesn't take in float points
+    for (QVector<qreal>::const_iterator it = radii.begin(); it != radii.end(); ++it) {
+        std::vector<cv::Point_<qreal> > pts;
+        qreal delta = 1 / (*it);//one point for one position
+        for (qreal angle = 0; angle < 2 * M_PI; angle += delta) {
+            pts.push_back(cv::Point_<qreal>(centre.x + (*it) * qCos(angle), centre.y + (*it) * qSin(angle)));
+            ++totalTestLineLength;//more accurate than 2 * pi * radius ?
+        }
         testPts.append(pts);
-        totalTestLineLength += 2 * M_PI * (*it);
+        //totalTestLineLength += 2 * M_PI * (*it);
     }
 
-
-    QtConcurrent::blockingMap(testPts.begin(), testPts.end(), [&](const std::vector<cv::Point> &pts) {
+    QtConcurrent::blockingMap(testPts.begin(), testPts.end(), [&](const std::vector<cv::Point_<qreal> > &pts) {
         int previous = -9;
-        for (std::vector<cv::Point>::const_iterator pit = pts.begin(); pit != pts.end(); ++pit) {
+        for (std::vector<cv::Point_<qreal> >::const_iterator pit = pts.begin(); pit != pts.end(); ++pit) {
             int index = m_markerMatrix->at<int>(*pit);
             if (index == -1 && index != previous) {//grain boundary
                 if (getBoundaryJointNeighbours(*pit) > 2) {
