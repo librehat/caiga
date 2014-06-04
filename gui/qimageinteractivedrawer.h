@@ -19,6 +19,7 @@ public:
     inline bool isWhite() { return m_penColour == QColor(255, 255, 255); }
     void setDrawMode(DRAW_MODE);
     inline DRAW_MODE getDrawMode() const { return m_drawMode; }
+    inline qreal getZoom() { return m_zoomer.getZoom(); }
 
 signals:
     void mousePressed(QPointF);

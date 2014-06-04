@@ -32,7 +32,7 @@ void QImageInteractiveDrawer::paintEvent(QPaintEvent *event)
     qreal zoom = m_zoomer.getZoom();
     QSizeF pixSize = m_image.size() * zoom;
 
-    transformer.setMatrix(zoom, 0, 0, 0, zoom, 0, (this->width() - pixSize.width()) / 2.0, (this->height() - pixSize.height()) / 2.0, 1.0);
+    transformer.setMatrix(zoom, 0, 0, 0, zoom, 0, (event->rect().width() - pixSize.width()) / 2.0, (event->rect().height() - pixSize.height()) / 2.0, 1.0);
     painter.setWorldTransform(transformer);
     painter.drawImage(0, 0, m_image);
 

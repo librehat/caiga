@@ -609,12 +609,20 @@ void MainWindow::onCurrentTabChanged(int i)
     ui->actionSaveCurrentImageAs->setEnabled(true);
 
     switch (i) {
+    case 0://raw
+        zoomLabel->setText(tr("Auto"));
+        break;
     case 1://crop and calibre
         ui->ccPixelViewer->setLivePreviewEnabled(true);
         ui->actionSaveCurrentImageAs->setEnabled(false);
+        onZoomUpdated(ui->ccDrawer->getZoom());
         break;
     case 2://process
         updateRedoUndoStatus();
+        onZoomUpdated(ui->processDrawer->getZoom());
+        break;
+    case 3://analysis
+        onZoomUpdated(ui->analysisInteracter->getZoom());
         break;
     case 4://report
         ui->actionSaveCurrentImageAs->setEnabled(false);

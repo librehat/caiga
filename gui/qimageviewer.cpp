@@ -5,7 +5,6 @@
 QImageViewer::QImageViewer(QWidget *parent) :
     QWidget(parent)
 {
-    m_noScale = false;
 }
 
 void QImageViewer::paintEvent(QPaintEvent *event)
@@ -22,11 +21,8 @@ void QImageViewer::paintEvent(QPaintEvent *event)
         return;
 
     painter.setRenderHint(QPainter::Antialiasing);
-    QSizeF pixSize = m_pixmap.size();
-    if (!m_noScale) {
-        pixSize.scale(event->rect().size(), Qt::KeepAspectRatio);
-        painter.scale(pixSize.width() / m_pixmap.width(), pixSize.height() / m_pixmap.height());
-    }
-    painter.translate((this->width() - pixSize.width()) / 2, (this->height() - pixSize.height()) / 2);
+    QSizeF pixSize = m_pixmap.size().scaled(event->rect().width(), event->rect().height(), Qt::KeepAspectRatio);
+    painter.translate((event->rect().width() - pixSize.width()) / 2, (event->rect().height() - pixSize.height()) / 2);
+    painter.scale(pixSize.width() / m_pixmap.width(), pixSize.height() / m_pixmap.height());
     painter.drawPixmap(0, 0, m_pixmap);
 }

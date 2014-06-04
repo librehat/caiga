@@ -60,14 +60,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QImageViewer" name="rawViewer" native="true">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-         </widget>
+         <widget class="QImageViewer" name="rawViewer" native="true"/>
         </item>
        </layout>
       </widget>
@@ -254,8 +247,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>471</width>
-             <height>491</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -345,8 +338,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>450</width>
-             <height>491</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <layout class="QHBoxLayout" name="processScrollAreaHorizontalLayout">
@@ -584,8 +577,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>372</width>
-             <height>491</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <layout class="QHBoxLayout" name="analysisScrollAreaHorizontalLayout">

@@ -26,6 +26,7 @@ public:
     }
     inline QColor getPenColour() { return m_penColour; }
     inline void reset() { ccSpace->reset(); update(); }
+    inline qreal getZoom() { return m_zoomer.getZoom(); }
 
 public slots:
     inline void setImage(QImage img, bool needRefreshZoom = false) { m_image = img; firstTimeShow = needRefreshZoom || firstTimeShow; update(); }

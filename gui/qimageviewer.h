@@ -11,7 +11,6 @@ class QImageViewer : public QWidget
 public:
     explicit QImageViewer(QWidget *parent = 0);
     inline const QPixmap *pixmap() const { return &m_pixmap; }
-    inline void setNoScale(bool n = true) { m_noScale = n; update();}
 
 public slots:
     inline void setPixmap(const QPixmap &pix) { m_pixmap = pix; update(); }
@@ -22,7 +21,6 @@ protected:
 
 private:
     QPixmap m_pixmap;
-    bool m_noScale;//display the image in its original size
 };
 
 #endif // QIMAGEVIEWER_H
