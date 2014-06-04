@@ -34,7 +34,7 @@ void QImageDrawer::paintEvent(QPaintEvent *event)
      * don't know why would that happen. maybe that's a Qt bug?
      * anyway, just stick to QTransform for now.
      */
-    ccSpace->setTransform(QTransform(zoom, 0, 0, 0, zoom, 0, (event->rect().width() - pixSize.width()) / 2.0, (event->rect().height() - pixSize.height()) / 2.0, 1.0));
+    ccSpace->setTransform(QTransform(zoom, 0, 0, 0, zoom, 0, (this->width() - pixSize.width()) / 2.0, (this->height() - pixSize.height()) / 2.0, 1.0));
     painter.setWorldTransform(ccSpace->getTransform());
     painter.drawImage(0, 0, m_image);
 

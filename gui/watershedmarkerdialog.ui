@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>632</width>
-    <height>399</height>
+    <width>609</width>
+    <height>447</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,8 +46,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>614</width>
-        <height>313</height>
+        <width>591</width>
+        <height>361</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="scrollAreaHorizontalLayout">
