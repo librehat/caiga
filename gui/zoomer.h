@@ -10,6 +10,7 @@ public:
     bool zoomIn();
     bool zoomOut();
     qreal getZoom();
+    void setZoom(qreal z);
     void adjustToNear(qreal scale);
 
 private:

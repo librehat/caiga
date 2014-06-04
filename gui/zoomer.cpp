@@ -42,6 +42,19 @@ qreal Zoomer::getZoom()
     }
 }
 
+void Zoomer::setZoom(qreal z)
+{
+    int p = -1;
+    if (z >= 0) {
+        p = positiveZoomList.indexOf(z);
+        m_level = p >= 0 ? p : 0;
+    }
+    else {
+        p = negativeZoomList.indexOf(z);
+        m_level = p >= 0 ? -(p + 1) : 0;
+    }
+}
+
 void Zoomer::adjustToNear(qreal scale)
 {
     if (scale < 1.0) {
@@ -55,7 +68,7 @@ void Zoomer::adjustToNear(qreal scale)
     else {
         for (int i = 0; i < positiveZoomList.count(); ++i) {
             if (positiveZoomList.at(i) > scale) {
-                m_level = i - 1;//the result is not good if we didn't minus 1
+                m_level = i;
                 return;
             }
         }

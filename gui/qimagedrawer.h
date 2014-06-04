@@ -57,7 +57,7 @@ private:
     bool firstTimeShow;
     Zoomer m_zoomer;
 
-    void findGoodEnoughZoom();
+    void resetZoom();
     void handleSizeChanged(qreal zoom);
 };
 
