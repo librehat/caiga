@@ -598,11 +598,10 @@ void MainWindow::updateReportTextBrowser(int split)
         reporter->disconnect();
         reporter->deleteLater();
     }
-    reporter = new Reporter(analyser, processSpace, split, cgimg.getRawImage(), this);
+    reporter = new Reporter(ui->diameterBarPlotter, analyser, processSpace, split, cgimg.getRawImage(), this);
     connect(reporter, &Reporter::reportAvailable, this, &MainWindow::onReportAvailable);
     connect(reporter, &Reporter::workStatusStrUpdated, this, &MainWindow::onMessagesArrived);
     connect(reporter, &Reporter::reportGenerated, ui->reportTextBrowser, &QTextBrowser::setDocument);
-    reporter->setBarChart(ui->diameterBarPlotter);
     reporter->generateReport();
 }
 

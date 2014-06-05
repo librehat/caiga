@@ -12,14 +12,10 @@ class Reporter : public QObject
 {
     Q_OBJECT
 public:
-    explicit Reporter(CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int s, const QImage &raw, QObject *parent = 0);
-    ~Reporter() {}
-    void setBarChart(QCustomPlot *plot);
+    explicit Reporter(QCustomPlot *plot, CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int s, const QImage &raw, QObject *parent = 0);
     void generateReport();
     void exportAsPDF(QString &filename);
     void exportAsFormat(QString &filename, const QByteArray &format);
-
-    void setTextBrowser();
 
 signals:
     void workStatusStrUpdated(const QString &);

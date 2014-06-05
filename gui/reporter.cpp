@@ -3,9 +3,10 @@
 #include <QtConcurrent>
 #include "reporter.h"
 
-Reporter::Reporter(CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int s, const QImage &raw, QObject *parent) :
+Reporter::Reporter(QCustomPlot *plot, CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int s, const QImage &raw, QObject *parent) :
     QObject(parent)
 {
+    m_plot = plot;
     m_analyser = analyser;
     m_workSpace = workSpace;
     split = s;
@@ -26,10 +27,12 @@ Reporter::Reporter(CAIGA::Analyser *analyser, CAIGA::WorkSpace *workSpace, int s
     cursor = QTextCursor(&textDoc);
 }
 
-void Reporter::setBarChart(QCustomPlot *plot)
+void Reporter::generateReport()
 {
-    m_plot = plot;
-    plot->clearPlottables();
+    emit workStatusStrUpdated(tr("Generating report... Please wait......"));
+
+    //bar chart
+    m_plot->clearPlottables();
     QVector<double> xticks;
 
     //find the biggest diameter at first
@@ -67,33 +70,33 @@ void Reporter::setBarChart(QCustomPlot *plot)
 
     //setup QCustomPlot x axis and y axis
     QFont labelFont("Arial");
-    plot->xAxis->setRange(-maxRadius / split, maxRadius + 2);
-    plot->xAxis->setTickLabelType(QCPAxis::ltNumber);
-    plot->xAxis->setNumberPrecision(4);
-    plot->xAxis->setAutoTicks(false);
-    plot->xAxis->setTickVector(xticks);
-    plot->xAxis->setTickLabelRotation(-30);
-    plot->xAxis->setTickLength(2);
-    plot->xAxis->setSubTickLength(6);
-    plot->xAxis->setSubTickCount(1);
-    plot->xAxis->grid()->setVisible(false);
-    plot->xAxis->setLabel(tr("Diameter (μm)"));
-    plot->xAxis->setLabelFont(labelFont);
-    plot->xAxis->setTickLabelFont(labelFont);
+    m_plot->xAxis->setRange(-maxRadius / split, maxRadius + 2);
+    m_plot->xAxis->setTickLabelType(QCPAxis::ltNumber);
+    m_plot->xAxis->setNumberPrecision(4);
+    m_plot->xAxis->setAutoTicks(false);
+    m_plot->xAxis->setTickVector(xticks);
+    m_plot->xAxis->setTickLabelRotation(-30);
+    m_plot->xAxis->setTickLength(2);
+    m_plot->xAxis->setSubTickLength(6);
+    m_plot->xAxis->setSubTickCount(1);
+    m_plot->xAxis->grid()->setVisible(false);
+    m_plot->xAxis->setLabel(tr("Diameter (μm)"));
+    m_plot->xAxis->setLabelFont(labelFont);
+    m_plot->xAxis->setTickLabelFont(labelFont);
 
-    plot->yAxis->setRange(0, static_cast<double>(maxCountBySlice + 1));
-    plot->yAxis->setTickLabelType(QCPAxis::ltNumber);
-    plot->yAxis->setAutoSubTicks(false);
-    plot->yAxis->setSubTickCount(0);
-    plot->yAxis->setTickStep(static_cast<double>(maxCountBySlice > 20 ? 5 : 2));
-    plot->yAxis->setLabel(tr("Count"));
-    plot->yAxis->setLabelFont(labelFont);
-    plot->yAxis->setTickLabelFont(labelFont);
+    m_plot->yAxis->setRange(0, static_cast<double>(maxCountBySlice + 1));
+    m_plot->yAxis->setTickLabelType(QCPAxis::ltNumber);
+    m_plot->yAxis->setAutoSubTicks(false);
+    m_plot->yAxis->setSubTickCount(0);
+    m_plot->yAxis->setTickStep(static_cast<double>(maxCountBySlice > 20 ? 5 : 2));
+    m_plot->yAxis->setLabel(tr("Count"));
+    m_plot->yAxis->setLabelFont(labelFont);
+    m_plot->yAxis->setTickLabelFont(labelFont);
 
     //setup data
     for (int i = 0; i < m_analyser->classCount(); ++i) {
-        QCPBars *bars = new QCPBars(plot->xAxis, plot->yAxis);
-        plot->addPlottable(bars);
+        QCPBars *bars = new QCPBars(m_plot->xAxis, m_plot->yAxis);
+        m_plot->addPlottable(bars);
 
         int r = qrand() % 255;
         int g = qrand() % 255;
@@ -107,21 +110,18 @@ void Reporter::setBarChart(QCustomPlot *plot)
 
         //stack above the previous one
         if (i > 0) {
-            if (QCPBars *previousBars = qobject_cast<QCPBars *>(plot->plottable(i - 1))) {
+            if (QCPBars *previousBars = qobject_cast<QCPBars *>(m_plot->plottable(i - 1))) {
                 bars->moveAbove(previousBars);
             }
         }
     }
 
-    plot->legend->setVisible(true);
-    plot->legend->setFont(labelFont);
-    plot->setInteraction(QCP::iSelectPlottables);
-    plot->replot();
-}
+    m_plot->legend->setVisible(true);
+    m_plot->legend->setFont(labelFont);
+    m_plot->setInteraction(QCP::iSelectPlottables);
+    m_plot->replot();
 
-void Reporter::generateReport()
-{
-    emit workStatusStrUpdated(tr("Generating report... Please wait......"));
+    //report
     cursor.setBlockFormat(alignCentreBlockFormat());
     cursor.insertBlock(alignCentreBlockFormat(), boldRomanFormat());
     cursor.insertText("Computer-Aid Interactive Grain Analyser\nAnalysis Report");
