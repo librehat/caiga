@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QDir::setCurrent(settings.value("CurrentDir").toString());
 
     //initialise pointers
-    cropCalibreSpace = NULL;
+    calibreSpace = NULL;
     processSpace = NULL;
     previewSpace = NULL;
     cameraDlg = NULL;
@@ -31,11 +31,11 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui->rawViewer->setNoScale();
     //processTab button menu
     mouseBehaviourMenu = new QMenu(this);
-    mouseBehaviourMenu->addAction(tr("Normal Arrow"), this, SLOT(onMouseNormalArrow()));
-    mouseBehaviourMenu->addAction(tr("White Pencil"), this, SLOT(onMouseWhitePencil()));
-    mouseBehaviourMenu->addAction(tr("Black Pencil"), this, SLOT(onMouseBlackPencil()));
-    mouseBehaviourMenu->addAction(tr("White Eraser"), this, SLOT(onMouseWhiteEraser()));
-    mouseBehaviourMenu->addAction(tr("Black Eraser"), this, SLOT(onMouseBlackEraser()));
+    mouseBehaviourMenu->addAction(QIcon::fromTheme("edit-select"), tr("Normal Arrow"), this, SLOT(onMouseNormalArrow()));
+    mouseBehaviourMenu->addAction(QIcon::fromTheme("draw-freehand"), tr("White Pencil"), this, SLOT(onMouseWhitePencil()));
+    mouseBehaviourMenu->addAction(QIcon::fromTheme("draw-freehand"), tr("Black Pencil"), this, SLOT(onMouseBlackPencil()));
+    mouseBehaviourMenu->addAction(QIcon::fromTheme("draw-eraser"), tr("White Eraser"), this, SLOT(onMouseWhiteEraser()));
+    mouseBehaviourMenu->addAction(QIcon::fromTheme("draw-eraser"), tr("Black Eraser"), this, SLOT(onMouseBlackEraser()));
     ui->mouseBehaviourButton->setMenu(mouseBehaviourMenu);
 
     //report
@@ -56,13 +56,13 @@ MainWindow::MainWindow(QWidget *parent) :
      * SIGNALs and SLOTs
      * Only those that cannot be connected in Deisgner should be defined below
      */
-    //crop and calibre tab
-    connect(ui->buttonGroup, static_cast<void (QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &MainWindow::ccModeChanged);//Operation Mode
-    connect(ui->ccDrawer, &QImageDrawer::calibreFinished, ui->scaleDoubleSpinBox, &QDoubleSpinBox::setValue);
-    connect(ui->ccDrawer, &QImageDrawer::gaugeLineResult, this, &MainWindow::onGaugeLineFinished);
-    connect(ui->ccLoadMacroButton, &QPushButton::clicked, this, &MainWindow::onCCLoadMacroButtonClicked);
-    connect(ui->ccSaveMacroButton, &QPushButton::clicked, this, &MainWindow::onCCSaveMacroButtonClicked);
-    connect(ui->ccButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onCCButtonBoxClicked);
+    //calibre tab
+    connect(ui->buttonGroup, static_cast<void (QButtonGroup::*)(int)>(&QButtonGroup::buttonClicked), this, &MainWindow::calibreModeChanged);//Operation Mode
+    connect(ui->calibreDrawer, &QImageDrawer::calibreFinished, ui->scaleDoubleSpinBox, &QDoubleSpinBox::setValue);
+    connect(ui->calibreDrawer, &QImageDrawer::gaugeLineResult, this, &MainWindow::onMeasureFinished);
+    connect(ui->calibreLoadMacroButton, &QPushButton::clicked, this, &MainWindow::onCalibreLoadMacroButtonClicked);
+    connect(ui->calibreSaveMacroButton, &QPushButton::clicked, this, &MainWindow::onCalibreSaveMacroButtonClicked);
+    connect(ui->calibreButtonBox, &QDialogButtonBox::clicked, this, &MainWindow::onCalibreButtonBoxClicked);
 
     //processTab
     connect(ui->invertGrayscaleButton, &QPushButton::clicked, this, &MainWindow::onInvertGrayscaleButtonClicked);
@@ -103,7 +103,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this, &MainWindow::configReadFinished, this, &MainWindow::updateOptions);
 
     //Zoom
-    connect(ui->ccDrawer, &QImageDrawer::zoomUpdated, this, &MainWindow::onZoomUpdated);
+    connect(ui->calibreDrawer, &QImageDrawer::zoomUpdated, this, &MainWindow::onZoomUpdated);
     connect(ui->processDrawer, &QImageInteractiveDrawer::zoomUpdated, this, &MainWindow::onZoomUpdated);
     connect(ui->analysisInteracter, &QImageInteractiveDrawer::zoomUpdated, this, &MainWindow::onZoomUpdated);
 
@@ -151,56 +151,56 @@ const QString MainWindow::aboutText = QString() + "<h3>Computer-Aid Interactive 
 
         + "</p><p>Copyright &copy; 2014 <a href='http://www.librehat.com'>William Wong</a> (<a href='mailto:hzwhuang@gmail.com'>hzwhuang@gmail.com</a>) and other contributors.<br /><a href= 'http://smse.seu.edu.cn'>School of Materials Science and Engineering</a>, <a href='http://www.seu.edu.cn'>Southeast University</a>.</p><p>Licensed under <a href='http://www.gnu.org/licenses/gpl-3.0.html'>GPLv3</a>.<br /></p><p><strong>The software contains third-party libraries and artwork below.</strong><br /><a href='http://qcustomplot.com'>QCustomPlot</a> licensed under <a href='http://www.gnu.org/licenses/gpl.html'>GPL</a><br /><a href='http://opencv.org'>OpenCV</a> licensed under <a href='https://github.com/Itseez/opencv/blob/master/LICENSE'>3-clause BSD License</a><br /><a href='http://www.oxygen-icons.org'>Oxygen Icons</a> licensed under <a href='http://www.gnu.org/licenses/lgpl-3.0.txt'>LGPLv3</a><br /></p><div>THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</div>";
 
-void MainWindow::ccModeChanged(int i)
+void MainWindow::calibreModeChanged(int i)
 {
-    ui->ccDrawer->setDrawMode(i);
+    ui->calibreDrawer->setDrawMode(i);
 }
 
-void MainWindow::onGaugeLineFinished(qreal r)
+void MainWindow::onMeasureFinished(qreal r)
 {
-    ui->gaugeResultLabel->setText(QString("%1 μm").arg(r));
+    ui->measureResultLabel->setText(QString("%1 μm").arg(r));
 }
 
-void MainWindow::onCCLoadMacroButtonClicked()
+void MainWindow::onCalibreLoadMacroButtonClicked()
 {
-    QString macroFile = QFileDialog::getOpenFileName(this, tr("Load Macro for Crop and Calibre"), QDir::currentPath(), "Macro Text File (*.txt)");
+    QString macroFile = QFileDialog::getOpenFileName(this, tr("Load Macro for Calibre"), QDir::currentPath(), "Macro Text File (*.txt)");
     if (macroFile.isNull()) {
         return;
     }
     setCurrentDirbyFile(macroFile);
     CAIGA::Macro macro(this);
-    macro.setCCSpace(cropCalibreSpace);
+    macro.setCCSpace(calibreSpace);
     macro.doCropAndCalibreMacroFromFile(macroFile);
     macro.deleteLater();
-    ui->ccDrawer->update();
+    ui->calibreDrawer->update();
 }
 
-void MainWindow::onCCSaveMacroButtonClicked()
+void MainWindow::onCalibreSaveMacroButtonClicked()
 {
-    QString macroFile = QFileDialog::getSaveFileName(this, tr("Save as Macro File for Crop and Calibre"), QDir::currentPath(), "Macro Text File (*.txt)");
+    QString macroFile = QFileDialog::getSaveFileName(this, tr("Save as Macro File for Calibre"), QDir::currentPath(), "Macro Text File (*.txt)");
     if (macroFile.isNull()) {
         return;
     }
     setCurrentDirbyFile(macroFile);
     CAIGA::Macro macro(this);
-    macro.setCCSpace(cropCalibreSpace);
+    macro.setCCSpace(calibreSpace);
     macro.saveCropAndCalibreAsMacroFile(macroFile);
     macro.deleteLater();
 }
 
-void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
+void MainWindow::onCalibreButtonBoxClicked(QAbstractButton *b)
 {
-    if (ui->ccButtonBox->standardButton(b) == QDialogButtonBox::Reset) {
-        ui->ccDrawer->reset();
+    if (ui->calibreButtonBox->standardButton(b) == QDialogButtonBox::Reset) {
+        ui->calibreDrawer->reset();
         ui->scaleDoubleSpinBox->setValue(0);
-        ui->cropRectRadio->setChecked(true);
+        ui->rectRadio->setChecked(true);
     }
     else {//save
         if (cgimg.getScaleValue() <= 0) {
             onMessagesArrived(tr("You must calibre image scale before move to next step."));
             return;
         }
-        cropCalibreSpace->cropImage();
+        calibreSpace->cropImage();
 
         if (processSpace != NULL) {
             processSpace->disconnect();
@@ -228,6 +228,7 @@ void MainWindow::onCCButtonBoxClicked(QAbstractButton *b)
 void MainWindow::onMouseNormalArrow()
 {
     ui->mouseBehaviourButton->setText(tr("Normal Arrow"));
+    ui->mouseBehaviourButton->setIcon(QIcon::fromTheme("edit-select"));
     ui->processDrawer->setDrawMode(QImageInteractiveDrawer::NONE);
     disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
 }
@@ -236,6 +237,7 @@ void MainWindow::onMouseWhitePencil()
 {
     disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
     ui->mouseBehaviourButton->setText(tr("White Pencil"));
+    ui->mouseBehaviourButton->setIcon(QIcon::fromTheme("draw-freehand"));
     ui->processDrawer->setWhite();
     ui->processDrawer->setDrawMode(QImageInteractiveDrawer::PENCIL);
     connect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onPencilDrawFinished);
@@ -245,6 +247,7 @@ void MainWindow::onMouseBlackPencil()
 {
     disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
     ui->mouseBehaviourButton->setText(tr("Black Pencil"));
+    ui->mouseBehaviourButton->setIcon(QIcon::fromTheme("draw-freehand"));
     ui->processDrawer->setWhite(false);
     ui->processDrawer->setDrawMode(QImageInteractiveDrawer::PENCIL);
     connect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onPencilDrawFinished);
@@ -254,6 +257,7 @@ void MainWindow::onMouseWhiteEraser()
 {
     disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
     ui->mouseBehaviourButton->setText(tr("White Eraser"));
+    ui->mouseBehaviourButton->setIcon(QIcon::fromTheme("draw-eraser"));
     ui->processDrawer->setWhite();
     ui->processDrawer->setDrawMode(QImageInteractiveDrawer::ERASER);
     connect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onEraserDrawFinished);
@@ -263,6 +267,7 @@ void MainWindow::onMouseBlackEraser()
 {
     disconnect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, 0, 0);
     ui->mouseBehaviourButton->setText(tr("Black Eraser"));
+    ui->mouseBehaviourButton->setIcon(QIcon::fromTheme("draw-eraser"));
     ui->processDrawer->setWhite(false);
     ui->processDrawer->setDrawMode(QImageInteractiveDrawer::ERASER);
     connect(ui->processDrawer, &QImageInteractiveDrawer::mouseReleased, this, &MainWindow::onEraserDrawFinished);
@@ -444,7 +449,7 @@ void MainWindow::onWatershedButtonClicked()
         watershedDlg->deleteLater();
     }
     watershedDlg = new WatershedMarkerDialog(this);
-    watershedDlg->setPenColour(ui->ccDrawer->getPenColour());
+    watershedDlg->setPenColour(ui->calibreDrawer->getPenColour());
     watershedDlg->setOriginalMat(processSpace->getLastMatrix(), processSpace->last()->inputMarker);
     connect(watershedDlg, &WatershedMarkerDialog::reseted, this, &MainWindow::onProcessWorkFinished);
     connect(watershedDlg, &WatershedMarkerDialog::previewTriggered, this, &MainWindow::onWatershedPreviewed);
@@ -603,7 +608,7 @@ void MainWindow::updateReportTextBrowser(int split)
 
 void MainWindow::onCurrentTabChanged(int i)
 {
-    ui->ccPixelViewer->setLivePreviewEnabled(false);
+    ui->calibrePixelViewer->setLivePreviewEnabled(false);
     ui->actionRedo->setEnabled(false);
     ui->actionUndo->setEnabled(false);
     ui->actionSaveCurrentImageAs->setEnabled(true);
@@ -612,10 +617,10 @@ void MainWindow::onCurrentTabChanged(int i)
     case 0://raw
         zoomLabel->setText(tr("Auto"));
         break;
-    case 1://crop and calibre
-        ui->ccPixelViewer->setLivePreviewEnabled(true);
+    case 1://calibre
+        ui->calibrePixelViewer->setLivePreviewEnabled(true);
         ui->actionSaveCurrentImageAs->setEnabled(false);
-        onZoomUpdated(ui->ccDrawer->getZoom());
+        onZoomUpdated(ui->calibreDrawer->getZoom());
         break;
     case 2://process
         updateRedoUndoStatus();
@@ -671,7 +676,7 @@ void MainWindow::onCameraImageAccepted(const QImage &img)
 
 void MainWindow::onResetActionTriggered()
 {
-    ui->ccDrawer->reset();
+    ui->calibreDrawer->reset();
     ui->imageTabs->setCurrentIndex(0);
     ui->processDrawer->setImage(QImage());
     if (processSpace != NULL) {
@@ -803,7 +808,7 @@ void MainWindow::updateOptions(int toolbarStyle, int tabPos, const QString &colo
     default:
         qWarning("Invalid Tab Position");
     }
-    ui->ccDrawer->setPenColour(colour);
+    ui->calibreDrawer->setPenColour(colour);
 }
 
 void MainWindow::readConfig()
@@ -831,14 +836,14 @@ void MainWindow::setCurrentDirbyFile(QString &f)
 
 void MainWindow::onNewImageOpened()
 {
-    //setup cropCalibreSpace
-    if (cropCalibreSpace != NULL) {
-        cropCalibreSpace->disconnect();
-        cropCalibreSpace->deleteLater();
+    //setup calibreSpace
+    if (calibreSpace != NULL) {
+        calibreSpace->disconnect();
+        calibreSpace->deleteLater();
     }
-    cropCalibreSpace = new CAIGA::CCSpace(&cgimg, this);
-    connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), cropCalibreSpace, static_cast<void (CAIGA::CCSpace::*) (qreal)>(&CAIGA::CCSpace::setScaleValue));
-    ui->ccDrawer->setSpace(cropCalibreSpace);
+    calibreSpace = new CAIGA::CCSpace(&cgimg, this);
+    connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), calibreSpace, static_cast<void (CAIGA::CCSpace::*) (qreal)>(&CAIGA::CCSpace::setScaleValue));
+    ui->calibreDrawer->setSpace(calibreSpace);
 
     //clean up process, analysis and report
     ui->reportTextBrowser->clear();
@@ -851,7 +856,7 @@ void MainWindow::onNewImageOpened()
 
     //setup tabs and some actions
     ui->rawViewer->setPixmap(cgimg.getRawPixmap());
-    ui->ccDrawer->setImage(cgimg.getRawImage(), true);
+    ui->calibreDrawer->setImage(cgimg.getRawImage(), true);
     onReportAvailable(false);
     ui->imageTabs->setEnabled(true);
     ui->processTab->setEnabled(false);
@@ -863,7 +868,7 @@ void MainWindow::onNewImageOpened()
 
 void MainWindow::updateRedoUndoStatus()
 {
-    if (ui->processTab->isEnabled()) {//prevent from crashes when processTab isn't ready (i.e. user click the processTab before clicking save in crop and calibre)
+    if (ui->processTab->isEnabled()) {//prevent from crashes when processTab isn't ready (i.e. user click the processTab before clicking save in calibre)
         ui->actionRedo->setEnabled(processSpace->countUndone() > 0);
         ui->actionUndo->setEnabled(processSpace->count() > 1);
     }

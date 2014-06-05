@@ -44,12 +44,12 @@ signals:
     void messageArrived(const QString &);//to display on statusbar
 
 private slots:
-    //crop and calibre
-    void ccModeChanged(int);
-    void onGaugeLineFinished(qreal);
-    void onCCLoadMacroButtonClicked();
-    void onCCSaveMacroButtonClicked();
-    void onCCButtonBoxClicked(QAbstractButton *);
+    //calibre
+    void calibreModeChanged(int);
+    void onMeasureFinished(qreal);
+    void onCalibreLoadMacroButtonClicked();
+    void onCalibreSaveMacroButtonClicked();
+    void onCalibreButtonBoxClicked(QAbstractButton *);
 
     //process
     void onMouseNormalArrow();
@@ -139,7 +139,7 @@ private:
     void setCurrentDirbyFile(QString &);
 
     CAIGA::Image cgimg;
-    CAIGA::CCSpace *cropCalibreSpace;
+    CAIGA::CCSpace *calibreSpace;
     CAIGA::WorkSpace *processSpace;
     CAIGA::WorkSpace *previewSpace;
     QVector<QPointF> floodfillPts;

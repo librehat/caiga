@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>658</width>
-    <height>616</height>
+    <width>654</width>
+    <height>612</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -47,16 +47,7 @@
         <string>Raw</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item>
@@ -64,32 +55,23 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="ccTab">
+      <widget class="QWidget" name="calibreTab">
        <attribute name="title">
-        <string>Crop and Calibre</string>
+        <string>Calibre</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_3">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item row="7" column="1" alignment="Qt::AlignBottom">
-         <widget class="QDialogButtonBox" name="ccButtonBox">
+         <widget class="QDialogButtonBox" name="calibreButtonBox">
           <property name="standardButtons">
            <set>QDialogButtonBox::Reset|QDialogButtonBox::Save</set>
           </property>
          </widget>
         </item>
         <item row="5" column="1" alignment="Qt::AlignBottom">
-         <widget class="QLabel" name="gaugeResultLabel">
+         <widget class="QLabel" name="measureResultLabel">
           <property name="text">
            <string/>
           </property>
@@ -99,7 +81,7 @@
          </widget>
         </item>
         <item row="4" column="1">
-         <spacer name="ccVerticalSpacer_2">
+         <spacer name="calibreVerticalSpacer_2">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -112,7 +94,7 @@
          </spacer>
         </item>
         <item row="6" column="1">
-         <spacer name="ccVerticalSpacer">
+         <spacer name="calibreVerticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -125,7 +107,7 @@
          </spacer>
         </item>
         <item row="2" column="1" rowspan="2">
-         <widget class="LivePixelViewer" name="ccPixelViewer" native="true">
+         <widget class="LivePixelViewer" name="calibrePixelViewer" native="true">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -135,7 +117,7 @@
          </widget>
         </item>
         <item row="0" column="1" rowspan="2">
-         <widget class="QGroupBox" name="ccModeGroupBox">
+         <widget class="QGroupBox" name="calibreModeGroupBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -147,9 +129,12 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
-            <widget class="QRadioButton" name="cropRectRadio">
+            <widget class="QRadioButton" name="rectRadio">
              <property name="text">
-              <string>Crop Rectangle</string>
+              <string>Select Rectangle</string>
+             </property>
+             <property name="icon">
+              <iconset theme="select-rectangular"/>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -164,15 +149,21 @@
              <property name="text">
               <string>Calibre</string>
              </property>
+             <property name="icon">
+              <iconset theme="measure"/>
+             </property>
              <attribute name="buttonGroup">
               <string notr="true">buttonGroup</string>
              </attribute>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="gaugeRadio">
+            <widget class="QRadioButton" name="measureRadio">
              <property name="text">
-              <string>Gauge a Line</string>
+              <string>Measure</string>
+             </property>
+             <property name="icon">
+              <iconset theme="measure"/>
              </property>
              <attribute name="buttonGroup">
               <string notr="true">buttonGroup</string>
@@ -209,14 +200,14 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="ccLoadMacroButton">
+            <widget class="QPushButton" name="calibreLoadMacroButton">
              <property name="text">
               <string>Load Macro</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="ccSaveMacroButton">
+            <widget class="QPushButton" name="calibreSaveMacroButton">
              <property name="text">
               <string>Save As Macro</string>
              </property>
@@ -226,7 +217,7 @@
          </widget>
         </item>
         <item row="0" column="0" rowspan="8">
-         <widget class="QScrollArea" name="ccScrollArea">
+         <widget class="QScrollArea" name="calibreScrollArea">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>10</horstretch>
@@ -242,33 +233,24 @@
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
-          <widget class="QWidget" name="ccScrollAreaWidgetContents">
+          <widget class="QWidget" name="calibreScrollAreaWidgetContents">
            <property name="geometry">
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>466</width>
+             <height>490</height>
             </rect>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <property name="spacing">
              <number>0</number>
             </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
+            <property name="margin">
              <number>0</number>
             </property>
             <item>
-             <widget class="QImageDrawer" name="ccDrawer" native="true">
+             <widget class="QImageDrawer" name="calibreDrawer" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                 <horstretch>10</horstretch>
@@ -291,16 +273,7 @@
         <string>Process</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item row="1" column="2">
@@ -338,24 +311,15 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>459</width>
+             <height>490</height>
             </rect>
            </property>
            <layout class="QHBoxLayout" name="processScrollAreaHorizontalLayout">
             <property name="spacing">
              <number>0</number>
             </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
+            <property name="margin">
              <number>0</number>
             </property>
             <item>
@@ -388,6 +352,11 @@
             <widget class="QPushButton" name="mouseBehaviourButton">
              <property name="text">
               <string>Normal Arrow</string>
+             </property>
+             <property name="icon">
+              <iconset theme="edit-select">
+               <normaloff/>
+              </iconset>
              </property>
             </widget>
            </item>
@@ -485,16 +454,7 @@
         <string>Analysis</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item row="1" column="1" colspan="2">
@@ -577,24 +537,15 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>376</width>
+             <height>490</height>
             </rect>
            </property>
            <layout class="QHBoxLayout" name="analysisScrollAreaHorizontalLayout">
             <property name="spacing">
              <number>0</number>
             </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
+            <property name="margin">
              <number>0</number>
             </property>
             <item>
@@ -618,16 +569,7 @@
         <string>Report</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
+        <property name="margin">
          <number>0</number>
         </property>
         <item row="0" column="4">
@@ -722,8 +664,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>658</width>
-     <height>21</height>
+     <width>654</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">

@@ -48,6 +48,21 @@
         <file alias="22x22/image-x-generic.png">icons/Oxygen/22x22/image-x-generic.png</file>
         <file alias="32x32/image-x-generic.png">icons/Oxygen/32x32/image-x-generic.png</file>
         <file alias="48x48/image-x-generic.png">icons/Oxygen/48x48/image-x-generic.png</file>
+        <file alias="48x48/measure.png">icons/Oxygen/48x48/measure.png</file>
+        <file alias="22x22/measure.png">icons/Oxygen/22x22/measure.png</file>
+        <file alias="32x32/measure.png">icons/Oxygen/32x32/measure.png</file>
+        <file alias="48x48/select-rectangular.png">icons/Oxygen/48x48/select-rectangular.png</file>
+        <file alias="22x22/select-rectangular.png">icons/Oxygen/22x22/select-rectangular.png</file>
+        <file alias="32x32/select-rectangular.png">icons/Oxygen/32x32/select-rectangular.png</file>
+        <file alias="22x22/draw-eraser.png">icons/Oxygen/22x22/draw-eraser.png</file>
+        <file alias="32x32/draw-eraser.png">icons/Oxygen/32x32/draw-eraser.png</file>
+        <file alias="48x48/draw-eraser.png">icons/Oxygen/48x48/draw-eraser.png</file>
+        <file alias="22x22/draw-freehand.png">icons/Oxygen/22x22/draw-freehand.png</file>
+        <file alias="32x32/draw-freehand.png">icons/Oxygen/32x32/draw-freehand.png</file>
+        <file alias="48x48/draw-freehand.png">icons/Oxygen/48x48/draw-freehand.png</file>
+        <file alias="22x22/edit-select.png">icons/Oxygen/22x22/edit-select.png</file>
+        <file alias="32x32/edit-select.png">icons/Oxygen/32x32/edit-select.png</file>
+        <file alias="48x48/edit-select.png">icons/Oxygen/48x48/edit-select.png</file>
         <file alias="index.theme">icons/Oxygen/index.theme</file>
     </qresource>
 </RCC>

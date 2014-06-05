@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>609</width>
-    <height>447</height>
+    <width>636</width>
+    <height>445</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,24 +46,15 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>591</width>
-        <height>361</height>
+        <width>624</width>
+        <height>358</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="scrollAreaHorizontalLayout">
        <property name="spacing">
         <number>0</number>
        </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
+       <property name="margin">
         <number>0</number>
        </property>
        <item>
@@ -184,6 +175,9 @@
     <widget class="QPushButton" name="brushModeButton">
      <property name="text">
       <string>Marker</string>
+     </property>
+     <property name="icon">
+      <iconset theme="draw-freehand"/>
      </property>
     </widget>
    </item>
