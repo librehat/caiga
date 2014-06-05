@@ -518,31 +518,37 @@ void MainWindow::onProcessButtonBoxClicked(QAbstractButton *b)
         ui->imageTabs->setCurrentIndex(3);
 
         onMessagesArrived(tr("Analysing... Please Wait......"));
-        //setup analyser and retrive report
-        if (analyser != NULL) {
-            analyser->disconnect();
-            analyser->deleteLater();
-        }
-        analyser = new CAIGA::Analyser(cgimg.getScaleValue(), processSpace->getMarkerMatrix(), processSpace->getContours(), this);
-
+        //clean the previous delegate
         if (analysisDelegate != NULL) {
             analysisDelegate->disconnect();
             analysisDelegate->deleteLater();
         }
         analysisDelegate = new AnalysisItemDelegate(ui->analysisTableView);
         ui->analysisTableView->setItemDelegate(analysisDelegate);
-        analysisDelegate->setClassesList(analyser->getClassesList());
-
-        ui->analysisTableView->setModel(analyser->getDataModel());
-        ui->analysisTableView->resizeColumnsToContents();
-        connect(analyser, &CAIGA::Analyser::foundContourIndex, this, &MainWindow::onContourIndexFound);
-        connect(analyser, &CAIGA::Analyser::currentClassChanged, this, &MainWindow::onCurrentClassChanged);
-        connect(ui->analysisInteracter, &QImageInteractiveDrawer::mousePressed, analyser, &CAIGA::Analyser::findContourHasPoint);
-        connect(ui->analysisTableView, &QTableView::activated, analyser, &CAIGA::Analyser::onModelIndexChanged);
-        connect(analysisDelegate, &AnalysisItemDelegate::classChanged, analyser, &CAIGA::Analyser::onClassChanged);
-        onMessagesArrived(tr("Analysed."));
+        //setup analyser and retrive report
+        if (analyser != NULL) {
+            analyser->disconnect();
+            analyser->deleteLater();
+        }
+        analyser = new CAIGA::Analyser(cgimg.getScaleValue(), processSpace->getMarkerMatrix(), processSpace->getContours(), this);
+        connect(analyser, &CAIGA::Analyser::finished, this, &MainWindow::onAnalysisFinished);
+        analyser->reset();
     }
     previewSpace->clear();
+}
+
+void MainWindow::onAnalysisFinished()
+{
+    analysisDelegate->setClassesList(analyser->getClassesList());
+
+    ui->analysisTableView->setModel(analyser->getDataModel());
+    ui->analysisTableView->resizeColumnsToContents();
+    connect(analyser, &CAIGA::Analyser::foundContourIndex, this, &MainWindow::onContourIndexFound);
+    connect(analyser, &CAIGA::Analyser::currentClassChanged, this, &MainWindow::onCurrentClassChanged);
+    connect(ui->analysisInteracter, &QImageInteractiveDrawer::mousePressed, analyser, &CAIGA::Analyser::findContourHasPoint);
+    connect(ui->analysisTableView, &QTableView::activated, analyser, &CAIGA::Analyser::onModelIndexChanged);
+    connect(analysisDelegate, &AnalysisItemDelegate::classChanged, analyser, &CAIGA::Analyser::onClassChanged);
+    onMessagesArrived(tr("Analysed."));
 }
 
 void MainWindow::onContourIndexFound(const QModelIndex &i)

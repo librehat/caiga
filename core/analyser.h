@@ -59,6 +59,7 @@ public:
 signals:
     void foundContourIndex(const QModelIndex &);
     void currentClassChanged(int classIdx);
+    void finished();
 
 public slots:
     void findContourHasPoint(const QPointF &pt);
@@ -66,7 +67,7 @@ public slots:
     void onClassChanged(const QModelIndex &mIndex, const QString classText);
 
 private:
-    void calculateByContours();
+    QFutureWatcher<void> m_watcher;
 
     qreal scaleValue;//pixel / um
     int currentSelectedIdx;
@@ -83,6 +84,8 @@ private:
 
     QStandardItemModel *contoursModel;
     QStringList headerLabels;
+
+    void calculateByContours();
 
     qreal calculatePerimeter(int idx);
     qreal calculateContourAreaByPixels(int idx);

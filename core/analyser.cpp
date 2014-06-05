@@ -14,18 +14,21 @@ Analyser::Analyser(qreal scale, cv::Mat *markers, std::vector<std::vector<cv::Po
     m_markerMatrix = markers;
     scaleValue = scale;
     m_contours = contours;
-    reset();
+    connect(&m_watcher, &QFutureWatcher<void>::finished, this, &Analyser::finished);
 }
 
 void Analyser::reset()
 {
-    contoursModel->clear();
-    contoursModel->setHorizontalHeaderLabels(headerLabels);
-    currentSelectedIdx = 0;
-    previousClassIdx = -1;
-    calculateByContours();
-    calculatePercentage();
-    calculateIntercepts();
+    QFuture<void> future = QtConcurrent::run([&] () {
+        contoursModel->clear();
+        contoursModel->setHorizontalHeaderLabels(headerLabels);
+        currentSelectedIdx = 0;
+        previousClassIdx = -1;
+        calculateByContours();
+        calculatePercentage();
+        calculateIntercepts();
+    });
+    m_watcher.setFuture(future);
 }
 
 void Analyser::calculateByContours()

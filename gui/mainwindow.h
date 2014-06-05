@@ -91,6 +91,7 @@ private slots:
     void onProcessButtonBoxClicked(QAbstractButton *);
 
     //analysis
+    void onAnalysisFinished();
     void onContourIndexFound(const QModelIndex &);
     void onCurrentClassChanged(int);
     void onAnalysisButtonBoxClicked(QAbstractButton *);
