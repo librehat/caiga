@@ -27,7 +27,7 @@ Reporter::Reporter(QCustomPlot *plot, CAIGA::Analyser *analyser, CAIGA::WorkSpac
     cursor = QTextCursor(&textDoc);
 }
 
-void Reporter::generateReport()
+void Reporter::generateReport()//TODO multi-threading
 {
     emit workStatusStrUpdated(tr("Generating report... Please wait......"));
 
