@@ -1,8 +1,8 @@
 #include "zoomer.h"
 
-const QList<qreal> Zoomer::positiveZoomList = QList<qreal>() << 1.0 << 1.25 << 2 << 2.5 << 4 << 5 << 8 << 10 << 20 << 32 << 50 << 100;
+const QList<qreal> Zoomer::positiveZoomList = QList<qreal>() << 1.0 << 1.25 << 2 << 2.5 << 4 << 5 << 8 << 10 << 16 << 20 << 32 << 40 << 50 << 64 << 80 << 100;
 
-const QList<qreal> Zoomer::negativeZoomList = QList<qreal>() << 0.8 << 0.5 << 0.4 << 0.25 << 0.2 << 0.125 << 0.1 << 0.05 << 0.03125 << 0.02 << 0.01;
+const QList<qreal> Zoomer::negativeZoomList = QList<qreal>() << 0.8 << 0.5 << 0.4 << 0.25 << 0.2 << 0.125 << 0.1 << 0.0625 << 0.05 << 0.03125 << 0.025 << 0.02 << 0.015625 << 0.0125 << 0.01;
 
 Zoomer::Zoomer()
 {
