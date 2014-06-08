@@ -42,7 +42,7 @@ public:
     static Mat convertQImage2Mat(const QImage &qimg, bool indexed = false);
 
     friend class WorkSpace;
-    friend class CCSpace;
+    friend class CalibreSpace;
 
 private:
     qreal m_scale;// pixel/um

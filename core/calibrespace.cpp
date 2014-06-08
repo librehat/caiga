@@ -1,8 +1,8 @@
-#include "ccspace.h"
+#include "calibrespace.h"
 #include <QDebug>
 using namespace CAIGA;
 
-CCSpace::CCSpace(Image *img, QObject *parent) :
+CalibreSpace::CalibreSpace(Image *img, QObject *parent) :
     QObject(parent)
 {
     m_image = img;
@@ -10,13 +10,13 @@ CCSpace::CCSpace(Image *img, QObject *parent) :
     reset();
 }
 
-void CCSpace::setScaleValue(qreal bar, qreal realLength)
+void CalibreSpace::setScaleValue(qreal bar, qreal realLength)
 {
      *scaleValue = bar / realLength;
     emit scaleValueChanged(*scaleValue);
 }
 
-void CCSpace::cropImage()
+void CalibreSpace::cropImage()
 {
     cv::Point_<qreal> tl, br;
     QPointF qtl = qrect.topLeft();
@@ -29,7 +29,7 @@ void CCSpace::cropImage()
     m_image->croppedImage = m_image->rawImage(rect).clone();
 }
 
-void CCSpace::reset()
+void CalibreSpace::reset()
 {
     qrect.setTopLeft(QPointF(0, 0));
     qrect.setBottomRight(QPointF(0, 0));

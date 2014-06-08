@@ -3,15 +3,15 @@
 #include "macro.h"
 using namespace CAIGA;
 
-Macro::Macro(QObject *parent) :
+Macro::Macro(CalibreSpace *c, QObject *parent) :
     QObject(parent)
 {
-    m_ccSpace = NULL;
+    m_calibreSpace = c;
 }
 
 void Macro::doCropAndCalibreMacroFromFile(const QString &f)
 {
-    if (m_ccSpace == NULL) {
+    if (m_calibreSpace == NULL) {
         qWarning() << "Error. CCSpace pointer is NULL.";
         return;
     }
@@ -54,10 +54,10 @@ void Macro::doCropAndCalibreMacroFromFile(const QString &f)
                 }
                 else {
                     QRect r(QPoint(topleft[0].toInt(), topleft[1].toInt()), QPoint(bottomright[0].toInt(), bottomright[1].toInt()));
-                    m_ccSpace->setRectangle(r);
+                    m_calibreSpace->setRectangle(r);
                 }
-                m_ccSpace->setScaleValue(lineList[3].toDouble());
-                m_ccSpace->cropImage();
+                m_calibreSpace->setScaleValue(lineList[3].toDouble());
+                m_calibreSpace->cropImage();
                 ongoing = false;
             }
             else {
@@ -69,7 +69,7 @@ void Macro::doCropAndCalibreMacroFromFile(const QString &f)
 
 void Macro::saveCropAndCalibreAsMacroFile(const QString &f)
 {
-    if (m_ccSpace == NULL) {
+    if (m_calibreSpace == NULL) {
         qWarning() << "Error. CCSpace pointer is NULL.";
         return;
     }
@@ -83,11 +83,11 @@ void Macro::saveCropAndCalibreAsMacroFile(const QString &f)
 
     QByteArray arrayToBeWritten;
     arrayToBeWritten.append("r;");
-    QString topleft = QString::number(m_ccSpace->qrect.topLeft().x()) + "," + QString::number(m_ccSpace->qrect.topLeft().y()) + ";";
-    QString bottomright = QString::number(m_ccSpace->qrect.bottomRight().x()) + "," + QString::number(m_ccSpace->qrect.bottomRight().y()) + QString(";");
+    QString topleft = QString::number(m_calibreSpace->qrect.topLeft().x()) + "," + QString::number(m_calibreSpace->qrect.topLeft().y()) + ";";
+    QString bottomright = QString::number(m_calibreSpace->qrect.bottomRight().x()) + "," + QString::number(m_calibreSpace->qrect.bottomRight().y()) + QString(";");
     arrayToBeWritten.append(topleft);
     arrayToBeWritten.append(bottomright);
-    arrayToBeWritten.append(QString::number(m_ccSpace->getScaleValue()));
+    arrayToBeWritten.append(QString::number(m_calibreSpace->getScaleValue()));
     arrayToBeWritten.append('\n');
     macroFile.write(arrayToBeWritten);
 }

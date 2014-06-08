@@ -89,15 +89,15 @@ MainWindow::MainWindow(QWidget *parent) :
     //MainWindow
     connect(ui->actionUndo, &QAction::triggered, this, &MainWindow::onUndoTriggered);
     connect(ui->actionRedo, &QAction::triggered, this, &MainWindow::onRedoTriggered);
-    connect(ui->actionOpenFile, &QAction::triggered, this, &MainWindow::addDiskFileDialog);
-    connect(ui->actionOpenCamera, &QAction::triggered, this, &MainWindow::addCameraImageDialog);
+    connect(ui->actionOpenFile, &QAction::triggered, this, &MainWindow::onAddDiskImageTriggered);
+    connect(ui->actionOpenCamera, &QAction::triggered, this, &MainWindow::onAddCameraImageTriggered);
     connect(ui->actionReset, &QAction::triggered, this, &MainWindow::onResetActionTriggered);
     connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::onOptionsActionTriggered);
     connect(ui->actionSaveCurrentImageAs, &QAction::triggered, this, &MainWindow::onSaveCurrentImageTriggered);
     connect(ui->actionQuickReportExport, &QAction::triggered, this, &MainWindow::onQuickExportTriggered);
     connect(ui->actionExportReportAs, &QAction::triggered, this, &MainWindow::onReportExportTriggered);
-    connect(ui->actionAbout_Qt, &QAction::triggered, this, &MainWindow::aboutQtDialog);
-    connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::aboutCAIGADialog);
+    connect(ui->actionAbout_Qt, &QAction::triggered, this, &MainWindow::onAboutQt);
+    connect(ui->actionAbout_CAIGA, &QAction::triggered, this, &MainWindow::onAboutCAIGA);
     connect(ui->imageTabs, &QTabWidget::currentChanged, this, &MainWindow::onCurrentTabChanged);
     connect(this, &MainWindow::messageArrived, this, &MainWindow::onMessagesArrived);
     connect(this, &MainWindow::configReadFinished, this, &MainWindow::updateOptions);
@@ -168,8 +168,7 @@ void MainWindow::onCalibreLoadMacroButtonClicked()
         return;
     }
     setCurrentDirbyFile(macroFile);
-    CAIGA::Macro macro(this);
-    macro.setCCSpace(calibreSpace);
+    CAIGA::Macro macro(calibreSpace, this);
     macro.doCropAndCalibreMacroFromFile(macroFile);
     macro.deleteLater();
     ui->calibreDrawer->update();
@@ -182,8 +181,7 @@ void MainWindow::onCalibreSaveMacroButtonClicked()
         return;
     }
     setCurrentDirbyFile(macroFile);
-    CAIGA::Macro macro(this);
-    macro.setCCSpace(calibreSpace);
+    CAIGA::Macro macro(calibreSpace, this);
     macro.saveCropAndCalibreAsMacroFile(macroFile);
     macro.deleteLater();
 }
@@ -652,7 +650,7 @@ void MainWindow::onRedoTriggered()
     updateRedoUndoStatus();
 }
 
-void MainWindow::addDiskFileDialog()
+void MainWindow::onAddDiskImageTriggered()
 {
     QString filename = QFileDialog::getOpenFileName(this, tr("Add Image from Disk"), QDir::currentPath(),
                        "Supported Images (*.png *.jpg *.jpeg *.tif *.tiff *.bmp)");
@@ -664,7 +662,7 @@ void MainWindow::addDiskFileDialog()
     onNewImageOpened();
 }
 
-void MainWindow::addCameraImageDialog()
+void MainWindow::onAddCameraImageTriggered()
 {
     cameraDlg = new CameraDialog(this);
     connect(cameraDlg, &CameraDialog::imageAccepted, this, &MainWindow::onCameraImageAccepted);
@@ -846,8 +844,8 @@ void MainWindow::onNewImageOpened()
         calibreSpace->disconnect();
         calibreSpace->deleteLater();
     }
-    calibreSpace = new CAIGA::CCSpace(&cgimg, this);
-    connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), calibreSpace, static_cast<void (CAIGA::CCSpace::*) (qreal)>(&CAIGA::CCSpace::setScaleValue));
+    calibreSpace = new CAIGA::CalibreSpace(&cgimg, this);
+    connect(ui->scaleDoubleSpinBox, static_cast<void (QDoubleSpinBox::*) (double)>(&QDoubleSpinBox::valueChanged), calibreSpace, static_cast<void (CAIGA::CalibreSpace::*) (qreal)>(&CAIGA::CalibreSpace::setScaleValue));
     ui->calibreDrawer->setSpace(calibreSpace);
 
     //clean up process, analysis and report

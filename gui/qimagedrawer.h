@@ -5,7 +5,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QMouseEvent>
-#include "ccspace.h"
+#include "calibrespace.h"
 #include "zoomer.h"
 using namespace CAIGA;
 
@@ -15,7 +15,7 @@ class QImageDrawer : public QWidget
 public:
     explicit QImageDrawer(QWidget *parent = 0);
     inline const QImage *image() const { return &m_image; }
-    inline void setSpace(CCSpace *s) { ccSpace = s; connect(s, &CCSpace::scaleValueChanged, this, &QImageDrawer::calibreFinished); }
+    inline void setSpace(CalibreSpace *s) { ccSpace = s; connect(s, &CalibreSpace::scaleValueChanged, this, &QImageDrawer::calibreFinished); }
     inline void setDrawMode(int m) { m_drawMode = m; update(); }
     inline void setPenColour(const QString &c)
     {
@@ -47,7 +47,7 @@ private:
     QColor m_penColour;
     QImage m_image;
 
-    CCSpace *ccSpace;
+    CalibreSpace *ccSpace;
 
     int m_drawMode;
     QPointF m_mousePressed;

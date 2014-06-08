@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include "core_lib.h"
-#include "ccspace.h"
+#include "calibrespace.h"
 
 namespace CAIGA
 {
@@ -11,13 +11,12 @@ class CORE_LIB Macro : public QObject
 {
     Q_OBJECT
 public:
-    explicit Macro(QObject *parent = 0);
-    inline void setCCSpace(CCSpace *c) { m_ccSpace = c; }
+    explicit Macro(CalibreSpace *c, QObject *parent = 0);
     void doCropAndCalibreMacroFromFile(const QString &);
     void saveCropAndCalibreAsMacroFile(const QString &);
 
 private:
-    CCSpace *m_ccSpace;
+    CalibreSpace *m_calibreSpace;
 };
 }
 

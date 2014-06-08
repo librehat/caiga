@@ -17,9 +17,9 @@ SOURCES  += image.cpp\
             analyser.cpp \
             workgradient.cpp \
             macro.cpp \
-            ccspace.cpp \
             object.cpp \
-            classobject.cpp
+            classobject.cpp \
+            calibrespace.cpp
 
 HEADERS  += image.h \
             core_lib.h \
@@ -40,8 +40,8 @@ HEADERS  += image.h \
             analyser.h \
             workgradient.h \
             macro.h \
-            ccspace.h \
             object.h \
-            classobject.h
+            classobject.h \
+            calibrespace.h
 
 DEFINES  += CORE

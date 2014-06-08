@@ -16,7 +16,7 @@
 #include <QSettings>
 #include <QDir>
 #include "image.h"
-#include "ccspace.h"
+#include "calibrespace.h"
 #include "workspace.h"
 #include "cameradialog.h"
 #include "parametersdialog.h"
@@ -105,16 +105,16 @@ private slots:
     void onCurrentTabChanged(int);
     void onUndoTriggered();
     void onRedoTriggered();
-    void addDiskFileDialog();
-    void addCameraImageDialog();
+    void onAddDiskImageTriggered();
+    void onAddCameraImageTriggered();
     void onCameraImageAccepted(const QImage &);
     void onResetActionTriggered();
     void onOptionsActionTriggered();
     void onQuickExportTriggered();
     void onReportExportTriggered();
     void onSaveCurrentImageTriggered();
-    inline void aboutQtDialog() { QMessageBox::aboutQt(this); }
-    inline void aboutCAIGADialog() { QMessageBox::about(this, "About CAIGA", aboutText); }
+    inline void onAboutQt() { QMessageBox::aboutQt(this); }
+    inline void onAboutCAIGA() { QMessageBox::about(this, "About CAIGA", aboutText); }
     void onMessagesArrived(const QString &);
     void onZoomUpdated(qreal);
     void updateOptions(int, int, const QString &);
@@ -140,7 +140,7 @@ private:
     void setCurrentDirbyFile(QString &);
 
     CAIGA::Image cgimg;
-    CAIGA::CCSpace *calibreSpace;
+    CAIGA::CalibreSpace *calibreSpace;
     CAIGA::WorkSpace *processSpace;
     CAIGA::WorkSpace *previewSpace;
     QVector<QPointF> floodfillPts;

@@ -1,5 +1,5 @@
-#ifndef CCSPACE_H
-#define CCSPACE_H
+#ifndef CALIBRESPACE_H
+#define CALIBRESPACE_H
 
 #include <QObject>
 #include <QTransform>
@@ -8,11 +8,11 @@
 
 namespace CAIGA
 {
-class CORE_LIB CCSpace : public QObject
+class CORE_LIB CalibreSpace : public QObject
 {
     Q_OBJECT
 public:
-    explicit CCSpace(Image *img, QObject *parent = 0);
+    explicit CalibreSpace(Image *img, QObject *parent = 0);
     inline void setRectangle(QRectF r) { qrect = r; }
     void setScaleValue(qreal bar, qreal realLength);
 
@@ -40,4 +40,4 @@ private:
 };
 }
 
-#endif // CCSPACE_H
+#endif // CALIBRESPACE_H
