@@ -187,7 +187,7 @@ QString Analyser::getClassValues(int classIdx)
             + "<br />" + tr("Average Grain Area: ") + QString::number(classObjMap[classIdx].averageArea()) + "μm<sup>2</sup>"
             + "<br />" + tr("Average Perimeter: ") + QString::number(classObjMap[classIdx].averagePerimeter()) + "μm"
             + "<br />" + tr("Average Diameter: ") + QString::number(classObjMap[classIdx].averageDiameter()) + "μm"
-            + "<br />" + tr("Average Flattening: ") + QString::number(classObjMap[classIdx].averageFlattening()) + "μm"
+            + "<br />" + tr("Average Flattening: ") + QString::number(classObjMap[classIdx].averageFlattening())
             + "<br />" + tr("Mean Intercept: ") + QString::number(classObjMap[classIdx].averageIntercept()) + "μm"
             + "<br />" + tr("Grain Size Number (Planimetric Procedure): ") + QString::number(classObjMap[classIdx].sizeNumberByPlanimetric())
             + "<br />" + tr("Grain Size Number (Intercept Procedure): ") + QString::number(classObjMap[classIdx].sizeNumberByIntercept());
