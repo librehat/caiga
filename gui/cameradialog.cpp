@@ -10,16 +10,13 @@ CameraDialog::CameraDialog(QWidget *parent) :
     ui->setupUi(this);
 
     //Camera devices:
-    QByteArray cameraDevice;
-    foreach(const QByteArray &deviceName, QCamera::availableDevices()) {
-        QString description = camera->deviceDescription(deviceName);
-        if (cameraDevice.isEmpty()) {//assign a camera device
-            cameraDevice = deviceName;
-        }
-        ui->cameraBox->addItem(description, QVariant(deviceName));
+    cameraList = QCameraInfo::availableCameras();
+    foreach (const QCameraInfo &cameraInfo, cameraList) {
+        ui->cameraBox->addItem(cameraInfo.description(), QVariant(cameraInfo.deviceName()));
     }
-
-    setCamera(cameraDevice);
+    if (!cameraList.isEmpty()) {
+        setCamera(cameraList.first());
+    }
 
     //SIGNALs and SLOTs
     connect(ui->cameraBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &CameraDialog::updateCameraDevice);
@@ -32,12 +29,7 @@ CameraDialog::~CameraDialog()
     delete ui;
 }
 
-void CameraDialog::updateCameraDevice(int camId)
-{
-    setCamera(ui->cameraBox->itemData(camId).toByteArray());
-}
-
-void CameraDialog::setCamera(const QByteArray &cameraDevice)
+void CameraDialog::setCamera(const QCameraInfo &cam)
 {
     if (imageCapture != NULL) {
         delete imageCapture;
@@ -46,11 +38,11 @@ void CameraDialog::setCamera(const QByteArray &cameraDevice)
         delete camera;
     }
 
-    if (cameraDevice.isEmpty()) {
+    if (cam.isNull()) {//null or invalid
         camera = new QCamera(this);
     }
     else {
-        camera = new QCamera(cameraDevice, this);
+        camera = new QCamera(cam, this);
     }
 
     camera->setViewfinder(ui->viewfinder);
@@ -76,7 +68,7 @@ void CameraDialog::onImageCaptured(int, const QImage &img)
 {
     capturedImage = img;
     capturedImage.detach();
-    ui->viewLabel->setPixmap(QPixmap::fromImage(img).scaled(ui->viewLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    ui->viewLabel->setPixmap(QPixmap::fromImage(img).scaled(ui->viewLabel->size(), Qt::KeepAspectRatio, Qt::FastTransformation));
 }
 
 void CameraDialog::displaycameraError()

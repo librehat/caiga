@@ -10,6 +10,7 @@
 #include <QDialog>
 #include <QMessageBox>
 #include <QCamera>
+#include <QCameraInfo>
 #include <QCameraImageCapture>
 #include <QDir>
 
@@ -30,8 +31,8 @@ signals:
     void imageAccepted(const QImage &);
 
 private slots:
-    void updateCameraDevice(int camId);
-    void setCamera(const QByteArray &cameraDevice);
+    inline void updateCameraDevice(int camId) { setCamera(cameraList.at(camId)); }
+    void setCamera(const QCameraInfo &cam);
     void takePicture();
     void onImageCaptured(int, const QImage &img);
 
@@ -44,6 +45,7 @@ private:
     Ui::CameraDialog *ui;
 
     QCamera *camera;
+    QList<QCameraInfo> cameraList;
     QCameraImageCapture *imageCapture;
     QImage capturedImage;
 };
