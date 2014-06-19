@@ -9,7 +9,7 @@ Macro::Macro(CalibreSpace *c, QObject *parent) :
     m_calibreSpace = c;
 }
 
-void Macro::doCropAndCalibreMacroFromFile(const QString &f)
+void Macro::doCalibreMacroFromFile(const QString &f)
 {
     if (m_calibreSpace == NULL) {
         qWarning() << "Error. CCSpace pointer is NULL.";
@@ -53,7 +53,7 @@ void Macro::doCropAndCalibreMacroFromFile(const QString &f)
                     continue;
                 }
                 else {
-                    QRect r(QPoint(topleft[0].toInt(), topleft[1].toInt()), QPoint(bottomright[0].toInt(), bottomright[1].toInt()));
+                    QRectF r(QPointF(topleft[0].toDouble(), topleft[1].toDouble()), QPointF(bottomright[0].toDouble(), bottomright[1].toDouble()));
                     m_calibreSpace->setRectangle(r);
                 }
                 m_calibreSpace->setScaleValue(lineList[3].toDouble());
@@ -67,7 +67,7 @@ void Macro::doCropAndCalibreMacroFromFile(const QString &f)
     } while (ongoing);
 }
 
-void Macro::saveCropAndCalibreAsMacroFile(const QString &f)
+void Macro::saveCalibreAsMacroFile(const QString &f)
 {
     if (m_calibreSpace == NULL) {
         qWarning() << "Error. CCSpace pointer is NULL.";

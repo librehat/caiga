@@ -169,7 +169,7 @@ void MainWindow::onCalibreLoadMacroButtonClicked()
     }
     setCurrentDirbyFile(macroFile);
     CAIGA::Macro macro(calibreSpace, this);
-    macro.doCropAndCalibreMacroFromFile(macroFile);
+    macro.doCalibreMacroFromFile(macroFile);
     macro.deleteLater();
     ui->calibreDrawer->update();
 }
@@ -182,7 +182,7 @@ void MainWindow::onCalibreSaveMacroButtonClicked()
     }
     setCurrentDirbyFile(macroFile);
     CAIGA::Macro macro(calibreSpace, this);
-    macro.saveCropAndCalibreAsMacroFile(macroFile);
+    macro.saveCalibreAsMacroFile(macroFile);
     macro.deleteLater();
 }
 

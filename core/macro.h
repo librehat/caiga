@@ -12,8 +12,8 @@ class CORE_LIB Macro : public QObject
     Q_OBJECT
 public:
     explicit Macro(CalibreSpace *c, QObject *parent = 0);
-    void doCropAndCalibreMacroFromFile(const QString &);
-    void saveCropAndCalibreAsMacroFile(const QString &);
+    void doCalibreMacroFromFile(const QString &);
+    void saveCalibreAsMacroFile(const QString &);
 
 private:
     CalibreSpace *m_calibreSpace;
