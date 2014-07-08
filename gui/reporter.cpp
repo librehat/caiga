@@ -46,9 +46,9 @@ void Reporter::generateReport()//TODO multi-threading
 
     int maxCountBySlice = 0;
     //count
-    xticks.prepend(maxRadius);
     QList<int> sList;
-    for (int i = 0; i < split; ++i) {
+    xticks.prepend(maxRadius);
+    for (int i = split - 1; i >= 0; --i) {
         sList.append(i);
         xticks.prepend(maxRadius / split * i);
     }
