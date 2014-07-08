@@ -44,77 +44,77 @@
         <translation>基础类</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="76"/>
+        <location filename="../core/analyser.cpp" line="79"/>
         <source>Border</source>
         <translation>边界</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="79"/>
+        <location filename="../core/analyser.cpp" line="82"/>
         <source>Corner</source>
         <translation>边角</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="82"/>
+        <location filename="../core/analyser.cpp" line="85"/>
         <source>Inside</source>
         <translation>内部</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="170"/>
+        <location filename="../core/analyser.cpp" line="173"/>
         <source>Critical Error. Changing class failed. Please report a bug.</source>
         <translation>严重错误。改变类别失败。请汇报本Bug。</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="179"/>
+        <location filename="../core/analyser.cpp" line="182"/>
         <source>Error. Class index is out of classes&apos;s range.</source>
         <translation>错误。类别索引超出范围。</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="181"/>
+        <location filename="../core/analyser.cpp" line="184"/>
         <source>Count: </source>
         <translation>数量：</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="182"/>
+        <location filename="../core/analyser.cpp" line="185"/>
         <source>Total Area: </source>
         <translation>总面积：</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="183"/>
+        <location filename="../core/analyser.cpp" line="186"/>
         <source>Percentage: </source>
         <translation>百分比：</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="184"/>
+        <location filename="../core/analyser.cpp" line="187"/>
         <source>Average Grain Area: </source>
         <translation>平均晶粒面积：</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="185"/>
+        <location filename="../core/analyser.cpp" line="188"/>
         <source>Average Perimeter: </source>
         <translation>平均周长：</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="186"/>
+        <location filename="../core/analyser.cpp" line="189"/>
         <source>Average Diameter: </source>
         <translation>平均直径：</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="187"/>
+        <location filename="../core/analyser.cpp" line="190"/>
         <source>Average Flattening: </source>
         <translation>平均扁率：</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="188"/>
+        <location filename="../core/analyser.cpp" line="191"/>
         <source>Mean Intercept: </source>
         <translation>平均截距：</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="189"/>
+        <location filename="../core/analyser.cpp" line="192"/>
         <source>Grain Size Number (Planimetric Procedure): </source>
         <translation>晶粒度级别数（面积法）：</translation>
     </message>
     <message>
-        <location filename="../core/analyser.cpp" line="190"/>
+        <location filename="../core/analyser.cpp" line="193"/>
         <source>Grain Size Number (Intercept Procedure): </source>
         <translation>晶粒度级别数（截点法）：</translation>
     </message>
@@ -122,51 +122,51 @@
 <context>
     <name>CAIGA::WorkSpace</name>
     <message>
-        <location filename="../core/workspace.cpp" line="38"/>
+        <location filename="../core/workspace.cpp" line="39"/>
         <source>Abort. Nothing available to be undone.</source>
         <translation>中止。没有可供撤销的步骤。</translation>
     </message>
     <message>
-        <location filename="../core/workspace.cpp" line="43"/>
+        <location filename="../core/workspace.cpp" line="44"/>
         <source>Work undone.</source>
         <translation>撤销完成。</translation>
     </message>
     <message>
-        <location filename="../core/workspace.cpp" line="50"/>
+        <location filename="../core/workspace.cpp" line="51"/>
         <source>Abort. Nothing available to be redone.</source>
         <translation>中止。没有可供重做的步骤。</translation>
     </message>
     <message>
-        <location filename="../core/workspace.cpp" line="55"/>
+        <location filename="../core/workspace.cpp" line="56"/>
         <source>Work redone.</source>
         <translation>重做完成。</translation>
     </message>
     <message>
-        <location filename="../core/workspace.cpp" line="171"/>
-        <location filename="../core/workspace.cpp" line="231"/>
-        <location filename="../core/workspace.cpp" line="295"/>
+        <location filename="../core/workspace.cpp" line="172"/>
+        <location filename="../core/workspace.cpp" line="232"/>
+        <location filename="../core/workspace.cpp" line="296"/>
         <source>Abort. 8-bit single channel image needed.</source>
         <translation>中止。需要8位单通道的图像。</translation>
     </message>
     <message>
-        <location filename="../core/workspace.cpp" line="189"/>
+        <location filename="../core/workspace.cpp" line="190"/>
         <source>Abort. 8-bit single or 3-channel image needed.</source>
         <translation>中止。需要8位单通道或者3通道的图像。</translation>
     </message>
     <message>
-        <location filename="../core/workspace.cpp" line="241"/>
-        <location filename="../core/workspace.cpp" line="258"/>
-        <location filename="../core/workspace.cpp" line="278"/>
+        <location filename="../core/workspace.cpp" line="242"/>
+        <location filename="../core/workspace.cpp" line="259"/>
+        <location filename="../core/workspace.cpp" line="279"/>
         <source>Abort. Insufficient points.</source>
         <translation>中止。点的数量不足。</translation>
     </message>
     <message>
-        <location filename="../core/workspace.cpp" line="341"/>
+        <location filename="../core/workspace.cpp" line="342"/>
         <source>Work has been started. Please wait......</source>
         <translation>工作已经开始了。 请稍侯……</translation>
     </message>
     <message>
-        <location filename="../core/workspace.cpp" line="347"/>
+        <location filename="../core/workspace.cpp" line="348"/>
         <source>Work Finished.</source>
         <translation>工作完成。</translation>
     </message>
@@ -268,7 +268,7 @@
     <message>
         <location filename="../gui/mainwindow.ui" line="354"/>
         <location filename="../gui/mainwindow.cpp" line="34"/>
-        <location filename="../gui/mainwindow.cpp" line="230"/>
+        <location filename="../gui/mainwindow.cpp" line="228"/>
         <source>Normal Arrow</source>
         <translation>普通箭头</translation>
     </message>
@@ -500,7 +500,7 @@
     </message>
     <message>
         <location filename="../gui/mainwindow.ui" line="918"/>
-        <location filename="../gui/mainwindow.cpp" line="734"/>
+        <location filename="../gui/mainwindow.cpp" line="737"/>
         <source>Save Current Image As</source>
         <translation>保存当前图像为</translation>
     </message>
@@ -516,25 +516,25 @@
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="35"/>
-        <location filename="../gui/mainwindow.cpp" line="239"/>
+        <location filename="../gui/mainwindow.cpp" line="237"/>
         <source>White Pencil</source>
         <translation>白铅笔</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="36"/>
-        <location filename="../gui/mainwindow.cpp" line="249"/>
+        <location filename="../gui/mainwindow.cpp" line="247"/>
         <source>Black Pencil</source>
         <translation>黑铅笔</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="37"/>
-        <location filename="../gui/mainwindow.cpp" line="259"/>
+        <location filename="../gui/mainwindow.cpp" line="257"/>
         <source>White Eraser</source>
         <translation>白橡皮</translation>
     </message>
     <message>
         <location filename="../gui/mainwindow.cpp" line="38"/>
-        <location filename="../gui/mainwindow.cpp" line="269"/>
+        <location filename="../gui/mainwindow.cpp" line="267"/>
         <source>Black Eraser</source>
         <translation>黑橡皮</translation>
     </message>
@@ -547,17 +547,17 @@
         <translation type="vanished">保存裁切和标定的宏为文件</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="200"/>
+        <location filename="../gui/mainwindow.cpp" line="198"/>
         <source>You must calibre image scale before move to next step.</source>
         <translation>在进入下一步前，你必须先标定图像的比例。</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="222"/>
+        <location filename="../gui/mainwindow.cpp" line="220"/>
         <source>Process and segment the image.</source>
         <translation>处理并分割图像。</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="512"/>
+        <location filename="../gui/mainwindow.cpp" line="510"/>
         <source>Error. Processing is not finished yet! You must segment the image before analysis.</source>
         <translation>错误。处理尚未完成！在分析前你必须先分割图像。</translation>
     </message>
@@ -571,47 +571,47 @@
         <translation>载入校准宏</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="180"/>
+        <location filename="../gui/mainwindow.cpp" line="179"/>
         <source>Save as Macro File for Calibre</source>
         <translation>保存校准宏</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="520"/>
+        <location filename="../gui/mainwindow.cpp" line="518"/>
         <source>Analysing... Please Wait......</source>
         <translation>分析中…… 请稍候……</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="543"/>
+        <location filename="../gui/mainwindow.cpp" line="549"/>
         <source>Analysed.</source>
         <translation>分析完毕。</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="618"/>
+        <location filename="../gui/mainwindow.cpp" line="621"/>
         <source>Auto</source>
         <translation>自动</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="652"/>
+        <location filename="../gui/mainwindow.cpp" line="655"/>
         <source>Add Image from Disk</source>
         <translation>从磁盘添加图像</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="708"/>
+        <location filename="../gui/mainwindow.cpp" line="711"/>
         <source>Export Report As</source>
         <translation>导出报告为</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="766"/>
+        <location filename="../gui/mainwindow.cpp" line="769"/>
         <source>Invalid operation.</source>
         <translation>无效的操作。</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="769"/>
+        <location filename="../gui/mainwindow.cpp" line="772"/>
         <source>Current image saved successfully.</source>
         <translation>当前图像保存成功。</translation>
     </message>
     <message>
-        <location filename="../gui/mainwindow.cpp" line="772"/>
+        <location filename="../gui/mainwindow.cpp" line="775"/>
         <source>Saving current image failed.</source>
         <translation>保存当前图像失败。</translation>
     </message>
@@ -622,6 +622,11 @@
         <location filename="../gui/optionsdialog.ui" line="32"/>
         <source>Options</source>
         <translation>选项</translation>
+    </message>
+    <message>
+        <location filename="../gui/optionsdialog.ui" line="83"/>
+        <source>Pen Colour</source>
+        <translation>笔的颜色</translation>
     </message>
     <message>
         <location filename="../gui/optionsdialog.ui" line="158"/>
@@ -642,6 +647,16 @@
         <location filename="../gui/optionsdialog.ui" line="173"/>
         <source>Text beside icons</source>
         <translation>文字在图标侧方</translation>
+    </message>
+    <message>
+        <location filename="../gui/optionsdialog.ui" line="187"/>
+        <source>Undo Steps</source>
+        <translation>撤销步数</translation>
+    </message>
+    <message>
+        <location filename="../gui/optionsdialog.ui" line="194"/>
+        <source>Cautious: More steps will consume more RAM.</source>
+        <translation>小心： 越多步数消耗的内存越多。</translation>
     </message>
     <message>
         <source>Application Restart Needed</source>
@@ -695,9 +710,8 @@
         <translation>工具栏风格</translation>
     </message>
     <message>
-        <location filename="../gui/optionsdialog.ui" line="83"/>
         <source>Pen colour</source>
-        <translation>笔的颜色</translation>
+        <translation type="vanished">笔的颜色</translation>
     </message>
 </context>
 <context>
@@ -801,18 +815,18 @@
 <context>
     <name>Reporter</name>
     <message>
-        <location filename="../gui/reporter.cpp" line="80"/>
+        <location filename="../gui/reporter.cpp" line="83"/>
         <source>Diameter (μm)</source>
         <translation>直径（微米）</translation>
     </message>
     <message>
-        <location filename="../gui/reporter.cpp" line="89"/>
+        <location filename="../gui/reporter.cpp" line="92"/>
         <location filename="../gui/reporter.cpp" line="168"/>
         <source>Count</source>
         <translation>数量</translation>
     </message>
     <message>
-        <location filename="../gui/reporter.cpp" line="124"/>
+        <location filename="../gui/reporter.cpp" line="32"/>
         <source>Generating report... Please wait......</source>
         <translation>生成报告中…… 请稍侯……</translation>
     </message>
