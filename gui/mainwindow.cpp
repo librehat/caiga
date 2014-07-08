@@ -204,7 +204,7 @@ void MainWindow::onCalibreButtonBoxClicked(QAbstractButton *b)
             processSpace->disconnect();
             processSpace->deleteLater();
         }
-        processSpace = new CAIGA::WorkSpace(cgimg.croppedMatrix(), true, false, this);
+        processSpace = new CAIGA::WorkSpace(cgimg.croppedMatrix(), m_undoSteps, true, false, this);
         connect(processSpace, &CAIGA::WorkSpace::workFinished, this, &MainWindow::onProcessWorkFinished);
         connect(processSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
 
@@ -212,7 +212,7 @@ void MainWindow::onCalibreButtonBoxClicked(QAbstractButton *b)
             previewSpace->disconnect();
             previewSpace->deleteLater();
         }
-        previewSpace = new CAIGA::WorkSpace(NULL, true, true, this);
+        previewSpace = new CAIGA::WorkSpace(NULL, m_undoSteps, true, true, this);
         connect(previewSpace, &CAIGA::WorkSpace::workStatusStringUpdated, this, &MainWindow::onMessagesArrived);
 
         ui->processTab->setEnabled(true);
@@ -776,7 +776,7 @@ void MainWindow::onSaveCurrentImageTriggered()
     }
 }
 
-void MainWindow::updateOptions(int toolbarStyle, int tabPos, const QString &colour)
+void MainWindow::updateOptions(int toolbarStyle, int tabPos, const QString &colour, int undoSteps)
 {
     switch(toolbarStyle) {
     case 0://<system>
@@ -812,13 +812,21 @@ void MainWindow::updateOptions(int toolbarStyle, int tabPos, const QString &colo
         qWarning("Invalid Tab Position");
     }
     ui->calibreDrawer->setPenColour(colour);
+    m_undoSteps = undoSteps;
+    if (processSpace != NULL) {
+        processSpace->setUndoSteps(m_undoSteps);
+    }
+    if (previewSpace != NULL) {
+        previewSpace->setUndoSteps(m_undoSteps);
+    }
 }
 
 void MainWindow::readConfig()
 {
     emit configReadFinished(settings.value("Toolbar Style").toInt(),
                             settings.value("Tab Position", 1).toInt(),
-                            settings.value("Pen Colour", "#F00").toString());
+                            settings.value("Pen Colour", "#F00").toString(),
+                            settings.value("Undo Steps", 10).toInt());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

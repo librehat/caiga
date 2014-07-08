@@ -22,7 +22,7 @@ signals:
     void workStatusStringUpdated(const QString &);
 
 public:
-    explicit WorkSpace(cv::Mat *src = NULL, bool restrictList = true, bool keepFirst = false, QObject *parent = 0);
+    explicit WorkSpace(cv::Mat *src = NULL, int steps = 10, bool restrictList = true, bool keepFirst = false, QObject *parent = 0);
     ~WorkSpace();
     void append(WorkBase *);//this will emit workFinished
     void append(QList<WorkBase *>);//this will also emit workFinished. WARN: this function will manipulate the QList directly, use it with caution!
@@ -71,6 +71,7 @@ public:
 public slots:
     bool undo();//move the last of workList to undoneList. return true if successful
     bool redo();//move the last of undoneList to workList. return true if successful
+    void setUndoSteps(int s) { m_steps = s; }
 
 private:
     QList<WorkBase *> workList;
@@ -87,7 +88,7 @@ private:
         this->clearUndoneList();
         future = QtConcurrent::run(work, &WorkBase::Func);
         watcher.setFuture(future);
-        if (workList.count() > 10) {
+        if (workList.count() > m_steps) {
             restrictWorkList();
         }
     }
@@ -101,6 +102,7 @@ protected:
     double m_d1;
     double m_d2;
     bool m_bool;
+    int m_steps;
 };
 
 }

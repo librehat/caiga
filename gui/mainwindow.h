@@ -39,7 +39,7 @@ public:
     ~MainWindow();
 
 signals:
-    void configReadFinished(int, int, const QString &);
+    void configReadFinished(int, int, const QString &, int);
     void binaryParametersChanged();
     void messageArrived(const QString &);//to display on statusbar
 
@@ -117,7 +117,7 @@ private slots:
     inline void onAboutCAIGA() { QMessageBox::about(this, "About CAIGA", aboutText); }
     void onMessagesArrived(const QString &);
     void onZoomUpdated(qreal);
-    void updateOptions(int, int, const QString &);
+    void updateOptions(int, int, const QString &, int);
 
 private:
     Ui::MainWindow *ui;
@@ -129,6 +129,7 @@ private:
     CAIGA::Analyser *analyser;
     AnalysisItemDelegate *analysisDelegate;
     Reporter *reporter;
+    int m_undoSteps;
 
     void onNewImageOpened();
     void updateRedoUndoStatus();

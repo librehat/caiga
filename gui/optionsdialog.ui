@@ -80,7 +80,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Pen colour</string>
+      <string>Pen Colour</string>
      </property>
     </widget>
    </item>
@@ -99,7 +99,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1" colspan="2" alignment="Qt::AlignBottom">
+   <item row="4" column="1" colspan="2" alignment="Qt::AlignBottom">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -175,8 +175,42 @@
      </item>
     </widget>
    </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="undoStepsLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Undo Steps</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="2">
+    <widget class="QSpinBox" name="undoStepsSpinBox">
+     <property name="toolTip">
+      <string>Cautious: More steps will consume more RAM.</string>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="value">
+      <number>10</number>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>toolbarStyleBox</tabstop>
+  <tabstop>tabPositionBox</tabstop>
+  <tabstop>penColourEdit</tabstop>
+  <tabstop>penColourToolButton</tabstop>
+  <tabstop>undoStepsSpinBox</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

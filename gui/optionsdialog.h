@@ -18,12 +18,12 @@ public:
     ~OptionsDialog();
 
 signals:
-    void optionsAccepted(int, int, const QString &);
+    void optionsAccepted(int, int, const QString &, int);
 
 private slots:
     void pickColour();
     void optionsChanged();
-    void writeConfigFile(int, int, const QString &);
+    void writeConfigFile(int, int, const QString &, int);
     inline void configsChanged() { confChanged = true; }
 
 private:
