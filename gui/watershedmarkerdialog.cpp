@@ -1,7 +1,7 @@
 #include "watershedmarkerdialog.h"
 #include "ui_watershedmarkerdialog.h"
 
-WatershedMarkerDialog::WatershedMarkerDialog(QWidget *parent) :
+WatershedMarkerDialog::WatershedMarkerDialog(int steps, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::WatershedMarkerDialog)
 {
@@ -15,7 +15,7 @@ WatershedMarkerDialog::WatershedMarkerDialog(QWidget *parent) :
     m_colour = QColor(255, 255, 255);
     ui->drawer->setDrawMode(QImageInteractiveDrawer::PENCIL);
 
-    markSpace = new CAIGA::WorkSpace(NULL, true, true, this);
+    markSpace = new CAIGA::WorkSpace(NULL, steps, true, true, this);
 
     connect(ui->drawer, &QImageInteractiveDrawer::zoomUpdated, [&] (qreal z) {
         ui->zoomLabel->setText(QString::number(qFloor(z * 100)) + "%");

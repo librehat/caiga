@@ -446,7 +446,7 @@ void MainWindow::onWatershedButtonClicked()
         watershedDlg->disconnect();
         watershedDlg->deleteLater();
     }
-    watershedDlg = new WatershedMarkerDialog(this);
+    watershedDlg = new WatershedMarkerDialog(m_undoSteps, this);
     watershedDlg->setPenColour(ui->calibreDrawer->getPenColour());
     watershedDlg->setOriginalMat(processSpace->getLastMatrix(), processSpace->last()->inputMarker);
     connect(watershedDlg, &WatershedMarkerDialog::reseted, this, &MainWindow::onProcessWorkFinished);

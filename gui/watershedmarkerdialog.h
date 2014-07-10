@@ -14,7 +14,7 @@ class WatershedMarkerDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit WatershedMarkerDialog(QWidget *parent = 0);
+    explicit WatershedMarkerDialog(int, QWidget *parent = 0);
     ~WatershedMarkerDialog();
     void setPenColour(const QColor &c);
     void setOriginalMat(const Mat *const src, const Mat *previousMarks = NULL);
