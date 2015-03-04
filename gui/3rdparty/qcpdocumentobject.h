@@ -19,8 +19,8 @@
 ****************************************************************************
 **           Author: Emanuel Eichhammer                                   **
 **  Website/Contact: http://www.qcustomplot.com/                          **
-**             Date: 07.04.14                                             **
-**          Version: 1.2.1                                                **
+**             Date: 27.12.14                                             **
+**          Version: 1.3.0                                                **
 ****************************************************************************/
 
 #ifndef QCPDOCUMENTOBJECT_H
@@ -31,7 +31,7 @@
 #include <QPicture>
 #include <QVariant>
 #include <QPainter>
-#include "qcustomplot.h"
+#include "../../qcustomplot.h"
 
 class QCPDocumentObject : public QObject, public QTextObjectInterface
 {
